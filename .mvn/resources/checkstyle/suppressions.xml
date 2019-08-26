@@ -1,0 +1,16 @@
+<!DOCTYPE suppressions PUBLIC "-//Puppy Crawl//DTD Suppressions 1.1//EN" "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
+<suppressions>
+
+    <!-- Suppress checks for hidden files and folders. -->
+    <suppress files="[/\\]\..+" checks=".*"/>
+
+    <!-- Suppress checks for Gradle-generated code -->
+    <suppress files="[/\\]build[/\\]" checks=".*"/>
+
+    <!-- Suppress checks for unit test code. -->
+    <suppress files="[/\\]test[/\\]" checks=".*"/>
+
+    <suppress files="MessageFormatter\.java" checks="[a-zA-Z0-9]*"/>
+    <suppress files="FormattingTuple\.java" checks="[a-zA-Z0-9]*"/>
+
+</suppressions>
