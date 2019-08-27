@@ -1,3 +1,6 @@
+/**
+ * This code is licenced under the GPL version 2.
+ */
 package pcap.common.memory;
 
 import pcap.common.internal.Unsafe;

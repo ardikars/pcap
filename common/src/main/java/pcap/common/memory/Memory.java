@@ -1,12 +1,27 @@
+/**
+ * This code is licenced under the GPL version 2.
+ */
 package pcap.common.memory;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 /**
+ * Used to wrap low-level memory address.
+ * <p>
+ * <h3>Creation of a buffer</h3>
+ * <p>
+ * It is recommended to create a new buffer using the helper methods in
+ * {@link Memories} rather than calling an individual implementation's
+ * constructor.
+ * <p>
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
 public interface Memory {
+
+    /**
+     * @return returns the number of bytes (octets) this buffer can contain.
+     */
     int capacity();
 
     /**

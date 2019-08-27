@@ -5,6 +5,9 @@ package pcap.codec.ip;
 
 import pcap.codec.AbstractPacket;
 
+/**
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 public abstract class Ip extends AbstractPacket {
 
 	protected static abstract class AbstractPacketHeader extends Header {

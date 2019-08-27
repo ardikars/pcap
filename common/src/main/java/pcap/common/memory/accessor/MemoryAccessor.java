@@ -6,9 +6,18 @@ package pcap.common.memory.accessor;
 import java.nio.ByteBuffer;
 
 /**
+ * Abstraction over an address space of readable and writable bytes,
+ * also can used to allocate/reallocate/deallocate buffer's.
+ * <p>
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
 public interface MemoryAccessor {
+
+    /**
+     * Allocate memory buffer's with given size.
+     * @param size size of buffer (in bytes).
+     * @return returns memory address of begining bytes.
+     */
     long allocate(int size);
 
     /**

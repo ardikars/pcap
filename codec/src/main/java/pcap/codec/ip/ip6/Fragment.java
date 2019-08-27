@@ -1,4 +1,6 @@
-
+/**
+ * This code is licenced under the GPL version 2.
+ */
 package pcap.codec.ip.ip6;
 
 import pcap.codec.AbstractPacket;
@@ -11,6 +13,9 @@ import pcap.common.util.Validate;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 public class Fragment extends AbstractPacket {
 
 	private final Header header;

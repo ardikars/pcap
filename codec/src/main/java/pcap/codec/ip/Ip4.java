@@ -1,4 +1,6 @@
-
+/**
+ * This code is licenced under the GPL version 2.
+ */
 package pcap.codec.ip;
 
 import pcap.codec.Packet;
@@ -9,6 +11,9 @@ import pcap.common.util.Validate;
 
 import java.util.Arrays;
 
+/**
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 public class Ip4 extends Ip {
 
 	private final Header header;

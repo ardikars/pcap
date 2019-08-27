@@ -20,12 +20,14 @@ import java.util.List;
 public class Reflections {
 
     private static final boolean ACCESS_CONTROL;
+
     public static Throwable trySetAccessible(final AccessibleObject object, final boolean checkAccessible) throws RuntimeException {
         if (checkAccessible && !ACCESS_CONTROL) {
             return new UnsupportedOperationException("Reflective setAccessible(true) disabled");
         }
         return setAccessible(object, checkAccessible);
     }
+
     public static Throwable forceSetAccessible(final AccessibleObject object, final boolean checkAccessible) throws RuntimeException {
         return setAccessible(object, checkAccessible);
     }

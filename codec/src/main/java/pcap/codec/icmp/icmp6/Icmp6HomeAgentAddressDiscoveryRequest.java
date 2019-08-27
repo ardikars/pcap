@@ -1,3 +1,6 @@
+/**
+ * This code is licenced under the GPL version 2.
+ */
 package pcap.codec.icmp.icmp6;
 
 import pcap.codec.icmp.Icmp;

@@ -1,4 +1,6 @@
-
+/**
+ * This code is licenced under the GPL version 2.
+ */
 package pcap.codec.ip.ip6;
 
 import pcap.codec.Packet;
@@ -6,6 +8,9 @@ import pcap.codec.TransportLayer;
 import pcap.common.memory.Memory;
 import pcap.common.util.Validate;
 
+/**
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 public class DestinationOptions extends Options {
 
 	private final Header header;

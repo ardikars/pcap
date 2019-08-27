@@ -1,4 +1,6 @@
-
+/**
+ * This code is licenced under the GPL version 2.
+ */
 package pcap.codec.ip.ip6;
 
 import pcap.codec.AbstractPacket;
@@ -7,6 +9,9 @@ import pcap.codec.ip.Ip6;
 import pcap.common.memory.Memory;
 import pcap.common.util.Strings;
 
+/**
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 public abstract class Options extends AbstractPacket {
 
 	protected abstract static class Header extends Ip6.ExtensionHeader {

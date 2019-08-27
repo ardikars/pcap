@@ -1,4 +1,6 @@
-
+/**
+ * This code is licenced under the GPL version 2.
+ */
 package pcap.codec.ip.ip6;
 
 import pcap.codec.AbstractPacket;
@@ -8,6 +10,9 @@ import pcap.common.memory.Memory;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
+/**
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 public class Authentication extends AbstractPacket {
 
 	private final Header header;
