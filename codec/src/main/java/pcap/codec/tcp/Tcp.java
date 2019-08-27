@@ -274,7 +274,7 @@ public class Tcp extends AbstractPacket {
                 this.options = new byte[optionLength];
                 buffer.readBytes(options);
                 int length = 20 + optionLength;
-                this.payloadBuffer = buffer.copy(length, buffer.capacity() - length);
+                this.payloadBuffer = buffer.slice(length, buffer.capacity() - length);
             }
             this.buffer = buffer;
             this.payloadBuffer = buffer.slice();

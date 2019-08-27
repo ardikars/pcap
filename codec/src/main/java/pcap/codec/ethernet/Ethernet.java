@@ -38,6 +38,7 @@ public class Ethernet extends AbstractPacket {
 	public Packet getPayload() {
 		return payload;
 	}
+
 	public static class Header extends AbstractPacket.Header {
 
 		public static final int ETHERNET_HEADER_LENGTH = 14;
