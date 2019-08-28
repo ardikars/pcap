@@ -8,6 +8,8 @@ import pcap.common.util.Properties;
 import pcap.common.util.Reflections;
 import sun.misc.Unsafe;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -134,6 +136,19 @@ public final class UnsafeHelper {
         return maybeUnsafe;
     }
 
+    private static Object findUnsafe9() {
+        try {
+            VarHandle privateIntHandle = MethodHandles
+                    .privateLookupIn(Unsafe.class, MethodHandles.lookup())
+                    .findStaticVarHandle(Unsafe.class, "theUnsafe", Unsafe.class);
+            return privateIntHandle.get();
+        } catch (NoSuchFieldException e) {
+            return e;
+        } catch (IllegalAccessException e) {
+            return e;
+        }
+    }
+
     /**
      * Java9 has jdk.internal.misc.Unsafe and not all methods are propagated to sun.misc.Unsafe.
      */
@@ -227,7 +242,7 @@ public final class UnsafeHelper {
     static {
         Unsafe unsafe = null;
         List<Throwable> causes = new ArrayList<Throwable>();
-        Object maybeUnsafe = findUnsafe();
+        Object maybeUnsafe = findUnsafe9();
         final boolean unaligned;
         if (maybeUnsafe instanceof Throwable) {
             unaligned = false;
