@@ -44,6 +44,7 @@ public class Arp extends AbstractPacket {
 	public static final Arp newPacket(final Memory buffer) {
 		return new Builder().build(buffer);
 	}
+
 	public static final class Header extends AbstractPacket.Header {
 
 		public static final int ARP_HEADER_LENGTH = 28;
@@ -313,7 +314,7 @@ public class Arp extends AbstractPacket {
 
 		public static final OperationCode UNKNOWN = new OperationCode((short) -1, "Unknown");
 
-		private static final Map<Short, OperationCode> registry
+		private static final Map<Short, OperationCode> REGISTRY
 				= new HashMap<Short, OperationCode>();
 
 		public OperationCode(Short value, String name) {
@@ -326,7 +327,7 @@ public class Arp extends AbstractPacket {
 		 * @return returns {@link OperationCode}.
 		 */
 		public static OperationCode register(final OperationCode operationCode) {
-			return registry.put(operationCode.getValue(), operationCode);
+			return REGISTRY.put(operationCode.getValue(), operationCode);
 		}
 
 		/**
@@ -335,8 +336,8 @@ public class Arp extends AbstractPacket {
 		 * @return returns {@link OperationCode}.
 		 */
 		public static OperationCode valueOf(final Short value) {
-			if (registry.containsKey(value)) {
-				return registry.get(value);
+			if (REGISTRY.containsKey(value)) {
+				return REGISTRY.get(value);
 			} else {
 				return UNKNOWN;
 			}
@@ -348,8 +349,8 @@ public class Arp extends AbstractPacket {
 		}
 
 		static {
-			registry.put(ARP_REQUEST.getValue(), ARP_REQUEST);
-			registry.put(ARP_REPLY.getValue(), ARP_REPLY);
+			REGISTRY.put(ARP_REQUEST.getValue(), ARP_REQUEST);
+			REGISTRY.put(ARP_REPLY.getValue(), ARP_REPLY);
 		}
 
 	}

@@ -40,16 +40,16 @@ public final class TransportLayer extends NamedNumber<Byte, TransportLayer> {
 
     public static final TransportLayer UNKNOWN = new TransportLayer((byte) -1, "Unknown");
 
-    private static Map<Byte, TransportLayer> registry = new HashMap<Byte, TransportLayer>();
+    private static Map<Byte, TransportLayer> REGISTRY = new HashMap<Byte, TransportLayer>();
 
-    private static Map<Byte, AbstractPacket.Builder> builder = new HashMap<Byte, AbstractPacket.Builder>();
+    private static Map<Byte, AbstractPacket.Builder> BUILDER = new HashMap<Byte, AbstractPacket.Builder>();
 
     protected TransportLayer(Byte value, String name) {
         super(value, name);
     }
 
     public Packet newInstance(Memory buffer) {
-        AbstractPacket.Builder packetBuilder = builder.get(this.getValue());
+        AbstractPacket.Builder packetBuilder = BUILDER.get(this.getValue());
         if (packetBuilder == null) {
             if (buffer == null || buffer.capacity() <= 0) {
                 return null;
@@ -59,7 +59,7 @@ public final class TransportLayer extends NamedNumber<Byte, TransportLayer> {
         return packetBuilder.build(buffer);
     }
     public static TransportLayer valueOf(final Byte value) {
-        TransportLayer transportLayer = registry.get(value);
+        TransportLayer transportLayer = REGISTRY.get(value);
         if (transportLayer == null) {
             return UNKNOWN;
         } else {
@@ -72,7 +72,7 @@ public final class TransportLayer extends NamedNumber<Byte, TransportLayer> {
      * @param type type
      */
     public static void register(final TransportLayer type) {
-        registry.put(type.getValue(), type);
+        REGISTRY.put(type.getValue(), type);
     }
 
     /**
@@ -81,22 +81,22 @@ public final class TransportLayer extends NamedNumber<Byte, TransportLayer> {
      * @param packetBuilder packet builder.
      */
     public static void register(TransportLayer type, AbstractPacket.Builder packetBuilder) {
-        builder.put(type.getValue(), packetBuilder);
+        BUILDER.put(type.getValue(), packetBuilder);
     }
 
     static {
-        registry.put(ICMP.getValue(), ICMP);
-        registry.put(IPV6.getValue(), IPV6);
-        registry.put(IPV6_ICMP.getValue(), IPV6_ICMP);
-        registry.put(IPV6_ROUTING.getValue(), IPV6_ROUTING);
-        registry.put(IPV6_FRAGMENT.getValue(), IPV6_FRAGMENT);
-        registry.put(IPV6_HOPOPT.getValue(), IPV6_HOPOPT);
-        registry.put(IPV6_DSTOPT.getValue(), IPV6_DSTOPT);
-        registry.put(IPV6_ESP.getValue(), IPV6_ESP);
-        registry.put(IPV6_AH.getValue(), IPV6_AH);
-        registry.put(IGMP.getValue(), IGMP);
-        registry.put(TCP.getValue(), TCP);
-        registry.put(UDP.getValue(), UDP);
+        REGISTRY.put(ICMP.getValue(), ICMP);
+        REGISTRY.put(IPV6.getValue(), IPV6);
+        REGISTRY.put(IPV6_ICMP.getValue(), IPV6_ICMP);
+        REGISTRY.put(IPV6_ROUTING.getValue(), IPV6_ROUTING);
+        REGISTRY.put(IPV6_FRAGMENT.getValue(), IPV6_FRAGMENT);
+        REGISTRY.put(IPV6_HOPOPT.getValue(), IPV6_HOPOPT);
+        REGISTRY.put(IPV6_DSTOPT.getValue(), IPV6_DSTOPT);
+        REGISTRY.put(IPV6_ESP.getValue(), IPV6_ESP);
+        REGISTRY.put(IPV6_AH.getValue(), IPV6_AH);
+        REGISTRY.put(IGMP.getValue(), IGMP);
+        REGISTRY.put(TCP.getValue(), TCP);
+        REGISTRY.put(UDP.getValue(), UDP);
     }
 
 }

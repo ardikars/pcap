@@ -99,9 +99,9 @@ public abstract class Icmp extends AbstractPacket {
 
         public static final IcmpTypeAndCode UNKNOWN = new IcmpTypeAndCode((byte) -1, (byte) -1, "Unknown");
 
-        private static Map<Byte, IcmpTypeAndCode> registry = new HashMap<Byte, IcmpTypeAndCode>();
+        private static Map<Byte, IcmpTypeAndCode> REGISTRY = new HashMap<Byte, IcmpTypeAndCode>();
 
-        private static Map<Byte, Builder> builder = new HashMap<Byte, Builder>();
+        private static Map<Byte, Builder> BUILDER = new HashMap<Byte, Builder>();
 
         private final byte type;
         private final byte code;
@@ -135,7 +135,7 @@ public abstract class Icmp extends AbstractPacket {
         }
 
         public Packet newInstance(Memory buffer) {
-            Builder packetBuilder = builder.get(this.getValue());
+            Builder packetBuilder = BUILDER.get(this.getValue());
             if (packetBuilder == null) {
                 if (buffer == null || buffer.capacity() <= 0) {
                     return null;
@@ -151,7 +151,7 @@ public abstract class Icmp extends AbstractPacket {
          * @return returns {@link IcmpTypeAndCode} object.
          */
         public static IcmpTypeAndCode valueOf(final Byte value) {
-            IcmpTypeAndCode icmpTypeAndCode = registry.get(value);
+            IcmpTypeAndCode icmpTypeAndCode = REGISTRY.get(value);
             if (icmpTypeAndCode == null) {
                 return UNKNOWN;
             } else {
@@ -164,7 +164,7 @@ public abstract class Icmp extends AbstractPacket {
          * @param type type
          */
         public static void register(final IcmpTypeAndCode type) {
-            registry.put(type.getValue(), type);
+            REGISTRY.put(type.getValue(), type);
         }
 
         /**
@@ -173,15 +173,15 @@ public abstract class Icmp extends AbstractPacket {
          * @param packetBuilder packet builder.
          */
         public static void register(IcmpTypeAndCode type, Builder packetBuilder) {
-            builder.put(type.getValue(), packetBuilder);
+            BUILDER.put(type.getValue(), packetBuilder);
         }
 
         static {
-            registry.put(ROUTER_SOLICICATION.getValue(), ROUTER_SOLICICATION);
-            registry.put(ROUTER_ADVERTISEMENT.getValue(), ROUTER_ADVERTISEMENT);
-            registry.put(NEIGHBOR_SOLICITATION.getValue(), NEIGHBOR_SOLICITATION);
-            registry.put(NEIGHBOR_ADVERTISEMENT.getValue(), NEIGHBOR_ADVERTISEMENT);
-            registry.put(REDIRECT.getValue(), REDIRECT);
+            REGISTRY.put(ROUTER_SOLICICATION.getValue(), ROUTER_SOLICICATION);
+            REGISTRY.put(ROUTER_ADVERTISEMENT.getValue(), ROUTER_ADVERTISEMENT);
+            REGISTRY.put(NEIGHBOR_SOLICITATION.getValue(), NEIGHBOR_SOLICITATION);
+            REGISTRY.put(NEIGHBOR_ADVERTISEMENT.getValue(), NEIGHBOR_ADVERTISEMENT);
+            REGISTRY.put(REDIRECT.getValue(), REDIRECT);
             IcmpTypeAndCode.register(IcmpTypeAndCode.NEIGHBOR_SOLICITATION, new NeighborSolicitation.Builder());
             IcmpTypeAndCode.register(IcmpTypeAndCode.NEIGHBOR_ADVERTISEMENT, new NeighborAdvertisement.Builder());
             IcmpTypeAndCode.register(IcmpTypeAndCode.ROUTER_SOLICICATION, new RouterSolicitation.Builder());

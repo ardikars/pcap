@@ -14,10 +14,10 @@ import java.util.Map;
  */
 public final class ApplicationLayer extends NamedNumber<Short, ApplicationLayer> {
 
-    private static final Map<ApplicationLayer, Short> registry =
+    private static final Map<ApplicationLayer, Short> REGISTRY =
             new HashMap<ApplicationLayer, Short>();
 
-    private static final Map<Short, AbstractPacket.Builder> builder =
+    private static final Map<Short, AbstractPacket.Builder> BUILDER =
             new HashMap<Short, AbstractPacket.Builder>();
 
     public ApplicationLayer(Short value, String name) {
@@ -25,7 +25,7 @@ public final class ApplicationLayer extends NamedNumber<Short, ApplicationLayer>
     }
 
     public Packet newInstance(Memory buffer) {
-        AbstractPacket.Builder packetBuilder = builder.get(this.getValue());
+        AbstractPacket.Builder packetBuilder = BUILDER.get(this.getValue());
         if (packetBuilder == null) {
             if (buffer == null || buffer.capacity() <= 0) {
                 return null;
@@ -35,7 +35,7 @@ public final class ApplicationLayer extends NamedNumber<Short, ApplicationLayer>
         return packetBuilder.build(buffer);
     }
     public static ApplicationLayer valueOf(short value) {
-        for (Map.Entry<ApplicationLayer, Short> entry : registry.entrySet()) {
+        for (Map.Entry<ApplicationLayer, Short> entry : REGISTRY.entrySet()) {
             if (entry.getValue() == value) {
                 return entry.getKey();
             }
@@ -48,8 +48,8 @@ public final class ApplicationLayer extends NamedNumber<Short, ApplicationLayer>
      * @param dataLinkLayer application type.
      */
     public static void register(ApplicationLayer dataLinkLayer) {
-        synchronized (registry) {
-            registry.put(dataLinkLayer, dataLinkLayer.getValue());
+        synchronized (REGISTRY) {
+            REGISTRY.put(dataLinkLayer, dataLinkLayer.getValue());
         }
     }
 
@@ -59,8 +59,8 @@ public final class ApplicationLayer extends NamedNumber<Short, ApplicationLayer>
      * @param packetBuilder packet builder.
      */
     public static void register(ApplicationLayer dataLinkLayer, AbstractPacket.Builder packetBuilder) {
-        synchronized (builder) {
-            builder.put(dataLinkLayer.getValue(), packetBuilder);
+        synchronized (BUILDER) {
+            BUILDER.put(dataLinkLayer.getValue(), packetBuilder);
         }
     }
 

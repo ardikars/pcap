@@ -84,10 +84,10 @@ public final class NetworkLayer extends NamedNumber<Short, NetworkLayer> {
     public static final NetworkLayer UNKNOWN
             = new NetworkLayer((short) -1, "Unknown");
 
-    private static final Map<Short, NetworkLayer> registry
+    private static final Map<Short, NetworkLayer> REGISTRY
             = new HashMap<Short, NetworkLayer>();
 
-    private static final Map<Short, AbstractPacket.Builder> builder
+    private static final Map<Short, AbstractPacket.Builder> BUILDER
             = new HashMap<Short, AbstractPacket.Builder>();
 
     /**
@@ -99,7 +99,7 @@ public final class NetworkLayer extends NamedNumber<Short, NetworkLayer> {
     }
 
     public Packet newInstance(Memory buffer) {
-        AbstractPacket.Builder packetBuilder = builder.get(this.getValue());
+        AbstractPacket.Builder packetBuilder = BUILDER.get(this.getValue());
         if (packetBuilder == null) {
             if (buffer == null || buffer.capacity() <= 0) {
                 return null;
@@ -117,7 +117,7 @@ public final class NetworkLayer extends NamedNumber<Short, NetworkLayer> {
         if ((value & 0xFFFF) <= IEEE802_3_MAX_LENGTH) {
             return UNKNOWN;
         }
-        NetworkLayer protocolType = registry.get(value);
+        NetworkLayer protocolType = REGISTRY.get(value);
         if (protocolType == null) {
             return UNKNOWN;
         }
@@ -128,8 +128,8 @@ public final class NetworkLayer extends NamedNumber<Short, NetworkLayer> {
      * @param type type.
      */
     public static void register(NetworkLayer type) {
-        synchronized (registry) {
-            registry.put(type.getValue(), type);
+        synchronized (REGISTRY) {
+            REGISTRY.put(type.getValue(), type);
         }
     }
 
@@ -139,8 +139,8 @@ public final class NetworkLayer extends NamedNumber<Short, NetworkLayer> {
      * @param packetBuilder packet builder.
      */
     public static void register(NetworkLayer networkLayer, AbstractPacket.Builder packetBuilder) {
-        synchronized (builder) {
-            builder.put(networkLayer.getValue(), packetBuilder);
+        synchronized (BUILDER) {
+            BUILDER.put(networkLayer.getValue(), packetBuilder);
         }
     }
 
@@ -150,17 +150,17 @@ public final class NetworkLayer extends NamedNumber<Short, NetworkLayer> {
     }
 
     static {
-        registry.put(IPV4.getValue(), IPV4);
-        registry.put(ARP.getValue(), ARP);
-        registry.put(DOT1Q_VLAN_TAGGED_FRAMES.getValue(), DOT1Q_VLAN_TAGGED_FRAMES);
-        registry.put(RARP.getValue(), RARP);
-        registry.put(APPLETALK.getValue(), APPLETALK);
-        registry.put(IPV6.getValue(), IPV6);
-        registry.put(PPP.getValue(), PPP);
-        registry.put(MPLS.getValue(), MPLS);
-        registry.put(PPPOE_DISCOVERY_STAGE.getValue(), PPPOE_DISCOVERY_STAGE);
-        registry.put(PPPOE_SESSION_STAGE.getValue(), PPPOE_SESSION_STAGE);
-        registry.put(IEEE_802_1_AD.getValue(), IEEE_802_1_AD);
+        REGISTRY.put(IPV4.getValue(), IPV4);
+        REGISTRY.put(ARP.getValue(), ARP);
+        REGISTRY.put(DOT1Q_VLAN_TAGGED_FRAMES.getValue(), DOT1Q_VLAN_TAGGED_FRAMES);
+        REGISTRY.put(RARP.getValue(), RARP);
+        REGISTRY.put(APPLETALK.getValue(), APPLETALK);
+        REGISTRY.put(IPV6.getValue(), IPV6);
+        REGISTRY.put(PPP.getValue(), PPP);
+        REGISTRY.put(MPLS.getValue(), MPLS);
+        REGISTRY.put(PPPOE_DISCOVERY_STAGE.getValue(), PPPOE_DISCOVERY_STAGE);
+        REGISTRY.put(PPPOE_SESSION_STAGE.getValue(), PPPOE_SESSION_STAGE);
+        REGISTRY.put(IEEE_802_1_AD.getValue(), IEEE_802_1_AD);
     }
 
 }

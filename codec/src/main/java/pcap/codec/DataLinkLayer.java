@@ -24,7 +24,7 @@ public final class DataLinkLayer extends NamedNumber<Short, DataLinkLayer> {
      */
     public static final DataLinkLayer LINUX_SLL = new DataLinkLayer((short) 113, "Linux SLL");
 
-    private static final Map<DataLinkLayer, Short> registry =
+    private static final Map<DataLinkLayer, Short> REGISTRY =
             new HashMap<DataLinkLayer, Short>();
 
     private static final Map<Short, AbstractPacket.Builder> builder =
@@ -50,7 +50,7 @@ public final class DataLinkLayer extends NamedNumber<Short, DataLinkLayer> {
      * @return returns {@link DataLinkLayer} object.
      */
     public static DataLinkLayer valueOf(short value) {
-        for (Map.Entry<DataLinkLayer, Short> entry : registry.entrySet()) {
+        for (Map.Entry<DataLinkLayer, Short> entry : REGISTRY.entrySet()) {
             if (entry.getValue() == value) {
                 return entry.getKey();
             }
@@ -63,8 +63,8 @@ public final class DataLinkLayer extends NamedNumber<Short, DataLinkLayer> {
      * @param dataLinkLayer data link type.
      */
     public static void register(DataLinkLayer dataLinkLayer) {
-        synchronized (registry) {
-            registry.put(dataLinkLayer, dataLinkLayer.getValue());
+        synchronized (REGISTRY) {
+            REGISTRY.put(dataLinkLayer, dataLinkLayer.getValue());
         }
     }
 
@@ -80,8 +80,8 @@ public final class DataLinkLayer extends NamedNumber<Short, DataLinkLayer> {
     }
 
     static {
-        registry.put(EN10MB, EN10MB.getValue());
-        registry.put(LINUX_SLL, LINUX_SLL.getValue());
+        REGISTRY.put(EN10MB, EN10MB.getValue());
+        REGISTRY.put(LINUX_SLL, LINUX_SLL.getValue());
     }
 
 }

@@ -37,34 +37,34 @@ public final class DateTimePattern {
         public static final DatePattern YYYY_MM_WITH_SPACE_AS_DELIMITER = new DatePattern("yyyy MM", "Year Month");
         public static final DatePattern MM_YYYY_WITH_SPACE_AS_DELIMITER = new DatePattern("MM yyyy", "Month Year");
 
-        private static final Map<String, DatePattern> registry = new HashMap<String, DatePattern>();
+        private static final Map<String, DatePattern> REGISTRY = new HashMap<String, DatePattern>();
 
         public DatePattern(String value, String name) {
             super(value, name);
         }
 
         public static DatePattern register(DatePattern datePattern) {
-            registry.put(datePattern.getValue(), datePattern);
+            REGISTRY.put(datePattern.getValue(), datePattern);
             return datePattern;
         }
 
         public static DatePattern getDatePattern(String stringDatePattern) {
-            return registry.getOrDefault(stringDatePattern, DD_MM_YYYY_WITH_SPACE_AS_DELIMITER);
+            return REGISTRY.getOrDefault(stringDatePattern, DD_MM_YYYY_WITH_SPACE_AS_DELIMITER);
         }
 
         static {
-            registry.put(YYYY_MM_DD_WITH_MINUS_AS_DELIMITER.getValue(), YYYY_MM_DD_WITH_MINUS_AS_DELIMITER);
-            registry.put(DD_MM_YYYY_WITH_MINUS_AS_DELIMITER.getValue(), DD_MM_YYYY_WITH_MINUS_AS_DELIMITER);
-            registry.put(YYYY_MM_WITH_MINUS_AS_DELIMITER.getValue(), YYYY_MM_WITH_MINUS_AS_DELIMITER);
-            registry.put(MM_YYYY_WITH_MINUS_AS_DELIMITER.getValue(), MM_YYYY_WITH_MINUS_AS_DELIMITER);
-            registry.put(YYYY_MM_DD_WITH_SLASH_AS_DELIMITER.getValue(), YYYY_MM_DD_WITH_SLASH_AS_DELIMITER);
-            registry.put(DD_MM_YYYY_WITH_SLASH_AS_DELIMITER.getValue(), DD_MM_YYYY_WITH_SLASH_AS_DELIMITER);
-            registry.put(YYYY_MM_WITH_SLASH_AS_DELIMITER.getValue(), YYYY_MM_WITH_SLASH_AS_DELIMITER);
-            registry.put(MM_YYYY_WITH_SLASH_AS_DELIMITER.getValue(), MM_YYYY_WITH_SLASH_AS_DELIMITER);
-            registry.put(YYYY_MM_DD_WITH_SPACE_AS_DELIMITER.getValue(), YYYY_MM_DD_WITH_SPACE_AS_DELIMITER);
-            registry.put(DD_MM_YYYY_WITH_SPACE_AS_DELIMITER.getValue(), DD_MM_YYYY_WITH_SPACE_AS_DELIMITER);
-            registry.put(YYYY_MM_WITH_SPACE_AS_DELIMITER.getValue(), YYYY_MM_WITH_SPACE_AS_DELIMITER);
-            registry.put(MM_YYYY_WITH_SPACE_AS_DELIMITER.getValue(), MM_YYYY_WITH_SPACE_AS_DELIMITER);
+            REGISTRY.put(YYYY_MM_DD_WITH_MINUS_AS_DELIMITER.getValue(), YYYY_MM_DD_WITH_MINUS_AS_DELIMITER);
+            REGISTRY.put(DD_MM_YYYY_WITH_MINUS_AS_DELIMITER.getValue(), DD_MM_YYYY_WITH_MINUS_AS_DELIMITER);
+            REGISTRY.put(YYYY_MM_WITH_MINUS_AS_DELIMITER.getValue(), YYYY_MM_WITH_MINUS_AS_DELIMITER);
+            REGISTRY.put(MM_YYYY_WITH_MINUS_AS_DELIMITER.getValue(), MM_YYYY_WITH_MINUS_AS_DELIMITER);
+            REGISTRY.put(YYYY_MM_DD_WITH_SLASH_AS_DELIMITER.getValue(), YYYY_MM_DD_WITH_SLASH_AS_DELIMITER);
+            REGISTRY.put(DD_MM_YYYY_WITH_SLASH_AS_DELIMITER.getValue(), DD_MM_YYYY_WITH_SLASH_AS_DELIMITER);
+            REGISTRY.put(YYYY_MM_WITH_SLASH_AS_DELIMITER.getValue(), YYYY_MM_WITH_SLASH_AS_DELIMITER);
+            REGISTRY.put(MM_YYYY_WITH_SLASH_AS_DELIMITER.getValue(), MM_YYYY_WITH_SLASH_AS_DELIMITER);
+            REGISTRY.put(YYYY_MM_DD_WITH_SPACE_AS_DELIMITER.getValue(), YYYY_MM_DD_WITH_SPACE_AS_DELIMITER);
+            REGISTRY.put(DD_MM_YYYY_WITH_SPACE_AS_DELIMITER.getValue(), DD_MM_YYYY_WITH_SPACE_AS_DELIMITER);
+            REGISTRY.put(YYYY_MM_WITH_SPACE_AS_DELIMITER.getValue(), YYYY_MM_WITH_SPACE_AS_DELIMITER);
+            REGISTRY.put(MM_YYYY_WITH_SPACE_AS_DELIMITER.getValue(), MM_YYYY_WITH_SPACE_AS_DELIMITER);
         }
 
     }
@@ -80,30 +80,30 @@ public final class DateTimePattern {
         public static final TimePattern HH_MM_SS_WITH_SPACE_AS_DELIMITER = new TimePattern("hh mm ss", "Hour Munite Second");
         public static final TimePattern HH_MM_WITH_SPACE_AS_DELIMITER = new TimePattern("hh mm", "Hour Munite");
 
-        private static final Map<String, TimePattern> registry = new HashMap<String, TimePattern>();
+        private static final Map<String, TimePattern> REGISTRY = new HashMap<String, TimePattern>();
 
         public TimePattern(String value, String name) {
             super(value, name);
         }
 
         public static TimePattern register(TimePattern timePattern) {
-            registry.put(timePattern.getValue(), timePattern);
+            REGISTRY.put(timePattern.getValue(), timePattern);
             return timePattern;
         }
 
         public static TimePattern getTimePattern(String stringTimePattern) {
-            return registry.getOrDefault(stringTimePattern, HH_MM_SS_WITH_SPACE_AS_DELIMITER);
+            return REGISTRY.getOrDefault(stringTimePattern, HH_MM_SS_WITH_SPACE_AS_DELIMITER);
         }
 
         static {
-            registry.put(HH_MM_SS_WITH_COLON_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
-            registry.put(HH_MM_WITH_COLON_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
-            registry.put(HH_MM_SS_WITH_MINUS_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
-            registry.put(HH_MM_WITH_MINUS_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
-            registry.put(HH_MM_SS_WITH_SLASH_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
-            registry.put(HH_MM_WITH_SLASH_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
-            registry.put(HH_MM_SS_WITH_SPACE_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
-            registry.put(HH_MM_WITH_SPACE_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+            REGISTRY.put(HH_MM_SS_WITH_COLON_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+            REGISTRY.put(HH_MM_WITH_COLON_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+            REGISTRY.put(HH_MM_SS_WITH_MINUS_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+            REGISTRY.put(HH_MM_WITH_MINUS_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+            REGISTRY.put(HH_MM_SS_WITH_SLASH_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+            REGISTRY.put(HH_MM_WITH_SLASH_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+            REGISTRY.put(HH_MM_SS_WITH_SPACE_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+            REGISTRY.put(HH_MM_WITH_SPACE_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
         }
 
     }

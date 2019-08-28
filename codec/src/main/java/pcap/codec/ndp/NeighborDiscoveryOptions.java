@@ -131,7 +131,7 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
         public static final OptionType MTU =
                 new OptionType((byte) 5, "MTU");
 
-        private static Map<Byte, OptionType> registry =
+        private static Map<Byte, OptionType> REGISTRY =
                 new HashMap<Byte, OptionType>();
 
         protected OptionType(Byte value, String name) {
@@ -139,11 +139,11 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
         }
 
         static {
-            registry.put(SOURCE_LINK_LAYER_ADDRESS.getValue(), SOURCE_LINK_LAYER_ADDRESS);
-            registry.put(TARGET_LINK_LAYER_ADDRESS.getValue(), TARGET_LINK_LAYER_ADDRESS);
-            registry.put(PREFIX_INFORMATION.getValue(), PREFIX_INFORMATION);
-            registry.put(REDIRECT_HEADER.getValue(), REDIRECT_HEADER);
-            registry.put(MTU.getValue(), MTU);
+            REGISTRY.put(SOURCE_LINK_LAYER_ADDRESS.getValue(), SOURCE_LINK_LAYER_ADDRESS);
+            REGISTRY.put(TARGET_LINK_LAYER_ADDRESS.getValue(), TARGET_LINK_LAYER_ADDRESS);
+            REGISTRY.put(PREFIX_INFORMATION.getValue(), PREFIX_INFORMATION);
+            REGISTRY.put(REDIRECT_HEADER.getValue(), REDIRECT_HEADER);
+            REGISTRY.put(MTU.getValue(), MTU);
         }
 
     }
@@ -226,7 +226,7 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
         @Override
         public Packet build(Memory buffer) {
             while (buffer.isReadable(2)) {
-                final OptionType type = OptionType.registry.get(buffer.readByte());
+                final OptionType type = OptionType.REGISTRY.get(buffer.readByte());
                 byte lengthField = buffer.readByte();
                 int dataLength = lengthField * 8;
                 if (dataLength < 2) {

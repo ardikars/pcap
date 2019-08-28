@@ -206,14 +206,14 @@ public class Fragment extends AbstractPacket {
 
 		public static final FlagType UNKNOWN = new FlagType((byte) -1, "UNKNOWN.");
 
-		private static final Map<Byte, FlagType> registry
+		private static final Map<Byte, FlagType> REGISTRY
 				= new HashMap<Byte, FlagType>();
 
 		protected FlagType(Byte value, String name) {
 			super(value, name);
 		}
 		public static FlagType register(final FlagType flagType) {
-			registry.put(flagType.getValue(), flagType);
+			REGISTRY.put(flagType.getValue(), flagType);
 			return flagType;
 		}
 
@@ -223,7 +223,7 @@ public class Fragment extends AbstractPacket {
 		 * @return returns {@link FlagType}.
 		 */
 		public static FlagType valueOf(final byte flag) {
-			FlagType flagType = registry.get(flag);
+			FlagType flagType = REGISTRY.get(flag);
 			if (flagType == null) {
 				return UNKNOWN;
 			}

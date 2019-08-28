@@ -223,7 +223,7 @@ public class Vlan extends AbstractPacket {
 		public static final PriorityCodePoint NC
 				= new PriorityCodePoint((byte) 7, "Network control (priority=7)");
 
-		private static final Map<Byte, PriorityCodePoint> registry
+		private static final Map<Byte, PriorityCodePoint> REGISTRY
 				= new HashMap<Byte, PriorityCodePoint>();
 
 		protected PriorityCodePoint(Byte value, String name) {
@@ -236,7 +236,7 @@ public class Vlan extends AbstractPacket {
 		 * @return returns {@link PriorityCodePoint}.
 		 */
 		public static PriorityCodePoint valueOf(final byte value) {
-			PriorityCodePoint priorityCodePoint = registry.get(value);
+			PriorityCodePoint priorityCodePoint = REGISTRY.get(value);
 			if (priorityCodePoint == null) {
 				return new PriorityCodePoint((byte) -1, "UNKONWN");
 			}
@@ -249,19 +249,19 @@ public class Vlan extends AbstractPacket {
 		 * @return returns {@link PriorityCodePoint}.
 		 */
 		public static PriorityCodePoint register(final PriorityCodePoint priorityCodePoint) {
-			registry.put(priorityCodePoint.getValue(), priorityCodePoint);
+			REGISTRY.put(priorityCodePoint.getValue(), priorityCodePoint);
 			return priorityCodePoint;
 		}
 
 		static {
-			registry.put(BK.getValue(), BK);
-			registry.put(BE.getValue(), BE);
-			registry.put(EE.getValue(), EE);
-			registry.put(CA.getValue(), CA);
-			registry.put(VI.getValue(), VI);
-			registry.put(VO.getValue(), VO);
-			registry.put(IC.getValue(), IC);
-			registry.put(NC.getValue(), NC);
+			REGISTRY.put(BK.getValue(), BK);
+			REGISTRY.put(BE.getValue(), BE);
+			REGISTRY.put(EE.getValue(), EE);
+			REGISTRY.put(CA.getValue(), CA);
+			REGISTRY.put(VI.getValue(), VI);
+			REGISTRY.put(VO.getValue(), VO);
+			REGISTRY.put(IC.getValue(), IC);
+			REGISTRY.put(NC.getValue(), NC);
 		}
 
 	}

@@ -248,7 +248,7 @@ public final class MacAddress implements Address  {
 		public static final Oui UNKNOWN
 				= new Oui(Integer.MAX_VALUE, "UNKNOWN");
 
-		private static final Map<Integer, Oui> registry
+		private static final Map<Integer, Oui> REGISTRY
 				= new HashMap<Integer, Oui>();
 
 		/**
@@ -277,7 +277,7 @@ public final class MacAddress implements Address  {
 					| ((0xFF & array[offset + 1]) << (16))
 					| ((0xFF & array[offset + 2]) << (8))
 					| ((0xFF & array[offset + 3]));
-			Oui oui = registry.get(value);
+			Oui oui = REGISTRY.get(value);
 			if (oui == null) {
 				return new Oui(1, "UNKNOWN");
 			}
@@ -291,14 +291,14 @@ public final class MacAddress implements Address  {
 		 */
 		public static Oui register(Oui version) {
 			synchronized (Oui.class) {
-				return registry.put(version.getValue(), version);
+				return REGISTRY.put(version.getValue(), version);
 			}
 		}
 
 		static {
-			registry.put(CISCO_00000C.getValue(), CISCO_00000C);
-			registry.put(IBM_08005A.getValue(), IBM_08005A);
-			registry.put(MICROSOFT_CORPORATION.getValue(), MICROSOFT_CORPORATION);
+			REGISTRY.put(CISCO_00000C.getValue(), CISCO_00000C);
+			REGISTRY.put(IBM_08005A.getValue(), IBM_08005A);
+			REGISTRY.put(MICROSOFT_CORPORATION.getValue(), MICROSOFT_CORPORATION);
 		}
 
 	}

@@ -258,7 +258,7 @@ public class Routing extends AbstractPacket {
 				= new Type((byte) 254,
 				"May be used for testing, not for actual implementations. RFC3692-style Experiment 2.[13]");
 
-		private static Map<Byte, Type> registry =
+		private static Map<Byte, Type> REGISTRY =
 				new HashMap<Byte, Type>();
 
 		protected Type(Byte value, String name) {
@@ -271,7 +271,7 @@ public class Routing extends AbstractPacket {
 		 * @return returns {@link Type}.
 		 */
 		public static Type valueOf(final byte value) {
-			Type type = registry.get(value);
+			Type type = REGISTRY.get(value);
 			if (type == null) {
 				return UNKNOWN;
 			}
@@ -284,17 +284,17 @@ public class Routing extends AbstractPacket {
 		 * @return returns {@link Type}.
 		 */
 		public static Type register(final Type type) {
-			registry.put(type.getValue(), type);
+			REGISTRY.put(type.getValue(), type);
 			return type;
 		}
 
 		static {
-			registry.put(DEPRECATED_01.getValue(), DEPRECATED_01);
-			registry.put(DEPRECATED_02.getValue(), DEPRECATED_02);
-			registry.put(ALLOWED_01.getValue(), ALLOWED_01);
-			registry.put(ALLOWED_02.getValue(), ALLOWED_02);
-			registry.put(PRIVATE_USE_01.getValue(), PRIVATE_USE_01);
-			registry.put(PRIVATE_USE_02.getValue(), PRIVATE_USE_02);
+			REGISTRY.put(DEPRECATED_01.getValue(), DEPRECATED_01);
+			REGISTRY.put(DEPRECATED_02.getValue(), DEPRECATED_02);
+			REGISTRY.put(ALLOWED_01.getValue(), ALLOWED_01);
+			REGISTRY.put(ALLOWED_02.getValue(), ALLOWED_02);
+			REGISTRY.put(PRIVATE_USE_01.getValue(), PRIVATE_USE_01);
+			REGISTRY.put(PRIVATE_USE_02.getValue(), PRIVATE_USE_02);
 		}
 
 	}
