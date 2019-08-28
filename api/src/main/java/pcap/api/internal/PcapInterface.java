@@ -25,6 +25,7 @@ import pcap.spi.Timestamp;
 import java.foreign.NativeTypes;
 import java.foreign.memory.LayoutType;
 import java.foreign.memory.Pointer;
+import java.net.Inet4Address;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -274,7 +275,7 @@ public class PcapInterface implements Interface {
             } else if (result == -9) {
                 throw new InterfaceNotUpException("Error occurred when activate a handle.");
             }
-            return new Pcap(pointer);
+            return new Pcap(pointer, netmask());
         }
     }
 
@@ -287,7 +288,7 @@ public class PcapInterface implements Interface {
             if (pointer == null || pointer.isNull()) {
                 throw new PcapErrorException(Pointer.toString(errbuf));
             }
-            return new Pcap(pointer);
+            return new Pcap(pointer, netmask());
         }
     }
 
@@ -295,6 +296,18 @@ public class PcapInterface implements Interface {
         synchronized (Pcap.LOCK) {
             return openLive(65535, true, 2000);
         }
+    }
+
+    private int netmask() {
+        if (addresses.netmask() instanceof Inet4Address) {
+            byte[] address = addresses.netmask().getAddress();
+            int ip = 0;
+            for (int i = 0; i < 4; i++) {
+                ip |= (address[i] & 0xff) << (3 - i) * 8;
+            }
+            return ip;
+        }
+        return 0xFFFFFF00;
     }
 
 }
