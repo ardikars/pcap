@@ -20,8 +20,7 @@ import java.foreign.memory.Struct;
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
 @NativeHeader(
-        libraries = {"pcap"},
-        resolutionContext = { PcapPktHdr.class, PcapStat.class }
+        resolutionContext = {PcapPktHdr.class, PcapStat.class}
 )
 public interface pcap_mapping {
 

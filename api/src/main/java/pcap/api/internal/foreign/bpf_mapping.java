@@ -13,9 +13,7 @@ import java.foreign.memory.Struct;
 /**
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
-@NativeHeader(
-        libraries = {"pcap"}
-)
+@NativeHeader
 public interface bpf_mapping {
 
     @NativeFunction("(u64:${bpf_insn}i32)i32")

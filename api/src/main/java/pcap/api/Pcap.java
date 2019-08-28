@@ -6,7 +6,6 @@ package pcap.api;
 import pcap.api.internal.PcapBuffer;
 import pcap.api.internal.PcapDumper;
 import pcap.api.internal.PcapHandler;
-import pcap.api.internal.PcapPktHdr;
 import pcap.api.internal.PcapStat;
 import pcap.api.internal.exception.BreakException;
 import pcap.api.internal.exception.PcapErrorException;
@@ -14,12 +13,14 @@ import pcap.api.internal.foreign.bpf_mapping;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
+import pcap.common.util.Platforms;
 import pcap.spi.Dumper;
 import pcap.spi.PacketHandler;
 import pcap.spi.PacketHeader;
 import pcap.spi.Status;
 
 import java.foreign.Libraries;
+import java.foreign.Library;
 import java.foreign.Scope;
 import java.foreign.memory.Callback;
 import java.foreign.memory.LayoutType;
@@ -37,11 +38,11 @@ public class Pcap {
 
     public static final Object LOCK = new Object();
 
-    public static final pcap_mapping MAPPING = Libraries.bind(MethodHandles.lookup(), pcap_mapping.class);
-
     public static final int ERRBUF_SIZE = 256;
 
-    public static final Scope SCOPE = Libraries.libraryScope(MAPPING);
+    public static final pcap_mapping MAPPING;
+
+    public static final Scope SCOPE;
 
     final Pointer<pcap_mapping.pcap> pcap;
     final Pointer<bpf_mapping.bpf_program> bpf_program;
@@ -150,6 +151,13 @@ public class Pcap {
                 MAPPING.pcap_close(pcap);
             }
         }
+    }
+
+    static {
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        Library library = Libraries.loadLibrary(lookup, Platforms.isWindows() ? "wpcap" : "pcap");
+        MAPPING = Libraries.bind(pcap_mapping.class, library);
+        SCOPE = Libraries.libraryScope(MAPPING);
     }
 
 }
