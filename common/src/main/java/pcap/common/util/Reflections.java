@@ -224,7 +224,7 @@ public class Reflections {
     }
 
     static {
-        ACCESS_CONTROL = Properties.getBoolean("common.util.tryReflectionSetAccessible", Platforms.getJavaMojorVersion() < 9);
+        ACCESS_CONTROL = Properties.getBoolean("pcap.common.util.tryReflectionSetAccessible", Platforms.getJavaMojorVersion() < 9);
     }
 
 }
