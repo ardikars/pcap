@@ -5,6 +5,7 @@ package pcap.codec.ip.ip6;
 
 import pcap.codec.Packet;
 import pcap.codec.TransportLayer;
+import pcap.codec.ip.Ip6;
 import pcap.common.memory.Memory;
 import pcap.common.util.Validate;
 
@@ -65,7 +66,7 @@ public class DestinationOptions extends Options {
 	public static final class Builder extends Options.Builder {
 
 		public Builder() {
-			super(TransportLayer.IPV6_AH);
+			super(Ip6.IPV6_AH);
 		}
 
 		@Override

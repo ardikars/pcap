@@ -6,6 +6,7 @@ package pcap.common.memory;
 import pcap.common.memory.accessor.MemoryAccessor;
 import pcap.common.memory.accessor.MemoryAccessors;
 import pcap.common.internal.Unsafe;
+import pcap.common.util.Strings;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -736,6 +737,20 @@ abstract class AbstractMemory implements Memory {
             throw new IllegalArgumentException("newCapacity: " + newCapacity
                     + " (expected: 0-" + maxCapacity() + ')');
         }
+    }
+
+    @Override
+    public String toString() {
+        return Strings.toStringBuilder(this)
+                .add("capacity", capacity)
+                .add("maxCapacity", maxCapacity)
+                .add("writtenBytes", writtenBytes)
+                .add("readerIndex", readerIndex)
+                .add("writerIndex", writerIndex)
+                .add("markedReaderIndex", markedReaderIndex)
+                .add("markedWriterIndex", markedWriterIndex)
+                .add("freed", freed)
+                .toString();
     }
 
 }

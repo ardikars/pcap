@@ -6,6 +6,7 @@ package pcap.codec.ip;
 import pcap.codec.AbstractPacket;
 import pcap.codec.Packet;
 import pcap.codec.TransportLayer;
+import pcap.codec.ip.ip6.*;
 import pcap.common.memory.Memory;
 import pcap.common.net.Inet6Address;
 import pcap.common.util.Validate;
@@ -255,6 +256,20 @@ public class Ip6 extends Ip {
 
 	public abstract static class ExtensionHeader extends AbstractPacket.Header {
 
+	}
+
+	public static final TransportLayer IPV6_ROUTING = new TransportLayer((byte) 43, "Routing Header for IPv6.");
+	public static final TransportLayer IPV6_FRAGMENT = new TransportLayer((byte) 44, "Fragment Header for IPv6.");
+	public static final TransportLayer IPV6_HOPOPT = new TransportLayer((byte) 0, "IPv6 Hop by Hop NeighborDiscoveryOptions.");
+	public static final TransportLayer IPV6_DSTOPT = new TransportLayer((byte) 60, "IPv6 Destination NeighborDiscoveryOptions.");
+	public static final TransportLayer IPV6_AH = new TransportLayer((byte) 51, "IPv6 Authentication Header.");
+
+	static {
+		TransportLayer.register(IPV6_AH, new Authentication.Builder());
+		TransportLayer.register(IPV6_DSTOPT, new DestinationOptions.Builder());
+		TransportLayer.register(IPV6_ROUTING, new Routing.Builder());
+		TransportLayer.register(IPV6_FRAGMENT, new Fragment.Builder());
+		TransportLayer.register(IPV6_HOPOPT, new HopByHopOptions.Builder());
 	}
 
 }

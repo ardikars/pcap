@@ -185,13 +185,13 @@ class CheckedMemory extends UncheckedMemory {
 
     void ensureAccessible() {
         if (freed) {
-            throw new IllegalStateException(String.format("%d is already freed.", memoryAddress()));
+            throw new IllegalStateException(String.format("%d is already freed.", address));
         }
     }
 
     void ensureAccessible(int index, int length) {
         if (freed) {
-            throw new IllegalStateException(String.format("%d is already freed.", memoryAddress()));
+            throw new IllegalStateException(String.format("%d is already freed.", address));
         }
         checkIndex(index, length);
     }

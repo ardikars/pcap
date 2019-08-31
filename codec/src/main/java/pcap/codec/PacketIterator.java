@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
 /**
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
-public class PacketIterator implements Iterator<Packet> {
+class PacketIterator implements Iterator<Packet> {
 
     private Packet next;
 

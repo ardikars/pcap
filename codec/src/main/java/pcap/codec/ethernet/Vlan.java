@@ -91,7 +91,7 @@ public class Vlan extends AbstractPacket {
 		public Memory getBuffer() {
 			if (buffer == null) {
 				buffer = ALLOCATOR.allocate(getLength());
-				buffer.setShort(0, NetworkLayer.DOT1Q_VLAN_TAGGED_FRAMES.getValue());
+				buffer.setShort(0, 0x8100); // IEEE 802.1Q VLAN-tagged frames
 				buffer.setShort(2, ((priorityCodePoint.getValue() << 13) & 0x07)
 						| ((canonicalFormatIndicator << 14) & 0x01) | (vlanIdentifier & 0x0fff));
 			}

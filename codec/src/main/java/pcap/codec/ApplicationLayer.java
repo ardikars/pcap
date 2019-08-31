@@ -45,23 +45,12 @@ public final class ApplicationLayer extends NamedNumber<Short, ApplicationLayer>
 
     /**
      *
-     * @param dataLinkLayer application type.
-     */
-    public static void register(ApplicationLayer dataLinkLayer) {
-        synchronized (REGISTRY) {
-            REGISTRY.put(dataLinkLayer, dataLinkLayer.getValue());
-        }
-    }
-
-    /**
-     *
-     * @param dataLinkLayer application type.
+     * @param applicationLayer application type.
      * @param packetBuilder packet builder.
      */
-    public static void register(ApplicationLayer dataLinkLayer, AbstractPacket.Builder packetBuilder) {
-        synchronized (BUILDER) {
-            BUILDER.put(dataLinkLayer.getValue(), packetBuilder);
-        }
+    public synchronized static void register(ApplicationLayer applicationLayer, AbstractPacket.Builder packetBuilder) {
+        BUILDER.put(applicationLayer.getValue(), packetBuilder);
+        REGISTRY.put(applicationLayer, applicationLayer.getValue());
     }
 
 }
