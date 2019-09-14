@@ -1,23 +1,18 @@
-/**
- * This code is licenced under the GPL version 2.
- */
+/** This code is licenced under the GPL version 2. */
 package pcap.spi;
 
 import java.net.InetAddress;
 
-/**
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
- */
+/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 public interface Address extends Iterable<Address> {
 
-    Address next();
+  Address next();
 
-    InetAddress address();
+  InetAddress address();
 
-    InetAddress netmask();
+  InetAddress netmask();
 
-    InetAddress broadcast();
+  InetAddress broadcast();
 
-    InetAddress destination();
-
+  InetAddress destination();
 }

@@ -1,15 +1,13 @@
-/**
- * This code is licenced under the GPL version 2.
- */
+/** This code is licenced under the GPL version 2. */
 package pcap.api.internal.exception;
 
-/**
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
- */
-public class ActivatedException extends Exception{
+import pcap.common.annotation.Inclubating;
 
-    public ActivatedException(String message) {
-        super(message);
-    }
+/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+@Inclubating
+public class ActivatedException extends Exception {
 
+  public ActivatedException(String message) {
+    super(message);
+  }
 }

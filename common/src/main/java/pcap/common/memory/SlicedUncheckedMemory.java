@@ -1,34 +1,38 @@
-/**
- * This code is licenced under the GPL version 2.
- */
+/** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
 import java.nio.ByteBuffer;
+import pcap.common.annotation.Inclubating;
 
-/**
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
- */
+/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+@Inclubating
 class SlicedUncheckedMemory extends UncheckedMemory {
 
-    private final long baseAddress;
-    private final int baseCapacity;
+  private final long baseAddress;
+  private final int baseCapacity;
 
-    public SlicedUncheckedMemory(long baseAddress, int baseCapacity, long address, int capacity, int maxCapacity, int readerIndex, int writerIndex) {
-        super(address, capacity, maxCapacity, readerIndex, writerIndex);
-        this.baseAddress = baseAddress;
-        this.baseCapacity = baseCapacity;
+  public SlicedUncheckedMemory(
+      long baseAddress,
+      int baseCapacity,
+      long address,
+      int capacity,
+      int maxCapacity,
+      int readerIndex,
+      int writerIndex) {
+    super(address, capacity, maxCapacity, readerIndex, writerIndex);
+    this.baseAddress = baseAddress;
+    this.baseCapacity = baseCapacity;
+  }
+
+  @Override
+  public ByteBuffer nioBuffer() {
+    return ACCESSOR.nioBuffer(baseAddress, baseCapacity);
+  }
+
+  @Override
+  public void release() {
+    if (!freed) {
+      ACCESSOR.deallocate(baseAddress);
     }
-
-    @Override
-    public ByteBuffer nioBuffer() {
-        return ACCESSOR.nioBuffer(baseAddress, baseCapacity);
-    }
-
-    @Override
-    public void release() {
-        if (!freed) {
-            ACCESSOR.deallocate(baseAddress);
-        }
-    }
-
+  }
 }

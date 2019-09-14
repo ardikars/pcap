@@ -1,31 +1,25 @@
-/**
- * This code is licenced under the GPL version 2.
- */
+/** This code is licenced under the GPL version 2. */
 package pcap.codec.ip;
 
 import pcap.codec.AbstractPacket;
+import pcap.common.annotation.Inclubating;
 
-/**
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
- */
+/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+@Inclubating
 public abstract class Ip extends AbstractPacket {
 
-	protected static abstract class AbstractPacketHeader extends Header {
+  protected abstract static class AbstractPacketHeader extends Header {
 
-		protected final byte version;
+    protected final byte version;
 
-		protected AbstractPacketHeader(final byte version) {
-			this.version = version;
-		}
+    protected AbstractPacketHeader(final byte version) {
+      this.version = version;
+    }
 
-		public int getVersion() {
-			return this.version & 0xf;
-		}
+    public int getVersion() {
+      return this.version & 0xf;
+    }
+  }
 
-	}
-
-	protected static abstract class AbstractPaketBuilder extends Builder {
-
-	}
-
+  protected abstract static class AbstractPaketBuilder extends Builder {}
 }

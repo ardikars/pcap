@@ -1,37 +1,33 @@
-/**
- * This code is licenced under the GPL version 2.
- */
+/** This code is licenced under the GPL version 2. */
 package pcap.api.internal.util;
-
-import pcap.spi.Address;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import pcap.common.annotation.Inclubating;
+import pcap.spi.Address;
 
-/**
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
- */
+/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+@Inclubating
 public class PcapAddressIterator implements Iterator<Address> {
 
-    private Address next;
+  private Address next;
 
-    public PcapAddressIterator(final Address pcapAddress) {
-        this.next = pcapAddress;
+  public PcapAddressIterator(final Address pcapAddress) {
+    this.next = pcapAddress;
+  }
+
+  @Override
+  public boolean hasNext() {
+    return next != null;
+  }
+
+  @Override
+  public Address next() {
+    if (!hasNext()) {
+      throw new NoSuchElementException();
     }
-
-    @Override
-    public boolean hasNext() {
-        return next != null;
-    }
-
-    @Override
-    public Address next() {
-        if (!hasNext()) {
-            throw new NoSuchElementException();
-        }
-        Address previous = next;
-        next = next.next();
-        return previous;
-    }
-
+    Address previous = next;
+    next = next.next();
+    return previous;
+  }
 }

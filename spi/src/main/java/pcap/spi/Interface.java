@@ -1,21 +1,16 @@
-/**
- * This code is licenced under the GPL version 2.
- */
+/** This code is licenced under the GPL version 2. */
 package pcap.spi;
 
-/**
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
- */
+/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 public interface Interface extends Iterable<Interface> {
 
-    Interface next();
+  Interface next();
 
-    String name();
+  String name();
 
-    String description();
+  String description();
 
-    Address addresses();
+  Address addresses();
 
-    int flags();
-
+  int flags();
 }
