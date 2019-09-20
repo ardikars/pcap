@@ -1,13 +1,10 @@
 package pcap.api;
 
 import org.junit.jupiter.api.Test;
-import pcap.api.internal.PcapInterface;
-import pcap.api.internal.exception.PcapErrorException;
+import pcap.spi.exception.ErrorException;
 
 public class PcapTest {
 
   @Test
-  public void lookup() throws PcapErrorException {
-    PcapInterface.lookup().forEach(System.out::println);
-  }
+  public void lookup() throws ErrorException {}
 }

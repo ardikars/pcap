@@ -3,7 +3,6 @@ package pcap.api.internal;
 
 import java.foreign.NativeTypes;
 import java.foreign.memory.Pointer;
-import pcap.api.Pcap;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.common.annotation.Inclubating;
 import pcap.spi.Dumper;
@@ -24,31 +23,31 @@ public class PcapDumper implements Dumper {
 
   @Override
   public void dump(PacketHeader header, PacketBuffer buffer) {
-    synchronized (Pcap.LOCK) {
-      Pcap.MAPPING.pcap_dump(
+    synchronized (PcapConstant.LOCK) {
+      PcapConstant.MAPPING.pcap_dump(
           reference, ((PcapPktHdr.Impl) header).pointer(), ((PcapBuffer) buffer).pointer());
     }
   }
 
   @Override
   public long position() {
-    synchronized (Pcap.LOCK) {
-      return Pcap.MAPPING.pcap_dump_ftell(pcap_dumper);
+    synchronized (PcapConstant.LOCK) {
+      return PcapConstant.MAPPING.pcap_dump_ftell(pcap_dumper);
     }
   }
 
   @Override
   public void flush() {
-    synchronized (Pcap.LOCK) {
-      Pcap.MAPPING.pcap_dump_flush(pcap_dumper);
+    synchronized (PcapConstant.LOCK) {
+      PcapConstant.MAPPING.pcap_dump_flush(pcap_dumper);
     }
   }
 
   @Override
   public void close() {
-    synchronized (Pcap.LOCK) {
+    synchronized (PcapConstant.LOCK) {
       if (!pcap_dumper.isNull()) {
-        Pcap.MAPPING.pcap_dump_close(pcap_dumper);
+        PcapConstant.MAPPING.pcap_dump_close(pcap_dumper);
       }
     }
   }

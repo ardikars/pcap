@@ -1,10 +1,11 @@
 /** This code is licenced under the GPL version 2. */
-package pcap.api.internal.exception;
+package pcap.spi.exception.error;
 
-import pcap.common.annotation.Inclubating;
-
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
-@Inclubating
+/**
+ * No such device exists ({@code -5}).
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 public class NoSuchDeviceException extends Exception {
 
   public NoSuchDeviceException(String message) {

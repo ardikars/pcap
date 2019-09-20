@@ -3,7 +3,11 @@ package pcap.spi;
 
 import java.nio.ByteBuffer;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * A {@link ByteBuffer} wrapper.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 public interface PacketBuffer {
 
   ByteBuffer buffer();

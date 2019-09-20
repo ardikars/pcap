@@ -12,5 +12,7 @@ public @interface Immutable {
 
   String[] volatiles() default {};
 
+  String[] except() default {};
+
   boolean blocking() default false;
 }

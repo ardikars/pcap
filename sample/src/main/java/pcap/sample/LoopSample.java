@@ -1,11 +1,7 @@
 package pcap.sample;
 
-import java.util.stream.StreamSupport;
-import pcap.api.Bootstrap;
-import pcap.api.Pcap;
 import pcap.codec.DataLinkLayer;
 import pcap.codec.NetworkLayer;
-import pcap.codec.Packet;
 import pcap.codec.TransportLayer;
 import pcap.codec.arp.Arp;
 import pcap.codec.ethernet.Ethernet;
@@ -14,11 +10,8 @@ import pcap.codec.icmp.Icmp4;
 import pcap.codec.icmp.Icmp6;
 import pcap.codec.ip.Ip4;
 import pcap.codec.ip.Ip6;
-import pcap.codec.ip.ip6.*;
 import pcap.codec.tcp.Tcp;
 import pcap.codec.udp.Udp;
-import pcap.common.memory.Memories;
-import pcap.common.memory.Memory;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 public class LoopSample {
@@ -39,21 +32,7 @@ public class LoopSample {
   //        pcap.close();
   //    }
 
-  public static void main(String[] args) throws Exception {
-    Pcap pcap = Bootstrap.bootstrap().open();
-    pcap.setFilter("ip", true);
-    pcap.loop(
-        100,
-        (args1, header, buffer) -> {
-          Memory memory = Memories.wrap(buffer.buffer());
-          memory.writerIndex(memory.capacity());
-          Packet packet = Ethernet.newPacket(memory);
-          StreamSupport.stream(packet.spliterator(), false)
-              //                    .filter(pkt -> pkt instanceof Ip6)
-              .forEach(System.out::println);
-        },
-        null);
-  }
+  public static void main(String[] args) throws Exception {}
 
   static {
     DataLinkLayer.register(new DataLinkLayer(0x1, "Ethernet"), new Ethernet.Builder());

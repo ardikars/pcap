@@ -1,13 +1,29 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.spi;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Specify a time interval (elapsed time).
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 public interface Timestamp {
 
+  /**
+   * This represents the number of whole seconds of elapsed time.
+   *
+   * @return returns time interval, in second.
+   */
   long second();
 
+  /**
+   * This is the rest of the elapsed time (a fraction of a second), represented as the number of
+   * microseconds. It is always less than one million.
+   *
+   * @return returns time interval, in micro second.
+   */
   int microSecond();
 
+  /** Timestamp precision. */
   enum Precision {
     MICRO(0),
     NANO(1);
@@ -23,6 +39,7 @@ public interface Timestamp {
     }
   }
 
+  /** Timestamp type. */
   enum Type {
     HOST(0),
     HOST_LOWPREC(1),
