@@ -45,6 +45,11 @@ public class Pcap {
     this.filterActivated = false;
   }
 
+  /**
+   * @param file
+   * @return
+   * @throws ErrorException
+   */
   public Dumper dumpOpen(String file) throws ErrorException {
     synchronized (PcapConstant.LOCK) {
       if (LOGGER.isDebugEnabled()) {
@@ -59,6 +64,11 @@ public class Pcap {
     }
   }
 
+  /**
+   * @param file
+   * @return
+   * @throws ErrorException
+   */
   public Dumper dumpOpenAppend(String file) throws ErrorException {
     synchronized (PcapConstant.LOCK) {
       if (LOGGER.isDebugEnabled()) {
@@ -74,6 +84,11 @@ public class Pcap {
     }
   }
 
+  /**
+   * @param filter
+   * @param optimize
+   * @throws ErrorException
+   */
   public void setFilter(String filter, boolean optimize) throws ErrorException {
     synchronized (PcapConstant.LOCK) {
       if (LOGGER.isDebugEnabled()) {
@@ -98,6 +113,18 @@ public class Pcap {
     }
   }
 
+  /**
+   * Process packets from a live {@link PcapLive} or {@link PcapOffline}.
+   *
+   * @param count maximum number of packets to process before returning. A value of -1 or 0 for cnt
+   *     is equivalent to infinity, so that packets are processed until another ending condition
+   *     occurs.
+   * @param handler {@link PacketHandler} callback function.
+   * @param args user args.
+   * @param <T> args type.
+   * @throws BreakException {@link Pcap#breakLoop()} is called.
+   * @throws ErrorException Generic error.
+   */
   public <T> void loop(int count, PacketHandler<T> handler, T args)
       throws BreakException, ErrorException {
     synchronized (PcapConstant.LOCK) {
@@ -123,13 +150,27 @@ public class Pcap {
     }
   }
 
-  public Status status() {
+  /**
+   * Represent packet statistics from the start of the run to the time of the call.
+   *
+   * <p>Supported only on live captures, not on {@link PcapOffline}; no statistics are stored in
+   * {@link PcapOffline} so no statistics are available when reading from a {@link PcapOffline}
+   *
+   * @return returns {@link Status} on success.
+   * @throws ErrorException There is an error or if this {@link Pcap} doesn't support packet
+   *     statistics.
+   */
+  public Status status() throws ErrorException {
     synchronized (PcapConstant.LOCK) {
       int result = PcapConstant.MAPPING.pcap_stats(pcap, pcap_stat);
+      if (result < 0) {
+        throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
+      }
       return pcap_stat.get().status();
     }
   }
 
+  /** Force a {@link Pcap#loop(int, PacketHandler, Object)} call to return. */
   public void breakLoop() {
     synchronized (PcapConstant.LOCK) {
       if (LOGGER.isDebugEnabled()) {
@@ -139,6 +180,7 @@ public class Pcap {
     }
   }
 
+  /** Close {@link PcapLive} or {@link PcapOffline}. */
   public void close() {
     synchronized (PcapConstant.LOCK) {
       if (LOGGER.isDebugEnabled()) {
