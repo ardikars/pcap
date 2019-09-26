@@ -19,10 +19,6 @@ public class PcapAddress implements Address {
   InetAddress broadcast;
   InetAddress destination;
 
-  PcapAddress() {
-    //
-  }
-
   PcapAddress(pcap_mapping.pcap_addr pcap_addr) {
     SockAddrParser parser = SockAddrParser.getInstance();
     this.address = parser.parse(pcap_addr.addr$get());

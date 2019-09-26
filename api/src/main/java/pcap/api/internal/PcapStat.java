@@ -21,22 +21,6 @@ public interface PcapStat extends Struct<PcapStat> {
   @NativeGetter("ps_ifdrop")
   int droppedByInterface();
 
-  default String json() {
-    return new StringBuilder()
-        .append("{\n")
-        .append("\t\"received\": \"")
-        .append(received())
-        .append("\",\n")
-        .append("\t\"dropped\": \"")
-        .append(dropped())
-        .append("\",\n")
-        .append("\t\"droppedByInterface\": \"")
-        .append(droppedByInterface())
-        .append("\"\n")
-        .append("}")
-        .toString();
-  }
-
   default Status status() {
     return new Impl(received(), dropped(), droppedByInterface());
   }

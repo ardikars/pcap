@@ -258,11 +258,15 @@ class ByteBuf extends AbstractMemory {
     LOGGER = LoggerFactory.getLogger(ByteBuf.class);
     Method method;
     if (Unsafe.HAS_UNSAFE) {
-      LOGGER.debug("Unsafe is available.");
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("Unsafe is available.");
+      }
       Unsafe unsafe = new Unsafe();
       method = unsafe.bufferCleaner();
       if (method != null) {
-        LOGGER.debug("ByteBuffer cleaner is available.");
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("ByteBuffer cleaner is available.");
+        }
       } else {
         LOGGER.error("ByteBuffer cleaner is not available.");
       }

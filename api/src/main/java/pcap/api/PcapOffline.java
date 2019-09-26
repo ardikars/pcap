@@ -32,11 +32,6 @@ public class PcapOffline extends Pcaps {
     return this;
   }
 
-  public PcapOffline file(String file) {
-    this.file = file;
-    return this;
-  }
-
   @Override
   Pcap open() throws ErrorException {
     synchronized (PcapConstant.LOCK) {
@@ -44,13 +39,17 @@ public class PcapOffline extends Pcaps {
           PcapConstant.SCOPE.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
       Pointer<pcap_mapping.pcap> pointer;
       if (timestampPrecision == null) {
-        LOGGER.debug("Opening file: {}", file);
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("Opening file: {}", file);
+        }
         pointer =
             PcapConstant.MAPPING.pcap_open_offline(
                 PcapConstant.SCOPE.allocateCString(file), errbuf);
       } else {
-        LOGGER.debug(
-            "Opening file ({}) with timestamp precision ({})", file, timestampPrecision.value());
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug(
+              "Opening file ({}) with timestamp precision ({})", file, timestampPrecision.value());
+        }
         pointer =
             PcapConstant.MAPPING.pcap_open_offline_with_tstamp_precision(
                 PcapConstant.SCOPE.allocateCString(file), timestampPrecision.value(), errbuf);

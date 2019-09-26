@@ -17,19 +17,6 @@ public interface Timestamp extends Struct<Timestamp> {
   @NativeGetter("tv_usec")
   int microSecond();
 
-  default String json() {
-    return new StringBuilder()
-        .append("{\n")
-        .append("\t\"second\": \"")
-        .append(second())
-        .append("\",\n")
-        .append("\t\"microSecond\": \"")
-        .append(microSecond())
-        .append("\"\n")
-        .append("}")
-        .toString();
-  }
-
   default pcap.spi.Timestamp timestamp() {
     return new Impl(second(), microSecond());
   }

@@ -37,10 +37,6 @@ public class PcapInterface implements Interface {
   boolean up;
   boolean running;
 
-  PcapInterface() {
-    //
-  }
-
   public PcapInterface(pcap_mapping.pcap_if pcap_if) {
     this.name = Pointer.toString(pcap_if.name$get());
     this.description = Pointer.toString(pcap_if.description$get());

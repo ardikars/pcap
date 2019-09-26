@@ -129,7 +129,7 @@ public class Pcap {
       throws BreakException, ErrorException {
     synchronized (PcapConstant.LOCK) {
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.info("Looping {} packets", count);
+        LOGGER.debug("Looping {} packets", count);
       }
       Callback<PcapHandler> callback =
           PcapConstant.SCOPE.allocateCallback(

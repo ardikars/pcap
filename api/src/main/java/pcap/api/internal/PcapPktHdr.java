@@ -24,26 +24,6 @@ public interface PcapPktHdr extends Struct<PcapPktHdr> {
   @NativeGetter("len")
   int length();
 
-  default String json() {
-    return new StringBuilder()
-        .append("{")
-        .append("\"timestamp\":{")
-        .append("\"second\":")
-        .append(timestamp().second())
-        .append(",")
-        .append("\"microSecond\":")
-        .append(timestamp().microSecond())
-        .append(",")
-        .append("},")
-        .append("\"captureLength\":")
-        .append(captureLength())
-        .append(",")
-        .append("\"length\":")
-        .append(length())
-        .append("}")
-        .toString();
-  }
-
   default PacketHeader packetHeader() {
     return new Impl(timestamp().timestamp(), captureLength(), length(), ptr());
   }
