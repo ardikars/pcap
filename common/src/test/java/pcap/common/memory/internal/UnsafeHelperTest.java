@@ -1,18 +1,17 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory.interlan;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.common.internal.UnsafeHelper;
 import pcap.common.util.Platforms;
 
-import java.util.List;
-
 @RunWith(JUnitPlatform.class)
 public class UnsafeHelperTest {
 
-  //@Test
+  // @Test
   public void isUnsafeAvailableTest() {
     if (Platforms.getJavaMojorVersion() > 8) {
       assert !UnsafeHelper.isUnsafeAvailable();

@@ -6,7 +6,11 @@ import java.foreign.annotations.NativeStruct;
 import java.foreign.memory.Struct;
 import pcap.common.annotation.Inclubating;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Wrapper for timestamp
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 @NativeStruct("[i64(tv_sec)i32(tv_usec)x32](timeval)")
 public interface Timestamp extends Struct<Timestamp> {

@@ -62,7 +62,7 @@ public class Tcp extends AbstractPacket {
       this.checksum = builder.checksum;
       this.urgentPointer = builder.urgentPointer;
       this.options = builder.options;
-      this.buffer = builder.buffer.slice(builder.buffer.readerIndex() - getLength(), getLength());
+      this.buffer = slice(builder.buffer, getLength());
       this.builder = builder;
     }
 
@@ -309,7 +309,7 @@ public class Tcp extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(buffer.readerIndex(), Header.TCP_HEADER_LENGTH);
+        reset(0, Header.TCP_HEADER_LENGTH);
       }
     }
 

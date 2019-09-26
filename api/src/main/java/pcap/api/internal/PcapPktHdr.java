@@ -8,7 +8,11 @@ import java.foreign.memory.Struct;
 import pcap.common.annotation.Inclubating;
 import pcap.spi.PacketHeader;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Wrapper for {@code pcap_pkthdr}
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 @NativeStruct(
     value = "[${timeval}(ts)u32(caplen)u32(len)](pcap_pkthdr)",

@@ -9,6 +9,7 @@ import pcap.common.annotation.Inclubating;
 import pcap.common.internal.ByteBufferHelper;
 import pcap.common.internal.Unsafe;
 import pcap.common.util.Hexs;
+import pcap.common.util.Properties;
 import pcap.common.util.Validate;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
@@ -63,14 +64,16 @@ public final class Memories {
   public static Memory wrap(long memoryAddress, int size, boolean checking) {
     Validate.notIllegalArgument(
         size > 0, new IllegalArgumentException(String.format("size: %d (expected: > 0)", size)));
-    if (!Unsafe.HAS_UNSAFE) {
+    if (Unsafe.HAS_UNSAFE && MemoryAllocator.UNSAFE_BUFFER) {
+      if (checking) {
+        return new CheckedMemory(memoryAddress, size, size);
+      } else {
+        return new UncheckedMemory(memoryAddress, size, size);
+      }
+    } else {
       ByteBuffer bbNoCleaner = ByteBufferHelper.wrapDirectByteBuffer(memoryAddress, size);
       return new ByteBuf(0, bbNoCleaner, size, size, 0, 0);
     }
-    if (checking) {
-      return new CheckedMemory(memoryAddress, size, size);
-    }
-    return new UncheckedMemory(memoryAddress, size, size);
   }
 
   /**
@@ -101,15 +104,16 @@ public final class Memories {
         buffer.isDirect(),
         new IllegalArgumentException(
             String.format("buffer.isDirect(): %b (expected: direct buffer)", buffer.isDirect())));
-    if (!Unsafe.HAS_UNSAFE) {
+    if (Unsafe.HAS_UNSAFE && MemoryAllocator.UNSAFE_BUFFER) {
+      int capacity = buffer.capacity();
+      long address = ByteBufferHelper.directByteBufferAddress(buffer);
+      if (checking) {
+        return new CheckedMemory(buffer, address, capacity, capacity, 0, 0);
+      }
+      return new UncheckedMemory(buffer, address, capacity, capacity, 0, 0);
+    } else {
       return new ByteBuf(0, buffer, buffer.capacity(), buffer.capacity(), 0, 0);
     }
-    int capacity = buffer.capacity();
-    long address = ByteBufferHelper.directByteBufferAddress(buffer);
-    if (checking) {
-      return new CheckedMemory(address, capacity, capacity);
-    }
-    return new UncheckedMemory(address, capacity, capacity);
   }
 
   /**

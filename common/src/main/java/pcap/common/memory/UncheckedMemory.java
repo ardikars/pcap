@@ -12,12 +12,21 @@ class UncheckedMemory extends AbstractMemory {
   long address;
 
   UncheckedMemory(long address, int capacity, int maxCapacity) {
-    super(capacity, maxCapacity);
-    this.address = address;
+    this(null, address, capacity, maxCapacity, 0, 0);
   }
 
   UncheckedMemory(long address, int capacity, int maxCapacity, int readerIndex, int writerIndex) {
-    super(capacity, maxCapacity, readerIndex, writerIndex);
+    this(null, address, capacity, maxCapacity, readerIndex, writerIndex);
+  }
+
+  UncheckedMemory(
+      ByteBuffer buffer,
+      long address,
+      int capacity,
+      int maxCapacity,
+      int readerIndex,
+      int writerIndex) {
+    super(buffer, capacity, maxCapacity, readerIndex, writerIndex);
     this.address = address;
   }
 
@@ -169,6 +178,7 @@ class UncheckedMemory extends AbstractMemory {
   @Override
   public UncheckedMemory slice(int index, int length) {
     return new SlicedUncheckedMemory(
+        buffer,
         address,
         capacity,
         address + index,
@@ -187,6 +197,9 @@ class UncheckedMemory extends AbstractMemory {
 
   @Override
   public ByteBuffer nioBuffer() {
+    if (buffer != null) {
+      return buffer;
+    }
     return ACCESSOR.nioBuffer(memoryAddress(), capacity);
   }
 

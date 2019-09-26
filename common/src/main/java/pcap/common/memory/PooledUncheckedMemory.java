@@ -41,6 +41,7 @@ class PooledUncheckedMemory extends UncheckedMemory {
   @Override
   public PooledSlicedUncheckedMemory slice(int index, int length) {
     return new PooledSlicedUncheckedMemory(
+        buffer,
         address,
         capacity,
         address + index,

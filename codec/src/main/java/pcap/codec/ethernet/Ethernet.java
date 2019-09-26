@@ -52,7 +52,7 @@ public class Ethernet extends AbstractPacket {
       this.destinationMacAddress = builder.destinationMacAddress;
       this.sourceMacAddress = builder.sourceMacAddress;
       this.ethernetType = builder.ethernetType;
-      this.buffer = builder.buffer.slice(builder.buffer.readerIndex() - getLength(), getLength());
+      this.buffer = slice(builder.buffer, getLength());
       this.builder = builder;
     }
 
@@ -174,7 +174,7 @@ public class Ethernet extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(buffer.readerIndex(), Header.ETHERNET_HEADER_LENGTH);
+        reset(0, Header.ETHERNET_HEADER_LENGTH);
       }
     }
 

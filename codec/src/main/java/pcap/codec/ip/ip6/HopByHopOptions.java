@@ -39,7 +39,7 @@ public class HopByHopOptions extends Options {
 
     protected Header(final Builder builder) {
       super(builder, builder.nextHeader);
-      this.buffer = builder.buffer.slice(builder.buffer.readerIndex() - getLength(), getLength());
+      this.buffer = slice(builder.buffer, getLength());
       this.builder = builder;
     }
 
@@ -93,7 +93,7 @@ public class HopByHopOptions extends Options {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(buffer.readerIndex(), Header.FIXED_OPTIONS_LENGTH);
+        reset(0, Header.FIXED_OPTIONS_LENGTH);
       }
     }
 

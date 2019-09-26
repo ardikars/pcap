@@ -12,6 +12,7 @@ class SlicedUncheckedMemory extends UncheckedMemory {
   private final int baseCapacity;
 
   public SlicedUncheckedMemory(
+      ByteBuffer buffer,
       long baseAddress,
       int baseCapacity,
       long address,
@@ -19,13 +20,16 @@ class SlicedUncheckedMemory extends UncheckedMemory {
       int maxCapacity,
       int readerIndex,
       int writerIndex) {
-    super(address, capacity, maxCapacity, readerIndex, writerIndex);
+    super(buffer, address, capacity, maxCapacity, readerIndex, writerIndex);
     this.baseAddress = baseAddress;
     this.baseCapacity = baseCapacity;
   }
 
   @Override
   public ByteBuffer nioBuffer() {
+    if (buffer != null) {
+      return buffer;
+    }
     return ACCESSOR.nioBuffer(baseAddress, baseCapacity);
   }
 

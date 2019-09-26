@@ -287,7 +287,7 @@ public class Arp extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(buffer.readerIndex(), Header.ARP_HEADER_LENGTH);
+        reset(0, Header.ARP_HEADER_LENGTH);
       }
     }
 

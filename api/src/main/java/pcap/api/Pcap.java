@@ -4,20 +4,22 @@ package pcap.api;
 import java.foreign.memory.Callback;
 import java.foreign.memory.LayoutType;
 import java.foreign.memory.Pointer;
+import java.nio.ByteBuffer;
 import pcap.api.internal.*;
 import pcap.api.internal.foreign.bpf_mapping;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
-import pcap.spi.Dumper;
-import pcap.spi.PacketHandler;
-import pcap.spi.PacketHeader;
-import pcap.spi.Status;
+import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * {@code Pcap} handle.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 public class Pcap {
 
@@ -46,8 +48,10 @@ public class Pcap {
   }
 
   /**
-   * @param file
-   * @return
+   * Open {@link Dumper} handler.
+   *
+   * @param file location of capture file will saved.
+   * @return returns {@code Pcap} {@link Dumper} handle.
    * @throws ErrorException
    */
   public Dumper dumpOpen(String file) throws ErrorException {
@@ -65,9 +69,11 @@ public class Pcap {
   }
 
   /**
-   * @param file
-   * @return
-   * @throws ErrorException
+   * Append packet buffer on existing {@code pcap} file.
+   *
+   * @param file location of saved file.
+   * @return returns {@code Pcap} {@link Dumper} handle.
+   * @throws ErrorException generic error.
    */
   public Dumper dumpOpenAppend(String file) throws ErrorException {
     synchronized (PcapConstant.LOCK) {
@@ -85,9 +91,11 @@ public class Pcap {
   }
 
   /**
-   * @param filter
-   * @param optimize
-   * @throws ErrorException
+   * BPF packet filter.
+   *
+   * @param filter filter expression.
+   * @param optimize {@code true} for optimized filter, {@code false} otherwise.
+   * @throws ErrorException generic error.
    */
   public void setFilter(String filter, boolean optimize) throws ErrorException {
     synchronized (PcapConstant.LOCK) {
@@ -170,7 +178,10 @@ public class Pcap {
     }
   }
 
-  /** Force a {@link Pcap#loop(int, PacketHandler, Object)} call to return. */
+  /**
+   * Force a {@link Pcap#loop(int, PacketHandler, Object)} call to return And throw {@link
+   * BreakException} on {@link Pcap#loop(int, PacketHandler, Object)}.
+   */
   public void breakLoop() {
     synchronized (PcapConstant.LOCK) {
       if (LOGGER.isDebugEnabled()) {
@@ -180,7 +191,31 @@ public class Pcap {
     }
   }
 
-  /** Close {@link PcapLive} or {@link PcapOffline}. */
+  /**
+   * Sends a raw packet through the network interface.
+   *
+   * @param buffer the data of the packet, including the link-layer header.
+   * @throws ErrorException generic error.
+   */
+  public void send(ByteBuffer buffer) throws ErrorException {
+    send(buffer, buffer.capacity());
+  }
+
+  /**
+   * Sends a raw packet through the network interface.
+   *
+   * @param buffer the data of the packet, including the link-layer header.
+   * @param size the number of bytes in the packet.
+   * @throws ErrorException generic error.
+   */
+  public void send(ByteBuffer buffer, int size) throws ErrorException {
+    int result = PcapConstant.MAPPING.pcap_sendpacket(pcap, Pointer.fromByteBuffer(buffer), size);
+    if (result < 0) {
+      throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
+    }
+  }
+
+  /** Close {@link PcapLive} or {@link PcapOffline}. Note: BPF handle will closed automaticly. */
   public void close() {
     synchronized (PcapConstant.LOCK) {
       if (LOGGER.isDebugEnabled()) {

@@ -12,6 +12,7 @@ class SlicedCheckedMemory extends CheckedMemory {
   private final int baseCapacity;
 
   public SlicedCheckedMemory(
+      ByteBuffer buffer,
       long baseAddress,
       int baseCapacity,
       long address,
@@ -19,13 +20,16 @@ class SlicedCheckedMemory extends CheckedMemory {
       int maxCapacity,
       int readerIndex,
       int writerIndex) {
-    super(address, capacity, maxCapacity, readerIndex, writerIndex);
+    super(buffer, address, capacity, maxCapacity, readerIndex, writerIndex);
     this.baseAddress = baseAddress;
     this.baseCapacity = baseCapacity;
   }
 
   @Override
   public ByteBuffer nioBuffer() {
+    if (buffer != null) {
+      return buffer;
+    }
     ensureAccessible(0, baseCapacity);
     return ACCESSOR.nioBuffer(baseAddress, baseCapacity);
   }

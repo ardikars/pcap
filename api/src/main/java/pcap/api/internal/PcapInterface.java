@@ -13,7 +13,11 @@ import pcap.common.logging.LoggerFactory;
 import pcap.spi.Address;
 import pcap.spi.Interface;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * {@code Pcap} {@link Interface} implementation
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 public class PcapInterface implements Interface {
 

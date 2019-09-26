@@ -43,6 +43,7 @@ class PooledCheckedMemory extends CheckedMemory {
   public PooledSlicedCheckedMemory slice(int index, int length) {
     ensureAccessible(index, length);
     return new PooledSlicedCheckedMemory(
+        buffer,
         address,
         capacity,
         address + index,

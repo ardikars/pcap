@@ -52,7 +52,7 @@ public class Authentication extends AbstractPacket {
       this.securityParameterIndex = builder.securityParameterIndex;
       this.sequenceNumber = builder.sequenceNumber;
       this.integrityCheckValue = builder.integrityCheckValue;
-      this.buffer = builder.buffer.slice(builder.buffer.readerIndex() - getLength(), getLength());
+      this.buffer = slice(builder.buffer, getLength());
       this.builder = builder;
     }
 
@@ -217,7 +217,7 @@ public class Authentication extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(buffer.readerIndex(), Header.FIXED_HEADER_LENGTH);
+        reset(0, Header.FIXED_HEADER_LENGTH);
       }
     }
 

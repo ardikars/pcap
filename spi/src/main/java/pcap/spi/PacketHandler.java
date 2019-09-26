@@ -1,6 +1,4 @@
-/**
- * This code is licenced under the GPL version 2.
- */
+/** This code is licenced under the GPL version 2. */
 package pcap.spi;
 
 /**
@@ -11,5 +9,5 @@ package pcap.spi;
 @FunctionalInterface
 public interface PacketHandler<T> {
 
-    void gotPacket(T args, PacketHeader header, PacketBuffer buffer);
+  void gotPacket(T args, PacketHeader header, PacketBuffer buffer);
 }

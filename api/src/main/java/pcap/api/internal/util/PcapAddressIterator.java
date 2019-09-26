@@ -6,7 +6,11 @@ import java.util.NoSuchElementException;
 import pcap.common.annotation.Inclubating;
 import pcap.spi.Address;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * {@link Address} iterator.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 public class PcapAddressIterator implements Iterator<Address> {
 

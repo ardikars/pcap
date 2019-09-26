@@ -56,7 +56,7 @@ public class NeighborAdvertisement extends AbstractPacket {
       this.overrideFlag = builder.overrideFlag;
       this.targetAddress = builder.targetAddress;
       this.options = builder.options;
-      this.buffer = builder.buffer.slice(builder.buffer.readerIndex() - getLength(), getLength());
+      this.buffer = slice(builder.buffer, getLength());
       this.builder = builder;
     }
 

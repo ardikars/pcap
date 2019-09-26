@@ -58,7 +58,7 @@ public class Routing extends AbstractPacket {
       this.routingType = builder.routingType;
       this.segmentLeft = builder.segmentLeft;
       this.routingData = builder.routingData;
-      this.buffer = builder.buffer.slice(builder.buffer.readerIndex() - getLength(), getLength());
+      this.buffer = slice(builder.buffer, getLength());
       this.builder = builder;
     }
 
@@ -213,7 +213,7 @@ public class Routing extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(buffer.readerIndex(), Header.FIXED_ROUTING_HEADER_LENGTH + routingData.length);
+        reset(0, Header.FIXED_ROUTING_HEADER_LENGTH + routingData.length);
       }
     }
 

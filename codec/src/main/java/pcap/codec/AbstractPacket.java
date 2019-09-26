@@ -73,6 +73,21 @@ public abstract class AbstractPacket implements Packet {
     protected Memory buffer;
 
     /**
+     * Get reminder of buffer.
+     *
+     * @param buffer buffer.
+     * @param length lenght.
+     * @return returns {@link Memory}.
+     */
+    protected Memory slice(Memory buffer, int length) {
+      if (buffer.readableBytes() <= length && buffer.readerIndex() - length > 0) {
+        return buffer.slice(buffer.readerIndex() - length, length);
+      } else {
+        return buffer.slice();
+      }
+    }
+
+    /**
      * Returns header as byte buffer.
      *
      * @return return byte buffer.

@@ -9,7 +9,11 @@ import pcap.api.internal.util.SockAddrParser;
 import pcap.common.annotation.Inclubating;
 import pcap.spi.Address;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * {@code Pcap} {@link Address} implementation
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 public class PcapAddress implements Address {
 

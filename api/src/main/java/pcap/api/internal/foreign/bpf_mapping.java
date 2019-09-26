@@ -9,7 +9,11 @@ import java.foreign.memory.Pointer;
 import java.foreign.memory.Struct;
 import pcap.common.annotation.Inclubating;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * BPF (Berkeley Packet Filter)
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 @NativeHeader
 public interface bpf_mapping {

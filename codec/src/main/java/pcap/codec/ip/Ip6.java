@@ -57,7 +57,7 @@ public class Ip6 extends Ip {
       this.hopLimit = builder.hopLimit;
       this.sourceAddress = builder.sourceAddress;
       this.destinationAddress = builder.destinationAddress;
-      this.buffer = builder.buffer.slice(builder.buffer.readerIndex() - getLength(), getLength());
+      this.buffer = slice(builder.buffer, getLength());
       this.builder = builder;
     }
 
@@ -242,7 +242,7 @@ public class Ip6 extends Ip {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(buffer.readerIndex(), Header.IPV6_HEADER_LENGTH);
+        reset(0, Header.IPV6_HEADER_LENGTH);
       }
     }
 

@@ -49,7 +49,7 @@ public class Udp extends AbstractPacket {
       this.destinationPort = builder.destinationPort;
       this.length = builder.length;
       this.checksum = builder.checksum;
-      this.buffer = builder.buffer.slice(builder.buffer.readerIndex() - getLength(), getLength());
+      this.buffer = slice(builder.buffer, getLength());
       this.builder = builder;
     }
 
@@ -177,7 +177,7 @@ public class Udp extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(buffer.readerIndex(), Header.UDP_HEADER_LENGTH);
+        reset(0, Header.UDP_HEADER_LENGTH);
       }
     }
 

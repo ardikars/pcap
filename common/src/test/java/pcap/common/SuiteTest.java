@@ -5,5 +5,11 @@ import org.junit.platform.suite.api.SelectPackages;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitPlatform.class)
-@SelectPackages({"pcap.common.logging", "pcap.common.net", "pcap.common.tuple", "pcap.common.util"})
+@SelectPackages({
+  "pcap.common.logging",
+  "pcap.common.memory",
+  "pcap.common.net",
+  "pcap.common.tuple",
+  "pcap.common.util"
+})
 public class SuiteTest {}

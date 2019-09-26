@@ -55,7 +55,7 @@ public class Vlan extends AbstractPacket {
       this.canonicalFormatIndicator = builder.canonicalFormatIndicator;
       this.vlanIdentifier = builder.vlanIdentifier;
       this.type = builder.type;
-      this.buffer = builder.buffer.slice(builder.buffer.readerIndex() - getLength(), getLength());
+      this.buffer = slice(builder.buffer, getLength());
       this.builder = builder;
     }
 
@@ -191,7 +191,7 @@ public class Vlan extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(buffer.readerIndex(), Header.VLAN_HEADER_LENGTH);
+        reset(0, Header.VLAN_HEADER_LENGTH);
       }
     }
 

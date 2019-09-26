@@ -8,7 +8,11 @@ import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.spi.Interface;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * {@link Interface} iterator.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 public class PcapInterfaceIterator implements Iterator<Interface> {
 

@@ -37,7 +37,7 @@ final class DefaultMemoryAllocator implements MemoryAllocator {
   @Override
   public Memory allocate(
       int capacity, int maxCapacity, int readerIndex, int writerIndex, boolean checking) {
-    if (Unsafe.HAS_UNSAFE) {
+    if (Unsafe.HAS_UNSAFE && MemoryAllocator.UNSAFE_BUFFER) {
       long address = AbstractMemory.ACCESSOR.allocate(capacity);
       if (checking) {
         return new CheckedMemory(address, capacity, maxCapacity, readerIndex, writerIndex);

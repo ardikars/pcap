@@ -69,7 +69,7 @@ public class Ip4 extends Ip {
       this.sourceAddress = builder.sourceAddress;
       this.destinationAddress = builder.destinationAddress;
       this.options = builder.options;
-      this.buffer = builder.buffer.slice(builder.buffer.readerIndex() - getLength(), getLength());
+      this.buffer = slice(builder.buffer, getLength());
       this.builder = builder;
     }
 
@@ -395,7 +395,7 @@ public class Ip4 extends Ip {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(buffer.readerIndex(), Header.IPV4_HEADER_LENGTH);
+        reset(0, Header.IPV4_HEADER_LENGTH);
       }
     }
 

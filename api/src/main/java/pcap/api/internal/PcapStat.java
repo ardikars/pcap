@@ -7,7 +7,11 @@ import java.foreign.memory.Struct;
 import pcap.common.annotation.Inclubating;
 import pcap.spi.Status;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Wrapper for {@code pcap_stat}
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 @NativeStruct("[u32(ps_recv)u32(ps_drop)u32(ps_ifdrop)](pcap_stat)")
 public interface PcapStat extends Struct<PcapStat> {

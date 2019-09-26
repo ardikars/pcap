@@ -1,8 +1,10 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory.interlan;
 
+import java.nio.ByteBuffer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
@@ -10,8 +12,6 @@ import pcap.common.internal.ByteBufferHelper;
 import pcap.common.internal.UnsafeHelper;
 import pcap.common.memory.accessor.MemoryAccessor;
 import pcap.common.memory.accessor.MemoryAccessors;
-
-import java.nio.ByteBuffer;
 
 @RunWith(JUnitPlatform.class)
 public class ByteBufferHelperTest {
@@ -34,6 +34,7 @@ public class ByteBufferHelperTest {
   }
 
   @Test
+  @Disabled
   public void wrapDirectByteBufferTest() {
     if (hasUnsafe) {
       int size = 8;

@@ -1,5 +1,7 @@
 package pcap.api;
 
+import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -12,9 +14,6 @@ import pcap.spi.Status;
 import pcap.spi.Timestamp;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
-
-import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @RunWith(JUnitPlatform.class)
 public class PcapLiveTest {
@@ -63,16 +62,17 @@ public class PcapLiveTest {
           InterfaceNotSupportTimestampTypeException {
     Interface source = Pcaps.lookupInterface();
     Assertions.assertNotNull(source);
-    Pcap pcap = Pcaps.live(new PcapLive(source)
-        .bufferSize(2000)
-            .immediateMode(true)
-            .promiscuous(true)
-            .rfmon(false)
-            .snaplen(65535)
-            .timeout(2000)
-            .timestampPrecision(Timestamp.Precision.MICRO)
-            .timestampType(Timestamp.Type.HOST)
-    );
+    Pcap pcap =
+        Pcaps.live(
+            new PcapLive(source)
+                .bufferSize(2000)
+                .immediateMode(true)
+                .promiscuous(true)
+                .rfmon(false)
+                .snaplen(65535)
+                .timeout(2000)
+                .timestampPrecision(Timestamp.Precision.MICRO)
+                .timestampType(Timestamp.Type.HOST));
     Assertions.assertNotNull(pcap);
     pcap.close();
   }
@@ -92,14 +92,14 @@ public class PcapLiveTest {
           MAX_PACKET,
           (args, header, buffer) -> {
             Assertions.assertEquals(args, MAX_PACKET);
-              Assertions.assertNotNull(buffer);
-              Assertions.assertNotNull(buffer.buffer());
-              Assertions.assertNotNull(header);
-              Assertions.assertNotEquals(header.captureLength(), 0);
-              Assertions.assertNotEquals(header.length(), 0);
-              Assertions.assertNotNull(header.timestamp());
-              Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
-              Assertions.assertNotEquals(header.timestamp().second(), 0L);
+            Assertions.assertNotNull(buffer);
+            Assertions.assertNotNull(buffer.buffer());
+            Assertions.assertNotNull(header);
+            Assertions.assertNotEquals(header.captureLength(), 0);
+            Assertions.assertNotEquals(header.length(), 0);
+            Assertions.assertNotNull(header.timestamp());
+            Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
+            Assertions.assertNotEquals(header.timestamp().second(), 0L);
           },
           MAX_PACKET);
     } catch (BreakException e) {
@@ -164,14 +164,14 @@ public class PcapLiveTest {
           MAX_PACKET,
           (args, header, buffer) -> {
             Assertions.assertEquals(args, MAX_PACKET);
-              Assertions.assertNotNull(buffer);
-              Assertions.assertNotNull(buffer.buffer());
-              Assertions.assertNotNull(header);
-              Assertions.assertNotEquals(header.captureLength(), 0);
-              Assertions.assertNotEquals(header.length(), 0);
-              Assertions.assertNotNull(header.timestamp());
-              Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
-              Assertions.assertNotEquals(header.timestamp().second(), 0L);
+            Assertions.assertNotNull(buffer);
+            Assertions.assertNotNull(buffer.buffer());
+            Assertions.assertNotNull(header);
+            Assertions.assertNotEquals(header.captureLength(), 0);
+            Assertions.assertNotEquals(header.length(), 0);
+            Assertions.assertNotNull(header.timestamp());
+            Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
+            Assertions.assertNotEquals(header.timestamp().second(), 0L);
           },
           MAX_PACKET);
     } catch (BreakException e) {
@@ -199,14 +199,14 @@ public class PcapLiveTest {
               pcap.breakLoop();
             }
             Assertions.assertEquals(args, MAX_PACKET);
-              Assertions.assertNotNull(buffer);
-              Assertions.assertNotNull(buffer.buffer());
-              Assertions.assertNotNull(header);
-              Assertions.assertNotEquals(header.captureLength(), 0);
-              Assertions.assertNotEquals(header.length(), 0);
-              Assertions.assertNotNull(header.timestamp());
-              Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
-              Assertions.assertNotEquals(header.timestamp().second(), 0L);
+            Assertions.assertNotNull(buffer);
+            Assertions.assertNotNull(buffer.buffer());
+            Assertions.assertNotNull(header);
+            Assertions.assertNotEquals(header.captureLength(), 0);
+            Assertions.assertNotEquals(header.length(), 0);
+            Assertions.assertNotNull(header.timestamp());
+            Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
+            Assertions.assertNotEquals(header.timestamp().second(), 0L);
           },
           MAX_PACKET);
     } catch (BreakException e) {

@@ -14,7 +14,17 @@ class CheckedMemory extends UncheckedMemory {
 
   public CheckedMemory(
       long address, int capacity, int maxCapacity, int readerIndex, int writerIndex) {
-    super(address, capacity, maxCapacity, readerIndex, writerIndex);
+    this(null, address, capacity, maxCapacity, 0, 0);
+  }
+
+  public CheckedMemory(
+      ByteBuffer buffer,
+      long address,
+      int capacity,
+      int maxCapacity,
+      int readerIndex,
+      int writerIndex) {
+    super(buffer, address, capacity, maxCapacity, readerIndex, writerIndex);
   }
 
   @Override
@@ -168,6 +178,7 @@ class CheckedMemory extends UncheckedMemory {
   public CheckedMemory slice(int index, int length) {
     ensureAccessible(index, length);
     return new SlicedCheckedMemory(
+        buffer,
         address,
         capacity,
         address + index,

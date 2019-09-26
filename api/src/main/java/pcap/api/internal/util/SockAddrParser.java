@@ -11,7 +11,11 @@ import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * A halper for parsing {@code sockaddr} to {@link Inet4Address}
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 public class SockAddrParser {
 
@@ -42,7 +46,7 @@ public class SockAddrParser {
           return Inet6Address.getByAddress(data);
         }
       } else {
-        //LOGGER.warn("pointer (null)");
+        // LOGGER.warn("pointer (null)");
       }
     } catch (UnknownHostException e) {
       LOGGER.error(e);

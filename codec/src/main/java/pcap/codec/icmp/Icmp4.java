@@ -55,7 +55,7 @@ public class Icmp4 extends AbstractPacket {
     private Header(Builder builder) {
       typeAndCode = builder.typeAndCode;
       checksum = builder.checksum;
-      buffer = builder.buffer.slice(builder.buffer.readerIndex() - getLength(), getLength());
+      buffer = slice(builder.buffer, getLength());
       this.builder = builder;
     }
 
@@ -145,7 +145,7 @@ public class Icmp4 extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(buffer.readerIndex(), Header.ICMP_HEADER_LENGTH);
+        reset(0, Header.ICMP_HEADER_LENGTH);
       }
     }
 

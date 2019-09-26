@@ -9,7 +9,11 @@ import pcap.spi.Dumper;
 import pcap.spi.PacketBuffer;
 import pcap.spi.PacketHeader;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * {@code Pcap} dumper implementation.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 public class PcapDumper implements Dumper {
 

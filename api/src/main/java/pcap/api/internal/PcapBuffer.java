@@ -6,7 +6,11 @@ import java.nio.ByteBuffer;
 import pcap.common.annotation.Inclubating;
 import pcap.spi.PacketBuffer;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Wrapper for {@code pcap} packet buffer.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 public class PcapBuffer implements PacketBuffer {
 

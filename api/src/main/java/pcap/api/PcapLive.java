@@ -135,7 +135,9 @@ public class PcapLive extends Pcaps {
             throw new ErrorException(
                 Pointer.toString(PcapConstant.MAPPING.pcap_statustostr(result)));
           } else {
-            LOGGER.warn("pcap_can_set_rfmon: {}", Pointer.toString(PcapConstant.MAPPING.pcap_statustostr(result)));
+            LOGGER.warn(
+                "pcap_can_set_rfmon: {}",
+                Pointer.toString(PcapConstant.MAPPING.pcap_statustostr(result)));
           }
         }
       }
@@ -147,7 +149,9 @@ public class PcapLive extends Pcaps {
         if (result == -4) {
           throw new ActivatedException("Error occurred when set timestamp type.");
         } else if (result == 3) {
-          LOGGER.warn("pcap_set_tstamp_type: {}", Pointer.toString(PcapConstant.MAPPING.pcap_statustostr(result)));
+          LOGGER.warn(
+              "pcap_set_tstamp_type: {}",
+              Pointer.toString(PcapConstant.MAPPING.pcap_statustostr(result)));
         } else if (result == -10) {
           throw new InterfaceNotSupportTimestampTypeException(
               "Error occurred when set timestamp type.");
@@ -172,9 +176,11 @@ public class PcapLive extends Pcaps {
         throw new PromiscuousModeNotSupported(
             Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pointer)));
       } else if (result == 3) {
-        LOGGER.warn("pcap_activate: {}", Pointer.toString(PcapConstant.MAPPING.pcap_statustostr(result)));
+        LOGGER.warn(
+            "pcap_activate: {}", Pointer.toString(PcapConstant.MAPPING.pcap_statustostr(result)));
       } else if (result == 1) {
-        LOGGER.warn("pcap_activate: {}", Pointer.toString(PcapConstant.MAPPING.pcap_statustostr(result)));
+        LOGGER.warn(
+            "pcap_activate: {}", Pointer.toString(PcapConstant.MAPPING.pcap_statustostr(result)));
       } else if (result == -4) {
         throw new ActivatedException("Error occurred when activate a handle.");
       } else if (result == -5) {

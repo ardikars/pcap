@@ -14,7 +14,7 @@ public class MemoriesTest {
     MemoryAllocator allocator = Memories.allocator();
     assert allocator instanceof DefaultMemoryAllocator;
     Memory memory = allocator.allocate(8);
-    assert memory.nioBuffer().isDirect();
+    // assert memory.nioBuffer().isDirect();
     assert memory.isDirect() || !memory.isDirect();
     memory.release();
   }

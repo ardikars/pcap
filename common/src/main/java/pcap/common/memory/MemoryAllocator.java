@@ -2,10 +2,13 @@
 package pcap.common.memory;
 
 import pcap.common.annotation.Inclubating;
+import pcap.common.util.Properties;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 public interface MemoryAllocator {
+
+  boolean UNSAFE_BUFFER = Properties.getBoolean("pcap.unsafe", false);
 
   Memory allocate(int capacity);
 

@@ -5,7 +5,11 @@ import java.foreign.annotations.NativeCallback;
 import java.foreign.memory.Pointer;
 import pcap.common.annotation.Inclubating;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * {@code Pcap} callback handler.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 @NativeCallback("(u64:u8u64:${pcap_pkthdr}u64:u8)v")
 @FunctionalInterface

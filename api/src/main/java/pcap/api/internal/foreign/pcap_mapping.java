@@ -14,7 +14,11 @@ import pcap.api.internal.PcapPktHdr;
 import pcap.api.internal.PcapStat;
 import pcap.common.annotation.Inclubating;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Pcap api mapping.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 @NativeHeader(resolutionContext = {PcapPktHdr.class, PcapStat.class})
 public interface pcap_mapping {
