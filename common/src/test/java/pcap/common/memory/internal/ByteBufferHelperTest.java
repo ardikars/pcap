@@ -1,5 +1,5 @@
 /** This code is licenced under the GPL version 2. */
-package pcap.common.memory.interlan;
+package pcap.common.memory.internal;
 
 import java.nio.ByteBuffer;
 import org.junit.jupiter.api.AfterEach;

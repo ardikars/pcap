@@ -3,7 +3,10 @@ package pcap.common.tuple;
 
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitPlatform.class)
 public class TripletTest extends BaseTest {
 
   @Test
