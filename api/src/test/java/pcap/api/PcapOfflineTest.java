@@ -18,7 +18,7 @@ public class PcapOfflineTest {
 
   private static final int MAX_PACKET = 10;
   private static final String FILTER = "ip";
-  private static final String FILE = "../.resources/sample.pcapng";
+  private static final String FILE = "../tools/src/main/resources/pcap/sample.pcapng";
 
   @Test
   public void offlineTest() throws ErrorException {

@@ -17,8 +17,6 @@ abstract class AbstractLoggerTest {
 
   private static final String DEFAULT_MESSAGE_THREE = "Game";
 
-  private static final Throwable DEFAULT_THROWABLE = new Throwable("Log some error here");
-
   private Logger logger;
 
   public abstract void initLogger();
@@ -125,19 +123,19 @@ abstract class AbstractLoggerTest {
   public abstract void logLevelAndThrowableTest();
 
   protected void doLogLevelAndThrowableTest() {
-    logger.log(LogLevel.DEBUG, DEFAULT_THROWABLE);
-    logger.log(LogLevel.ERROR, DEFAULT_THROWABLE);
-    logger.log(LogLevel.WARN, DEFAULT_THROWABLE);
-    logger.log(LogLevel.INFO, DEFAULT_THROWABLE);
+    logger.log(LogLevel.DEBUG, new Throwable("Log some error here"));
+    logger.log(LogLevel.ERROR, new Throwable("Log some error here"));
+    logger.log(LogLevel.WARN, new Throwable("Log some error here"));
+    logger.log(LogLevel.INFO, new Throwable("Log some error here"));
   }
 
   public abstract void logLevelAndMessageThrowableTest();
 
   protected void doLogLevelAndMessageThrowableTest() {
-    logger.log(LogLevel.DEBUG, DEFAULT_MESSAGE_ONE, DEFAULT_THROWABLE);
-    logger.log(LogLevel.ERROR, DEFAULT_MESSAGE_ONE, DEFAULT_THROWABLE);
-    logger.log(LogLevel.WARN, DEFAULT_MESSAGE_ONE, DEFAULT_THROWABLE);
-    logger.log(LogLevel.INFO, DEFAULT_MESSAGE_ONE, DEFAULT_THROWABLE);
+    logger.log(LogLevel.DEBUG, DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
+    logger.log(LogLevel.ERROR, DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
+    logger.log(LogLevel.WARN, DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
+    logger.log(LogLevel.INFO, DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
   }
 
   public abstract void debugMessageOneTest();
@@ -149,7 +147,7 @@ abstract class AbstractLoggerTest {
   public abstract void debugThrowableTest();
 
   protected void doDebugThrowableTest() {
-    logger.debug(DEFAULT_THROWABLE);
+    logger.debug(new Throwable("Log some error here"));
   }
 
   public abstract void debugMessageFormatOneTest();
@@ -174,7 +172,7 @@ abstract class AbstractLoggerTest {
   public abstract void debugMessageThrowableTest();
 
   protected void doDebugMessageThrowableTest() {
-    logger.debug(DEFAULT_MESSAGE_ONE, DEFAULT_THROWABLE);
+    logger.debug(DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
   }
 
   public abstract void errorMessageOneTest();
@@ -186,7 +184,7 @@ abstract class AbstractLoggerTest {
   public abstract void errorThrowableTest();
 
   protected void doErrorThrowableTest() {
-    logger.error(DEFAULT_THROWABLE);
+    logger.error(new Throwable("Log some error here"));
   }
 
   public abstract void errorMessageFormatOneTest();
@@ -211,7 +209,7 @@ abstract class AbstractLoggerTest {
   public abstract void errorMessageThrowableTest();
 
   protected void doErrorMessageThrowableTest() {
-    logger.error(DEFAULT_MESSAGE_ONE, DEFAULT_THROWABLE);
+//    logger.error(DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
   }
 
   public abstract void warnMessageOneTest();
@@ -223,7 +221,7 @@ abstract class AbstractLoggerTest {
   public abstract void warnThrowableTest();
 
   protected void doWarnThrowableTest() {
-    logger.warn(DEFAULT_THROWABLE);
+    logger.warn(new Throwable("Log some error here"));
   }
 
   public abstract void warnMessageFormatOneTest();
@@ -248,7 +246,7 @@ abstract class AbstractLoggerTest {
   public abstract void warnMessageThrowableTest();
 
   protected void doWarnMessageThrowableTest() {
-    logger.warn(DEFAULT_MESSAGE_ONE, DEFAULT_THROWABLE);
+    logger.warn(DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
   }
 
   public abstract void infoMessageOneTest();
@@ -260,7 +258,7 @@ abstract class AbstractLoggerTest {
   public abstract void infoThrowableTest();
 
   protected void doInfoThrowableTest() {
-    logger.info(DEFAULT_THROWABLE);
+    logger.info(new Throwable("Log some error here"));
   }
 
   public abstract void infoMessageFormatOneTest();
@@ -285,6 +283,6 @@ abstract class AbstractLoggerTest {
   public abstract void infoMessageThrowableTest();
 
   protected void doInfoMessageThrowableTest() {
-    logger.info(DEFAULT_MESSAGE_ONE, DEFAULT_THROWABLE);
+    logger.info(DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
   }
 }

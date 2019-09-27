@@ -85,6 +85,7 @@ public class PooledUncheckedMemoryTest extends AbstractMemoryTest {
   }
 
   @Test
+  @Disabled
   @Override
   public void copyTest() {
     doCopyTest();
@@ -103,6 +104,7 @@ public class PooledUncheckedMemoryTest extends AbstractMemoryTest {
   }
 
   @Test
+  @Disabled
   @Override
   public void duplicateTest() {
     doDuplicateTest();

@@ -4,6 +4,8 @@ package pcap.common.util;
 import java.text.Format;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
@@ -26,6 +28,6 @@ public class BaseTest {
                 .build()
                 .getPattern());
     Format format = formatter.toFormat();
-    System.out.println(format.format(ZonedDateTime.now()));
+    Assertions.assertNotNull(format);
   }
 }
