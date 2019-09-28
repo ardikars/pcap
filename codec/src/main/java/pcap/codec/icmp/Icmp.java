@@ -40,6 +40,7 @@ public abstract class Icmp extends AbstractPacket {
     protected IcmpTypeAndCode typeAndCode;
     protected short checksum;
 
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
     public abstract <T extends NamedNumber> T getPayloadType();
 

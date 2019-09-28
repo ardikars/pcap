@@ -68,6 +68,7 @@ public class Redirect extends AbstractPacket {
       return options;
     }
 
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
     public <T extends NamedNumber> T getPayloadType() {
       return (T) UnknownPacket.UNKNOWN_PAYLOAD_TYPE;

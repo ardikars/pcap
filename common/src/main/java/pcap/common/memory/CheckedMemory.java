@@ -14,7 +14,7 @@ class CheckedMemory extends UncheckedMemory {
 
   public CheckedMemory(
       long address, int capacity, int maxCapacity, int readerIndex, int writerIndex) {
-    this(null, address, capacity, maxCapacity, 0, 0);
+    this(null, address, capacity, maxCapacity, readerIndex, writerIndex);
   }
 
   public CheckedMemory(

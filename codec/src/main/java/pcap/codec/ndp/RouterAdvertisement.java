@@ -90,6 +90,7 @@ public class RouterAdvertisement extends AbstractPacket {
       return options;
     }
 
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
     public <T extends NamedNumber> T getPayloadType() {
       return null;

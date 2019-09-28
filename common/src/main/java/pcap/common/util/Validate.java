@@ -49,6 +49,7 @@ public final class Validate {
    *     otherwise.
    * @since 1.0.0
    */
+  @SuppressWarnings("TypeParameterUnusedInFormals")
   public static <T> T nullPointer(T reference, T newVal) {
     if (reference == null) {
       return newVal;
@@ -69,6 +70,7 @@ public final class Validate {
    *     otherwise.
    * @since 1.0.0
    */
+  @SuppressWarnings("TypeParameterUnusedInFormals")
   public static <T> T notIllegalArgument(boolean expression, T reference, T newVal) {
     if (!expression) {
       return newVal;

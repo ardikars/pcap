@@ -52,6 +52,7 @@ public interface Packet extends Iterable<Packet>, Serializable {
      * @param <T> type.
      * @return returns payload type.
      */
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     <T extends NamedNumber> T getPayloadType();
 
     /**

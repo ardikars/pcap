@@ -78,6 +78,7 @@ public class Icmp6 extends AbstractPacket {
       this.builder = builder;
     }
 
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
     public <T extends NamedNumber> T getPayloadType() {
       return (T) typeAndCode;

@@ -53,13 +53,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>14</maven.compiler.source>
         <maven.compiler.target>14</maven.compiler.target>
+        <java.old.version>7</java.old.version>
         <jsr305.version>3.0.2</jsr305.version>
         <junit.version>5.5.1</junit.version>
         <junit.runner.version>1.5.2</junit.runner.version>
         <junit.engine.version>5.4.2</junit.engine.version>
         <errorprone.version>2.3.3</errorprone.version>
-        <javaModuleName>${project.groupId}</javaModuleName>
-        <arguments/>
     </properties>
 
     <modules>
@@ -170,26 +169,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-jar</id>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                </manifest>
-                                <manifestEntries>
-                                    <Automatic-Module-Name>${javaModuleName}</Automatic-Module-Name>
-                                </manifestEntries>
-                                <index>true</index>
-                            </archive>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>

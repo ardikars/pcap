@@ -81,6 +81,7 @@ public class NeighborAdvertisement extends AbstractPacket {
     }
 
     @Override
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     public <T extends NamedNumber> T getPayloadType() {
       return (T) UnknownPacket.UNKNOWN_PAYLOAD_TYPE;
     }

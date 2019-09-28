@@ -61,6 +61,7 @@ public class NeighborSolicitation extends AbstractPacket {
       return options;
     }
 
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
     public <T extends NamedNumber> T getPayloadType() {
       return null;

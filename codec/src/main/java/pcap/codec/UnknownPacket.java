@@ -63,6 +63,7 @@ public class UnknownPacket extends AbstractPacket {
       return buffer;
     }
 
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
     public <T extends NamedNumber> T getPayloadType() {
       return (T) UNKNOWN_PAYLOAD_TYPE;
