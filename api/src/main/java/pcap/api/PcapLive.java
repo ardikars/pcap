@@ -3,6 +3,8 @@ package pcap.api;
 import java.foreign.NativeTypes;
 import java.foreign.memory.Pointer;
 import java.net.Inet4Address;
+
+import pcap.api.internal.Pcap;
 import pcap.api.internal.PcapConstant;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.common.annotation.Inclubating;

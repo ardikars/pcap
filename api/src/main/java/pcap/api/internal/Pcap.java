@@ -1,11 +1,13 @@
 /** This code is licenced under the GPL version 2. */
-package pcap.api;
+package pcap.api.internal;
 
 import java.foreign.memory.Callback;
 import java.foreign.memory.LayoutType;
 import java.foreign.memory.Pointer;
 import java.nio.ByteBuffer;
-import pcap.api.internal.*;
+
+import pcap.api.PcapLive;
+import pcap.api.PcapOffline;
 import pcap.api.internal.foreign.bpf_mapping;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.common.annotation.Inclubating;
@@ -21,7 +23,7 @@ import pcap.spi.exception.error.BreakException;
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
 @Inclubating
-public class Pcap {
+public class Pcap implements pcap.spi.Pcap {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Pcap.class);
 
@@ -33,11 +35,11 @@ public class Pcap {
 
   boolean filterActivated;
 
-  Pcap(Pointer<pcap_mapping.pcap> pcap) {
+  public Pcap(Pointer<pcap_mapping.pcap> pcap) {
     this(pcap, 0xFFFFFF00);
   }
 
-  Pcap(Pointer<pcap_mapping.pcap> pcap, int netmask) {
+  public Pcap(Pointer<pcap_mapping.pcap> pcap, int netmask) {
     this.pcap = pcap;
     this.bpf_program =
         PcapConstant.SCOPE.allocate(LayoutType.ofStruct(bpf_mapping.bpf_program.class));
@@ -54,6 +56,7 @@ public class Pcap {
    * @return returns {@code Pcap} {@link Dumper} handle.
    * @throws ErrorException
    */
+  @Override
   public Dumper dumpOpen(String file) throws ErrorException {
     synchronized (PcapConstant.LOCK) {
       if (LOGGER.isDebugEnabled()) {
@@ -75,6 +78,7 @@ public class Pcap {
    * @return returns {@code Pcap} {@link Dumper} handle.
    * @throws ErrorException generic error.
    */
+  @Override
   public Dumper dumpOpenAppend(String file) throws ErrorException {
     synchronized (PcapConstant.LOCK) {
       if (LOGGER.isDebugEnabled()) {
@@ -97,6 +101,7 @@ public class Pcap {
    * @param optimize {@code true} for optimized filter, {@code false} otherwise.
    * @throws ErrorException generic error.
    */
+  @Override
   public void setFilter(String filter, boolean optimize) throws ErrorException {
     synchronized (PcapConstant.LOCK) {
       if (LOGGER.isDebugEnabled()) {
@@ -133,6 +138,7 @@ public class Pcap {
    * @throws BreakException {@link Pcap#breakLoop()} is called.
    * @throws ErrorException Generic error.
    */
+  @Override
   public <T> void loop(int count, PacketHandler<T> handler, T args)
       throws BreakException, ErrorException {
     synchronized (PcapConstant.LOCK) {
@@ -168,6 +174,7 @@ public class Pcap {
    * @throws ErrorException There is an error or if this {@link Pcap} doesn't support packet
    *     statistics.
    */
+  @Override
   public Status status() throws ErrorException {
     synchronized (PcapConstant.LOCK) {
       int result = PcapConstant.MAPPING.pcap_stats(pcap, pcap_stat);
@@ -182,6 +189,7 @@ public class Pcap {
    * Force a {@link Pcap#loop(int, PacketHandler, Object)} call to return And throw {@link
    * BreakException} on {@link Pcap#loop(int, PacketHandler, Object)}.
    */
+  @Override
   public void breakLoop() {
     synchronized (PcapConstant.LOCK) {
       if (LOGGER.isDebugEnabled()) {
@@ -208,6 +216,7 @@ public class Pcap {
    * @param size the number of bytes in the packet.
    * @throws ErrorException generic error.
    */
+  @Override
   public void send(ByteBuffer buffer, int size) throws ErrorException {
     int result = PcapConstant.MAPPING.pcap_sendpacket(pcap, Pointer.fromByteBuffer(buffer), size);
     if (result < 0) {
@@ -216,6 +225,7 @@ public class Pcap {
   }
 
   /** Close {@link PcapLive} or {@link PcapOffline}. Note: BPF handle will closed automaticly. */
+  @Override
   public void close() {
     synchronized (PcapConstant.LOCK) {
       if (LOGGER.isDebugEnabled()) {

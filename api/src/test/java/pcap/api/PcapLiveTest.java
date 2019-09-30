@@ -8,10 +8,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
-import pcap.spi.Address;
-import pcap.spi.Interface;
-import pcap.spi.Status;
-import pcap.spi.Timestamp;
+import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 

@@ -5,11 +5,13 @@ import java.foreign.NativeTypes;
 import java.foreign.memory.LayoutType;
 import java.foreign.memory.Pointer;
 import java.util.stream.StreamSupport;
+
 import pcap.api.internal.PcapConstant;
 import pcap.api.internal.PcapInterface;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.common.annotation.Inclubating;
 import pcap.spi.Interface;
+import pcap.spi.Pcap;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 

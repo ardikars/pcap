@@ -6,7 +6,7 @@ package pcap.spi;
  *
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
-public interface Dumper {
+public interface Dumper extends AutoCloseable {
 
   /**
    * Write a packet to a capture file.
@@ -27,5 +27,6 @@ public interface Dumper {
   void flush();
 
   /** Closes a capture file. */
+  @Override
   void close();
 }

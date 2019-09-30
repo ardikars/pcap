@@ -7,6 +7,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
+import pcap.spi.Pcap;
 import pcap.spi.Timestamp;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
