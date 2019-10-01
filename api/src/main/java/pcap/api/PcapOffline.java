@@ -2,7 +2,6 @@ package pcap.api;
 
 import java.foreign.NativeTypes;
 import java.foreign.memory.Pointer;
-
 import pcap.api.internal.Pcap;
 import pcap.api.internal.PcapConstant;
 import pcap.api.internal.foreign.pcap_mapping;

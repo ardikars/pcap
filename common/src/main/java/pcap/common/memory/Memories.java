@@ -9,7 +9,6 @@ import pcap.common.annotation.Inclubating;
 import pcap.common.internal.ByteBufferHelper;
 import pcap.common.internal.Unsafe;
 import pcap.common.util.Hexs;
-import pcap.common.util.Properties;
 import pcap.common.util.Validate;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */

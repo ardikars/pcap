@@ -2,9 +2,7 @@
 package pcap.common.util;
 
 import java.text.Format;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;

@@ -12,23 +12,22 @@ import pcap.common.util.Hexs;
 @RunWith(JUnitPlatform.class)
 public class ArpTest extends BaseTest {
 
-    private byte[] data = Hexs.parseHex(ETHERNET_II_ARP);
+  private byte[] data = Hexs.parseHex(ETHERNET_II_ARP);
 
-    private Memory buf = allocator.allocate(data.length);
+  private Memory buf = allocator.allocate(data.length);
 
-    @Override
-    public void before() {
-        buf.writeBytes(data);
-        ethernet = Ethernet.newPacket(buf);
+  @Override
+  public void before() {
+    buf.writeBytes(data);
+    ethernet = Ethernet.newPacket(buf);
+  }
+
+  @AfterEach
+  public void after() {
+    try {
+      buf.release();
+    } catch (Throwable e) {
+      //
     }
-
-    @AfterEach
-    public void after() {
-        try {
-            buf.release();
-        } catch (Throwable e) {
-            //
-        }
-    }
-
+  }
 }
