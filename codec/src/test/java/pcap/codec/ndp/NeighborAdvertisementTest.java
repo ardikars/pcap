@@ -12,23 +12,22 @@ import pcap.common.util.Hexs;
 @RunWith(JUnitPlatform.class)
 public class NeighborAdvertisementTest extends BaseTest {
 
-    private byte[] data = Hexs.parseHex(NDP_NEIGHBOR_ADVERTISEMENT);
+  private byte[] data = Hexs.parseHex(NDP_NEIGHBOR_ADVERTISEMENT);
 
-    private Memory buf = allocator.allocate(data.length);
+  private Memory buf = allocator.allocate(data.length);
 
-    @Override
-    public void before() {
-        buf.writeBytes(data);
-        ethernet = Ethernet.newPacket(buf);
+  @Override
+  public void before() {
+    buf.writeBytes(data);
+    ethernet = Ethernet.newPacket(buf);
+  }
+
+  @AfterEach
+  public void after() {
+    try {
+      buf.release();
+    } catch (Throwable e) {
+      //
     }
-
-    @AfterEach
-    public void after() {
-        try {
-            buf.release();
-        } catch (Throwable e) {
-            //
-        }
-    }
-
+  }
 }

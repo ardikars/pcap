@@ -84,6 +84,7 @@ public class Unsafe {
    * Fetches a value from a given memory address. If the address is zero, or does not point into a
    * block obtained from {@link #allocateMemory}, the results are undefined.
    *
+   * @param address memory address.
    * @see #allocateMemory
    */
   public byte getByte(long address) {
@@ -94,68 +95,112 @@ public class Unsafe {
    * Stores a value into a given memory address. If the address is zero, or does not point into a
    * block obtained from {@link #allocateMemory}, the results are undefined.
    *
+   * @param address memory address.
+   * @param x value.
    * @see #getByte(long)
    */
   public void putByte(long address, byte x) {
     UnsafeHelper.getUnsafe().putByte(address, x);
   }
 
-  /** @see #getByte(long) */
+  /**
+   * @param address memory address.
+   * @see #getByte(long)
+   */
   public short getShort(long address) {
     return UnsafeHelper.getUnsafe().getShort(address);
   }
 
-  /** @see #putByte(long, byte) */
+  /**
+   * @param address memory address.
+   * @param x value.
+   * @see #putByte(long, byte)
+   */
   public void putShort(long address, short x) {
     UnsafeHelper.getUnsafe().putShort(address, x);
   }
 
-  /** @see #getByte(long) */
+  /**
+   * @param address memory address.
+   * @see #getByte(long)
+   */
   public char getChar(long address) {
     return UnsafeHelper.getUnsafe().getChar(address);
   }
 
-  /** @see #putByte(long, byte) */
+  /**
+   * @param address memory address.
+   * @param x value.
+   * @see #putByte(long, byte)
+   */
   public void putChar(long address, char x) {
     UnsafeHelper.getUnsafe().putChar(address, x);
   }
 
-  /** @see #getByte(long) */
+  /**
+   * @param address memory address.
+   * @see #getByte(long)
+   */
   public int getInt(long address) {
     return UnsafeHelper.getUnsafe().getInt(address);
   }
 
-  /** @see #putByte(long, byte) */
+  /**
+   * @param address memory address.
+   * @param x value.
+   * @see #putByte(long, byte)
+   */
   public void putInt(long address, int x) {
     UnsafeHelper.getUnsafe().putInt(address, x);
   }
 
-  /** @see #getByte(long) */
+  /**
+   * @param address memory address.
+   * @see #getByte(long)
+   */
   public long getLong(long address) {
     return UnsafeHelper.getUnsafe().getLong(address);
   }
 
-  /** @see #putByte(long, byte) */
+  /**
+   * @param address memory address.
+   * @param x value.
+   * @see #putByte(long, byte)
+   */
   public void putLong(long address, long x) {
     UnsafeHelper.getUnsafe().putLong(address, x);
   }
 
-  /** @see #getByte(long) */
+  /**
+   * @param address memory address.
+   * @see #getByte(long)
+   */
   public float getFloat(long address) {
     return UnsafeHelper.getUnsafe().getFloat(address);
   }
 
-  /** @see #putByte(long, byte) */
+  /**
+   * @param address memory address.
+   * @param x value.
+   * @see #putByte(long, byte)
+   */
   public void putFloat(long address, float x) {
     UnsafeHelper.getUnsafe().putFloat(address, x);
   }
 
-  /** @see #getByte(long) */
+  /**
+   * @param address memory address.
+   * @see #getByte(long)
+   */
   public double getDouble(long address) {
     return UnsafeHelper.getUnsafe().getDouble(address);
   }
 
-  /** @see #putByte(long, byte) */
+  /**
+   * @param address memory address.
+   * @param x value.
+   * @see #putByte(long, byte)
+   */
   public void putDouble(long address, double x) {
     UnsafeHelper.getUnsafe().putDouble(address, x);
   }

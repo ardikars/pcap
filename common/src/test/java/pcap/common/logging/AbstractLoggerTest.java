@@ -209,7 +209,7 @@ abstract class AbstractLoggerTest {
   public abstract void errorMessageThrowableTest();
 
   protected void doErrorMessageThrowableTest() {
-//    logger.error(DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
+    //    logger.error(DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
   }
 
   public abstract void warnMessageOneTest();

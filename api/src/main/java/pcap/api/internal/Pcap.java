@@ -5,7 +5,6 @@ import java.foreign.memory.Callback;
 import java.foreign.memory.LayoutType;
 import java.foreign.memory.Pointer;
 import java.nio.ByteBuffer;
-
 import pcap.api.PcapLive;
 import pcap.api.PcapOffline;
 import pcap.api.internal.foreign.bpf_mapping;
