@@ -230,6 +230,7 @@ abstract class AbstractMemoryWriterAndReaderTest extends BaseTest {
     }
     memSrc.readerIndex(0);
     memSrc.writerIndex(5);
+    memory.writerIndex(0);
     memory.writeBytes(memSrc, 2);
     for (int i = 0; i < 2; i++) {
       assert memory.getByte(i) == DUMMY[i];

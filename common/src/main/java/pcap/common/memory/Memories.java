@@ -188,6 +188,29 @@ public final class Memories {
     return memory;
   }
 
+  /**
+   * Wrap bytes array into {@link Memory}.
+   *
+   * @param bytes raw bytes.
+   * @param checking if true it will do bounds checking for every get/set method, false will not
+   *     bounds checking.
+   * @return returns {@link Memory}.
+   */
+  public static Memory wrapBytes(byte[] bytes, boolean checking) {
+    Validate.notIllegalArgument(
+        bytes != null,
+        new IllegalArgumentException(String.format("hexStream: null (expected: non null)")));
+    if (Unsafe.HAS_UNSAFE) {
+      if (checking) {
+        return new CheckedByteArray(0, bytes, bytes.length, bytes.length, 0, 0);
+      } else {
+        return new UncheckedByteArray(0, bytes, bytes.length, bytes.length, 0, 0);
+      }
+    } else {
+      return new ByteBuf(0, ByteBuffer.wrap(bytes), bytes.length, bytes.length, 0, 0);
+    }
+  }
+
   static void offer(Memory memory) {
     POOLS.get(memory.maxCapacity()).offer(new PooledMemory(memory));
   }

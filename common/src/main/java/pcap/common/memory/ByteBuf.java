@@ -15,7 +15,7 @@ import pcap.common.logging.LoggerFactory;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-class ByteBuf extends AbstractMemory {
+class ByteBuf extends AbstractMemory<ByteBuffer> {
 
   private static final Logger LOGGER;
 
@@ -224,7 +224,7 @@ class ByteBuf extends AbstractMemory {
 
   @Override
   public void release() {
-    if (CLEANER != null) {
+    if (CLEANER != null && !isDirect()) {
       if (System.getSecurityManager() == null) {
         try {
           CLEANER.invoke(UnsafeHelper.getUnsafe(), buffer);

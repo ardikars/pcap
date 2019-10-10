@@ -49,7 +49,7 @@
         <junit.version>5.5.1</junit.version>
         <junit.runner.version>1.5.2</junit.runner.version>
         <junit.engine.version>5.4.2</junit.engine.version>
-        <errorprone.version>2.3.3</errorprone.version>
+        <errorprone.version>2.3.4-SNAPSHOT</errorprone.version>
     </properties>
 
     <modules>
@@ -58,6 +58,7 @@
         <module>common</module>
         <module>codec</module>
         <module>tools</module>
+        <module>stream</module>
     </modules>
 
     <dependencies>
@@ -291,6 +292,25 @@
                     <plugin>
                         <groupId>com.coveo</groupId>
                         <artifactId>fmt-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <source>${maven.compiler.source}</source>
+                            <target>${maven.compiler.target}</target>
+                            <compilerArgs>
+                                <arg>-XDcompilePolicy=simple</arg>
+                                <arg>-Xplugin:ErrorProne</arg>
+                            </compilerArgs>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>com.google.errorprone</groupId>
+                                    <artifactId>error_prone_core</artifactId>
+                                    <version>${errorprone.version}</version>
+                                </path>
+                            </annotationProcessorPaths>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>

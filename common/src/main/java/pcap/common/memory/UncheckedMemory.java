@@ -7,7 +7,7 @@ import pcap.common.internal.UnsafeHelper;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-class UncheckedMemory extends AbstractMemory {
+class UncheckedMemory extends AbstractMemory<ByteBuffer> {
 
   long address;
 

@@ -1,7 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import pcap.common.annotation.Inclubating;
 import pcap.common.internal.Unsafe;
@@ -11,14 +10,14 @@ import pcap.common.util.Strings;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-abstract class AbstractMemory implements Memory {
+abstract class AbstractMemory<B> implements Memory {
 
   static final MemoryAccessor ACCESSOR =
       Unsafe.HAS_UNSAFE ? MemoryAccessors.memoryAccessor() : null;
 
   static final Charset DEFAULT_CHARSET = Charset.defaultCharset();
 
-  ByteBuffer buffer;
+  B buffer;
 
   int capacity;
   int maxCapacity;
@@ -41,8 +40,7 @@ abstract class AbstractMemory implements Memory {
     this(null, capacity, maxCapacity, readerIndex, writerIndex);
   }
 
-  AbstractMemory(
-      ByteBuffer buffer, int capacity, int maxCapacity, int readerIndex, int writerIndex) {
+  AbstractMemory(B buffer, int capacity, int maxCapacity, int readerIndex, int writerIndex) {
     this.capacity = capacity;
     this.maxCapacity = maxCapacity;
     this.readerIndex = readerIndex;
