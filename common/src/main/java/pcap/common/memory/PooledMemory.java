@@ -3,7 +3,11 @@ package pcap.common.memory;
 
 import pcap.common.annotation.Inclubating;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Polled memory wrapper.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 class PooledMemory {
 

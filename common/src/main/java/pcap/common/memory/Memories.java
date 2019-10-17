@@ -1,15 +1,16 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
-import java.nio.ByteBuffer;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
 import pcap.common.annotation.Inclubating;
 import pcap.common.internal.ByteBufferHelper;
 import pcap.common.internal.Unsafe;
 import pcap.common.util.Hexs;
 import pcap.common.util.Validate;
+
+import java.nio.ByteBuffer;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -212,13 +213,19 @@ public final class Memories {
   }
 
   static void offer(Memory memory) {
-    POOLS.get(memory.maxCapacity()).offer(new PooledMemory(memory));
+    if (memory instanceof Pooled) {
+      POOLS.get(memory.maxCapacity()).offer(new PooledMemory(memory));
+    }
   }
 
   static Memory poll(int maxCapacity) {
     PooledMemory pooledMemory = POOLS.get(maxCapacity).poll();
     if (pooledMemory != null) {
-      return pooledMemory.get();
+      Memory memory = pooledMemory.get();
+      if (memory instanceof Pooled) {
+        return memory;
+      }
+      return null;
     }
     return null;
   }

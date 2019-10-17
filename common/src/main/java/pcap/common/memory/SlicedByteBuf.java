@@ -1,12 +1,13 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
-import java.nio.ByteBuffer;
 import pcap.common.annotation.Inclubating;
+
+import java.nio.ByteBuffer;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-class SlicedByteBuf extends ByteBuf {
+class SlicedByteBuf extends ByteBuf implements Sliced {
 
   SlicedByteBuf(int capacity, int maxCapacity) {
     this(capacity, maxCapacity, 0, 0);
@@ -30,5 +31,16 @@ class SlicedByteBuf extends ByteBuf {
   public long memoryAddress() {
     long address = super.memoryAddress();
     return address != 0 ? address + baseIndex : address;
+  }
+
+  @Override
+  public Memory unslice() {
+    return new ByteBuf(
+        0,
+        buffer,
+        capacity + baseIndex,
+        maxCapacity + baseIndex,
+        readerIndex() - baseIndex,
+        writerIndex() - baseIndex);
   }
 }

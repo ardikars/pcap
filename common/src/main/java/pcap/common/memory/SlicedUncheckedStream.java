@@ -5,7 +5,7 @@ import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-class SlicedUncheckedStream extends UncheckedStream {
+class SlicedUncheckedStream extends UncheckedStream implements Sliced {
 
   public SlicedUncheckedStream(
       int baseIndex,
@@ -15,5 +15,16 @@ class SlicedUncheckedStream extends UncheckedStream {
       int readerIndex,
       int writerIndex) {
     super(baseIndex, buffer, capacity, maxCapacity, readerIndex, writerIndex);
+  }
+
+  @Override
+  public Memory unslice() {
+    return new UncheckedStream(
+        0,
+        buffer,
+        capacity + baseIndex,
+        maxCapacity + baseIndex,
+        readerIndex() - baseIndex,
+        writerIndex() - baseIndex);
   }
 }

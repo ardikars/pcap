@@ -6,7 +6,7 @@ import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-class PooledSlicedCheckedMemory extends SlicedCheckedMemory {
+class PooledSlicedCheckedMemory extends SlicedCheckedMemory implements Pooled {
 
   PooledSlicedCheckedMemory(
       ByteBuffer buffer,

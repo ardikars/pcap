@@ -4,7 +4,6 @@ import pcap.common.annotation.Inclubating;
 
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
-import java.util.Collection;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -24,7 +23,7 @@ public abstract class Stream extends AbstractMemory<Memory[]> {
     this.baseIndex = baseIndex;
   }
 
-  public static Stream stream(Collection<Memory> memories, boolean checked) {
+  public static Stream stream(Memory[] memories, boolean checked) {
     int capacity = 0;
     int maxCapacity = 0;
     int readerIndex = 0;
@@ -40,10 +39,10 @@ public abstract class Stream extends AbstractMemory<Memory[]> {
     }
     if (checked) {
       return new CheckedStream(
-          0, (Memory[]) memories.toArray(), capacity, maxCapacity, readerIndex, writerIndex);
+          0, memories, capacity, maxCapacity, readerIndex, writerIndex);
     } else {
       return new UncheckedStream(
-          0, (Memory[]) memories.toArray(), capacity, maxCapacity, readerIndex, writerIndex);
+          0, memories, capacity, maxCapacity, readerIndex, writerIndex);
     }
   }
 

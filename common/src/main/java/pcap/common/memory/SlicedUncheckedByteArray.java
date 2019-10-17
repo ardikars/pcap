@@ -5,7 +5,7 @@ import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-class SlicedUncheckedByteArray extends UncheckedByteArray {
+class SlicedUncheckedByteArray extends UncheckedByteArray implements Sliced {
 
   SlicedUncheckedByteArray(int capacity, int maxCapacity) {
     this(capacity, maxCapacity, 0, 0);
@@ -23,5 +23,16 @@ class SlicedUncheckedByteArray extends UncheckedByteArray {
       int readerIndex,
       int writerIndex) {
     super(baseIndex, buffer, capacity, maxCapacity, readerIndex, writerIndex);
+  }
+
+  @Override
+  public Memory unslice() {
+    return new UncheckedByteArray(
+        0,
+        buffer,
+        capacity + baseIndex,
+        maxCapacity + baseIndex,
+        readerIndex() - baseIndex,
+        writerIndex() - baseIndex);
   }
 }

@@ -6,7 +6,7 @@ import pcap.common.util.Validate;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-class PooledCheckedMemory extends CheckedMemory {
+class PooledCheckedMemory extends CheckedMemory implements Pooled {
 
   PooledCheckedMemory(long address, int capacity, int maxCapacity) {
     super(address, capacity, maxCapacity);
