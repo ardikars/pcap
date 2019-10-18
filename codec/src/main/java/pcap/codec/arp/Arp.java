@@ -69,7 +69,7 @@ public class Arp extends AbstractPacket {
       this.senderProtocolAddress = builder.senderProtocolAddress;
       this.targetHardwareAddress = builder.targetHardwareAddress;
       this.targetProtocolAddress = builder.targetProtocolAddress;
-      this.buffer = builder.buffer.slice(builder.buffer.readerIndex() - getLength(), getLength());
+      this.buffer = slice(builder.buffer, getLength());
       this.builder = builder;
     }
 

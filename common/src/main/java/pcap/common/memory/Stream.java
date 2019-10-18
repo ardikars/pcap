@@ -1,9 +1,8 @@
 package pcap.common.memory;
 
-import pcap.common.annotation.Inclubating;
-
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
+import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -38,11 +37,9 @@ public abstract class Stream extends AbstractMemory<Memory[]> {
       writerIndex += memory.writerIndex();
     }
     if (checked) {
-      return new CheckedStream(
-          0, memories, capacity, maxCapacity, readerIndex, writerIndex);
+      return new CheckedStream(0, memories, capacity, maxCapacity, readerIndex, writerIndex);
     } else {
-      return new UncheckedStream(
-          0, memories, capacity, maxCapacity, readerIndex, writerIndex);
+      return new UncheckedStream(0, memories, capacity, maxCapacity, readerIndex, writerIndex);
     }
   }
 

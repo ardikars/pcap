@@ -80,6 +80,9 @@ public abstract class AbstractPacket implements Packet {
      * @return returns {@link Memory}.
      */
     protected Memory slice(Memory buffer, int length) {
+      if (buffer == null) {
+        return null;
+      }
       if (buffer.readableBytes() <= length && buffer.readerIndex() - length > 0) {
         return buffer.slice(buffer.readerIndex() - length, length);
       } else {

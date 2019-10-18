@@ -51,9 +51,11 @@ public class RouterSolicitation extends AbstractPacket {
      */
     public Header(Builder builder) {
       this.options = builder.options;
-      this.buffer =
-          builder.buffer.slice(
-              0, ROUTER_SOLICITATION_HEADER_LENGTH + options.getHeader().getLength());
+      if (builder.buffer != null) {
+        this.buffer =
+            builder.buffer.slice(
+                0, ROUTER_SOLICITATION_HEADER_LENGTH + options.getHeader().getLength());
+      }
       this.builder = builder;
     }
 
