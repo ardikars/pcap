@@ -1,15 +1,16 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
-import java.nio.ByteBuffer;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
 import pcap.common.annotation.Inclubating;
 import pcap.common.internal.ByteBufferHelper;
 import pcap.common.internal.Unsafe;
 import pcap.common.util.Hexs;
 import pcap.common.util.Validate;
+
+import java.nio.ByteBuffer;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -209,6 +210,28 @@ public final class Memories {
     } else {
       return new ByteBuf(0, ByteBuffer.wrap(bytes), bytes.length, bytes.length, 0, 0);
     }
+  }
+
+  /**
+   * Assemble (combining) memory buffers (copying memories into single buffer).
+   *
+   * @param memories list of memory.
+   * @return returns new direct {@link Memory} instance.
+   */
+  public static Memory assemble(Memory... memories) {
+    int capacity = 0;
+    int maxCapacity = 0;
+    for (int i = 0; i < memories.length; i++) {
+      capacity += memories[i].capacity();
+      maxCapacity += memories[i].maxCapacity();
+    }
+    Memory memory = allocator().allocate(capacity, maxCapacity);
+    int index = 0;
+    for (int i = 0; i < memories.length; i++) {
+      memory.setBytes(index, memories[i]);
+      index += memories[i].capacity();
+    }
+    return memory;
   }
 
   static void offer(Memory memory) {
