@@ -23,10 +23,14 @@ public class Arp extends AbstractPacket {
 
   private Arp(final Builder builder) {
     this.header = new Header(builder);
-    this.payload =
-        NetworkLayer.valueOf(this.header.getPayloadType().getValue())
-            .newInstance(builder.payloadBuffer);
-    payloadBuffer = builder.payloadBuffer;
+    this.payloadBuffer = builder.payloadBuffer;
+    if (this.payloadBuffer != null) {
+      this.payload =
+          NetworkLayer.valueOf(this.header.getPayloadType().getValue())
+              .newInstance(this.payloadBuffer);
+    } else {
+      this.payload = null;
+    }
   }
 
   @Override

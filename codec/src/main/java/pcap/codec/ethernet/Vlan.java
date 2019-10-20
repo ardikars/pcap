@@ -20,9 +20,13 @@ public class Vlan extends AbstractPacket {
 
   private Vlan(final Builder builder) {
     this.header = new Header(builder);
-    this.payload =
-        NetworkLayer.valueOf(this.header.getType().getValue()).newInstance(builder.payloadBuffer);
-    payloadBuffer = builder.payloadBuffer;
+    this.payloadBuffer = builder.payloadBuffer;
+    if (this.payloadBuffer != null) {
+      this.payload =
+          NetworkLayer.valueOf(this.header.getType().getValue()).newInstance(this.payloadBuffer);
+    } else {
+      this.payload = null;
+    }
   }
 
   public static Vlan newPacket(final Memory buffer) {

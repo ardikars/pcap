@@ -5,30 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import pcap.codec.AbstractPacket;
 import pcap.codec.Packet;
-import pcap.codec.icmp.icmp6.Icmp6DestinationUnreachable;
-import pcap.codec.icmp.icmp6.Icmp6EchoReply;
-import pcap.codec.icmp.icmp6.Icmp6EchoRequest;
-import pcap.codec.icmp.icmp6.Icmp6HomeAgentAddressDiscoveryReply;
-import pcap.codec.icmp.icmp6.Icmp6HomeAgentAddressDiscoveryRequest;
-import pcap.codec.icmp.icmp6.Icmp6InverseNeighborDiscoveryAdvertisement;
-import pcap.codec.icmp.icmp6.Icmp6InverseNeighborDiscoverySolicitation;
-import pcap.codec.icmp.icmp6.Icmp6MobilePrefixAdvertisement;
-import pcap.codec.icmp.icmp6.Icmp6MobilePrefixSolicitation;
-import pcap.codec.icmp.icmp6.Icmp6MulticastListenerDone;
-import pcap.codec.icmp.icmp6.Icmp6MulticastListenerQuery;
-import pcap.codec.icmp.icmp6.Icmp6MulticastListenerReportV1;
-import pcap.codec.icmp.icmp6.Icmp6MulticastListenerReportV2;
-import pcap.codec.icmp.icmp6.Icmp6NeighborAdvertisement;
-import pcap.codec.icmp.icmp6.Icmp6NeighborSolicitation;
-import pcap.codec.icmp.icmp6.Icmp6NodeInformationQuery;
-import pcap.codec.icmp.icmp6.Icmp6NodeInformationResponse;
-import pcap.codec.icmp.icmp6.Icmp6PacketTooBigMessage;
-import pcap.codec.icmp.icmp6.Icmp6ParameterProblem;
-import pcap.codec.icmp.icmp6.Icmp6RedirectMessage;
-import pcap.codec.icmp.icmp6.Icmp6RouterAdvertisement;
-import pcap.codec.icmp.icmp6.Icmp6RouterRenumbering;
-import pcap.codec.icmp.icmp6.Icmp6RouterSolicitation;
-import pcap.codec.icmp.icmp6.Icmp6TimeExceeded;
+import pcap.codec.icmp.icmp6.*;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.util.NamedNumber;
@@ -51,10 +28,14 @@ public class Icmp6 extends AbstractPacket {
    */
   public Icmp6(Builder builder) {
     this.header = new Header(builder);
-    this.payload =
-        Icmp.IcmpTypeAndCode.valueOf(this.header.getPayloadType().getValue().byteValue())
-            .newInstance(builder.payloadBuffer);
-    payloadBuffer = builder.payloadBuffer;
+    this.payloadBuffer = builder.payloadBuffer;
+    if (this.payloadBuffer != null) {
+      this.payload =
+          Icmp.IcmpTypeAndCode.valueOf(this.header.getPayloadType().getValue().byteValue())
+              .newInstance(this.payloadBuffer);
+    } else {
+      this.payload = null;
+    }
   }
 
   @Override

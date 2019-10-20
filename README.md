@@ -24,7 +24,7 @@ Provides high level network packet processing API for rapid development.
         <dependency>
             <groupId>com.ardikars.pcap</groupId>
             <artifactId>pcap</artifactId>
-            <version>0.0.3</version>
+            <version>0.0.3-SNAPSHOT</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>

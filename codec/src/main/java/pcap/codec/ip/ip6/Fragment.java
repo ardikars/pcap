@@ -20,10 +20,14 @@ public class Fragment extends AbstractPacket {
 
   private Fragment(final Builder builder) {
     this.header = new Header(builder);
-    this.payload =
-        TransportLayer.valueOf(header.getPayloadType().getValue())
-            .newInstance(builder.payloadBuffer);
-    payloadBuffer = builder.payloadBuffer;
+    this.payloadBuffer = builder.payloadBuffer;
+    if (this.payloadBuffer != null) {
+      this.payload =
+          TransportLayer.valueOf(header.getPayloadType().getValue())
+              .newInstance(this.payloadBuffer);
+    } else {
+      this.payload = null;
+    }
   }
 
   @Override

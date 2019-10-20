@@ -18,10 +18,14 @@ public class Authentication extends AbstractPacket {
 
   private Authentication(final Builder builder) {
     this.header = new Header(builder);
-    this.payload =
-        TransportLayer.valueOf(header.getPayloadType().getValue())
-            .newInstance(builder.payloadBuffer);
-    payloadBuffer = builder.payloadBuffer;
+    this.payloadBuffer = builder.payloadBuffer;
+    if (this.payloadBuffer != null) {
+      this.payload =
+          TransportLayer.valueOf(header.getPayloadType().getValue())
+              .newInstance(this.payloadBuffer);
+    } else {
+      payload = null;
+    }
   }
 
   @Override

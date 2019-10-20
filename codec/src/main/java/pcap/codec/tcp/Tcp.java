@@ -18,10 +18,14 @@ public class Tcp extends AbstractPacket {
 
   private Tcp(final Builder builder) {
     this.header = new Header(builder);
-    this.payload =
-        ApplicationLayer.valueOf(this.header.getPayloadType().getValue())
-            .newInstance(builder.payloadBuffer);
     this.payloadBuffer = builder.payloadBuffer;
+    if (this.payloadBuffer != null) {
+      this.payload =
+          ApplicationLayer.valueOf(this.header.getPayloadType().getValue())
+              .newInstance(this.payloadBuffer);
+    } else {
+      this.payload = null;
+    }
   }
 
   @Override

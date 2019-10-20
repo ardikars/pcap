@@ -19,9 +19,14 @@ public class Ip6 extends Ip {
 
   private Ip6(final Builder builder) {
     this.header = new Header(builder);
-    this.payload =
-        TransportLayer.valueOf(this.header.getPayloadType().getValue())
-            .newInstance(builder.payloadBuffer);
+    this.payloadBuffer = builder.payloadBuffer;
+    if (this.payloadBuffer != null) {
+      this.payload =
+          TransportLayer.valueOf(this.header.getPayloadType().getValue())
+              .newInstance(this.payloadBuffer);
+    } else {
+      this.payload = null;
+    }
   }
 
   @Override
