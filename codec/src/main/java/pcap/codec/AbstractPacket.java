@@ -1,14 +1,15 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec;
 
+import pcap.common.annotation.Inclubating;
+import pcap.common.memory.Memory;
+import pcap.common.memory.MemoryAllocator;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
-import pcap.common.annotation.Inclubating;
-import pcap.common.memory.Memory;
-import pcap.common.memory.MemoryAllocator;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -47,6 +48,21 @@ public abstract class AbstractPacket implements Packet {
       }
     }
     return (List<T>) packets;
+  }
+
+  @Override
+  public <T extends Packet> T getFirst(Class<T> clazz) {
+    return this.iterator().hasNext() ? (T) this.iterator().next() : null;
+  }
+
+  @Override
+  public <T extends Packet> T getLast(Class<T> clazz) {
+    Iterator<Packet> iterator = this.iterator();
+    Packet packet = null;
+    while (iterator.hasNext()) {
+      packet = iterator.next();
+    }
+    return (T) packet;
   }
 
   @Override

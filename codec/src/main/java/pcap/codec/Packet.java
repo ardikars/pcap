@@ -1,10 +1,11 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec;
 
-import java.io.Serializable;
-import java.util.List;
 import pcap.common.annotation.Inclubating;
 import pcap.common.util.NamedNumber;
+
+import java.io.Serializable;
+import java.util.List;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -42,6 +43,24 @@ public interface Packet extends Iterable<Packet>, Serializable {
    * @return returns list of {@link Packet} object.
    */
   <T extends Packet> List<T> get(Class<T> clazz);
+
+  /**
+   * Returns first of specify packet's.
+   *
+   * @param clazz packet type.
+   * @param <T> type.
+   * @return returns first of {@link Packet} object.
+   */
+  <T extends Packet> T getFirst(Class<T> clazz);
+
+  /**
+   * Returns last of specify packet's.
+   *
+   * @param clazz packet type.
+   * @param <T> type.
+   * @return returns last of {@link Packet} object.
+   */
+  <T extends Packet> T getLast(Class<T> clazz);
 
   /** This interface representing a packet header. */
   interface Header extends Serializable {
