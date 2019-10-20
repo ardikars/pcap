@@ -35,7 +35,7 @@ public final class UnsafeHelper {
   }
 
   /**
-   * Returns aligned.
+   * Returns alignment.
    *
    * @return returns {@code true} if and only if the platform supports unaligned access.
    */
