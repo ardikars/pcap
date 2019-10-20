@@ -257,10 +257,10 @@ public class Ip4 extends Ip {
     private byte flags;
     private short fragmentOffset;
     private byte ttl;
-    private TransportLayer protocol;
+    private TransportLayer protocol = TransportLayer.TCP;
     private short checksum;
-    private Inet4Address sourceAddress;
-    private Inet4Address destinationAddress;
+    private Inet4Address sourceAddress = Inet4Address.ZERO;
+    private Inet4Address destinationAddress = Inet4Address.ZERO;
     private byte[] options;
 
     private Memory buffer;

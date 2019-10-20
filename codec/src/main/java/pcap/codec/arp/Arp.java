@@ -193,15 +193,15 @@ public class Arp extends AbstractPacket {
 
   public static final class Builder extends AbstractPacket.Builder {
 
-    private DataLinkLayer hardwareType;
-    private NetworkLayer protocolType;
-    private byte hardwareAddressLength;
-    private byte protocolAddressLength;
-    private OperationCode operationCode;
-    private MacAddress senderHardwareAddress;
-    private Inet4Address senderProtocolAddress;
-    private MacAddress targetHardwareAddress;
-    private Inet4Address targetProtocolAddress;
+    private DataLinkLayer hardwareType = DataLinkLayer.EN10MB;
+    private NetworkLayer protocolType = NetworkLayer.IPV4;
+    private byte hardwareAddressLength = MacAddress.MAC_ADDRESS_LENGTH;
+    private byte protocolAddressLength = Inet4Address.IPV4_ADDRESS_LENGTH;
+    private OperationCode operationCode = OperationCode.ARP_REQUEST;
+    private MacAddress senderHardwareAddress = MacAddress.ZERO;
+    private Inet4Address senderProtocolAddress = Inet4Address.ZERO;
+    private MacAddress targetHardwareAddress = MacAddress.ZERO;
+    private Inet4Address targetProtocolAddress = Inet4Address.ZERO;
 
     private Memory buffer;
     private Memory payloadBuffer;

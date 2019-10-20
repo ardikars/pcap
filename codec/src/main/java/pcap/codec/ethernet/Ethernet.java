@@ -128,9 +128,9 @@ public class Ethernet extends AbstractPacket {
 
   public static class Builder extends AbstractPacket.Builder {
 
-    private MacAddress destinationMacAddress;
-    private MacAddress sourceMacAddress;
-    private NetworkLayer ethernetType;
+    private MacAddress destinationMacAddress = MacAddress.BROADCAST;
+    private MacAddress sourceMacAddress = MacAddress.ZERO;
+    private NetworkLayer ethernetType = NetworkLayer.ARP;
 
     private Memory buffer;
     private Memory payloadBuffer;

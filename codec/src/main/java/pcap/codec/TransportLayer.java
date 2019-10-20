@@ -18,6 +18,8 @@ public final class TransportLayer extends NamedNumber<Byte, TransportLayer> {
   private static Map<Byte, AbstractPacket.Builder> BUILDER =
       new HashMap<Byte, AbstractPacket.Builder>();
 
+  public static final TransportLayer TCP = new TransportLayer((byte) 6, "Transmission Control Protocol");
+
   public TransportLayer(int value, String name) {
     super((byte) value, name);
   }

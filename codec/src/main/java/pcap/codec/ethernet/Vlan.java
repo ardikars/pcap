@@ -1,8 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.ethernet;
 
-import java.util.HashMap;
-import java.util.Map;
 import pcap.codec.AbstractPacket;
 import pcap.codec.NetworkLayer;
 import pcap.codec.Packet;
@@ -10,6 +8,9 @@ import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.util.NamedNumber;
 import pcap.common.util.Validate;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -141,10 +142,10 @@ public class Vlan extends AbstractPacket {
 
   public static final class Builder extends AbstractPacket.Builder {
 
-    private PriorityCodePoint priorityCodePoint; // 3 bit
+    private PriorityCodePoint priorityCodePoint = PriorityCodePoint.BE; // 3 bit
     private byte canonicalFormatIndicator; // 1 bit
     private short vlanIdentifier; // 12 bit
-    private NetworkLayer type;
+    private NetworkLayer type = NetworkLayer.DOT1Q_VLAN_TAGGED_FRAMES;
 
     private Memory buffer;
     private Memory payloadBuffer;

@@ -126,8 +126,8 @@ public class Redirect extends AbstractPacket {
 
   public static class Builder extends AbstractPacket.Builder {
 
-    private Inet6Address targetAddress;
-    private Inet6Address destinationAddress;
+    private Inet6Address targetAddress = Inet6Address.ZERO;
+    private Inet6Address destinationAddress = Inet6Address.ZERO;
 
     private NeighborDiscoveryOptions options;
 

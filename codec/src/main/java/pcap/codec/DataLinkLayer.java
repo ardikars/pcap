@@ -1,11 +1,12 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec;
 
-import java.util.HashMap;
-import java.util.Map;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.util.NamedNumber;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -15,6 +16,9 @@ public final class DataLinkLayer extends NamedNumber<Short, DataLinkLayer> {
 
   private static final Map<Short, AbstractPacket.Builder> BUILDER =
       new HashMap<Short, AbstractPacket.Builder>();
+
+  /** Ethernet (10Mb, 100Mb, 1000Mb, and up): 1 */
+  public static final DataLinkLayer EN10MB = new DataLinkLayer((short) 1, "Ethernet");
 
   public DataLinkLayer(int value, String name) {
     super((short) value, name);

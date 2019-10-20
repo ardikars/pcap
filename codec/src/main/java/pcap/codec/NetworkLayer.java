@@ -1,11 +1,12 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec;
 
-import java.util.HashMap;
-import java.util.Map;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.util.NamedNumber;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -19,6 +20,16 @@ public final class NetworkLayer extends NamedNumber<Short, NetworkLayer> {
 
   private static final Map<Short, AbstractPacket.Builder> BUILDER =
       new HashMap<Short, AbstractPacket.Builder>();
+
+  /** IPv4: 0x0800 */
+  public static final NetworkLayer IPV4 = new NetworkLayer((short) 0x0800, "IPv4");
+
+  /** Arp: 0x0806 */
+  public static final NetworkLayer ARP = new NetworkLayer((short) 0x0806, "Arp");
+
+  /** IEEE 802.1Q VLAN-tagged frames: 0x8100 */
+  public static final NetworkLayer DOT1Q_VLAN_TAGGED_FRAMES =
+      new NetworkLayer((short) 0x8100, "IEEE 802.1Q VLAN-tagged frames");
 
   /**
    * @param value value

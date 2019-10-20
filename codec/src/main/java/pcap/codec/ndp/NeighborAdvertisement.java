@@ -149,7 +149,7 @@ public class NeighborAdvertisement extends AbstractPacket {
     private boolean routerFlag;
     private boolean solicitedFlag;
     private boolean overrideFlag;
-    private Inet6Address targetAddress;
+    private Inet6Address targetAddress = Inet6Address.ZERO;
 
     private NeighborDiscoveryOptions options;
 

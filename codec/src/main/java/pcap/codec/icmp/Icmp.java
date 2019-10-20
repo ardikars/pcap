@@ -63,7 +63,7 @@ public abstract class Icmp extends AbstractPacket {
 
   protected abstract static class AbstractPacketBuilder extends Builder {
 
-    protected IcmpTypeAndCode typeAndCode;
+    protected IcmpTypeAndCode typeAndCode = IcmpTypeAndCode.ROUTER_SOLICICATION;
     protected short checksum;
 
     public AbstractPacketBuilder typeAndCode(IcmpTypeAndCode typeAndCode) {

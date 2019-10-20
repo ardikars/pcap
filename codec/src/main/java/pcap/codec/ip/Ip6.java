@@ -172,10 +172,10 @@ public class Ip6 extends Ip {
     private byte trafficClass;
     private int flowLabel;
     private short payloadLength;
-    private TransportLayer nextHeader;
+    private TransportLayer nextHeader = TransportLayer.TCP;
     private byte hopLimit;
-    private Inet6Address sourceAddress;
-    private Inet6Address destinationAddress;
+    private Inet6Address sourceAddress = Inet6Address.ZERO;
+    private Inet6Address destinationAddress = Inet6Address.ZERO;
 
     private Memory buffer;
     private Memory payloadBuffer;
