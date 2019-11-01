@@ -26,7 +26,7 @@ class PacketIterator implements Iterator<Packet> {
       throw new NoSuchElementException();
     }
     Packet previous = next;
-    next = next.getPayload();
+    next = next.payload();
     return previous;
   }
 }

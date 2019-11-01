@@ -1,12 +1,11 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec;
 
+import java.util.HashMap;
+import java.util.Map;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.util.NamedNumber;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -25,7 +24,7 @@ public final class DataLinkLayer extends NamedNumber<Short, DataLinkLayer> {
   }
 
   public Packet newInstance(Memory buffer) {
-    AbstractPacket.Builder packetBuilder = BUILDER.get(this.getValue());
+    AbstractPacket.Builder packetBuilder = BUILDER.get(this.value());
     if (packetBuilder == null) {
       if (buffer == null || buffer.capacity() <= 0) {
         return null;
@@ -54,7 +53,7 @@ public final class DataLinkLayer extends NamedNumber<Short, DataLinkLayer> {
    */
   public static synchronized void register(
       DataLinkLayer dataLinkLayer, AbstractPacket.Builder packetBuilder) {
-    BUILDER.put(dataLinkLayer.getValue(), packetBuilder);
-    REGISTRY.put(dataLinkLayer, dataLinkLayer.getValue());
+    BUILDER.put(dataLinkLayer.value(), packetBuilder);
+    REGISTRY.put(dataLinkLayer, dataLinkLayer.value());
   }
 }

@@ -24,7 +24,7 @@ public class RawAddress implements Address {
   }
 
   @Override
-  public byte[] getAddress() {
+  public byte[] address() {
     byte[] data = new byte[address.length];
     System.arraycopy(address, 0, data, 0, data.length);
     return data;

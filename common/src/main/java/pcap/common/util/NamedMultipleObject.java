@@ -23,7 +23,7 @@ public abstract class NamedMultipleObject<
    *
    * @return returns the number of this {@code NamedMultiKey} object.
    */
-  public T getValue() {
+  public T value() {
     return value;
   }
 
@@ -33,7 +33,7 @@ public abstract class NamedMultipleObject<
    * @return returns the name of this {@code NamedMultiKey} object.
    */
   @Override
-  public String getName() {
+  public String name() {
     return name;
   }
 
@@ -46,12 +46,12 @@ public abstract class NamedMultipleObject<
       return false;
     }
     NamedMultipleObject<?, ?> that = (NamedMultipleObject<?, ?>) o;
-    return Objects.equals(getValue(), that.getValue()) && Objects.equals(getName(), that.getName());
+    return Objects.equals(value(), that.value()) && Objects.equals(name(), that.name());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getValue(), getName());
+    return Objects.hash(value(), name());
   }
 
   @Override

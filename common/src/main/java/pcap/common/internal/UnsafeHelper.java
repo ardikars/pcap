@@ -213,7 +213,7 @@ public final class UnsafeHelper {
                 try {
                   Class<?> bitsClass =
                       Class.forName("java.nio.Bits", false, getSystemClassLoader());
-                  int version = Platforms.getJavaMojorVersion();
+                  int version = Platforms.javaMojorVersion();
                   if (version >= 9) {
                     // Java9/10 use all lowercase and later versions all uppercase.
                     String fieldName = version >= 11 ? "UNALIGNED" : "unaligned";
@@ -276,7 +276,7 @@ public final class UnsafeHelper {
         unaligned = arch.matches("^(i[3-6]86|x86(_64)?|x64|amd64)$");
       }
 
-      if (Platforms.getJavaMojorVersion() >= 9) {
+      if (Platforms.javaMojorVersion() >= 9) {
         Object maybeExceptionJdk9 = checkJdk9Unsafe();
         if (maybeExceptionJdk9 instanceof Throwable) {
           causes.add((Throwable) maybeExceptionJdk9);

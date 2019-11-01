@@ -21,13 +21,13 @@ public class NamedNumberTest extends BaseTest {
   @Test
   public void found() {
     HttpStatusCode httpStatusCode = HttpStatusCode.valueOf(NOT_FOUND_CODE);
-    Assertions.assertEquals(HttpStatusCode.NOT_FOUND.getValue(), httpStatusCode.getValue());
+    Assertions.assertEquals(HttpStatusCode.NOT_FOUND.value(), httpStatusCode.value());
   }
 
   @Test
   public void notFound() {
     HttpStatusCode httpStatusCode = HttpStatusCode.valueOf(UNKNOWN_CODE);
-    Assertions.assertEquals(HttpStatusCode.UNKNOWN.getValue(), httpStatusCode.getValue());
+    Assertions.assertEquals(HttpStatusCode.UNKNOWN.value(), httpStatusCode.value());
   }
 
   @Test
@@ -39,6 +39,6 @@ public class NamedNumberTest extends BaseTest {
 
     /** Test */
     HttpStatusCode internalServerError = HttpStatusCode.valueOf(INTERNAL_SERVER_ERROR_CODE);
-    Assertions.assertEquals(httpStatusCode.getValue(), internalServerError.getValue());
+    Assertions.assertEquals(httpStatusCode.value(), internalServerError.value());
   }
 }

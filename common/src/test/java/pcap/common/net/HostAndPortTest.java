@@ -23,17 +23,17 @@ public class HostAndPortTest extends BaseTest {
 
   @Test
   public void ipv6HostName() {
-    Assertions.assertEquals(HOST_NAME, IPV6_HOST.getHostName());
+    Assertions.assertEquals(HOST_NAME, IPV6_HOST.hostName());
   }
 
   @Test
   public void ipv6HostAddress() {
-    Assertions.assertEquals(INET_6_ADDRESS, IPV6_HOST.getHostAddress());
+    Assertions.assertEquals(INET_6_ADDRESS, IPV6_HOST.hostAddress());
   }
 
   @Test
   public void ipv6Port() {
-    Assertions.assertEquals(PORT, IPV6_HOST.getPort());
+    Assertions.assertEquals(PORT, IPV6_HOST.port());
   }
 
   @Test
@@ -60,17 +60,17 @@ public class HostAndPortTest extends BaseTest {
 
   @Test
   public void ipv4HostName() {
-    Assertions.assertEquals(HOST_NAME, IPV4_HOST.getHostName());
+    Assertions.assertEquals(HOST_NAME, IPV4_HOST.hostName());
   }
 
   @Test
   public void ipv4HostAddress() {
-    Assertions.assertEquals(INET_4_ADDRESS, IPV4_HOST.getHostAddress());
+    Assertions.assertEquals(INET_4_ADDRESS, IPV4_HOST.hostAddress());
   }
 
   @Test
   public void ipv4Port() {
-    Assertions.assertEquals(PORT, IPV4_HOST.getPort());
+    Assertions.assertEquals(PORT, IPV4_HOST.port());
   }
 
   @Test

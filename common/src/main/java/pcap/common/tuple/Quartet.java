@@ -15,11 +15,11 @@ import pcap.common.annotation.Inclubating;
 @Inclubating
 public interface Quartet<L, ML, MR, R> {
 
-  L getLeft();
+  L left();
 
-  ML getMiddleLeft();
+  ML middleLeft();
 
-  MR getMiddleRight();
+  MR middleRight();
 
-  R getRight();
+  R right();
 }

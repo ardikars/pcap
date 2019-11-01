@@ -10,12 +10,12 @@ public class PlatformsTest {
 
   @Test
   public void getNameTest() {
-    assert Platforms.getName().name() != null;
+    assert Platforms.name().name() != null;
   }
 
   @Test
   public void getArchitectureTest() {
-    assert Platforms.getArchitecture() != null;
+    assert Platforms.architecture() != null;
   }
 
   @Test
@@ -70,11 +70,11 @@ public class PlatformsTest {
 
   @Test
   public void getCpuVersionTest() {
-    assert Platforms.getCpuVersion() != null;
+    assert Platforms.cpuVersion() != null;
   }
 
   @Test
   public void getJavaMajorVersionTest() {
-    assert Platforms.getJavaMojorVersion() != 0;
+    assert Platforms.javaMojorVersion() != 0;
   }
 }

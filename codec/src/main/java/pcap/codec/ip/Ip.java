@@ -16,7 +16,7 @@ public abstract class Ip extends AbstractPacket {
       this.version = version;
     }
 
-    public int getVersion() {
+    public int version() {
       return this.version & 0xf;
     }
   }

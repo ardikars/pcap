@@ -24,12 +24,12 @@ public class PairImpl<L, R> extends Tuple implements Pair<L, R> {
   }
 
   @Override
-  public L getLeft() {
+  public L left() {
     return left;
   }
 
   @Override
-  public R getRight() {
+  public R right() {
     return right;
   }
 

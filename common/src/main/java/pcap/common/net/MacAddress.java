@@ -97,7 +97,7 @@ public final class MacAddress implements Address {
   }
 
   /** @return oui. */
-  public Oui getOui() {
+  public Oui oui() {
     return Oui.valueOf(this);
   }
 
@@ -213,7 +213,7 @@ public final class MacAddress implements Address {
    * @return returns bytes Mas Address.
    */
   @Override
-  public byte[] getAddress() {
+  public byte[] address() {
     return Arrays.copyOf(this.address, this.address.length);
   }
 
@@ -271,14 +271,14 @@ public final class MacAddress implements Address {
      */
     public static Oui register(Oui version) {
       synchronized (Oui.class) {
-        return REGISTRY.put(version.getValue(), version);
+        return REGISTRY.put(version.value(), version);
       }
     }
 
     static {
-      REGISTRY.put(CISCO_00000C.getValue(), CISCO_00000C);
-      REGISTRY.put(IBM_08005A.getValue(), IBM_08005A);
-      REGISTRY.put(MICROSOFT_CORPORATION.getValue(), MICROSOFT_CORPORATION);
+      REGISTRY.put(CISCO_00000C.value(), CISCO_00000C);
+      REGISTRY.put(IBM_08005A.value(), IBM_08005A);
+      REGISTRY.put(MICROSOFT_CORPORATION.value(), MICROSOFT_CORPORATION);
     }
   }
 }

@@ -1,6 +1,8 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.ethernet;
 
+import java.util.HashMap;
+import java.util.Map;
 import pcap.codec.AbstractPacket;
 import pcap.codec.NetworkLayer;
 import pcap.codec.Packet;
@@ -8,9 +10,6 @@ import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.util.NamedNumber;
 import pcap.common.util.Validate;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -24,7 +23,7 @@ public class Vlan extends AbstractPacket {
     this.payloadBuffer = builder.payloadBuffer;
     if (this.payloadBuffer != null) {
       this.payload =
-          NetworkLayer.valueOf(this.header.getType().getValue()).newInstance(this.payloadBuffer);
+          NetworkLayer.valueOf(this.header.type().value()).newInstance(this.payloadBuffer);
     } else {
       this.payload = null;
     }
@@ -35,12 +34,12 @@ public class Vlan extends AbstractPacket {
   }
 
   @Override
-  public Header getHeader() {
+  public Header header() {
     return header;
   }
 
   @Override
-  public Packet getPayload() {
+  public Packet payload() {
     return payload;
   }
 
@@ -60,44 +59,44 @@ public class Vlan extends AbstractPacket {
       this.canonicalFormatIndicator = builder.canonicalFormatIndicator;
       this.vlanIdentifier = builder.vlanIdentifier;
       this.type = builder.type;
-      this.buffer = slice(builder.buffer, getLength());
+      this.buffer = slice(builder.buffer, length());
       this.builder = builder;
     }
 
-    public PriorityCodePoint getPriorityCodePoint() {
+    public PriorityCodePoint priorityCodePoint() {
       return priorityCodePoint;
     }
 
-    public int getCanonicalFormatIndicator() {
+    public int canonicalFormatIndicator() {
       return canonicalFormatIndicator & 0x01;
     }
 
-    public int getVlanIdentifier() {
+    public int vlanIdentifier() {
       return vlanIdentifier & 0x0fff;
     }
 
-    public NetworkLayer getType() {
+    public NetworkLayer type() {
       return type;
     }
 
     @Override
-    public NetworkLayer getPayloadType() {
+    public NetworkLayer payloadType() {
       return type;
     }
 
     @Override
-    public int getLength() {
+    public int length() {
       return Header.VLAN_HEADER_LENGTH;
     }
 
     @Override
-    public Memory getBuffer() {
+    public Memory buffer() {
       if (buffer == null) {
-        buffer = ALLOCATOR.allocate(getLength());
+        buffer = ALLOCATOR.allocate(length());
         buffer.setShort(0, 0x8100); // IEEE 802.1Q VLAN-tagged frames
         buffer.setShort(
             2,
-            ((priorityCodePoint.getValue() << 13) & 0x07)
+            ((priorityCodePoint.value() << 13) & 0x07)
                 | ((canonicalFormatIndicator << 14) & 0x01)
                 | (vlanIdentifier & 0x0fff));
       }
@@ -105,7 +104,7 @@ public class Vlan extends AbstractPacket {
     }
 
     @Override
-    public Builder getBuilder() {
+    public Builder builder() {
       return builder;
     }
 
@@ -131,7 +130,7 @@ public class Vlan extends AbstractPacket {
   @Override
   public String toString() {
     return new StringBuilder("[ Vlan Header (")
-        .append(getHeader().getLength())
+        .append(header().length())
         .append(" bytes) ]")
         .append('\n')
         .append(header)
@@ -210,12 +209,12 @@ public class Vlan extends AbstractPacket {
         Validate.notIllegalArgument(type != null, ILLEGAL_HEADER_EXCEPTION);
         int index = offset;
         int tci =
-            ((priorityCodePoint.getValue() << 13) & 0x07)
+            ((priorityCodePoint.value() << 13) & 0x07)
                 | ((canonicalFormatIndicator << 14) & 0x01)
                 | (vlanIdentifier & 0x0fff);
         buffer.setShort(index, tci);
         index += 2;
-        buffer.setShort(index, type.getValue());
+        buffer.setShort(index, type.value());
       }
     }
   }
@@ -268,19 +267,19 @@ public class Vlan extends AbstractPacket {
      * @return returns {@link PriorityCodePoint}.
      */
     public static PriorityCodePoint register(final PriorityCodePoint priorityCodePoint) {
-      REGISTRY.put(priorityCodePoint.getValue(), priorityCodePoint);
+      REGISTRY.put(priorityCodePoint.value(), priorityCodePoint);
       return priorityCodePoint;
     }
 
     static {
-      REGISTRY.put(BK.getValue(), BK);
-      REGISTRY.put(BE.getValue(), BE);
-      REGISTRY.put(EE.getValue(), EE);
-      REGISTRY.put(CA.getValue(), CA);
-      REGISTRY.put(VI.getValue(), VI);
-      REGISTRY.put(VO.getValue(), VO);
-      REGISTRY.put(IC.getValue(), IC);
-      REGISTRY.put(NC.getValue(), NC);
+      REGISTRY.put(BK.value(), BK);
+      REGISTRY.put(BE.value(), BE);
+      REGISTRY.put(EE.value(), EE);
+      REGISTRY.put(CA.value(), CA);
+      REGISTRY.put(VI.value(), VI);
+      REGISTRY.put(VO.value(), VO);
+      REGISTRY.put(IC.value(), IC);
+      REGISTRY.put(NC.value(), NC);
     }
   }
 }

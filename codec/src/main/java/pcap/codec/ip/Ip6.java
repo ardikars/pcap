@@ -22,20 +22,19 @@ public class Ip6 extends Ip {
     this.payloadBuffer = builder.payloadBuffer;
     if (this.payloadBuffer != null) {
       this.payload =
-          TransportLayer.valueOf(this.header.getPayloadType().getValue())
-              .newInstance(this.payloadBuffer);
+          TransportLayer.valueOf(this.header.payloadType().value()).newInstance(this.payloadBuffer);
     } else {
       this.payload = null;
     }
   }
 
   @Override
-  public Header getHeader() {
+  public Header header() {
     return header;
   }
 
   @Override
-  public Packet getPayload() {
+  public Packet payload() {
     return payload;
   }
 
@@ -62,56 +61,56 @@ public class Ip6 extends Ip {
       this.hopLimit = builder.hopLimit;
       this.sourceAddress = builder.sourceAddress;
       this.destinationAddress = builder.destinationAddress;
-      this.buffer = slice(builder.buffer, getLength());
+      this.buffer = slice(builder.buffer, length());
       this.builder = builder;
     }
 
-    public int getTrafficClass() {
+    public int trafficClass() {
       return trafficClass & 0xff;
     }
 
-    public int getFlowLabel() {
+    public int flowLabel() {
       return flowLabel & 0xfffff;
     }
 
-    public int getPayloadLength() {
+    public int payloadLength() {
       return payloadLength & 0xffff;
     }
 
-    public TransportLayer getNextHeader() {
+    public TransportLayer nextHeader() {
       return nextHeader;
     }
 
-    public int getHopLimit() {
+    public int hopLimit() {
       return hopLimit & 0xff;
     }
 
-    public Inet6Address getSourceAddress() {
+    public Inet6Address sourceAddress() {
       return sourceAddress;
     }
 
-    public Inet6Address getDestinationAddress() {
+    public Inet6Address destinationAddress() {
       return destinationAddress;
     }
 
     @Override
-    public TransportLayer getPayloadType() {
+    public TransportLayer payloadType() {
       return nextHeader;
     }
 
     @Override
-    public int getLength() {
+    public int length() {
       return IPV6_HEADER_LENGTH;
     }
 
     @Override
-    public Memory getBuffer() {
+    public Memory buffer() {
       if (buffer == null) {
-        buffer = ALLOCATOR.allocate(getLength());
+        buffer = ALLOCATOR.allocate(length());
         buffer.writeInt(
             (super.version & 0xf) << 28 | (trafficClass & 0xff) << 20 | flowLabel & 0xfffff);
         buffer.writeShort(payloadLength);
-        buffer.writeByte(nextHeader.getValue());
+        buffer.writeByte(nextHeader.value());
         buffer.writeByte(hopLimit);
         buffer.writeBytes(sourceAddress.toBytes());
         buffer.writeBytes(destinationAddress.toBytes());
@@ -120,7 +119,7 @@ public class Ip6 extends Ip {
     }
 
     @Override
-    public Builder getBuilder() {
+    public Builder builder() {
       return builder;
     }
 
@@ -158,7 +157,7 @@ public class Ip6 extends Ip {
   @Override
   public String toString() {
     return new StringBuilder("[ Ip6 Header (")
-        .append(getHeader().getLength())
+        .append(header().length())
         .append(" bytes) ]")
         .append('\n')
         .append(header)
@@ -268,7 +267,7 @@ public class Ip6 extends Ip {
         index += 4;
         buffer.setShort(offset, payloadLength);
         index += 2;
-        buffer.setByte(index, nextHeader.getValue());
+        buffer.setByte(index, nextHeader.value());
         index += 1;
         buffer.setByte(index, hopLimit);
         index += 1;

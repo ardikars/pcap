@@ -22,7 +22,7 @@ public abstract class NamedObject<T, U extends NamedObject<T, ?>> implements Obj
    *
    * @return returns the value of this {@code NamedObject} object.
    */
-  public T getValue() {
+  public T value() {
     return this.value;
   }
 
@@ -32,7 +32,7 @@ public abstract class NamedObject<T, U extends NamedObject<T, ?>> implements Obj
    * @return returns the name of this {@code NamedObject} object.
    */
   @Override
-  public String getName() {
+  public String name() {
     return this.name;
   }
 
@@ -50,7 +50,7 @@ public abstract class NamedObject<T, U extends NamedObject<T, ?>> implements Obj
     if (!(obj instanceof NamedObject)) {
       return false;
     }
-    return this.value.equals(this.getClass().cast(obj).getValue());
+    return this.value.equals(this.getClass().cast(obj).value());
   }
 
   @Override

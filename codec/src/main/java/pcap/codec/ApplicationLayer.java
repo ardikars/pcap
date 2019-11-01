@@ -22,7 +22,7 @@ public final class ApplicationLayer extends NamedNumber<Short, ApplicationLayer>
   }
 
   public Packet newInstance(Memory buffer) {
-    AbstractPacket.Builder packetBuilder = BUILDER.get(this.getValue());
+    AbstractPacket.Builder packetBuilder = BUILDER.get(this.value());
     if (packetBuilder == null) {
       if (buffer == null || buffer.capacity() <= 0) {
         return null;
@@ -47,7 +47,7 @@ public final class ApplicationLayer extends NamedNumber<Short, ApplicationLayer>
    */
   public static synchronized void register(
       ApplicationLayer applicationLayer, AbstractPacket.Builder packetBuilder) {
-    BUILDER.put(applicationLayer.getValue(), packetBuilder);
-    REGISTRY.put(applicationLayer, applicationLayer.getValue());
+    BUILDER.put(applicationLayer.value(), packetBuilder);
+    REGISTRY.put(applicationLayer, applicationLayer.value());
   }
 }

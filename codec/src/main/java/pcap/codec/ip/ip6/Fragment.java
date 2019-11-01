@@ -23,20 +23,19 @@ public class Fragment extends AbstractPacket {
     this.payloadBuffer = builder.payloadBuffer;
     if (this.payloadBuffer != null) {
       this.payload =
-          TransportLayer.valueOf(header.getPayloadType().getValue())
-              .newInstance(this.payloadBuffer);
+          TransportLayer.valueOf(header.payloadType().value()).newInstance(this.payloadBuffer);
     } else {
       this.payload = null;
     }
   }
 
   @Override
-  public Packet.Header getHeader() {
+  public Packet.Header header() {
     return header;
   }
 
   @Override
-  public Packet getPayload() {
+  public Packet payload() {
     return payload;
   }
 
@@ -56,50 +55,50 @@ public class Fragment extends AbstractPacket {
       this.fragmentOffset = builder.fragmentOffset;
       this.flagType = builder.flagType;
       this.identification = builder.identification;
-      this.buffer = slice(builder.buffer, getLength());
+      this.buffer = slice(builder.buffer, length());
       this.builder = builder;
     }
 
-    public TransportLayer getNextHeader() {
+    public TransportLayer nextHeader() {
       return nextHeader;
     }
 
-    public int getFragmentOffset() {
+    public int fragmentOffset() {
       return fragmentOffset & 0x1fff;
     }
 
-    public FlagType getFlagType() {
+    public FlagType flagType() {
       return flagType;
     }
 
-    public int getIdentification() {
+    public int identification() {
       return identification;
     }
 
     @Override
-    public TransportLayer getPayloadType() {
+    public TransportLayer payloadType() {
       return nextHeader;
     }
 
     @Override
-    public int getLength() {
+    public int length() {
       return FIXED_FRAGMENT_HEADER_LENGTH;
     }
 
     @Override
-    public Memory getBuffer() {
+    public Memory buffer() {
       if (buffer == null) {
-        buffer = ALLOCATOR.allocate(getLength());
-        buffer.writeByte(nextHeader.getValue());
+        buffer = ALLOCATOR.allocate(length());
+        buffer.writeByte(nextHeader.value());
         buffer.writeByte(0); // reserved
-        buffer.writeShort((fragmentOffset & 0x1fff) << 3 | flagType.getValue() & 0x1);
+        buffer.writeShort((fragmentOffset & 0x1fff) << 3 | flagType.value() & 0x1);
         buffer.writeInt(identification);
       }
       return buffer;
     }
 
     @Override
-    public Builder getBuilder() {
+    public Builder builder() {
       return builder;
     }
 
@@ -125,7 +124,7 @@ public class Fragment extends AbstractPacket {
   @Override
   public String toString() {
     return new StringBuilder("\t[ Fragment Header (")
-        .append(getHeader().getLength())
+        .append(header().length())
         .append(" bytes) ]")
         .append('\n')
         .append(header)
@@ -198,11 +197,11 @@ public class Fragment extends AbstractPacket {
         Validate.notIllegalArgument(flagType != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(identification >= 0, ILLEGAL_HEADER_EXCEPTION);
         int index = offset;
-        buffer.setByte(index, nextHeader.getValue());
+        buffer.setByte(index, nextHeader.value());
         index += 1;
         buffer.setByte(index, 0); // reserved
         index += 1;
-        int sscratch = (fragmentOffset & 0x1fff) << 3 | flagType.getValue() & 0x1;
+        int sscratch = (fragmentOffset & 0x1fff) << 3 | flagType.value() & 0x1;
         buffer.setShort(index, sscratch);
         index += 2;
         buffer.setIndex(index, identification);
@@ -225,7 +224,7 @@ public class Fragment extends AbstractPacket {
     }
 
     public static FlagType register(final FlagType flagType) {
-      REGISTRY.put(flagType.getValue(), flagType);
+      REGISTRY.put(flagType.value(), flagType);
       return flagType;
     }
 

@@ -14,9 +14,9 @@ import pcap.common.annotation.Inclubating;
 @Inclubating
 public interface Triplet<L, M, R> {
 
-  L getLeft();
+  L left();
 
-  M getMiddle();
+  M middle();
 
-  R getRight();
+  R right();
 }

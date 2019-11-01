@@ -23,7 +23,7 @@ public abstract class NamedNumber<T extends Number, U extends NamedNumber<T, ?>>
    *
    * @return returns the number of this {@code NamedNumber} object.
    */
-  public T getValue() {
+  public T value() {
     return this.value;
   }
 
@@ -33,7 +33,7 @@ public abstract class NamedNumber<T extends Number, U extends NamedNumber<T, ?>>
    * @return returns the name of this {@code NamedNumber} object.
    */
   @Override
-  public String getName() {
+  public String name() {
     return this.name;
   }
 
@@ -51,7 +51,7 @@ public abstract class NamedNumber<T extends Number, U extends NamedNumber<T, ?>>
     if (!(obj instanceof NamedNumber)) {
       return false;
     }
-    return this.value.equals(this.getClass().cast(obj).getValue());
+    return this.value.equals(this.getClass().cast(obj).value());
   }
 
   @Override

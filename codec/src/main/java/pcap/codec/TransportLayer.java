@@ -18,14 +18,15 @@ public final class TransportLayer extends NamedNumber<Byte, TransportLayer> {
   private static Map<Byte, AbstractPacket.Builder> BUILDER =
       new HashMap<Byte, AbstractPacket.Builder>();
 
-  public static final TransportLayer TCP = new TransportLayer((byte) 6, "Transmission Control Protocol");
+  public static final TransportLayer TCP =
+      new TransportLayer((byte) 6, "Transmission Control Protocol");
 
   public TransportLayer(int value, String name) {
     super((byte) value, name);
   }
 
   public Packet newInstance(Memory buffer) {
-    AbstractPacket.Builder packetBuilder = BUILDER.get(this.getValue());
+    AbstractPacket.Builder packetBuilder = BUILDER.get(this.value());
     if (packetBuilder == null) {
       if (buffer == null || buffer.capacity() <= 0) {
         return null;
@@ -50,7 +51,7 @@ public final class TransportLayer extends NamedNumber<Byte, TransportLayer> {
    */
   public static synchronized void register(
       TransportLayer type, AbstractPacket.Builder packetBuilder) {
-    BUILDER.put(type.getValue(), packetBuilder);
-    REGISTRY.put(type.getValue(), type);
+    BUILDER.put(type.value(), packetBuilder);
+    REGISTRY.put(type.value(), type);
   }
 }

@@ -26,20 +26,19 @@ public class Arp extends AbstractPacket {
     this.payloadBuffer = builder.payloadBuffer;
     if (this.payloadBuffer != null) {
       this.payload =
-          NetworkLayer.valueOf(this.header.getPayloadType().getValue())
-              .newInstance(this.payloadBuffer);
+          NetworkLayer.valueOf(this.header.payloadType().value()).newInstance(this.payloadBuffer);
     } else {
       this.payload = null;
     }
   }
 
   @Override
-  public Header getHeader() {
+  public Header header() {
     return header;
   }
 
   @Override
-  public Packet getPayload() {
+  public Packet payload() {
     return payload;
   }
 
@@ -73,65 +72,65 @@ public class Arp extends AbstractPacket {
       this.senderProtocolAddress = builder.senderProtocolAddress;
       this.targetHardwareAddress = builder.targetHardwareAddress;
       this.targetProtocolAddress = builder.targetProtocolAddress;
-      this.buffer = slice(builder.buffer, getLength());
+      this.buffer = slice(builder.buffer, length());
       this.builder = builder;
     }
 
-    public DataLinkLayer getHardwareType() {
+    public DataLinkLayer hardwareType() {
       return hardwareType;
     }
 
-    public NetworkLayer getProtocolType() {
+    public NetworkLayer protocolType() {
       return protocolType;
     }
 
-    public int getHardwareAddressLength() {
+    public int hardwareAddressLength() {
       return hardwareAddressLength & 0xff;
     }
 
-    public int getProtocolAddressLength() {
+    public int protocolAddressLength() {
       return protocolAddressLength & 0xff;
     }
 
-    public OperationCode getOperationCode() {
+    public OperationCode operationCode() {
       return operationCode;
     }
 
-    public MacAddress getSenderHardwareAddress() {
+    public MacAddress senderHardwareAddress() {
       return senderHardwareAddress;
     }
 
-    public Inet4Address getSenderProtocolAddress() {
+    public Inet4Address senderProtocolAddress() {
       return senderProtocolAddress;
     }
 
-    public MacAddress getTargetHardwareAddress() {
+    public MacAddress targetHardwareAddress() {
       return targetHardwareAddress;
     }
 
-    public Inet4Address getTargetProtocolAddress() {
+    public Inet4Address targetProtocolAddress() {
       return targetProtocolAddress;
     }
 
     @Override
-    public NetworkLayer getPayloadType() {
+    public NetworkLayer payloadType() {
       return NetworkLayer.UNKNOWN;
     }
 
     @Override
-    public int getLength() {
+    public int length() {
       return Header.ARP_HEADER_LENGTH;
     }
 
     @Override
-    public Memory getBuffer() {
+    public Memory buffer() {
       if (buffer == null) {
-        buffer = ALLOCATOR.allocate(getLength());
-        buffer.writeShort(hardwareType.getValue());
-        buffer.writeShort(protocolType.getValue());
+        buffer = ALLOCATOR.allocate(length());
+        buffer.writeShort(hardwareType.value());
+        buffer.writeShort(protocolType.value());
         buffer.writeByte(hardwareAddressLength);
         buffer.writeByte(protocolAddressLength);
-        buffer.writeShort(operationCode.getValue());
+        buffer.writeShort(operationCode.value());
         buffer.writeBytes(senderHardwareAddress.toBytes());
         buffer.writeBytes(senderProtocolAddress.toBytes());
         buffer.writeBytes(targetHardwareAddress.toBytes());
@@ -141,7 +140,7 @@ public class Arp extends AbstractPacket {
     }
 
     @Override
-    public Builder getBuilder() {
+    public Builder builder() {
       return builder;
     }
 
@@ -182,7 +181,7 @@ public class Arp extends AbstractPacket {
   @Override
   public String toString() {
     return new StringBuilder("[ Arp Header (")
-        .append(getHeader().getLength())
+        .append(header().length())
         .append(" bytes) ]")
         .append('\n')
         .append(header)
@@ -308,15 +307,15 @@ public class Arp extends AbstractPacket {
         Validate.notIllegalArgument(targetHardwareAddress != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(targetProtocolAddress != null, ILLEGAL_HEADER_EXCEPTION);
         int index = offset;
-        buffer.setShort(index, hardwareType.getValue());
+        buffer.setShort(index, hardwareType.value());
         index += 2;
-        buffer.setShort(index, protocolType.getValue());
+        buffer.setShort(index, protocolType.value());
         index += 2;
         buffer.setByte(index, hardwareAddressLength);
         index += 1;
         buffer.setByte(index, protocolAddressLength);
         index += 1;
-        buffer.setShort(index, operationCode.getValue());
+        buffer.setShort(index, operationCode.value());
         index += 2;
         buffer.setBytes(index, senderHardwareAddress.toBytes());
         index += MacAddress.MAC_ADDRESS_LENGTH;
@@ -350,7 +349,7 @@ public class Arp extends AbstractPacket {
      * @return returns {@link OperationCode}.
      */
     public static OperationCode register(final OperationCode operationCode) {
-      return REGISTRY.put(operationCode.getValue(), operationCode);
+      return REGISTRY.put(operationCode.value(), operationCode);
     }
 
     /**
@@ -373,8 +372,8 @@ public class Arp extends AbstractPacket {
     }
 
     static {
-      REGISTRY.put(ARP_REQUEST.getValue(), ARP_REQUEST);
-      REGISTRY.put(ARP_REPLY.getValue(), ARP_REPLY);
+      REGISTRY.put(ARP_REQUEST.value(), ARP_REQUEST);
+      REGISTRY.put(ARP_REPLY.value(), ARP_REPLY);
     }
   }
 }

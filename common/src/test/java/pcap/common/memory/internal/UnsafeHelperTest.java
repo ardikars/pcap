@@ -13,7 +13,7 @@ public class UnsafeHelperTest {
 
   // @Test
   public void isUnsafeAvailableTest() {
-    if (Platforms.getJavaMojorVersion() > 8) {
+    if (Platforms.javaMojorVersion() > 8) {
       assert !UnsafeHelper.isUnsafeAvailable();
     } else {
       assert UnsafeHelper.isUnsafeAvailable();
@@ -30,14 +30,14 @@ public class UnsafeHelperTest {
     try {
       assert UnsafeHelper.getUnsafe() != null;
     } catch (UnsupportedOperationException ex) {
-      assert Platforms.getJavaMojorVersion() > 8;
+      assert Platforms.javaMojorVersion() > 8;
     }
   }
 
   @Test
   public void getNoUnsafeCausesTest() {
     List<Throwable> throwables = UnsafeHelper.getNoUnsafeCauses();
-    if (Platforms.getJavaMojorVersion() > 8) {
+    if (Platforms.javaMojorVersion() > 8) {
       assert !throwables.isEmpty();
     } else {
       assert throwables.isEmpty();

@@ -25,20 +25,19 @@ public class Routing extends AbstractPacket {
     this.payloadBuffer = builder.payloadBuffer;
     if (this.payloadBuffer != null) {
       this.payload =
-          TransportLayer.valueOf(header.getPayloadType().getValue())
-              .newInstance(this.payloadBuffer);
+          TransportLayer.valueOf(header.payloadType().value()).newInstance(this.payloadBuffer);
     } else {
       this.payload = null;
     }
   }
 
   @Override
-  public Header getHeader() {
+  public Header header() {
     return header;
   }
 
   @Override
-  public Packet getPayload() {
+  public Packet payload() {
     return payload;
   }
 
@@ -62,49 +61,49 @@ public class Routing extends AbstractPacket {
       this.routingType = builder.routingType;
       this.segmentLeft = builder.segmentLeft;
       this.routingData = builder.routingData;
-      this.buffer = slice(builder.buffer, getLength());
+      this.buffer = slice(builder.buffer, length());
       this.builder = builder;
     }
 
-    public TransportLayer getNextHeader() {
+    public TransportLayer nextHeader() {
       return nextHeader;
     }
 
-    public int getExtensionLength() {
+    public int extensionLength() {
       return extensionLength & 0xff;
     }
 
-    public Type getRoutingType() {
+    public Type routingType() {
       return routingType;
     }
 
-    public int getSegmentLeft() {
+    public int segmentLeft() {
       return segmentLeft & 0xff;
     }
 
-    public byte[] getRoutingData() {
+    public byte[] routingData() {
       byte[] routingData = new byte[this.routingData.length];
       System.arraycopy(this.routingData, 0, routingData, 0, routingData.length);
       return routingData;
     }
 
     @Override
-    public TransportLayer getPayloadType() {
+    public TransportLayer payloadType() {
       return nextHeader;
     }
 
     @Override
-    public int getLength() {
+    public int length() {
       return FIXED_ROUTING_HEADER_LENGTH + (routingData == null ? 0 : routingData.length);
     }
 
     @Override
-    public Memory getBuffer() {
+    public Memory buffer() {
       if (buffer == null) {
-        buffer = ALLOCATOR.allocate(getLength());
-        buffer.writeByte(nextHeader.getValue());
+        buffer = ALLOCATOR.allocate(length());
+        buffer.writeByte(nextHeader.value());
         buffer.writeByte(extensionLength);
-        buffer.writeByte(routingType.getValue());
+        buffer.writeByte(routingType.value());
         buffer.writeByte(segmentLeft);
         if (routingData != null) {
           buffer.writeBytes(routingData);
@@ -135,7 +134,7 @@ public class Routing extends AbstractPacket {
     }
 
     @Override
-    public Builder getBuilder() {
+    public Builder builder() {
       return builder;
     }
   }
@@ -143,7 +142,7 @@ public class Routing extends AbstractPacket {
   @Override
   public String toString() {
     return new StringBuilder("\t[ Routing Header (")
-        .append(getHeader().getLength())
+        .append(header().length())
         .append(" bytes) ]")
         .append('\n')
         .append(header)
@@ -231,11 +230,11 @@ public class Routing extends AbstractPacket {
         Validate.notIllegalArgument(segmentLeft >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(routingData != null, ILLEGAL_HEADER_EXCEPTION);
         int index = offset;
-        buffer.setByte(index, nextHeader.getValue());
+        buffer.setByte(index, nextHeader.value());
         index += 1;
         buffer.setByte(index, extensionLength);
         index += 1;
-        buffer.setByte(index, routingType.getValue());
+        buffer.setByte(index, routingType.value());
         index += 1;
         buffer.setByte(index, segmentLeft);
         index += 1;
@@ -305,17 +304,17 @@ public class Routing extends AbstractPacket {
      * @return returns {@link Type}.
      */
     public static Type register(final Type type) {
-      REGISTRY.put(type.getValue(), type);
+      REGISTRY.put(type.value(), type);
       return type;
     }
 
     static {
-      REGISTRY.put(DEPRECATED_01.getValue(), DEPRECATED_01);
-      REGISTRY.put(DEPRECATED_02.getValue(), DEPRECATED_02);
-      REGISTRY.put(ALLOWED_01.getValue(), ALLOWED_01);
-      REGISTRY.put(ALLOWED_02.getValue(), ALLOWED_02);
-      REGISTRY.put(PRIVATE_USE_01.getValue(), PRIVATE_USE_01);
-      REGISTRY.put(PRIVATE_USE_02.getValue(), PRIVATE_USE_02);
+      REGISTRY.put(DEPRECATED_01.value(), DEPRECATED_01);
+      REGISTRY.put(DEPRECATED_02.value(), DEPRECATED_02);
+      REGISTRY.put(ALLOWED_01.value(), ALLOWED_01);
+      REGISTRY.put(ALLOWED_02.value(), ALLOWED_02);
+      REGISTRY.put(PRIVATE_USE_01.value(), PRIVATE_USE_01);
+      REGISTRY.put(PRIVATE_USE_02.value(), PRIVATE_USE_02);
     }
   }
 }

@@ -10,9 +10,9 @@ public final class DateTimePattern {
   private static String SPACE_DELIMITER = " ";
 
   public static final String DEFAULT_PATTERN =
-      DatePattern.DD_MM_YYYY_WITH_SPACE_AS_DELIMITER.getValue()
+      DatePattern.DD_MM_YYYY_WITH_SPACE_AS_DELIMITER.value()
           + SPACE_DELIMITER
-          + TimePattern.HH_MM_SS_WITH_SPACE_AS_DELIMITER.getValue();
+          + TimePattern.HH_MM_SS_WITH_SPACE_AS_DELIMITER.value();
 
   public static final class DatePattern extends NamedObject<String, DatePattern> {
 
@@ -53,33 +53,27 @@ public final class DateTimePattern {
     }
 
     public static DatePattern register(DatePattern datePattern) {
-      REGISTRY.put(datePattern.getValue(), datePattern);
+      REGISTRY.put(datePattern.value(), datePattern);
       return datePattern;
     }
 
-    public static DatePattern getDatePattern(String stringDatePattern) {
+    public static DatePattern datePattern(String stringDatePattern) {
       return REGISTRY.getOrDefault(stringDatePattern, DD_MM_YYYY_WITH_SPACE_AS_DELIMITER);
     }
 
     static {
-      REGISTRY.put(
-          YYYY_MM_DD_WITH_MINUS_AS_DELIMITER.getValue(), YYYY_MM_DD_WITH_MINUS_AS_DELIMITER);
-      REGISTRY.put(
-          DD_MM_YYYY_WITH_MINUS_AS_DELIMITER.getValue(), DD_MM_YYYY_WITH_MINUS_AS_DELIMITER);
-      REGISTRY.put(YYYY_MM_WITH_MINUS_AS_DELIMITER.getValue(), YYYY_MM_WITH_MINUS_AS_DELIMITER);
-      REGISTRY.put(MM_YYYY_WITH_MINUS_AS_DELIMITER.getValue(), MM_YYYY_WITH_MINUS_AS_DELIMITER);
-      REGISTRY.put(
-          YYYY_MM_DD_WITH_SLASH_AS_DELIMITER.getValue(), YYYY_MM_DD_WITH_SLASH_AS_DELIMITER);
-      REGISTRY.put(
-          DD_MM_YYYY_WITH_SLASH_AS_DELIMITER.getValue(), DD_MM_YYYY_WITH_SLASH_AS_DELIMITER);
-      REGISTRY.put(YYYY_MM_WITH_SLASH_AS_DELIMITER.getValue(), YYYY_MM_WITH_SLASH_AS_DELIMITER);
-      REGISTRY.put(MM_YYYY_WITH_SLASH_AS_DELIMITER.getValue(), MM_YYYY_WITH_SLASH_AS_DELIMITER);
-      REGISTRY.put(
-          YYYY_MM_DD_WITH_SPACE_AS_DELIMITER.getValue(), YYYY_MM_DD_WITH_SPACE_AS_DELIMITER);
-      REGISTRY.put(
-          DD_MM_YYYY_WITH_SPACE_AS_DELIMITER.getValue(), DD_MM_YYYY_WITH_SPACE_AS_DELIMITER);
-      REGISTRY.put(YYYY_MM_WITH_SPACE_AS_DELIMITER.getValue(), YYYY_MM_WITH_SPACE_AS_DELIMITER);
-      REGISTRY.put(MM_YYYY_WITH_SPACE_AS_DELIMITER.getValue(), MM_YYYY_WITH_SPACE_AS_DELIMITER);
+      REGISTRY.put(YYYY_MM_DD_WITH_MINUS_AS_DELIMITER.value(), YYYY_MM_DD_WITH_MINUS_AS_DELIMITER);
+      REGISTRY.put(DD_MM_YYYY_WITH_MINUS_AS_DELIMITER.value(), DD_MM_YYYY_WITH_MINUS_AS_DELIMITER);
+      REGISTRY.put(YYYY_MM_WITH_MINUS_AS_DELIMITER.value(), YYYY_MM_WITH_MINUS_AS_DELIMITER);
+      REGISTRY.put(MM_YYYY_WITH_MINUS_AS_DELIMITER.value(), MM_YYYY_WITH_MINUS_AS_DELIMITER);
+      REGISTRY.put(YYYY_MM_DD_WITH_SLASH_AS_DELIMITER.value(), YYYY_MM_DD_WITH_SLASH_AS_DELIMITER);
+      REGISTRY.put(DD_MM_YYYY_WITH_SLASH_AS_DELIMITER.value(), DD_MM_YYYY_WITH_SLASH_AS_DELIMITER);
+      REGISTRY.put(YYYY_MM_WITH_SLASH_AS_DELIMITER.value(), YYYY_MM_WITH_SLASH_AS_DELIMITER);
+      REGISTRY.put(MM_YYYY_WITH_SLASH_AS_DELIMITER.value(), MM_YYYY_WITH_SLASH_AS_DELIMITER);
+      REGISTRY.put(YYYY_MM_DD_WITH_SPACE_AS_DELIMITER.value(), YYYY_MM_DD_WITH_SPACE_AS_DELIMITER);
+      REGISTRY.put(DD_MM_YYYY_WITH_SPACE_AS_DELIMITER.value(), DD_MM_YYYY_WITH_SPACE_AS_DELIMITER);
+      REGISTRY.put(YYYY_MM_WITH_SPACE_AS_DELIMITER.value(), YYYY_MM_WITH_SPACE_AS_DELIMITER);
+      REGISTRY.put(MM_YYYY_WITH_SPACE_AS_DELIMITER.value(), MM_YYYY_WITH_SPACE_AS_DELIMITER);
     }
   }
 
@@ -109,23 +103,23 @@ public final class DateTimePattern {
     }
 
     public static TimePattern register(TimePattern timePattern) {
-      REGISTRY.put(timePattern.getValue(), timePattern);
+      REGISTRY.put(timePattern.value(), timePattern);
       return timePattern;
     }
 
-    public static TimePattern getTimePattern(String stringTimePattern) {
+    public static TimePattern timePattern(String stringTimePattern) {
       return REGISTRY.getOrDefault(stringTimePattern, HH_MM_SS_WITH_SPACE_AS_DELIMITER);
     }
 
     static {
-      REGISTRY.put(HH_MM_SS_WITH_COLON_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
-      REGISTRY.put(HH_MM_WITH_COLON_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
-      REGISTRY.put(HH_MM_SS_WITH_MINUS_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
-      REGISTRY.put(HH_MM_WITH_MINUS_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
-      REGISTRY.put(HH_MM_SS_WITH_SLASH_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
-      REGISTRY.put(HH_MM_WITH_SLASH_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
-      REGISTRY.put(HH_MM_SS_WITH_SPACE_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
-      REGISTRY.put(HH_MM_WITH_SPACE_AS_DELIMITER.getValue(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+      REGISTRY.put(HH_MM_SS_WITH_COLON_AS_DELIMITER.value(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+      REGISTRY.put(HH_MM_WITH_COLON_AS_DELIMITER.value(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+      REGISTRY.put(HH_MM_SS_WITH_MINUS_AS_DELIMITER.value(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+      REGISTRY.put(HH_MM_WITH_MINUS_AS_DELIMITER.value(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+      REGISTRY.put(HH_MM_SS_WITH_SLASH_AS_DELIMITER.value(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+      REGISTRY.put(HH_MM_WITH_SLASH_AS_DELIMITER.value(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+      REGISTRY.put(HH_MM_SS_WITH_SPACE_AS_DELIMITER.value(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
+      REGISTRY.put(HH_MM_WITH_SPACE_AS_DELIMITER.value(), HH_MM_SS_WITH_COLON_AS_DELIMITER);
     }
   }
 
@@ -139,22 +133,20 @@ public final class DateTimePattern {
       this.pattern = DEFAULT_PATTERN;
     } else if (builder.datePattern != null && builder.timePattern != null) {
       if (builder.timeBeforeDate == false) {
-        this.pattern =
-            builder.datePattern.getValue() + SPACE_DELIMITER + builder.timePattern.getValue();
+        this.pattern = builder.datePattern.value() + SPACE_DELIMITER + builder.timePattern.value();
       } else {
-        this.pattern =
-            builder.timePattern.getValue() + SPACE_DELIMITER + builder.datePattern.getValue();
+        this.pattern = builder.timePattern.value() + SPACE_DELIMITER + builder.datePattern.value();
       }
     } else if (builder.datePattern != null && builder.timePattern == null) {
-      this.pattern = builder.datePattern.getValue();
+      this.pattern = builder.datePattern.value();
     } else if (builder.datePattern == null && builder.timePattern != null) {
-      this.pattern = builder.timePattern.getValue();
+      this.pattern = builder.timePattern.value();
     } else {
       this.pattern = DEFAULT_PATTERN;
     }
   }
 
-  public String getPattern() {
+  public String pattern() {
     return pattern;
   }
 

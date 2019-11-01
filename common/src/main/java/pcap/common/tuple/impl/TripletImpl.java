@@ -27,17 +27,17 @@ public class TripletImpl<L, M, R> extends Tuple implements Triplet<L, M, R> {
   }
 
   @Override
-  public L getLeft() {
+  public L left() {
     return left;
   }
 
   @Override
-  public M getMiddle() {
+  public M middle() {
     return middle;
   }
 
   @Override
-  public R getRight() {
+  public R right() {
     return right;
   }
 

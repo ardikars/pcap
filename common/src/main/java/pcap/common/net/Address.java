@@ -7,5 +7,5 @@ import pcap.common.annotation.Inclubating;
 @Inclubating
 public interface Address {
 
-  byte[] getAddress();
+  byte[] address();
 }

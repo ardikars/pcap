@@ -26,7 +26,7 @@ public abstract class Icmp extends AbstractPacket {
     Iterator<IcmpTypeAndCode> icmpTypeAndCodeIterator = typeAndCodes.iterator();
     while (icmpTypeAndCodeIterator.hasNext()) {
       IcmpTypeAndCode typeAndCode = icmpTypeAndCodeIterator.next();
-      if (typeAndCode.getType() == type && typeAndCode.getCode() == code) {
+      if (typeAndCode.type() == type && typeAndCode.code() == code) {
         return typeAndCode;
       }
     }
@@ -42,19 +42,19 @@ public abstract class Icmp extends AbstractPacket {
 
     @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
-    public abstract <T extends NamedNumber> T getPayloadType();
+    public abstract <T extends NamedNumber> T payloadType();
 
     @Override
-    public int getLength() {
+    public int length() {
       return ICMP_HEADER_LENGTH;
     }
 
     @Override
-    public Memory getBuffer() {
+    public Memory buffer() {
       if (buffer == null) {
-        buffer = ALLOCATOR.allocate(getLength());
-        buffer.writeByte(typeAndCode.getType());
-        buffer.writeByte(typeAndCode.getCode());
+        buffer = ALLOCATOR.allocate(length());
+        buffer.writeByte(typeAndCode.type());
+        buffer.writeByte(typeAndCode.code());
         buffer.writeShort(checksum);
       }
       return buffer;
@@ -112,15 +112,15 @@ public abstract class Icmp extends AbstractPacket {
       this.name = name;
     }
 
-    public byte getType() {
+    public byte type() {
       return type;
     }
 
-    public byte getCode() {
+    public byte code() {
       return code;
     }
 
-    public String getName() {
+    public String name() {
       return name;
     }
 
@@ -139,7 +139,7 @@ public abstract class Icmp extends AbstractPacket {
     }
 
     public Packet newInstance(Memory buffer) {
-      Builder packetBuilder = BUILDER.get(this.getValue());
+      Builder packetBuilder = BUILDER.get(this.value());
       if (packetBuilder == null) {
         if (buffer == null || buffer.capacity() <= 0) {
           return null;
@@ -164,7 +164,7 @@ public abstract class Icmp extends AbstractPacket {
 
     /** @param type type */
     public static void register(final IcmpTypeAndCode type) {
-      REGISTRY.put(type.getValue(), type);
+      REGISTRY.put(type.value(), type);
     }
 
     /**
@@ -172,15 +172,15 @@ public abstract class Icmp extends AbstractPacket {
      * @param packetBuilder packet builder.
      */
     public static void register(IcmpTypeAndCode type, Builder packetBuilder) {
-      BUILDER.put(type.getValue(), packetBuilder);
+      BUILDER.put(type.value(), packetBuilder);
     }
 
     static {
-      REGISTRY.put(ROUTER_SOLICICATION.getValue(), ROUTER_SOLICICATION);
-      REGISTRY.put(ROUTER_ADVERTISEMENT.getValue(), ROUTER_ADVERTISEMENT);
-      REGISTRY.put(NEIGHBOR_SOLICITATION.getValue(), NEIGHBOR_SOLICITATION);
-      REGISTRY.put(NEIGHBOR_ADVERTISEMENT.getValue(), NEIGHBOR_ADVERTISEMENT);
-      REGISTRY.put(REDIRECT.getValue(), REDIRECT);
+      REGISTRY.put(ROUTER_SOLICICATION.value(), ROUTER_SOLICICATION);
+      REGISTRY.put(ROUTER_ADVERTISEMENT.value(), ROUTER_ADVERTISEMENT);
+      REGISTRY.put(NEIGHBOR_SOLICITATION.value(), NEIGHBOR_SOLICITATION);
+      REGISTRY.put(NEIGHBOR_ADVERTISEMENT.value(), NEIGHBOR_ADVERTISEMENT);
+      REGISTRY.put(REDIRECT.value(), REDIRECT);
       IcmpTypeAndCode.register(
           IcmpTypeAndCode.NEIGHBOR_SOLICITATION, new NeighborSolicitation.Builder());
       IcmpTypeAndCode.register(

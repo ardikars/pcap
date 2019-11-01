@@ -20,7 +20,7 @@ public class Udp extends AbstractPacket {
     this.payloadBuffer = builder.payloadBuffer;
     if (this.payloadBuffer != null) {
       this.payload =
-          ApplicationLayer.valueOf(this.header.getPayloadType().getValue())
+          ApplicationLayer.valueOf(this.header.payloadType().value())
               .newInstance(this.payloadBuffer);
     } else {
       this.payload = null;
@@ -28,12 +28,12 @@ public class Udp extends AbstractPacket {
   }
 
   @Override
-  public Header getHeader() {
+  public Header header() {
     return header;
   }
 
   @Override
-  public Packet getPayload() {
+  public Packet payload() {
     return payload;
   }
 
@@ -53,36 +53,36 @@ public class Udp extends AbstractPacket {
       this.destinationPort = builder.destinationPort;
       this.length = builder.length;
       this.checksum = builder.checksum;
-      this.buffer = slice(builder.buffer, getLength());
+      this.buffer = slice(builder.buffer, length());
       this.builder = builder;
     }
 
-    public int getSourcePort() {
+    public int sourcePort() {
       return sourcePort & 0xffff;
     }
 
-    public int getDestinationPort() {
+    public int destinationPort() {
       return destinationPort & 0xffff;
     }
 
-    public int getChecksum() {
+    public int checksum() {
       return checksum & 0xffff;
     }
 
     @Override
-    public ApplicationLayer getPayloadType() {
+    public ApplicationLayer payloadType() {
       return ApplicationLayer.valueOf(destinationPort);
     }
 
     @Override
-    public int getLength() {
+    public int length() {
       return UDP_HEADER_LENGTH;
     }
 
     @Override
-    public Memory getBuffer() {
+    public Memory buffer() {
       if (buffer == null) {
-        buffer = ALLOCATOR.allocate(getLength());
+        buffer = ALLOCATOR.allocate(length());
         buffer.writeShort(this.sourcePort);
         buffer.writeShort(this.destinationPort);
         buffer.writeShort(this.length);
@@ -92,7 +92,7 @@ public class Udp extends AbstractPacket {
     }
 
     @Override
-    public Builder getBuilder() {
+    public Builder builder() {
       return builder;
     }
 
@@ -118,7 +118,7 @@ public class Udp extends AbstractPacket {
   @Override
   public String toString() {
     return new StringBuilder("[ Udp Header (")
-        .append(getHeader().getLength())
+        .append(header().length())
         .append(" bytes) ]")
         .append('\n')
         .append(header)

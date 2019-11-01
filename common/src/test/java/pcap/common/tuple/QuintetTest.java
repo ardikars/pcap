@@ -12,10 +12,10 @@ public class QuintetTest extends BaseTest {
   @Test
   public void quintet() {
     Quintet<Integer, Float, Long, Double, String> quintet = Tuple.of(1, 1.1F, 1L, 1.1D, "nol");
-    Assertions.assertEquals(Integer.valueOf(1), quintet.getLeft());
-    Assertions.assertEquals(Float.valueOf(1.1F), quintet.getBetweenLeftAndMiddle());
-    Assertions.assertEquals(Long.valueOf(1L), quintet.getMiddle());
-    Assertions.assertEquals(Double.valueOf(1.1D), quintet.getBetweenRigthAndMiddle());
-    Assertions.assertEquals("nol", quintet.getRight());
+    Assertions.assertEquals(Integer.valueOf(1), quintet.left());
+    Assertions.assertEquals(Float.valueOf(1.1F), quintet.betweenLeftAndMiddle());
+    Assertions.assertEquals(Long.valueOf(1L), quintet.middle());
+    Assertions.assertEquals(Double.valueOf(1.1D), quintet.betweenRigthAndMiddle());
+    Assertions.assertEquals("nol", quintet.right());
   }
 }

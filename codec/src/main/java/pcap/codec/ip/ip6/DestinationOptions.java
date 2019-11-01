@@ -20,20 +20,19 @@ public class DestinationOptions extends Options {
     this.payloadBuffer = builder.payloadBuffer;
     if (this.payloadBuffer != null) {
       this.payload =
-          TransportLayer.valueOf(header.getPayloadType().getValue())
-              .newInstance(this.payloadBuffer);
+          TransportLayer.valueOf(header.payloadType().value()).newInstance(this.payloadBuffer);
     } else {
       this.payload = null;
     }
   }
 
   @Override
-  public Header getHeader() {
+  public Header header() {
     return header;
   }
 
   @Override
-  public Packet getPayload() {
+  public Packet payload() {
     return payload;
   }
 
@@ -43,7 +42,7 @@ public class DestinationOptions extends Options {
 
     protected Header(Builder builder) {
       super(builder, builder.nextHeader);
-      this.buffer = slice(builder.buffer, getLength());
+      this.buffer = slice(builder.buffer, length());
       this.builder = builder;
     }
 
@@ -53,7 +52,7 @@ public class DestinationOptions extends Options {
     }
 
     @Override
-    public Builder getBuilder() {
+    public Builder builder() {
       return builder;
     }
   }
@@ -61,7 +60,7 @@ public class DestinationOptions extends Options {
   @Override
   public String toString() {
     return new StringBuilder("\t[ DestinationOptions Header (")
-        .append(getHeader().getLength())
+        .append(header().length())
         .append(" bytes) ]")
         .append('\n')
         .append(header)
@@ -109,7 +108,7 @@ public class DestinationOptions extends Options {
         Validate.notIllegalArgument(extensionLength >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(options != null, ILLEGAL_HEADER_EXCEPTION);
         int index = offset;
-        buffer.setByte(index, nextHeader.getValue());
+        buffer.setByte(index, nextHeader.value());
         index += 1;
         buffer.setInt(index, extensionLength);
         index += 4;

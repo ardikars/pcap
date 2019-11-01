@@ -16,13 +16,13 @@ import pcap.common.annotation.Inclubating;
 @Inclubating
 public interface Quintet<L, BLM, M, BRM, R> {
 
-  L getLeft();
+  L left();
 
-  BLM getBetweenLeftAndMiddle();
+  BLM betweenLeftAndMiddle();
 
-  M getMiddle();
+  M middle();
 
-  BRM getBetweenRigthAndMiddle();
+  BRM betweenRigthAndMiddle();
 
-  R getRight();
+  R right();
 }

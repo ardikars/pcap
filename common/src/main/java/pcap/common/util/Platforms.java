@@ -36,7 +36,7 @@ public final class Platforms {
    *
    * @return returns platform name.
    */
-  public static Name getName() {
+  public static Name name() {
     return name;
   }
 
@@ -45,7 +45,7 @@ public final class Platforms {
    *
    * @return returns platform architecture.
    */
-  public static Architecture getArchitecture() {
+  public static Architecture architecture() {
     return architecture;
   }
 
@@ -141,21 +141,11 @@ public final class Platforms {
   }
 
   /**
-   * Get Cpu Version. Please use getCpuVersoin().
-   *
-   * @return returns Cpu version.
-   */
-  @Deprecated
-  public static String getVersion() {
-    return getCpuVersion();
-  }
-
-  /**
    * Get Cpu Version.
    *
    * @return returns Cpu version.
    */
-  public static String getCpuVersion() {
+  public static String cpuVersion() {
     final String version = Properties.getProperty("os.version");
     if (Character.isDigit(version.charAt(version.indexOf('v') + 1))) {
       return String.valueOf("v" + version.charAt(version.indexOf('v') + 1));
@@ -169,7 +159,7 @@ public final class Platforms {
    * @return returns java major version.
    * @since 1.2.3
    */
-  public static int getJavaMojorVersion() {
+  public static int javaMojorVersion() {
     return javaMajorVersion;
   }
 

@@ -21,7 +21,7 @@ public class Tcp extends AbstractPacket {
     this.payloadBuffer = builder.payloadBuffer;
     if (this.payloadBuffer != null) {
       this.payload =
-          ApplicationLayer.valueOf(this.header.getPayloadType().getValue())
+          ApplicationLayer.valueOf(this.header.payloadType().value())
               .newInstance(this.payloadBuffer);
     } else {
       this.payload = null;
@@ -29,12 +29,12 @@ public class Tcp extends AbstractPacket {
   }
 
   @Override
-  public Header getHeader() {
+  public Header header() {
     return header;
   }
 
   @Override
-  public Packet getPayload() {
+  public Packet payload() {
     return payload;
   }
 
@@ -66,43 +66,43 @@ public class Tcp extends AbstractPacket {
       this.checksum = builder.checksum;
       this.urgentPointer = builder.urgentPointer;
       this.options = builder.options;
-      this.buffer = slice(builder.buffer, getLength());
+      this.buffer = slice(builder.buffer, length());
       this.builder = builder;
     }
 
-    public int getSourcePort() {
+    public int sourcePort() {
       return sourcePort & 0xffff;
     }
 
-    public int getDestinationPort() {
+    public int destinationPort() {
       return destinationPort & 0xffff;
     }
 
-    public int getSequence() {
+    public int sequence() {
       return sequence;
     }
 
-    public int getAcknowledge() {
+    public int acknowledge() {
       return acknowledge;
     }
 
-    public int getDataOffset() {
+    public int dataOffset() {
       return dataOffset & 0xf;
     }
 
-    public TcpFlags getFlags() {
+    public TcpFlags flags() {
       return flags;
     }
 
-    public int getWindowSize() {
+    public int windowSize() {
       return windowSize & 0xffff;
     }
 
-    public int getChecksum() {
+    public int checksum() {
       return checksum & 0xffff;
     }
 
-    public int getUrgentPointer() {
+    public int urgentPointer() {
       return urgentPointer & 0xffff;
     }
 
@@ -111,7 +111,7 @@ public class Tcp extends AbstractPacket {
      *
      * @return returns options.
      */
-    public byte[] getOptions() {
+    public byte[] options() {
       if (options == null) {
         return new byte[0];
       }
@@ -121,12 +121,12 @@ public class Tcp extends AbstractPacket {
     }
 
     @Override
-    public ApplicationLayer getPayloadType() {
+    public ApplicationLayer payloadType() {
       return ApplicationLayer.valueOf(destinationPort);
     }
 
     @Override
-    public int getLength() {
+    public int length() {
       int length = TCP_HEADER_LENGTH;
       if (this.options != null) {
         length += this.options.length;
@@ -135,14 +135,14 @@ public class Tcp extends AbstractPacket {
     }
 
     @Override
-    public Memory getBuffer() {
+    public Memory buffer() {
       if (buffer == null) {
-        buffer = ALLOCATOR.allocate(getLength());
+        buffer = ALLOCATOR.allocate(length());
         buffer.writeShort(this.sourcePort);
         buffer.writeShort(this.destinationPort);
         buffer.writeInt(this.sequence);
         buffer.writeInt(this.acknowledge);
-        buffer.writeShort((this.flags.getShortValue() & 0x1ff) | (this.dataOffset & 0xf) << 12);
+        buffer.writeShort((this.flags.value() & 0x1ff) | (this.dataOffset & 0xf) << 12);
         buffer.writeShort(this.windowSize);
         buffer.writeShort(this.checksum);
         buffer.writeShort(this.urgentPointer);
@@ -154,7 +154,7 @@ public class Tcp extends AbstractPacket {
     }
 
     @Override
-    public Builder getBuilder() {
+    public Builder builder() {
       return builder;
     }
 
@@ -198,7 +198,7 @@ public class Tcp extends AbstractPacket {
   @Override
   public String toString() {
     return new StringBuilder("[ Tcp Header (")
-        .append(getHeader().getLength())
+        .append(header().length())
         .append(" bytes) ]")
         .append('\n')
         .append(header)
@@ -340,7 +340,7 @@ public class Tcp extends AbstractPacket {
         index += 4;
         buffer.setInt(index, acknowledge);
         index += 4;
-        int tmp = ((dataOffset << 12) & 0xf) | (flags.getShortValue() & 0x1ff);
+        int tmp = ((dataOffset << 12) & 0xf) | (flags.value() & 0x1ff);
         buffer.setShort(index, tmp);
         index += 2;
         buffer.setShort(index, windowSize);

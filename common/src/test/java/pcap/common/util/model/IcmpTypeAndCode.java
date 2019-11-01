@@ -26,7 +26,7 @@ public class IcmpTypeAndCode extends NamedMultipleObject<MultipleObject<Byte>, I
   }
 
   public static final IcmpTypeAndCode register(final IcmpTypeAndCode icmpTypeAndCode) {
-    registry.put(icmpTypeAndCode.getValue(), icmpTypeAndCode);
+    registry.put(icmpTypeAndCode.value(), icmpTypeAndCode);
     return icmpTypeAndCode;
   }
 
@@ -39,6 +39,6 @@ public class IcmpTypeAndCode extends NamedMultipleObject<MultipleObject<Byte>, I
   }
 
   static {
-    registry.put(NO_ROUTE_TO_DESTINATION.getValue(), NO_ROUTE_TO_DESTINATION);
+    registry.put(NO_ROUTE_TO_DESTINATION.value(), NO_ROUTE_TO_DESTINATION);
   }
 }

@@ -28,12 +28,12 @@ public class Redirect extends AbstractPacket {
   }
 
   @Override
-  public Header getHeader() {
+  public Header header() {
     return header;
   }
 
   @Override
-  public Packet getPayload() {
+  public Packet payload() {
     return payload;
   }
 
@@ -52,47 +52,47 @@ public class Redirect extends AbstractPacket {
       this.targetAddress = builder.targetAddress;
       this.destinationAddress = builder.destinationAddress;
       this.options = builder.options;
-      this.buffer = slice(builder.buffer, getLength());
+      this.buffer = slice(builder.buffer, length());
       this.builder = builder;
     }
 
-    public Inet6Address getTargetAddress() {
+    public Inet6Address targetAddress() {
       return targetAddress;
     }
 
-    public Inet6Address getDestinationAddress() {
+    public Inet6Address destinationAddress() {
       return destinationAddress;
     }
 
-    public NeighborDiscoveryOptions getOptions() {
+    public NeighborDiscoveryOptions options() {
       return options;
     }
 
     @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
-    public <T extends NamedNumber> T getPayloadType() {
+    public <T extends NamedNumber> T payloadType() {
       return (T) UnknownPacket.UNKNOWN_PAYLOAD_TYPE;
     }
 
     @Override
-    public int getLength() {
-      return REDIRECT_HEADER_LENGTH + options.getHeader().getLength();
+    public int length() {
+      return REDIRECT_HEADER_LENGTH + options.header().length();
     }
 
     @Override
-    public Memory getBuffer() {
+    public Memory buffer() {
       if (buffer == null) {
-        buffer = ALLOCATOR.allocate(getLength());
+        buffer = ALLOCATOR.allocate(length());
         buffer.writeInt(0);
-        buffer.writeBytes(targetAddress.getAddress());
-        buffer.writeBytes(destinationAddress.getAddress());
-        buffer.writeBytes(options.getHeader().getBuffer());
+        buffer.writeBytes(targetAddress.address());
+        buffer.writeBytes(destinationAddress.address());
+        buffer.writeBytes(options.header().buffer());
       }
       return buffer;
     }
 
     @Override
-    public Builder getBuilder() {
+    public Builder builder() {
       return builder;
     }
 
@@ -115,7 +115,7 @@ public class Redirect extends AbstractPacket {
   @Override
   public String toString() {
     return new StringBuilder("[ Redirect Header (")
-        .append(getHeader().getLength())
+        .append(header().length())
         .append(" bytes) ]")
         .append('\n')
         .append(header)

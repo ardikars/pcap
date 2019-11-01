@@ -27,12 +27,12 @@ public class RouterSolicitation extends AbstractPacket {
   }
 
   @Override
-  public Header getHeader() {
+  public Header header() {
     return header;
   }
 
   @Override
-  public Packet getPayload() {
+  public Packet payload() {
     return payload;
   }
 
@@ -53,39 +53,38 @@ public class RouterSolicitation extends AbstractPacket {
       this.options = builder.options;
       if (builder.buffer != null) {
         this.buffer =
-            builder.buffer.slice(
-                0, ROUTER_SOLICITATION_HEADER_LENGTH + options.getHeader().getLength());
+            builder.buffer.slice(0, ROUTER_SOLICITATION_HEADER_LENGTH + options.header().length());
       }
       this.builder = builder;
     }
 
-    public NeighborDiscoveryOptions getOptions() {
+    public NeighborDiscoveryOptions options() {
       return options;
     }
 
     @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
-    public <T extends NamedNumber> T getPayloadType() {
+    public <T extends NamedNumber> T payloadType() {
       return (T) UnknownPacket.UNKNOWN_PAYLOAD_TYPE;
     }
 
     @Override
-    public int getLength() {
-      return ROUTER_SOLICITATION_HEADER_LENGTH + options.getHeader().getLength();
+    public int length() {
+      return ROUTER_SOLICITATION_HEADER_LENGTH + options.header().length();
     }
 
     @Override
-    public Memory getBuffer() {
+    public Memory buffer() {
       if (buffer == null) {
-        buffer = ALLOCATOR.allocate(getLength());
+        buffer = ALLOCATOR.allocate(length());
         buffer.writeInt(0);
-        buffer.writeBytes(options.getHeader().getBuffer());
+        buffer.writeBytes(options.header().buffer());
       }
       return buffer;
     }
 
     @Override
-    public AbstractPacket.Builder getBuilder() {
+    public AbstractPacket.Builder builder() {
       return builder;
     }
 
@@ -98,7 +97,7 @@ public class RouterSolicitation extends AbstractPacket {
   @Override
   public String toString() {
     return new StringBuilder("[ RouterSolicitation Header (")
-        .append(getHeader().getLength())
+        .append(header().length())
         .append(" bytes) ]")
         .append('\n')
         .append(header)

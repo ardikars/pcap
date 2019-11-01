@@ -34,27 +34,27 @@ public class QuintetImpl<L, BLM, M, BRM, R> extends Tuple implements Quintet<L, 
   }
 
   @Override
-  public L getLeft() {
+  public L left() {
     return left;
   }
 
   @Override
-  public BLM getBetweenLeftAndMiddle() {
+  public BLM betweenLeftAndMiddle() {
     return betweenLeftAndMiddle;
   }
 
   @Override
-  public M getMiddle() {
+  public M middle() {
     return middle;
   }
 
   @Override
-  public BRM getBetweenRigthAndMiddle() {
+  public BRM betweenRigthAndMiddle() {
     return betweenRightAndMiddle;
   }
 
   @Override
-  public R getRight() {
+  public R right() {
     return right;
   }
 

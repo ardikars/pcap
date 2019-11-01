@@ -24,7 +24,7 @@ public class BaseTest {
                 .timePattern(DateTimePattern.TimePattern.HH_MM_SS_WITH_COLON_AS_DELIMITER)
                 .timeBeforeDate(true)
                 .build()
-                .getPattern());
+                .pattern());
     Format format = formatter.toFormat();
     Assertions.assertNotNull(format);
   }

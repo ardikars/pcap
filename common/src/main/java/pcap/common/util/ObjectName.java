@@ -8,5 +8,5 @@ import pcap.common.annotation.Inclubating;
 @Inclubating
 public interface ObjectName<T, U> extends Serializable {
 
-  String getName();
+  String name();
 }

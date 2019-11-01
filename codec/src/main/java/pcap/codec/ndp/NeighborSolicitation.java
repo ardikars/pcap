@@ -27,12 +27,12 @@ public class NeighborSolicitation extends AbstractPacket {
   }
 
   @Override
-  public Header getHeader() {
+  public Header header() {
     return header;
   }
 
   @Override
-  public Packet getPayload() {
+  public Packet payload() {
     return payload;
   }
 
@@ -49,41 +49,41 @@ public class NeighborSolicitation extends AbstractPacket {
     private Header(Builder builder) {
       this.targetAddress = builder.targetAddress;
       this.options = builder.options;
-      this.buffer = slice(builder.buffer, getLength());
+      this.buffer = slice(builder.buffer, length());
       this.builder = builder;
     }
 
-    public Inet6Address getTargetAddress() {
+    public Inet6Address targetAddress() {
       return targetAddress;
     }
 
-    public NeighborDiscoveryOptions getOptions() {
+    public NeighborDiscoveryOptions options() {
       return options;
     }
 
     @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
-    public <T extends NamedNumber> T getPayloadType() {
+    public <T extends NamedNumber> T payloadType() {
       return null;
     }
 
     @Override
-    public int getLength() {
-      return NEIGHBOR_SOLICITATION_HEADER_LENGTH + options.getHeader().getLength();
+    public int length() {
+      return NEIGHBOR_SOLICITATION_HEADER_LENGTH + options.header().length();
     }
 
     @Override
-    public Memory getBuffer() {
+    public Memory buffer() {
       if (buffer == null) {
-        buffer = ALLOCATOR.allocate(getLength());
-        buffer.writeBytes(targetAddress.getAddress());
-        buffer.writeBytes(options.getHeader().getBuffer());
+        buffer = ALLOCATOR.allocate(length());
+        buffer.writeBytes(targetAddress.address());
+        buffer.writeBytes(options.header().buffer());
       }
       return buffer;
     }
 
     @Override
-    public Builder getBuilder() {
+    public Builder builder() {
       return builder;
     }
 
@@ -103,7 +103,7 @@ public class NeighborSolicitation extends AbstractPacket {
   @Override
   public String toString() {
     return new StringBuilder("[ NeighborSolicitation Header (")
-        .append(getHeader().getLength())
+        .append(header().length())
         .append(" bytes) ]")
         .append('\n')
         .append(header)

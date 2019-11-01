@@ -196,7 +196,7 @@ public final class Inet4Address extends InetAddress {
    * @return the raw IPv4 address of this object.
    */
   @Override
-  public byte[] getAddress() {
+  public byte[] address() {
     return Arrays.copyOf(this.address, this.address.length);
   }
 }

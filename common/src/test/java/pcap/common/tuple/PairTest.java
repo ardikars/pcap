@@ -12,7 +12,7 @@ public class PairTest extends BaseTest {
   @Test
   public void pair() {
     Pair<Integer, String> pair = Tuple.of(1, "nol");
-    Assertions.assertEquals(Integer.valueOf(1), pair.getLeft());
-    Assertions.assertEquals("nol", pair.getRight());
+    Assertions.assertEquals(Integer.valueOf(1), pair.left());
+    Assertions.assertEquals("nol", pair.right());
   }
 }

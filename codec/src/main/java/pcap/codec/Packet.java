@@ -1,11 +1,10 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec;
 
-import pcap.common.annotation.Inclubating;
-import pcap.common.util.NamedNumber;
-
 import java.io.Serializable;
 import java.util.List;
+import pcap.common.annotation.Inclubating;
+import pcap.common.util.NamedNumber;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -16,14 +15,14 @@ public interface Packet extends Iterable<Packet>, Serializable {
    *
    * @return returns null if header doesn't exist, {@link Header} object otherwise.
    */
-  Header getHeader();
+  Header header();
 
   /**
    * Returns the {@link Packet} object representing this packet's payload.
    *
    * @return returns null if a payload doesn't exits, {@link Packet} object otherwise.
    */
-  Packet getPayload();
+  Packet payload();
 
   /**
    * Ensures that given packet type is included on this {@link Packet} object.
@@ -72,13 +71,13 @@ public interface Packet extends Iterable<Packet>, Serializable {
      * @return returns payload type.
      */
     @SuppressWarnings("TypeParameterUnusedInFormals")
-    <T extends NamedNumber> T getPayloadType();
+    <T extends NamedNumber> T payloadType();
 
     /**
      * Returns header length.
      *
      * @return returns header length.
      */
-    int getLength();
+    int length();
   }
 }

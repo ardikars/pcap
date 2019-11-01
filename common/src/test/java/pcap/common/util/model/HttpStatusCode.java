@@ -25,7 +25,7 @@ public final class HttpStatusCode extends NamedNumber<Integer, HttpStatusCode> {
   }
 
   public static final HttpStatusCode register(final HttpStatusCode httpStatusCode) {
-    registry.put(httpStatusCode.getValue(), httpStatusCode);
+    registry.put(httpStatusCode.value(), httpStatusCode);
     return httpStatusCode;
   }
 
@@ -38,8 +38,8 @@ public final class HttpStatusCode extends NamedNumber<Integer, HttpStatusCode> {
   }
 
   static {
-    registry.put(NOT_FOUND.getValue(), NOT_FOUND);
-    registry.put(OK.getValue(), OK);
-    registry.put(UNKNOWN.getValue(), UNKNOWN);
+    registry.put(NOT_FOUND.value(), NOT_FOUND);
+    registry.put(OK.value(), OK);
+    registry.put(UNKNOWN.value(), UNKNOWN);
   }
 }

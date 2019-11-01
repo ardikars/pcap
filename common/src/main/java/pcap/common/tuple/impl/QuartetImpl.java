@@ -30,22 +30,22 @@ public class QuartetImpl<L, ML, MR, R> extends Tuple implements Quartet<L, ML, M
   }
 
   @Override
-  public L getLeft() {
+  public L left() {
     return left;
   }
 
   @Override
-  public ML getMiddleLeft() {
+  public ML middleLeft() {
     return middleLeft;
   }
 
   @Override
-  public MR getMiddleRight() {
+  public MR middleRight() {
     return middleRight;
   }
 
   @Override
-  public R getRight() {
+  public R right() {
     return right;
   }
 

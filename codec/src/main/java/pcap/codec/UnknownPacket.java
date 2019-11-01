@@ -33,12 +33,12 @@ public class UnknownPacket extends AbstractPacket {
   }
 
   @Override
-  public Header getHeader() {
+  public Header header() {
     return header;
   }
 
   @Override
-  public Packet getPayload() {
+  public Packet payload() {
     return payload;
   }
 
@@ -54,23 +54,23 @@ public class UnknownPacket extends AbstractPacket {
     }
 
     @Override
-    public int getLength() {
+    public int length() {
       return buffer.capacity();
     }
 
     @Override
-    public Memory getBuffer() {
+    public Memory buffer() {
       return buffer;
     }
 
     @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
-    public <T extends NamedNumber> T getPayloadType() {
+    public <T extends NamedNumber> T payloadType() {
       return (T) UNKNOWN_PAYLOAD_TYPE;
     }
 
     @Override
-    public Builder getBuilder() {
+    public Builder builder() {
       return builder;
     }
 
@@ -83,7 +83,7 @@ public class UnknownPacket extends AbstractPacket {
   @Override
   public String toString() {
     return new StringBuilder("[ UnknownPacket Header (")
-        .append(getHeader().getLength())
+        .append(header().length())
         .append(" bytes) ]")
         .append('\n')
         .append(header)

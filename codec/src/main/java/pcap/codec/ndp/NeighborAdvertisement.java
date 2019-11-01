@@ -28,12 +28,12 @@ public class NeighborAdvertisement extends AbstractPacket {
   }
 
   @Override
-  public Header getHeader() {
+  public Header header() {
     return header;
   }
 
   @Override
-  public Packet getPayload() {
+  public Packet payload() {
     return payload;
   }
 
@@ -56,7 +56,7 @@ public class NeighborAdvertisement extends AbstractPacket {
       this.overrideFlag = builder.overrideFlag;
       this.targetAddress = builder.targetAddress;
       this.options = builder.options;
-      this.buffer = slice(builder.buffer, getLength());
+      this.buffer = slice(builder.buffer, length());
       this.builder = builder;
     }
 
@@ -72,41 +72,41 @@ public class NeighborAdvertisement extends AbstractPacket {
       return overrideFlag;
     }
 
-    public Inet6Address getTargetAddress() {
+    public Inet6Address targetAddress() {
       return targetAddress;
     }
 
-    public NeighborDiscoveryOptions getOptions() {
+    public NeighborDiscoveryOptions options() {
       return options;
     }
 
     @Override
     @SuppressWarnings("TypeParameterUnusedInFormals")
-    public <T extends NamedNumber> T getPayloadType() {
+    public <T extends NamedNumber> T payloadType() {
       return (T) UnknownPacket.UNKNOWN_PAYLOAD_TYPE;
     }
 
     @Override
-    public int getLength() {
-      return HEADER_LENGTH + options.getHeader().getLength();
+    public int length() {
+      return HEADER_LENGTH + options.header().length();
     }
 
     @Override
-    public Memory getBuffer() {
+    public Memory buffer() {
       if (buffer == null) {
-        buffer = ALLOCATOR.allocate(getLength());
+        buffer = ALLOCATOR.allocate(length());
         buffer.writeInt(
             (routerFlag ? 1 : 0) << 31
                 | (solicitedFlag ? 1 : 0) << 30
                 | (overrideFlag ? 1 : 0) << 29);
-        buffer.writeBytes(targetAddress.getAddress());
-        buffer.writeBytes(options.getHeader().getBuffer());
+        buffer.writeBytes(targetAddress.address());
+        buffer.writeBytes(options.header().buffer());
       }
       return buffer;
     }
 
     @Override
-    public Builder getBuilder() {
+    public Builder builder() {
       return builder;
     }
 
@@ -135,7 +135,7 @@ public class NeighborAdvertisement extends AbstractPacket {
   @Override
   public String toString() {
     return new StringBuilder("[ NeighborAdvertisement Header (")
-        .append(getHeader().getLength())
+        .append(header().length())
         .append(" bytes) ]")
         .append('\n')
         .append(header)

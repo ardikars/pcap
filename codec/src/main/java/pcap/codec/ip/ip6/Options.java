@@ -27,15 +27,15 @@ public abstract class Options extends AbstractPacket {
       this.options = builder.options;
     }
 
-    public TransportLayer getNextHeader() {
+    public TransportLayer nextHeader() {
       return nextHeader;
     }
 
-    public int getExtensionLength() {
+    public int extensionLength() {
       return extensionLength;
     }
 
-    public byte[] getOptions() {
+    public byte[] options() {
       if (options != null) {
         byte[] data = new byte[options.length];
         System.arraycopy(options, 0, data, 0, data.length);
@@ -45,20 +45,20 @@ public abstract class Options extends AbstractPacket {
     }
 
     @Override
-    public TransportLayer getPayloadType() {
+    public TransportLayer payloadType() {
       return nextHeader;
     }
 
     @Override
-    public int getLength() {
+    public int length() {
       return FIXED_OPTIONS_LENGTH + LENGTH_UNIT * extensionLength;
     }
 
     @Override
-    public Memory getBuffer() {
+    public Memory buffer() {
       if (buffer == null) {
-        buffer = ALLOCATOR.allocate(getLength());
-        buffer.writeByte(nextHeader.getValue());
+        buffer = ALLOCATOR.allocate(length());
+        buffer.writeByte(nextHeader.value());
         buffer.writeInt(extensionLength);
         if (options != null) {
           buffer.writeBytes(options);

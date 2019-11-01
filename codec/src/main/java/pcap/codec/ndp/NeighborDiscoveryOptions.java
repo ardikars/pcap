@@ -33,12 +33,12 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
   }
 
   @Override
-  public Header getHeader() {
+  public Header header() {
     return header;
   }
 
   @Override
-  public Packet getPayload() {
+  public Packet payload() {
     return payload;
   }
 
@@ -51,39 +51,39 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
 
     private Header(Builder builder) {
       this.options = builder.options;
-      this.buffer = slice(builder.buffer, getLength());
+      this.buffer = slice(builder.buffer, length());
       this.builder = builder;
     }
 
-    public List<Option> getOptions() {
+    public List<Option> options() {
       return options;
     }
 
     @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
-    public <T extends NamedNumber> T getPayloadType() {
+    public <T extends NamedNumber> T payloadType() {
       return (T) UnknownPacket.UNKNOWN_PAYLOAD_TYPE;
     }
 
     @Override
-    public int getLength() {
+    public int length() {
       if (length == 0) {
         for (Option option : this.options) {
-          length += option.getLength() << 3;
+          length += option.length() << 3;
         }
       }
       return length;
     }
 
     @Override
-    public Memory getBuffer() {
+    public Memory buffer() {
       if (buffer == null) {
-        buffer = ALLOCATOR.allocate(getLength());
+        buffer = ALLOCATOR.allocate(length());
         for (Option option : options) {
-          buffer.writeByte(option.getType().getValue());
-          buffer.writeByte(option.getLength());
-          buffer.writeBytes(option.getData());
-          int paddingLength = (option.getLength() << 3) - (option.getData().length + 2);
+          buffer.writeByte(option.type().value());
+          buffer.writeByte(option.length());
+          buffer.writeBytes(option.data());
+          int paddingLength = (option.length() << 3) - (option.data().length + 2);
           for (int i = 0; i < paddingLength; i++) {
             buffer.writeByte(0);
           }
@@ -93,7 +93,7 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
     }
 
     @Override
-    public Builder getBuilder() {
+    public Builder builder() {
       return builder;
     }
 
@@ -106,7 +106,7 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
   @Override
   public String toString() {
     return new StringBuilder("[ NeighborDiscoveryOptions Header (")
-        .append(getHeader().getLength())
+        .append(header().length())
         .append(" bytes) ]")
         .append('\n')
         .append(header)
@@ -137,11 +137,11 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
     }
 
     static {
-      REGISTRY.put(SOURCE_LINK_LAYER_ADDRESS.getValue(), SOURCE_LINK_LAYER_ADDRESS);
-      REGISTRY.put(TARGET_LINK_LAYER_ADDRESS.getValue(), TARGET_LINK_LAYER_ADDRESS);
-      REGISTRY.put(PREFIX_INFORMATION.getValue(), PREFIX_INFORMATION);
-      REGISTRY.put(REDIRECT_HEADER.getValue(), REDIRECT_HEADER);
-      REGISTRY.put(MTU.getValue(), MTU);
+      REGISTRY.put(SOURCE_LINK_LAYER_ADDRESS.value(), SOURCE_LINK_LAYER_ADDRESS);
+      REGISTRY.put(TARGET_LINK_LAYER_ADDRESS.value(), TARGET_LINK_LAYER_ADDRESS);
+      REGISTRY.put(PREFIX_INFORMATION.value(), PREFIX_INFORMATION);
+      REGISTRY.put(REDIRECT_HEADER.value(), REDIRECT_HEADER);
+      REGISTRY.put(MTU.value(), MTU);
     }
   }
 
@@ -172,11 +172,11 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
       return option;
     }
 
-    public OptionType getType() {
+    public OptionType type() {
       return type;
     }
 
-    public byte getLength() {
+    public byte length() {
       return length;
     }
 
@@ -185,7 +185,7 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
      *
      * @return returns option.
      */
-    public byte[] getData() {
+    public byte[] data() {
       byte[] data = new byte[this.data.length];
       System.arraycopy(this.data, 0, data, 0, data.length);
       return data;
@@ -195,9 +195,9 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
     public String toString() {
       return new StringBuilder("[")
           .append("Type: ")
-          .append(this.getType())
+          .append(this.type())
           .append(", Data: ")
-          .append(Strings.toHexString(this.getData()))
+          .append(Strings.toHexString(this.data()))
           .append("]")
           .toString();
     }

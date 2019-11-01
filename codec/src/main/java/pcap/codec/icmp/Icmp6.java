@@ -31,7 +31,7 @@ public class Icmp6 extends AbstractPacket {
     this.payloadBuffer = builder.payloadBuffer;
     if (this.payloadBuffer != null) {
       this.payload =
-          Icmp.IcmpTypeAndCode.valueOf(this.header.getPayloadType().getValue().byteValue())
+          Icmp.IcmpTypeAndCode.valueOf(this.header.payloadType().value().byteValue())
               .newInstance(this.payloadBuffer);
     } else {
       this.payload = null;
@@ -39,12 +39,12 @@ public class Icmp6 extends AbstractPacket {
   }
 
   @Override
-  public Header getHeader() {
+  public Header header() {
     return header;
   }
 
   @Override
-  public Packet getPayload() {
+  public Packet payload() {
     return payload;
   }
 
@@ -55,13 +55,13 @@ public class Icmp6 extends AbstractPacket {
     private Header(Builder builder) {
       typeAndCode = builder.typeAndCode;
       checksum = builder.checksum;
-      buffer = slice(builder.buffer, getLength());
+      buffer = slice(builder.buffer, length());
       this.builder = builder;
     }
 
     @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
-    public <T extends NamedNumber> T getPayloadType() {
+    public <T extends NamedNumber> T payloadType() {
       return (T) typeAndCode;
     }
 
@@ -78,7 +78,7 @@ public class Icmp6 extends AbstractPacket {
     }
 
     @Override
-    public AbstractPacket.Builder getBuilder() {
+    public AbstractPacket.Builder builder() {
       return builder;
     }
   }
@@ -86,7 +86,7 @@ public class Icmp6 extends AbstractPacket {
   @Override
   public String toString() {
     return new StringBuilder("[ Icmp6 Header (")
-        .append(getHeader().getLength())
+        .append(header().length())
         .append(" bytes) ]")
         .append('\n')
         .append(header)
@@ -130,9 +130,9 @@ public class Icmp6 extends AbstractPacket {
         Validate.notIllegalArgument(typeAndCode != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(checksum >= 0, ILLEGAL_HEADER_EXCEPTION);
         int index = offset;
-        buffer.setByte(index, typeAndCode.getType());
+        buffer.setByte(index, typeAndCode.type());
         index += 1;
-        buffer.setByte(index, typeAndCode.getCode());
+        buffer.setByte(index, typeAndCode.code());
         index += 1;
         buffer.setShort(index, checksum);
       }

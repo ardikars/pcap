@@ -38,7 +38,7 @@ public final class HostAndPort {
    *
    * @return returns host name of this {@code Host} object.
    */
-  public String getHostName() {
+  public String hostName() {
     return hostName;
   }
 
@@ -47,7 +47,7 @@ public final class HostAndPort {
    *
    * @return returns host address of this {@code Host} object.
    */
-  public InetAddress getHostAddress() {
+  public InetAddress hostAddress() {
     return hostAddress;
   }
 
@@ -56,7 +56,7 @@ public final class HostAndPort {
    *
    * @return returns host port of this {@code Host} object.
    */
-  public int getPort() {
+  public int port() {
     return port;
   }
 
@@ -86,7 +86,7 @@ public final class HostAndPort {
    * @return returns host address with given prefix of this {@code Host} object.
    */
   public String hostAddress(String prefix) {
-    return Validate.nullPointer(prefix, "") + getHostAddress().toString();
+    return Validate.nullPointer(prefix, "") + hostAddress().toString();
   }
 
   /**
@@ -115,7 +115,7 @@ public final class HostAndPort {
    * @return returns host name with given prefix of this {@code Host} object.
    */
   public String hostName(String prefix) {
-    return Validate.nullPointer(prefix, "") + getHostName();
+    return Validate.nullPointer(prefix, "") + hostName();
   }
 
   public static Builder builder() {

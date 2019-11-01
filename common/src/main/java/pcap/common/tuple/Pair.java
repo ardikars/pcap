@@ -13,7 +13,7 @@ import pcap.common.annotation.Inclubating;
 @Inclubating
 public interface Pair<L, R> {
 
-  L getLeft();
+  L left();
 
-  R getRight();
+  R right();
 }

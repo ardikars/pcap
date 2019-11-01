@@ -68,7 +68,7 @@ public final class TcpFlags implements Serializable {
     return fin;
   }
 
-  public short getShortValue() {
+  public short value() {
     short flags = 0;
     if (this.ns) {
       flags += 256;

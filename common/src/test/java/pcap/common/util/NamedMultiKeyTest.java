@@ -21,13 +21,13 @@ public class NamedMultiKeyTest {
   public void found() {
     IcmpTypeAndCode icmpTypeAndCode = IcmpTypeAndCode.valueOf(NO_ROUTE_TO_DESTINATION);
     Assertions.assertEquals(
-        IcmpTypeAndCode.NO_ROUTE_TO_DESTINATION.getValue(), icmpTypeAndCode.getValue());
+        IcmpTypeAndCode.NO_ROUTE_TO_DESTINATION.value(), icmpTypeAndCode.value());
   }
 
   @Test
   public void notFound() {
     IcmpTypeAndCode icmpTypeAndCode = IcmpTypeAndCode.valueOf(UNKNOWN_CODE);
-    Assertions.assertEquals(IcmpTypeAndCode.UNKNOWN.getValue(), icmpTypeAndCode.getValue());
+    Assertions.assertEquals(IcmpTypeAndCode.UNKNOWN.value(), icmpTypeAndCode.value());
   }
 
   @Test
@@ -43,7 +43,6 @@ public class NamedMultiKeyTest {
     IcmpTypeAndCode communicationWithxxx =
         IcmpTypeAndCode.valueOf(COMMUNICATION_WITH_DESTINATION_ADMINIS_TRATIVELY_PROHIBITED);
     Assertions.assertEquals(
-        COMMUNICATION_WITH_DESTINATION_ADMINIS_TRATIVELY_PROHIBITED,
-        communicationWithxxx.getValue());
+        COMMUNICATION_WITH_DESTINATION_ADMINIS_TRATIVELY_PROHIBITED, communicationWithxxx.value());
   }
 }
