@@ -91,7 +91,7 @@ public abstract class Pcaps {
    * @return returns {@link Interface}.
    * @throws ErrorException interface not found.
    */
-  private Interface findInterfaceByName(String name) throws ErrorException {
+  private static Interface findInterfaceByName(String name) throws ErrorException {
     Interface interfaces = findInterfaces();
     Iterator<Interface> interfaceIterator = interfaces.iterator();
     while (interfaceIterator.hasNext()) {
