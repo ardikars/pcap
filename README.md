@@ -39,7 +39,7 @@ Add below configuration to your pom.xml
         <dependency>
             <groupId>com.ardikars.pcap</groupId>
             <artifactId>pcap</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
+            <version>0.0.4-SNAPSHOT</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
