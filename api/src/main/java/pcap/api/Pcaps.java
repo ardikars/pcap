@@ -12,8 +12,11 @@ import pcap.api.internal.PcapConstant;
 import pcap.api.internal.PcapInterface;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.common.annotation.Inclubating;
+import pcap.common.net.Inet4Address;
+import pcap.common.net.Inet6Address;
 import pcap.common.net.MacAddress;
 import pcap.common.util.Platforms;
+import pcap.spi.Address;
 import pcap.spi.Interface;
 import pcap.spi.Pcap;
 import pcap.spi.exception.ErrorException;
@@ -67,7 +70,7 @@ public abstract class Pcaps {
    * @return returns iterable {@link Interface}'s.
    * @throws ErrorException generic error.
    */
-  public static Interface findInterfaces() throws ErrorException {
+  public static Interface lookupInterfaces() throws ErrorException {
     synchronized (PcapConstant.LOCK) {
       Pointer<Pointer<pcap_mapping.pcap_if>> pointer =
           PcapConstant.SCOPE.allocate(LayoutType.ofStruct(pcap_mapping.pcap_if.class).pointer());
@@ -91,8 +94,8 @@ public abstract class Pcaps {
    * @return returns {@link Interface}.
    * @throws ErrorException interface not found.
    */
-  private static Interface findInterfaceByName(String name) throws ErrorException {
-    Interface interfaces = findInterfaces();
+  public static Interface lookupInterface(String name) throws ErrorException {
+    Interface interfaces = lookupInterfaces();
     Iterator<Interface> interfaceIterator = interfaces.iterator();
     while (interfaceIterator.hasNext()) {
       Interface next = interfaceIterator.next();
@@ -119,7 +122,7 @@ public abstract class Pcaps {
       }
       String deviceName = Pointer.toString(device);
       Interface pcapInterface =
-          StreamSupport.stream(findInterfaces().spliterator(), false)
+          StreamSupport.stream(lookupInterfaces().spliterator(), false)
               .filter(iface -> deviceName.equals(iface.name()))
               .findFirst()
               .get();
@@ -144,6 +147,52 @@ public abstract class Pcaps {
     } catch (SocketException e) {
       throw new ErrorException(e.getMessage());
     }
+  }
+
+  /**
+   * Lookup {@link Inet4Address} from {@link Interface}.
+   *
+   * @param source {@link Interface}.
+   * @return returns {@link Inet4Address}.
+   * @throws ErrorException address not found.
+   */
+  public static Inet4Address lookupInet4Addres(Interface source) throws ErrorException {
+    Iterator<Address> addressIterator = source.addresses().iterator();
+    while (addressIterator.hasNext()) {
+      Address next = addressIterator.next();
+      if (next.address() != null && !next.address().isLoopbackAddress()) {
+        if (next.address() instanceof java.net.Inet4Address) {
+          Inet4Address inet4Address = Inet4Address.valueOf(next.address().getAddress());
+          if (!inet4Address.equals(Inet4Address.ZERO)) {
+            return inet4Address;
+          }
+        }
+      }
+    }
+    throw new ErrorException("IPv4 address not found for " + source.name());
+  }
+
+  /**
+   * Lookup {@link Inet6Address} from {@link Interface}.
+   *
+   * @param source {@link Interface}.
+   * @return returns {@link Inet6Address}.
+   * @throws ErrorException address not found.
+   */
+  public static Inet6Address lookupInet6Address(Interface source) throws ErrorException {
+    Iterator<Address> addressIterator = source.addresses().iterator();
+    while (addressIterator.hasNext()) {
+      Address next = addressIterator.next();
+      if (next.address() != null && !next.address().isLoopbackAddress()) {
+        if (next.address() instanceof java.net.Inet6Address) {
+          Inet6Address inet6Address = Inet6Address.valueOf(next.address().getAddress());
+          if (!inet6Address.equals(Inet6Address.ZERO.ZERO)) {
+            return inet6Address;
+          }
+        }
+      }
+    }
+    throw new ErrorException("IPv6 address not found for " + source.name());
   }
 
   /**

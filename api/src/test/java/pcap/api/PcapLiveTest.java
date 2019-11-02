@@ -22,7 +22,7 @@ public class PcapLiveTest {
 
   @Test
   public void iterateInterfaceTest() throws ErrorException {
-    Interface aInterface = Pcaps.findInterfaces();
+    Interface aInterface = Pcaps.lookupInterfaces();
     Iterator<Interface> interfaceIterator = aInterface.iterator();
     while (interfaceIterator.hasNext()) {
       Interface nextInterface = interfaceIterator.next();
