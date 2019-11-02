@@ -11,7 +11,7 @@ final class DefaultMemoryAllocator implements MemoryAllocator {
 
   @Override
   public Memory allocate(int capacity) {
-    return allocate(capacity, 0, 0, 0, true);
+    return allocate(capacity, 0, 0, 0, false);
   }
 
   @Override
@@ -21,7 +21,7 @@ final class DefaultMemoryAllocator implements MemoryAllocator {
 
   @Override
   public Memory allocate(int capacity, int maxCapacity) {
-    return allocate(capacity, maxCapacity, 0, 0, true);
+    return allocate(capacity, maxCapacity, 0, 0, false);
   }
 
   @Override
@@ -31,7 +31,7 @@ final class DefaultMemoryAllocator implements MemoryAllocator {
 
   @Override
   public Memory allocate(int capacity, int maxCapacity, int readerIndex, int writerIndex) {
-    return allocate(capacity, maxCapacity, readerIndex, writerIndex, true);
+    return allocate(capacity, maxCapacity, readerIndex, writerIndex, false);
   }
 
   @Override

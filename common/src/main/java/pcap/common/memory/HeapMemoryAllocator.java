@@ -11,7 +11,7 @@ final class HeapMemoryAllocator implements MemoryAllocator {
 
   @Override
   public Memory allocate(int capacity) {
-    return allocate(capacity, 0, 0, 0, true);
+    return allocate(capacity, 0, 0, 0, false);
   }
 
   @Override
@@ -21,7 +21,7 @@ final class HeapMemoryAllocator implements MemoryAllocator {
 
   @Override
   public Memory allocate(int capacity, int maxCapacity) {
-    return allocate(capacity, maxCapacity, 0, 0, true);
+    return allocate(capacity, maxCapacity, 0, 0, false);
   }
 
   @Override
@@ -31,7 +31,7 @@ final class HeapMemoryAllocator implements MemoryAllocator {
 
   @Override
   public Memory allocate(int capacity, int maxCapacity, int readerIndex, int writerIndex) {
-    return allocate(capacity, maxCapacity, readerIndex, writerIndex, true);
+    return allocate(capacity, maxCapacity, readerIndex, writerIndex, false);
   }
 
   @Override
@@ -40,10 +40,10 @@ final class HeapMemoryAllocator implements MemoryAllocator {
     if (Unsafe.HAS_UNSAFE && MemoryAllocator.UNSAFE_BUFFER) {
       if (!checking && UNCHECKED) {
         return new UncheckedByteArray(
-                0, new byte[capacity], capacity, maxCapacity, readerIndex, writerIndex);
+            0, new byte[capacity], capacity, maxCapacity, readerIndex, writerIndex);
       }
       return new CheckedByteArray(
-              0, new byte[capacity], capacity, maxCapacity, readerIndex, writerIndex);
+          0, new byte[capacity], capacity, maxCapacity, readerIndex, writerIndex);
     } else {
       ByteBuffer buffer = ByteBuffer.allocate(capacity);
       Memory memory = new ByteBuf(0, buffer, capacity, maxCapacity, readerIndex, writerIndex);

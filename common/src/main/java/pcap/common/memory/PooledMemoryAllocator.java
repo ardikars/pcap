@@ -30,7 +30,7 @@ final class PooledMemoryAllocator implements MemoryAllocator {
     this.moreMemoryCounter = new AtomicInteger(maxPoolSize - poolSize);
     Queue<PooledMemory> queue = new ConcurrentLinkedQueue<PooledMemory>();
     for (int i = 0; i < poolSize; i++) {
-      Memory memory = doAllocateForPooledMemory(maxMemoryCapacity, maxMemoryCapacity, 0, 0, true);
+      Memory memory = doAllocateForPooledMemory(maxMemoryCapacity, maxMemoryCapacity, 0, 0, false);
       queue.offer(new PooledMemory(memory));
     }
     Memories.POOLS.put(maxMemoryCapacity, queue);
@@ -43,22 +43,22 @@ final class PooledMemoryAllocator implements MemoryAllocator {
 
   @Override
   public Memory allocate(int capacity, boolean checking) {
-    return allocate(capacity, capacity, true);
+    return allocate(capacity, capacity, false);
   }
 
   @Override
   public Memory allocate(int capacity, int maxCapacity) {
-    return allocate(capacity, maxCapacity, true);
+    return allocate(capacity, maxCapacity, false);
   }
 
   @Override
   public Memory allocate(int capacity, int maxCapacity, boolean checking) {
-    return allocate(capacity, maxCapacity, 0, 0, true);
+    return allocate(capacity, maxCapacity, 0, 0, false);
   }
 
   @Override
   public Memory allocate(int capacity, int maxCapacity, int readerIndex, int writerIndex) {
-    return allocate(capacity, maxCapacity, readerIndex, writerIndex, true);
+    return allocate(capacity, maxCapacity, readerIndex, writerIndex, false);
   }
 
   @Override
