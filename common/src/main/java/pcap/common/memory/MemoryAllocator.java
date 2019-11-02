@@ -10,6 +10,8 @@ public interface MemoryAllocator {
 
   boolean UNSAFE_BUFFER = Properties.getBoolean("pcap.unsafe", false);
 
+  boolean UNCHECKED = Properties.getBoolean("pcap.unchecked", false);
+
   Memory allocate(int capacity);
 
   Memory allocate(int capacity, boolean checking);

@@ -89,10 +89,10 @@ final class PooledMemoryAllocator implements MemoryAllocator {
           // allocate non pooled buffer
           if (Unsafe.HAS_UNSAFE) {
             long address = AbstractMemory.ACCESSOR.allocate(capacity);
-            if (checking) {
-              return new CheckedMemory(address, capacity, maxCapacity, readerIndex, writerIndex);
+            if (!checking && UNCHECKED) {
+              return new UncheckedMemory(address, capacity, maxCapacity, readerIndex, writerIndex);
             }
-            return new UncheckedMemory(address, capacity, maxCapacity, readerIndex, writerIndex);
+            return new CheckedMemory(address, capacity, maxCapacity, readerIndex, writerIndex);
           } else {
             ByteBuffer buffer = ByteBuffer.allocateDirect(capacity);
             return new ByteBuf(0, buffer, capacity, maxCapacity, readerIndex, writerIndex);
@@ -128,10 +128,10 @@ final class PooledMemoryAllocator implements MemoryAllocator {
       int capacity, int maxCapacity, int readerIndex, int writerIndex, boolean checking) {
     if (Unsafe.HAS_UNSAFE) {
       long address = AbstractMemory.ACCESSOR.allocate(capacity);
-      if (checking) {
-        return new PooledCheckedMemory(address, capacity, maxCapacity, readerIndex, writerIndex);
+      if (!checking && UNCHECKED) {
+        return new PooledUncheckedMemory(address, capacity, capacity, readerIndex, writerIndex);
       }
-      return new PooledUncheckedMemory(address, capacity, capacity, readerIndex, writerIndex);
+      return new PooledCheckedMemory(address, capacity, maxCapacity, readerIndex, writerIndex);
     } else {
       ByteBuffer buffer = ByteBuffer.allocateDirect(capacity);
       Memory memory = new PooledByteBuf(0, buffer, capacity, capacity, readerIndex, writerIndex);

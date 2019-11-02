@@ -39,10 +39,10 @@ final class DefaultMemoryAllocator implements MemoryAllocator {
       int capacity, int maxCapacity, int readerIndex, int writerIndex, boolean checking) {
     if (Unsafe.HAS_UNSAFE && MemoryAllocator.UNSAFE_BUFFER) {
       long address = AbstractMemory.ACCESSOR.allocate(capacity);
-      if (checking) {
-        return new CheckedMemory(address, capacity, maxCapacity, readerIndex, writerIndex);
+      if (!checking && UNCHECKED) {
+        return new UncheckedMemory(address, capacity, maxCapacity, readerIndex, writerIndex);
       }
-      return new UncheckedMemory(address, capacity, maxCapacity, readerIndex, writerIndex);
+      return new CheckedMemory(address, capacity, maxCapacity, readerIndex, writerIndex);
     } else {
       ByteBuffer buffer = ByteBuffer.allocateDirect(capacity);
       Memory memory = new ByteBuf(0, buffer, capacity, maxCapacity, readerIndex, writerIndex);

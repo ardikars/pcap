@@ -38,12 +38,12 @@ final class HeapMemoryAllocator implements MemoryAllocator {
   public Memory allocate(
       int capacity, int maxCapacity, int readerIndex, int writerIndex, boolean checking) {
     if (Unsafe.HAS_UNSAFE && MemoryAllocator.UNSAFE_BUFFER) {
-      if (checking) {
-        return new CheckedByteArray(
-            0, new byte[capacity], capacity, maxCapacity, readerIndex, writerIndex);
+      if (!checking && UNCHECKED) {
+        return new UncheckedByteArray(
+                0, new byte[capacity], capacity, maxCapacity, readerIndex, writerIndex);
       }
-      return new UncheckedByteArray(
-          0, new byte[capacity], capacity, maxCapacity, readerIndex, writerIndex);
+      return new CheckedByteArray(
+              0, new byte[capacity], capacity, maxCapacity, readerIndex, writerIndex);
     } else {
       ByteBuffer buffer = ByteBuffer.allocate(capacity);
       Memory memory = new ByteBuf(0, buffer, capacity, maxCapacity, readerIndex, writerIndex);
