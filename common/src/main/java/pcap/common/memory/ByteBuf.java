@@ -271,7 +271,7 @@ class ByteBuf extends AbstractMemory<ByteBuffer> {
         LOGGER.error("ByteBuffer cleaner is not available.");
       }
     } else {
-      LOGGER.warn("Unssafe is not available.");
+      LOGGER.warn("Unsafe is not available.");
       method = null;
     }
     CLEANER = method;
