@@ -1,30 +1,32 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
+import pcap.common.annotation.Inclubating;
+import pcap.common.internal.Unsafe;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-final class PooledMemoryAllocator implements MemoryAllocator {
+final class PooledDirectMemoryAllocator implements MemoryAllocator {
 
   private final int poolSize;
   private final int maxMemoryCapacity;
 
   private final AtomicInteger moreMemoryCounter;
 
-  private final MemoryAllocator defaultMemoryAllocator = new DefaultMemoryAllocator();
+  private final MemoryAllocator heapMemoryAllocator = new DirectMemoryAllocator();
 
-  PooledMemoryAllocator(int maxMemoryCapacity) {
+  PooledDirectMemoryAllocator(int maxMemoryCapacity) {
     this(
         Math.max(Runtime.getRuntime().availableProcessors(), 15),
         Math.max(Runtime.getRuntime().availableProcessors() * 2, 15),
         maxMemoryCapacity);
   }
 
-  PooledMemoryAllocator(int poolSize, int maxPoolSize, int maxMemoryCapacity) {
+  PooledDirectMemoryAllocator(int poolSize, int maxPoolSize, int maxMemoryCapacity) {
     this.poolSize = poolSize;
     this.maxMemoryCapacity = maxMemoryCapacity;
     this.moreMemoryCounter = new AtomicInteger(maxPoolSize - poolSize);
@@ -119,7 +121,6 @@ final class PooledMemoryAllocator implements MemoryAllocator {
 
   private Memory doAllocateForPooledMemory(
       int capacity, int maxCapacity, int readerIndex, int writerIndex, boolean checking) {
-    return defaultMemoryAllocator.allocate(
-        capacity, maxCapacity, readerIndex, writerIndex, checking);
+    return heapMemoryAllocator.allocate(capacity, maxCapacity, readerIndex, writerIndex, checking);
   }
 }

@@ -51,4 +51,9 @@ class SlicedUncheckedMemory extends UncheckedMemory implements Sliced {
         readerIndex() - index,
         writerIndex() - index);
   }
+
+  @Override
+  protected long baseAddress() {
+    return baseAddress;
+  }
 }

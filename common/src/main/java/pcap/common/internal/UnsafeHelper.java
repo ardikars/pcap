@@ -280,6 +280,7 @@ public final class UnsafeHelper {
         Object maybeExceptionJdk9 = checkJdk9Unsafe();
         if (maybeExceptionJdk9 instanceof Throwable) {
           causes.add((Throwable) maybeExceptionJdk9);
+          unsafe = null;
         }
       }
     }

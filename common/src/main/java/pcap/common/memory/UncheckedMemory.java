@@ -200,7 +200,7 @@ class UncheckedMemory extends AbstractMemory<ByteBuffer> {
     if (buffer != null) {
       return buffer;
     }
-    return ACCESSOR.nioBuffer(memoryAddress(), capacity);
+    return ACCESSOR.nioBuffer(baseAddress(), capacity);
   }
 
   @Override
@@ -213,5 +213,9 @@ class UncheckedMemory extends AbstractMemory<ByteBuffer> {
 
   final long addr(int index) {
     return address + index;
+  }
+
+  protected long baseAddress() {
+    return address;
   }
 }

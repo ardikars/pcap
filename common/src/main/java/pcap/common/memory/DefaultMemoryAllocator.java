@@ -37,16 +37,24 @@ final class DefaultMemoryAllocator implements MemoryAllocator {
   @Override
   public Memory allocate(
       int capacity, int maxCapacity, int readerIndex, int writerIndex, boolean checking) {
-    if (Unsafe.HAS_UNSAFE && MemoryAllocator.UNSAFE_BUFFER) {
+    if (MemoryAllocator.UNSAFE_BUFFER) {
       long address = AbstractMemory.ACCESSOR.allocate(capacity);
       if (!checking && UNCHECKED) {
         return new UncheckedMemory(address, capacity, maxCapacity, readerIndex, writerIndex);
       }
       return new CheckedMemory(address, capacity, maxCapacity, readerIndex, writerIndex);
     } else {
-      ByteBuffer buffer = ByteBuffer.allocateDirect(capacity);
-      Memory memory = new ByteBuf(0, buffer, capacity, maxCapacity, readerIndex, writerIndex);
-      return memory;
+      if (Unsafe.HAS_UNSAFE) {
+        if (!checking && UNCHECKED) {
+          return new UncheckedByteArray(0, new byte[capacity], capacity, maxCapacity, readerIndex, writerIndex);
+        } else {
+          return new CheckedByteArray(0, new byte[capacity], capacity, maxCapacity, readerIndex, writerIndex);
+        }
+      } else {
+        ByteBuffer buffer = ByteBuffer.allocateDirect(capacity);
+        Memory memory = new ByteBuf(0, buffer, capacity, maxCapacity, readerIndex, writerIndex);
+        return memory;
+      }
     }
   }
 
