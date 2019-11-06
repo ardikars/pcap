@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+    <servers>
+        <server>
+            <id>sonatype-nexus-snapshots</id>
+            <username>${env.SONATYPE_USERNAME}</username>
+            <password>${env.SONATYPE_TOKEN}</password>
+        </server>
+        <server>
+            <id>sonatype-nexus-staging</id>
+            <username>${env.SONATYPE_USERNAME}</username>
+            <password>${env.SONATYPE_TOKEN}</password>
+        </server>
+    </servers>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <properties>
+                <gpg.keyname>${env.GPG_KEYNAME}</gpg.keyname>
+                <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
+                <gpg.defaultKeyring>false</gpg.defaultKeyring>
+                <gpg.useagent>true</gpg.useagent>
+                <gpg.lockMode>never</gpg.lockMode>
+                <gpg.homedir>${env.HOME}/.gnupg</gpg.homedir>
+                <gpg.publicKeyring>${env.HOME}/.gnupg/pubring.gpg</gpg.publicKeyring>
+                <gpg.secretKeyring>${env.HOME}/.gnupg/secring.gpg</gpg.secretKeyring>
+            </properties>
+        </profile>
+    </profiles>
+</settings>

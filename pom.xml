@@ -49,7 +49,7 @@
         <junit.version>5.5.1</junit.version>
         <junit.runner.version>1.5.2</junit.runner.version>
         <junit.engine.version>5.4.2</junit.engine.version>
-        <errorprone.version>2.3.4-SNAPSHOT</errorprone.version>
+        <errorprone.version>2.3.3</errorprone.version>
     </properties>
 
     <modules>
@@ -354,6 +354,19 @@
             </build>
         </profile>
     </profiles>
+
+    <repositories>
+        <repository>
+            <id>central-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
 
     <distributionManagement>
         <snapshotRepository>

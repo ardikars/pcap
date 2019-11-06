@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron: "0 0 * * 1"
+
+jobs:
+  hotspot-ea:
+    name: HotSpot (EA)
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Install JDK and build project
+        run: |
+          . ./.mvn/install-jdk.sh --feature ea --os linux-x64
+          ./mvnw -s .mvn/settings.xml verify -pl !api -Dmaven.compiler.target=14 -DskipTests
+  hotspot-supported:
+    name: HotSpot (supported)
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-18.04, macOS-10.14, windows-2019]
+        java: [11, 13]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+          architecture: x64
+      - name: Build project
+        run: ./mvnw -s .mvn/settings.xml verify -pl !api -Dmaven.compiler.source=${{ matrix.java }} -Dmaven.compiler.target=${{ matrix.java }} -DskipTests
+  hotspot-unsupported:
+    name: HotSpot (unsupported)
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-18.04, macOS-10.14, windows-2019]
+        java: [8]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+          architecture: x64
+      - name: Build project
+        run: ./mvnw -s .mvn/settings.xml verify -pl !api -Plegacy-support -DskipTests
