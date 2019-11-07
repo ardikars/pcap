@@ -3,6 +3,13 @@
 *.jar
 *.class
 
+.gnupg/*.gpg-agent*
+.gnupg/private-keys*
+.gnupg/.gpg*
+.gnupg/secring.gpg
+
+.mvn/*settings.xml
+
 api/target
 codec/target
 common/target

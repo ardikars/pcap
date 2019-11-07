@@ -46,9 +46,11 @@ final class DefaultMemoryAllocator implements MemoryAllocator {
     } else {
       if (Unsafe.HAS_UNSAFE) {
         if (!checking && UNCHECKED) {
-          return new UncheckedByteArray(0, new byte[capacity], capacity, maxCapacity, readerIndex, writerIndex);
+          return new UncheckedByteArray(
+              0, new byte[capacity], capacity, maxCapacity, readerIndex, writerIndex);
         } else {
-          return new CheckedByteArray(0, new byte[capacity], capacity, maxCapacity, readerIndex, writerIndex);
+          return new CheckedByteArray(
+              0, new byte[capacity], capacity, maxCapacity, readerIndex, writerIndex);
         }
       } else {
         ByteBuffer buffer = ByteBuffer.allocateDirect(capacity);

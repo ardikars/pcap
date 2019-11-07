@@ -57,7 +57,6 @@
         <module>api</module>
         <module>common</module>
         <module>codec</module>
-        <module>tools</module>
     </modules>
 
     <dependencies>
@@ -182,6 +181,12 @@
                             <goals>
                                 <goal>sign</goal>
                             </goals>
+                            <configuration>
+                                <gpgArguments>
+                                    <arg>--pinentry-mode</arg>
+                                    <arg>loopback</arg>
+                                </gpgArguments>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>

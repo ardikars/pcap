@@ -34,18 +34,18 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
-                    <fork>true</fork>
-                    <compilerArgs combine.children="append">
-                        <arg>-Xplugin:ErrorProne</arg>
-                        <arg>-XDcompilePolicy=simple</arg>
-                    </compilerArgs>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>com.google.errorprone</groupId>
-                            <artifactId>error_prone_core</artifactId>
-                            <version>${errorprone.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
+<!--                    <fork>true</fork>-->
+<!--                    <compilerArgs combine.children="append">-->
+<!--                        <arg>-Xplugin:ErrorProne</arg>-->
+<!--                        <arg>-XDcompilePolicy=simple</arg>-->
+<!--                    </compilerArgs>-->
+<!--                    <annotationProcessorPaths>-->
+<!--                        <path>-->
+<!--                            <groupId>com.google.errorprone</groupId>-->
+<!--                            <artifactId>error_prone_core</artifactId>-->
+<!--                            <version>${errorprone.version}</version>-->
+<!--                        </path>-->
+<!--                    </annotationProcessorPaths>-->
                 </configuration>
             </plugin>
         </plugins>
