@@ -165,12 +165,15 @@ public class PcapLive extends Pcaps {
       if (PcapConstant.MAPPING.pcap_set_buffer_size(pointer, bufferSize) != PcapConstant.OK) {
         throw new ActivatedException("Error occurred when set buffer size.");
       }
-      result = PcapConstant.MAPPING.pcap_set_tstamp_precision(pointer, timestampPrecision.value());
-      if (result == -12) {
-        throw new TimestampPrecisionNotSupportedException(
-            "Error occurred when set timestamp procision.");
-      } else if (result == -4) {
-        throw new ActivatedException("Error occurred when set timestamp procision.");
+      if (timestampPrecision != null) {
+        result =
+            PcapConstant.MAPPING.pcap_set_tstamp_precision(pointer, timestampPrecision.value());
+        if (result == -12) {
+          throw new TimestampPrecisionNotSupportedException(
+              "Error occurred when set timestamp procision.");
+        } else if (result == -4) {
+          throw new ActivatedException("Error occurred when set timestamp procision.");
+        }
       }
       result = PcapConstant.MAPPING.pcap_activate(pointer);
       if (result == 2) {
