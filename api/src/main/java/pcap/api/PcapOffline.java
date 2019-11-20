@@ -1,36 +1,31 @@
 package pcap.api;
 
-import java.foreign.NativeTypes;
-import java.foreign.memory.Pointer;
 import pcap.api.internal.Pcap;
 import pcap.api.internal.PcapConstant;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
-import pcap.spi.Timestamp;
 import pcap.spi.exception.ErrorException;
+
+import java.foreign.NativeTypes;
+import java.foreign.memory.Pointer;
 
 @Inclubating
 public class PcapOffline extends Pcaps {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PcapOffline.class);
 
-  private Timestamp.Precision timestampPrecision; // nullable
   private String file; // not null
+  private PcapOfflineOptions options; // nullable
 
   public PcapOffline(String file) {
-    this(null, file);
+    this(file, new PcapOfflineOptions());
   }
 
-  public PcapOffline(Timestamp.Precision timestampPrecision, String file) {
-    this.timestampPrecision = timestampPrecision;
+  public PcapOffline(String file, PcapOfflineOptions options) {
     this.file = file;
-  }
-
-  public PcapOffline timestampPrecision(Timestamp.Precision timestampPrecision) {
-    this.timestampPrecision = timestampPrecision;
-    return this;
+    this.options = options;
   }
 
   @Override
@@ -39,7 +34,7 @@ public class PcapOffline extends Pcaps {
       Pointer<Byte> errbuf =
           PcapConstant.SCOPE.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
       Pointer<pcap_mapping.pcap> pointer;
-      if (timestampPrecision == null) {
+      if (options.timestampPrecision() == null) {
         if (LOGGER.isDebugEnabled()) {
           LOGGER.debug("Opening file: {}", file);
         }
@@ -49,11 +44,15 @@ public class PcapOffline extends Pcaps {
       } else {
         if (LOGGER.isDebugEnabled()) {
           LOGGER.debug(
-              "Opening file ({}) with timestamp precision ({})", file, timestampPrecision.value());
+              "Opening file ({}) with timestamp precision ({})",
+              file,
+              options.timestampPrecision().value());
         }
         pointer =
             PcapConstant.MAPPING.pcap_open_offline_with_tstamp_precision(
-                PcapConstant.SCOPE.allocateCString(file), timestampPrecision.value(), errbuf);
+                PcapConstant.SCOPE.allocateCString(file),
+                options.timestampPrecision().value(),
+                errbuf);
       }
       if (pointer == null || pointer.isNull()) {
         throw new ErrorException(Pointer.toString(errbuf));

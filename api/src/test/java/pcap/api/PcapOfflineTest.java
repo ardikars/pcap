@@ -1,6 +1,5 @@
 package pcap.api;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -8,9 +7,10 @@ import org.junit.runner.RunWith;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.spi.Pcap;
-import pcap.spi.Timestamp;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RunWith(JUnitPlatform.class)
 public class PcapOfflineTest {
@@ -23,7 +23,7 @@ public class PcapOfflineTest {
 
   @Test
   public void offlineTest() throws ErrorException {
-    Pcap pcap = Pcaps.offline(new PcapOffline(FILE).timestampPrecision(Timestamp.Precision.MICRO));
+    Pcap pcap = Pcaps.offline(new PcapOffline(FILE));
     Assertions.assertNotNull(pcap);
     pcap.close();
   }

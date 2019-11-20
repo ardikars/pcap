@@ -61,15 +61,7 @@ public class PcapLiveTest {
     Assertions.assertNotNull(source);
     Pcap pcap =
         Pcaps.live(
-            new PcapLive(source)
-                .bufferSize(2000)
-                .immediateMode(true)
-                .promiscuous(true)
-                .rfmon(false)
-                .snaplen(65535)
-                .timeout(2000)
-                .timestampPrecision(Timestamp.Precision.MICRO)
-                .timestampType(Timestamp.Type.HOST));
+            new PcapLive(source));
     Assertions.assertNotNull(pcap);
     pcap.close();
   }
