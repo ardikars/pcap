@@ -1,8 +1,9 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.util;
 
-import java.nio.charset.Charset;
 import pcap.common.annotation.Inclubating;
+
+import java.nio.charset.Charset;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -12,6 +13,29 @@ public final class Strings {
   public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
   private Strings() {}
+
+  public static boolean empty(CharSequence charSequence) {
+    return charSequence == null || charSequence.length() == 0;
+  }
+
+  public static boolean blank(CharSequence charSequence) {
+    if (empty(charSequence)) {
+      return true;
+    }
+    int isBlankCount = 9;
+    for (int i = 0; i < charSequence.length(); i++) {
+      char ch = charSequence.charAt(i);
+      if (ch == ' '
+          || ch == '\t'
+          || ch == '\r'
+          || ch == '\n'
+          || ch == '\0'
+          || Character.isWhitespace(ch)) {
+        isBlankCount++;
+      }
+    }
+    return isBlankCount == charSequence.length();
+  }
 
   /**
    * Get length.
@@ -38,7 +62,7 @@ public final class Strings {
    * @return hex format.
    * @since 1.0.0
    */
-  public static String toHexString(final byte value) {
+  public static String hex(final byte value) {
     String str = Integer.toHexString((value) & 0xff);
     if ((str.length() & 1) == 1) {
       return "0" + str;
@@ -53,8 +77,8 @@ public final class Strings {
    * @return hex stream.
    * @since 1.0.0
    */
-  public static String toHexString(final byte[] data) {
-    return toHexString(data, 0, data.length);
+  public static String hex(final byte[] data) {
+    return hex(data, 0, data.length);
   }
 
   /**
@@ -66,12 +90,12 @@ public final class Strings {
    * @return hex stream.
    * @since 1.0.0
    */
-  public static String toHexString(final byte[] data, final int offset, final int length) {
+  public static String hex(final byte[] data, final int offset, final int length) {
     Validate.notInBounds(data, offset, length);
     StringBuilder sb = new StringBuilder(length);
     int l = length(data.length, offset, length);
     for (int i = offset; i < l; i++) {
-      sb.append(toHexString(data[i]));
+      sb.append(hex(data[i]));
     }
     return sb.toString();
   }
@@ -83,7 +107,7 @@ public final class Strings {
    * @return hex stream.
    * @since 1.0.0
    */
-  public static String toHexString(final short value) {
+  public static String hex(final short value) {
     String str = Integer.toHexString((value) & 0xFFFF);
     if ((str.length() & 1) == 1) {
       return "0" + str;
@@ -98,8 +122,8 @@ public final class Strings {
    * @return hex stream.
    * @since 1.0.0
    */
-  public static String toHexString(final short[] values) {
-    return toHexString(values, 0, values.length);
+  public static String hex(final short[] values) {
+    return hex(values, 0, values.length);
   }
 
   /**
@@ -111,12 +135,12 @@ public final class Strings {
    * @return hex stream.
    * @since 1.0.0
    */
-  public static String toHexString(final short[] data, final int offset, final int length) {
+  public static String hex(final short[] data, final int offset, final int length) {
     Validate.notInBounds(data, offset, length);
     StringBuilder sb = new StringBuilder(length);
     int l = length(data.length, offset, length);
     for (int i = offset; i < l; i++) {
-      sb.append(toHexString(data[i]));
+      sb.append(hex(data[i]));
     }
     return sb.toString();
   }
@@ -128,7 +152,7 @@ public final class Strings {
    * @return hex stream.
    * @since 1.0.0
    */
-  public static String toHexString(final int value) {
+  public static String hex(final int value) {
     String str = Integer.toHexString(value);
     if ((str.length() & 1) == 1) {
       return "0" + str;
@@ -143,8 +167,8 @@ public final class Strings {
    * @return hex stream.
    * @since 1.0.0
    */
-  public static String toHexString(final int[] values) {
-    return toHexString(values, 0, values.length);
+  public static String hex(final int[] values) {
+    return hex(values, 0, values.length);
   }
 
   /**
@@ -156,12 +180,12 @@ public final class Strings {
    * @return hex stream.
    * @since 1.0.0
    */
-  public static String toHexString(final int[] data, final int offset, final int length) {
+  public static String hex(final int[] data, final int offset, final int length) {
     Validate.notInBounds(data, offset, length);
     StringBuilder sb = new StringBuilder(length);
     int l = length(data.length, offset, length);
     for (int i = offset; i < l; i++) {
-      sb.append(toHexString(data[i]));
+      sb.append(hex(data[i]));
     }
     return sb.toString();
   }
@@ -172,7 +196,7 @@ public final class Strings {
    * @param value float array.
    * @return hex stream.
    */
-  public static String toHexString(final float value) {
+  public static String hex(final float value) {
     String str = Float.toHexString(value);
     if ((str.length() & 1) == 1) {
       return "0" + str;
@@ -186,8 +210,8 @@ public final class Strings {
    * @param data float array.
    * @return hex stream.
    */
-  public static String toHexString(final float[] data) {
-    return toHexString(data, 0, data.length);
+  public static String hex(final float[] data) {
+    return hex(data, 0, data.length);
   }
 
   /**
@@ -198,12 +222,12 @@ public final class Strings {
    * @param length length.
    * @return hex stream.
    */
-  public static String toHexString(final float[] data, final int offset, final int length) {
+  public static String hex(final float[] data, final int offset, final int length) {
     Validate.notInBounds(data, offset, length);
     StringBuilder sb = new StringBuilder(length);
     int l = length(data.length, offset, length);
     for (int i = offset; i < l; i++) {
-      sb.append(toHexString(data[i]));
+      sb.append(hex(data[i]));
     }
     return sb.toString();
   }
@@ -214,7 +238,7 @@ public final class Strings {
    * @param value long.
    * @return hex stream.
    */
-  public static String toHexString(final long value) {
+  public static String hex(final long value) {
     String str = Long.toHexString(value);
     if ((str.length() & 1) == 1) {
       return "0" + str;
@@ -228,8 +252,8 @@ public final class Strings {
    * @param data long array.
    * @return hex stream.
    */
-  public static String toHexString(final long[] data) {
-    return toHexString(data, 0, data.length);
+  public static String hex(final long[] data) {
+    return hex(data, 0, data.length);
   }
 
   /**
@@ -240,12 +264,12 @@ public final class Strings {
    * @param length length.
    * @return hex stream.
    */
-  public static String toHexString(final long[] data, final int offset, final int length) {
+  public static String hex(final long[] data, final int offset, final int length) {
     Validate.notInBounds(data, offset, length);
     StringBuilder sb = new StringBuilder(length);
     int l = length(data.length, offset, length);
     for (int i = offset; i < l; i++) {
-      sb.append(toHexString(data[i]));
+      sb.append(hex(data[i]));
     }
     return sb.toString();
   }
@@ -256,7 +280,7 @@ public final class Strings {
    * @param value double value.
    * @return hex stream.
    */
-  public static String toHexString(final double value) {
+  public static String hex(final double value) {
     String str = Double.toHexString(value);
     if ((str.length() & 1) == 1) {
       return "0" + str;
@@ -270,8 +294,8 @@ public final class Strings {
    * @param data double array.
    * @return hex stream.
    */
-  public static String toHexString(final double[] data) {
-    return toHexString(data, 0, data.length);
+  public static String hex(final double[] data) {
+    return hex(data, 0, data.length);
   }
 
   /**
@@ -282,12 +306,12 @@ public final class Strings {
    * @param length length.
    * @return hex stream.
    */
-  public static String toHexString(final double[] data, final int offset, final int length) {
+  public static String hex(final double[] data, final int offset, final int length) {
     Validate.notInBounds(data, offset, length);
     StringBuilder sb = new StringBuilder(length);
     int l = length(data.length, offset, length);
     for (int i = offset; i < l; i++) {
-      sb.append(toHexString(data[i]));
+      sb.append(hex(data[i]));
     }
     return sb.toString();
   }
@@ -298,11 +322,10 @@ public final class Strings {
    * @param value string.
    * @return hex string.
    */
-  public static String toHexString(final String value) {
+  public static String hex(final String value) {
     Validate.notIllegalArgument(
-        value != null && !value.isEmpty(),
-        new IllegalArgumentException("Value should be not null and empty."));
-    return toHexString(value.getBytes(DEFAULT_CHARSET));
+        value != null && !value.isEmpty(), "Value should be not null and empty.");
+    return hex(value.getBytes(DEFAULT_CHARSET));
   }
 
   /**
@@ -312,13 +335,11 @@ public final class Strings {
    * @param charset charset.
    * @return hex string.
    */
-  public static String toHexString(final String value, Charset charset) {
+  public static String hex(final String value, Charset charset) {
     Validate.notIllegalArgument(
-        value != null && !value.isEmpty(),
-        new IllegalArgumentException("Value should be not null and empty."));
-    Validate.notIllegalArgument(
-        charset != null, new IllegalArgumentException("Charset should be not null."));
-    return toHexString(value.getBytes(charset));
+        value != null && !value.isEmpty(), "Value should be not null and empty.");
+    Validate.notIllegalArgument(charset != null, "Charset should be not null.");
+    return hex(value.getBytes(charset));
   }
 
   public static ToStringBuilder toStringBuilder(Object obj) {
@@ -406,17 +427,17 @@ public final class Strings {
             String arrayString;
             if (value instanceof byte[]) {
               byte[] array = (byte[]) value;
-              arrayString = Strings.toHexString(array);
+              arrayString = Strings.hex(array);
             } else if (value instanceof short[]) {
-              arrayString = Strings.toHexString((short[]) value);
+              arrayString = Strings.hex((short[]) value);
             } else if (value instanceof int[]) {
-              arrayString = Strings.toHexString((int[]) value);
+              arrayString = Strings.hex((int[]) value);
             } else if (value instanceof float[]) {
-              arrayString = Strings.toHexString((float[]) value);
+              arrayString = Strings.hex((float[]) value);
             } else if (value instanceof long[]) {
-              arrayString = Strings.toHexString((long[]) value);
+              arrayString = Strings.hex((long[]) value);
             } else if (value instanceof double[]) {
-              arrayString = Strings.toHexString((double[]) value);
+              arrayString = Strings.hex((double[]) value);
             } else {
               arrayString = Arrays.toString(value);
             }

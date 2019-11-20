@@ -1,18 +1,17 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.util;
 
+import pcap.common.annotation.Inclubating;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 public final class ValidateNumber {
   public static void notNumeric(String text) throws IllegalArgumentException {
-    Validate.notIllegalArgument(
-        text != null, new IllegalArgumentException("Text should be not null."));
-    Validate.notIllegalArgument(
-        text.length() > 0, new IllegalArgumentException("Text should be not empty."));
+    Validate.notIllegalArgument(text != null, "Text should be not null.");
+    Validate.notIllegalArgument(text.length() > 0, "Text should be not empty.");
     int length = text.length();
     for (int i = 0; i < length; i++) {
       if (!Character.isDigit(text.charAt(i))) {
@@ -28,10 +27,8 @@ public final class ValidateNumber {
    * @throws IllegalArgumentException illegal argument exception.
    */
   public static void notNumericWithCommaSeparator(String text) throws IllegalArgumentException {
-    Validate.notIllegalArgument(
-        text != null, new IllegalArgumentException("Text should be not null."));
-    Validate.notIllegalArgument(
-        text.length() > 0, new IllegalArgumentException("Text should be not empty."));
+    Validate.notIllegalArgument(text != null, "Text should be not null.");
+    Validate.notIllegalArgument(text.length() > 0, "Text should be not empty.");
     int length = text.length();
     for (int i = 0; i < length; i++) {
       char character = text.charAt(i);
@@ -50,10 +47,8 @@ public final class ValidateNumber {
    */
   public static void notNumericWithDotAndCommaSeparator(String text)
       throws IllegalArgumentException {
-    Validate.notIllegalArgument(
-        text != null, new IllegalArgumentException("Text should be not null."));
-    Validate.notIllegalArgument(
-        text.length() > 0, new IllegalArgumentException("Text should be not empty."));
+    Validate.notIllegalArgument(text != null, "Text should be not null.");
+    Validate.notIllegalArgument(text.length() > 0, "Text should be not empty.");
     int length = text.length();
     for (int i = 0; i < length; i++) {
       char character = text.charAt(i);
@@ -71,10 +66,8 @@ public final class ValidateNumber {
    * @throws IllegalArgumentException illegal argument exception.
    */
   public static void notNumericWithDotSeparator(String text) throws IllegalArgumentException {
-    Validate.notIllegalArgument(
-        text != null, new IllegalArgumentException("Text should be not null."));
-    Validate.notIllegalArgument(
-        text.length() > 0, new IllegalArgumentException("Text should be not empty."));
+    Validate.notIllegalArgument(text != null, "Text should be not null.");
+    Validate.notIllegalArgument(text.length() > 0, "Text should be not empty.");
     int length = text.length();
     for (int i = 0; i < length; i++) {
       if (!Character.isDigit(text.charAt(i)) && text.charAt(i) != '.') {
@@ -93,10 +86,8 @@ public final class ValidateNumber {
    */
   public static void notNumeric(String text, IllegalArgumentException exception)
       throws IllegalArgumentException {
-    Validate.notIllegalArgument(
-        text != null, new IllegalArgumentException("Text should be not null."));
-    Validate.notIllegalArgument(
-        text.length() > 0, new IllegalArgumentException("Text should be not empty."));
+    Validate.notIllegalArgument(text != null, "Text should be not null.");
+    Validate.notIllegalArgument(text.length() > 0, "Text should be not empty.");
     int length = text.length();
     for (int i = 0; i < length; i++) {
       if (!Character.isDigit(text.charAt(i))) {

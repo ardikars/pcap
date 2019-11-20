@@ -189,7 +189,7 @@ public class Tcp extends AbstractPacket {
           .append(urgentPointer)
           .append('\n')
           .append("\toptions: ")
-          .append(Strings.toHexString(options))
+          .append(Strings.hex(options))
           .append('\n')
           .toString();
     }
@@ -269,7 +269,7 @@ public class Tcp extends AbstractPacket {
     }
 
     public Builder options(byte[] options) {
-      this.options = Validate.nullPointer(options, new byte[0]);
+      this.options = Validate.nullPointerThenReturns(options, new byte[0]);
       return this;
     }
 

@@ -1,15 +1,16 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
-import java.nio.ByteBuffer;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
 import pcap.common.annotation.Inclubating;
 import pcap.common.internal.ByteBufferHelper;
 import pcap.common.internal.Unsafe;
 import pcap.common.util.Hexs;
 import pcap.common.util.Validate;
+
+import java.nio.ByteBuffer;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -123,8 +124,7 @@ public final class Memories {
    */
   public static Memory wrap(long memoryAddress, int size, boolean checking)
       throws UnsupportedOperationException {
-    Validate.notIllegalArgument(
-        size > 0, new IllegalArgumentException(String.format("size: %d (expected: > 0)", size)));
+    Validate.notIllegalArgument(size > 0, String.format("size: %d (expected: > 0)", size));
     if (MemoryAllocator.UNSAFE_BUFFER) {
       if (checking) {
         return new CheckedMemory(memoryAddress, size, size);
@@ -155,8 +155,7 @@ public final class Memories {
    * @return returns {@link Memory}.
    */
   public static Memory wrap(ByteBuffer buffer, boolean checking) {
-    Validate.notIllegalArgument(
-        buffer != null, new IllegalArgumentException("buffer: null (expected: non null)"));
+    Validate.notIllegalArgument(buffer != null, "buffer: null (expected: non null)");
     if (MemoryAllocator.UNSAFE_BUFFER) {
       int capacity = buffer.capacity();
       long address = ByteBufferHelper.directByteBufferAddress(buffer);
@@ -212,8 +211,7 @@ public final class Memories {
    */
   public static Memory wrap(byte[] bytes, boolean checking) {
     Validate.notIllegalArgument(
-        bytes != null,
-        new IllegalArgumentException(String.format("hexStream: null (expected: non null)")));
+        bytes != null, String.format("hexStream: null (expected: non null)"));
     if (Unsafe.HAS_UNSAFE) {
       if (checking) {
         return new CheckedByteArray(0, bytes, bytes.length, bytes.length, 0, 0);

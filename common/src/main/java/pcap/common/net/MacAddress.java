@@ -51,7 +51,7 @@ public final class MacAddress implements Address {
    * @return an Mac address object.
    */
   public static MacAddress valueOf(String stringAddress) {
-    stringAddress = Validate.nullPointer(stringAddress, "00:00:00:00:00:00");
+    stringAddress = Validate.nullPointerThenReturns(stringAddress, "00:00:00:00:00:00");
     final String[] elements = stringAddress.split(":|-");
     Validate.notIllegalArgument(elements.length == MAC_ADDRESS_LENGTH);
     final byte[] b = new byte[MAC_ADDRESS_LENGTH];
@@ -239,8 +239,7 @@ public final class MacAddress implements Address {
       super(value, name);
       Validate.notIllegalArgument(
           (value & 0xFF000000) == 0,
-          new IllegalArgumentException(
-              value + " is invalid value. " + " Value must be between 0 and 16777215."));
+          value + " is invalid value. " + " Value must be between 0 and 16777215.");
     }
 
     /**

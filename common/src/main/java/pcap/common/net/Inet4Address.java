@@ -35,7 +35,7 @@ public final class Inet4Address extends InetAddress {
    * @return an IPv4 address.
    */
   public static Inet4Address valueOf(String stringAddress) {
-    stringAddress = Validate.nullPointer(stringAddress, "0.0.0.0");
+    stringAddress = Validate.nullPointerThenReturns(stringAddress, "0.0.0.0");
     String[] parts = stringAddress.split("\\.");
     byte[] result = new byte[parts.length];
     Validate.notIllegalArgument(result.length == IPV4_ADDRESS_LENGTH);

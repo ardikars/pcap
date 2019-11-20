@@ -128,7 +128,7 @@ public class Routing extends AbstractPacket {
           .append(segmentLeft)
           .append('\n')
           .append("\t\troutingData: ")
-          .append(Strings.toHexString(routingData))
+          .append(Strings.hex(routingData))
           .append('\n')
           .toString();
     }

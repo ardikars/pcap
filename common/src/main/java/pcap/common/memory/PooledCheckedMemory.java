@@ -21,8 +21,7 @@ class PooledCheckedMemory extends CheckedMemory implements Pooled {
   public PooledCheckedMemory capacity(int newCapacity) {
     Validate.notIllegalArgument(
         newCapacity <= maxCapacity,
-        new IllegalArgumentException(
-            String.format("newCapacity < maxCapacity: %s <= %s", newCapacity, maxCapacity)));
+        String.format("newCapacity < maxCapacity: %s <= %s", newCapacity, maxCapacity));
     this.capacity = newCapacity;
     return this;
   }

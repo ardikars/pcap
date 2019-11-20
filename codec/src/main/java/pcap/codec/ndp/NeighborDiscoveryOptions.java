@@ -197,7 +197,7 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
           .append("Type: ")
           .append(this.type())
           .append(", Data: ")
-          .append(Strings.toHexString(this.data()))
+          .append(Strings.hex(this.data()))
           .append("]")
           .toString();
     }

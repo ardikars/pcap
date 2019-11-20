@@ -25,110 +25,110 @@ public class StringsTest extends BaseTest {
 
   @Test
   public void byteToHexString() {
-    Assertions.assertEquals("0a", Strings.toHexString(byteData[0]));
+    Assertions.assertEquals("0a", Strings.hex(byteData[0]));
   }
 
   @Test
   public void byteArrayToHexString() {
-    Assertions.assertEquals("0a2b2d0205", Strings.toHexString(byteData));
+    Assertions.assertEquals("0a2b2d0205", Strings.hex(byteData));
   }
 
   @Test
   public void byteArrayToHexStringWithRange() {
-    Assertions.assertEquals("2b2d02", Strings.toHexString(byteData, 1, byteData.length - 2));
+    Assertions.assertEquals("2b2d02", Strings.hex(byteData, 1, byteData.length - 2));
   }
 
   @Test
   public void shortToHexString() {
-    Assertions.assertEquals("01dc", Strings.toHexString(shortData[0]));
+    Assertions.assertEquals("01dc", Strings.hex(shortData[0]));
   }
 
   @Test
   public void shortArrayToHexString() {
-    Assertions.assertEquals("01dcb308f3d0b1d2b178", Strings.toHexString(shortData));
+    Assertions.assertEquals("01dcb308f3d0b1d2b178", Strings.hex(shortData));
   }
 
   @Test
   public void shortArrayToHexStringWithRange() {
     Assertions.assertEquals(
-        "b308f3d0b1d2", Strings.toHexString(shortData, 1, shortData.length - 2));
+        "b308f3d0b1d2", Strings.hex(shortData, 1, shortData.length - 2));
   }
 
   @Test
   public void intToHexString() {
-    Assertions.assertEquals("0c3423df", Strings.toHexString(intData[0]));
+    Assertions.assertEquals("0c3423df", Strings.hex(intData[0]));
   }
 
   @Test
   public void intArrayToHexString() {
     Assertions.assertEquals(
-        "0c3423df7a0a1d0b7a10397e79fadcbf7a0a1efd", Strings.toHexString(intData));
+        "0c3423df7a0a1d0b7a10397e79fadcbf7a0a1efd", Strings.hex(intData));
   }
 
   @Test
   public void intArrayToHexStringWithRange() {
     Assertions.assertEquals(
-        "7a0a1d0b7a10397e79fadcbf", Strings.toHexString(intData, 1, intData.length - 2));
+        "7a0a1d0b7a10397e79fadcbf", Strings.hex(intData, 1, intData.length - 2));
   }
 
   @Test
   public void floatToHexString() {
-    Assertions.assertEquals("00x1.86847cp27", Strings.toHexString(floatData[0]));
+    Assertions.assertEquals("00x1.86847cp27", Strings.hex(floatData[0]));
   }
 
   @Test
   public void floatArrayToHexString() {
     Assertions.assertEquals(
         "00x1.86847cp2700x1.e82874p3000x1.e840e6p3000x1.e7eb72p3000x1.e8287cp30",
-        Strings.toHexString(floatData));
+        Strings.hex(floatData));
   }
 
   @Test
   public void floatArrayToHexStringWithRange() {
     Assertions.assertEquals(
         "00x1.e82874p3000x1.e840e6p3000x1.e7eb72p30",
-        Strings.toHexString(floatData, 1, floatData.length - 2));
+        Strings.hex(floatData, 1, floatData.length - 2));
   }
 
   @Test
   public void longToHexString() {
-    Assertions.assertEquals("0c31169f", Strings.toHexString(longData[0]));
+    Assertions.assertEquals("0c31169f", Strings.hex(longData[0]));
   }
 
   @Test
   public void longArrayToHexString() {
     Assertions.assertEquals(
-        "0c31169f7a0a0a4b79cc2d920d53015f0fb3fbcd", Strings.toHexString(longData));
+        "0c31169f7a0a0a4b79cc2d920d53015f0fb3fbcd", Strings.hex(longData));
   }
 
   @Test
   public void longArrayToHexStringWithRange() {
     Assertions.assertEquals(
-        "7a0a0a4b79cc2d920d53015f0fb3fbcd", Strings.toHexString(longData, 1, longData.length - 1));
+        "7a0a0a4b79cc2d920d53015f0fb3fbcd", Strings.hex(longData, 1, longData.length - 1));
   }
 
   @Test
   public void doubleToHexString() {
-    Assertions.assertEquals("0x1.8622d3e333333p27", Strings.toHexString(doubleData[0]));
+    Assertions.assertEquals("0x1.8622d3e333333p27", Strings.hex(doubleData[0]));
   }
 
   @Test
   public void doubleArrayToHexString() {
     Assertions.assertEquals(
         "0x1.8622d3e333333p270x1.e828292cccccdp300x1.e730b64933333p300x1.aa602becccccdp270x1.f67f79bp27",
-        Strings.toHexString(doubleData));
+        Strings.hex(doubleData));
   }
 
   @Test
   public void doubleArrayToHexStringWithRange() {
     Assertions.assertEquals(
         "0x1.e828292cccccdp300x1.e730b64933333p300x1.aa602becccccdp270x1.f67f79bp27",
-        Strings.toHexString(doubleData, 1, doubleData.length - 1));
+        Strings.hex(doubleData, 1, doubleData.length - 1));
   }
 
   @Test
   public void stringToHexString() {
-    Assertions.assertEquals("526f636b2054686520506172747921", Strings.toHexString(stringData));
+    Assertions.assertEquals("526f636b2054686520506172747921", Strings.hex(stringData));
   }
 
   @Test

@@ -20,11 +20,11 @@ public final class HostAndPort {
 
   private HostAndPort(Builder builder) {
     Validate.notIllegalArgument(
-        builder.hostName != null, new IllegalArgumentException("Hostname should be not null."));
+        builder.hostName != null, "Hostname should be not null.");
     Validate.notIllegalArgument(
-        builder.hostAddress != null, new IllegalArgumentException("Address sould be not null."));
+        builder.hostAddress != null, "Address sould be not null.");
     Validate.notIllegalArgument(
-        builder.port >= 0 && builder.port < 65536, new IllegalArgumentException("Invalid port."));
+        builder.port >= 0 && builder.port < 65536, "Invalid port.");
     if (!DOMAIN_PATTERN.matcher(builder.hostName).matches()) {
       throw new IllegalArgumentException("Invalid hostname.");
     }
@@ -67,7 +67,7 @@ public final class HostAndPort {
    * @return returns host name and port with given prefix of this {@code Host} object.
    */
   public String hostNameWithPort(String prefix) {
-    return Validate.nullPointer(prefix, "") + hostName + ":" + port;
+    return Validate.nullPointerThenReturns(prefix, "") + hostName + ":" + port;
   }
 
   /**
@@ -86,7 +86,7 @@ public final class HostAndPort {
    * @return returns host address with given prefix of this {@code Host} object.
    */
   public String hostAddress(String prefix) {
-    return Validate.nullPointer(prefix, "") + hostAddress().toString();
+    return Validate.nullPointerThenReturns(prefix, "") + hostAddress().toString();
   }
 
   /**
@@ -96,7 +96,7 @@ public final class HostAndPort {
    * @return returns host address and port with given prefix of this {@code Host} object.
    */
   public String hostAddressWithPort(String prefix) {
-    return Validate.nullPointer(prefix, "") + hostAddress.toString() + ":" + port;
+    return Validate.nullPointerThenReturns(prefix, "") + hostAddress.toString() + ":" + port;
   }
 
   /**
@@ -115,7 +115,7 @@ public final class HostAndPort {
    * @return returns host name with given prefix of this {@code Host} object.
    */
   public String hostName(String prefix) {
-    return Validate.nullPointer(prefix, "") + hostName();
+    return Validate.nullPointerThenReturns(prefix, "") + hostName();
   }
 
   public static Builder builder() {

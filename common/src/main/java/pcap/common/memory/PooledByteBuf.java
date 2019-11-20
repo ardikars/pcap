@@ -1,9 +1,10 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
-import java.nio.ByteBuffer;
 import pcap.common.annotation.Inclubating;
 import pcap.common.util.Validate;
+
+import java.nio.ByteBuffer;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -31,8 +32,7 @@ class PooledByteBuf extends ByteBuf implements Pooled {
   public Memory capacity(int newCapacity) {
     Validate.notIllegalArgument(
         newCapacity <= maxCapacity,
-        new IllegalArgumentException(
-            String.format("newCapacity < maxCapacity: %s <= %s", newCapacity, maxCapacity)));
+        String.format("newCapacity < maxCapacity: %s <= %s", newCapacity, maxCapacity));
     this.capacity = newCapacity;
     return this;
   }

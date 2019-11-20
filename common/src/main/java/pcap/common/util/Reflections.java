@@ -1,6 +1,8 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.util;
 
+import pcap.common.annotation.Inclubating;
+
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -11,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -39,8 +40,7 @@ public class Reflections {
    * @return returns {@code List} of superclasses.
    */
   public static List<Class<?>> getAllSuperClasses(final Class<?> cls) {
-    Validate.notIllegalArgument(
-        cls != null, new IllegalArgumentException("Class should be not null"));
+    Validate.notIllegalArgument(cls != null, "Class should be not null");
     final List<Class<?>> classes = new ArrayList<Class<?>>();
     Class<?> superclass = cls.getSuperclass();
     while (superclass != null) {
@@ -57,8 +57,7 @@ public class Reflections {
    * @return returns {@code List} of superclasses and class it self.
    */
   public static List<Class<?>> getAllClasses(final Class<?> cls) {
-    Validate.notIllegalArgument(
-        cls != null, new IllegalArgumentException("Class should be not null"));
+    Validate.notIllegalArgument(cls != null, "Class should be not null");
     final List<Class<?>> classes = new ArrayList<Class<?>>();
     classes.add(cls);
     classes.addAll(getAllSuperClasses(cls));
@@ -72,8 +71,7 @@ public class Reflections {
    * @return returns {@code List} of interfaces.
    */
   public static List<Class<?>> getAllInterfaces(final Class<?> cls) {
-    Validate.notIllegalArgument(
-        cls != null, new IllegalArgumentException("Class should be not null"));
+    Validate.notIllegalArgument(cls != null, "Class should be not null");
     List<Class<?>> classes = getAllClasses(cls);
     Iterator<Class<?>> iterator = classes.iterator();
     List<Class<?>> interfaces = new ArrayList<Class<?>>();
@@ -93,8 +91,7 @@ public class Reflections {
    * @return returns {@code List} of all classes and interfaces.
    */
   public static List<Class<?>> getAllClassesAndInterfaces(final Class<?> cls) {
-    Validate.notIllegalArgument(
-        cls != null, new IllegalArgumentException("Class should be not null"));
+    Validate.notIllegalArgument(cls != null, "Class should be not null");
     List<Class<?>> classes = new ArrayList<Class<?>>();
     classes.addAll(getAllClasses(cls));
     classes.addAll(getAllInterfaces(cls));
@@ -108,8 +105,7 @@ public class Reflections {
    * @return returns {@code List} of all super classes and interfaces.
    */
   public static List<Class<?>> getAllSuperClassesAndInterfaces(final Class<?> cls) {
-    Validate.notIllegalArgument(
-        cls != null, new IllegalArgumentException("Class should be not null"));
+    Validate.notIllegalArgument(cls != null, "Class should be not null");
     final List<Class<?>> allSuperClassesAndInterfaces = new ArrayList<Class<?>>();
     final List<Class<?>> allSuperclasses = getAllSuperClasses(cls);
     int superClassIndex = 0;

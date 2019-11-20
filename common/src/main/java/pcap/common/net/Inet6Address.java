@@ -60,7 +60,7 @@ public final class Inet6Address extends InetAddress {
    */
   public static Inet6Address valueOf(String stringAddress) {
 
-    stringAddress = Validate.nullPointer(stringAddress, "::");
+    stringAddress = Validate.nullPointerThenReturns(stringAddress, "::");
 
     final int ipv6MaxHexGroups = 8;
     final int ipv6MaxHexDigitsPerGroup = 4;

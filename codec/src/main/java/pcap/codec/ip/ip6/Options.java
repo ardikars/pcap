@@ -77,7 +77,7 @@ public abstract class Options extends AbstractPacket {
           .append(extensionLength)
           .append('\n')
           .append("\t\toptions: ")
-          .append(Strings.toHexString(options))
+          .append(Strings.hex(options))
           .append('\n')
           .toString();
     }

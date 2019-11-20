@@ -127,7 +127,7 @@ public final class DateTimePattern {
 
   private DateTimePattern(Builder builder) {
 
-    Validate.nullPointer(builder, new NullPointerException("DateTime builder should be not null."));
+    Validate.nullPointer(builder, "DateTime builder should be not null.");
 
     if (builder.datePattern == null && builder.timePattern == null) {
       this.pattern = DEFAULT_PATTERN;

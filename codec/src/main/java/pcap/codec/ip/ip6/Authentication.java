@@ -134,7 +134,7 @@ public class Authentication extends AbstractPacket {
           .append(sequenceNumber)
           .append('\n')
           .append("\t\tintegrityCheckValue: ")
-          .append(Strings.toHexString(integrityCheckValue))
+          .append(Strings.hex(integrityCheckValue))
           .append('\n')
           .toString();
     }
