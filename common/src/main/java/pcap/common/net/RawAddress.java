@@ -3,7 +3,12 @@ package pcap.common.net;
 
 import pcap.common.annotation.Inclubating;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Default implementation of raw byte array address.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ * @since 1.0.0
+ */
 @Inclubating
 public class RawAddress implements Address {
 

@@ -85,8 +85,8 @@ public class Ethernet extends AbstractPacket {
     public Memory buffer() {
       if (buffer == null) {
         buffer = ALLOCATOR.allocate(length());
-        buffer.writeBytes(destinationMacAddress.toBytes());
-        buffer.writeBytes(sourceMacAddress.toBytes());
+        buffer.writeBytes(destinationMacAddress.address());
+        buffer.writeBytes(sourceMacAddress.address());
         buffer.writeShort(ethernetType.value());
       }
       return buffer;
@@ -189,9 +189,9 @@ public class Ethernet extends AbstractPacket {
         Validate.notIllegalArgument(sourceMacAddress != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(ethernetType != null, ILLEGAL_HEADER_EXCEPTION);
         int index = offset;
-        buffer.setBytes(index, destinationMacAddress.toBytes());
+        buffer.setBytes(index, destinationMacAddress.address());
         index += MacAddress.MAC_ADDRESS_LENGTH;
-        buffer.setBytes(index, sourceMacAddress.toBytes());
+        buffer.setBytes(index, sourceMacAddress.address());
         index += MacAddress.MAC_ADDRESS_LENGTH;
         buffer.setShort(index, ethernetType.value());
       }

@@ -131,10 +131,10 @@ public class Arp extends AbstractPacket {
         buffer.writeByte(hardwareAddressLength);
         buffer.writeByte(protocolAddressLength);
         buffer.writeShort(operationCode.value());
-        buffer.writeBytes(senderHardwareAddress.toBytes());
-        buffer.writeBytes(senderProtocolAddress.toBytes());
-        buffer.writeBytes(targetHardwareAddress.toBytes());
-        buffer.writeBytes(targetProtocolAddress.toBytes());
+        buffer.writeBytes(senderHardwareAddress.address());
+        buffer.writeBytes(senderProtocolAddress.address());
+        buffer.writeBytes(targetHardwareAddress.address());
+        buffer.writeBytes(targetProtocolAddress.address());
       }
       return buffer;
     }
@@ -317,13 +317,13 @@ public class Arp extends AbstractPacket {
         index += 1;
         buffer.setShort(index, operationCode.value());
         index += 2;
-        buffer.setBytes(index, senderHardwareAddress.toBytes());
+        buffer.setBytes(index, senderHardwareAddress.address());
         index += MacAddress.MAC_ADDRESS_LENGTH;
-        buffer.setBytes(index, senderProtocolAddress.toBytes());
+        buffer.setBytes(index, senderProtocolAddress.address());
         index += Inet4Address.IPV4_ADDRESS_LENGTH;
-        buffer.setBytes(index, targetHardwareAddress.toBytes());
+        buffer.setBytes(index, targetHardwareAddress.address());
         index += MacAddress.MAC_ADDRESS_LENGTH;
-        buffer.setBytes(index, targetProtocolAddress.toBytes());
+        buffer.setBytes(index, targetProtocolAddress.address());
       }
     }
   }

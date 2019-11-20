@@ -94,7 +94,7 @@ public final class Inet6Address extends InetAddress {
         emptyOctets = 0;
         if (index == parts.length - 1 && octet.contains(".")) {
           byte[] quad;
-          quad = Inet4Address.valueOf(octet).toBytes();
+          quad = Inet4Address.valueOf(octet).address();
           String initialPart = stringAddress.substring(0, stringAddress.lastIndexOf(":") + 1);
           String penultimate = Integer.toHexString(((quad[0] & 0xff) << 8) | (quad[1] & 0xff));
           String ultimate = Integer.toHexString(((quad[2] & 0xff) << 8) | (quad[3] & 0xff));
@@ -204,15 +204,6 @@ public final class Inet6Address extends InetAddress {
   @Override
   public boolean isMcOrgLocal() {
     return ((address[0] & 0xff) == 0xff && (address[1] & 0x0f) == 0x08);
-  }
-
-  /**
-   * Returns the raw IPv6 address of this {@code Inet6Address} object.
-   *
-   * @return the raw IPv6 address of this object.
-   */
-  public byte[] toBytes() {
-    return Arrays.copyOf(this.address, this.address.length);
   }
 
   /**

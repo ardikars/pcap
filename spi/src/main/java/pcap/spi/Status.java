@@ -5,6 +5,7 @@ package pcap.spi;
  * As returned by the pcap_stats().
  *
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ * @since 1.0.0
  */
 public interface Status {
 
@@ -12,6 +13,7 @@ public interface Status {
    * Number of packets received.
    *
    * @return returns number of packets received.
+   * @since 1.0.0
    */
   int received();
 
@@ -19,6 +21,7 @@ public interface Status {
    * Number of packets dropped.
    *
    * @return returns number of packets dropped.
+   * @since 1.0.0
    */
   int dropped();
 
@@ -26,6 +29,7 @@ public interface Status {
    * Number of packets dropped by interface (only supported on some platforms).
    *
    * @return returns number of packets dropped by interface.
+   * @since 1.0.0
    */
   int droppedByInterface();
 }

@@ -1,15 +1,21 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.net;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
 import pcap.common.annotation.Inclubating;
 import pcap.common.util.NamedNumber;
 import pcap.common.util.Validate;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+/**
+ * Wrapper for raw mac address.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ * @since 1.0.0
+ */
 @Inclubating
 public final class MacAddress implements Address {
 
@@ -28,6 +34,7 @@ public final class MacAddress implements Address {
   /** Multicast Address. */
   public static final MacAddress IPV4_MULTICAST = valueOf("01:00:5e:00:00:00");
 
+  /** Multicast mask. */
   public static final MacAddress IPV4_MULTICAST_MASK = valueOf("ff:ff:ff:80:00:00");
 
   private final byte[] address;
@@ -108,15 +115,6 @@ public final class MacAddress implements Address {
    */
   public int length() {
     return this.address.length;
-  }
-
-  /**
-   * Returns bytes MAC Address.
-   *
-   * @return bytes MAC Address.
-   */
-  public byte[] toBytes() {
-    return Arrays.copyOf(this.address, this.address.length);
   }
 
   /**
@@ -266,6 +264,8 @@ public final class MacAddress implements Address {
     }
 
     /**
+     * Register new OUI.
+     *
      * @param version version
      * @return a Oui object.
      */

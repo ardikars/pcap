@@ -3,7 +3,12 @@ package pcap.common.logging;
 
 import pcap.common.annotation.Inclubating;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Abstract logger.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ * @since 1.0.0
+ */
 @Inclubating
 abstract class AbstractLogger implements Logger {
 

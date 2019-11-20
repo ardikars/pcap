@@ -1,6 +1,11 @@
 /** This code is licenced under the GPL version 2. */
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Pcap api specification.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ * @since 1.0.0
+ */
 module pcap.spi {
   exports pcap.spi;
   exports pcap.spi.exception;

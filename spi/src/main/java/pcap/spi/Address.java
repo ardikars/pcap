@@ -7,6 +7,7 @@ import java.net.InetAddress;
  * Representation of an interface address.
  *
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ * @since 1.0.0
  */
 public interface Address extends Iterable<Address> {
 
@@ -14,6 +15,7 @@ public interface Address extends Iterable<Address> {
    * Next available address.
    *
    * @return returns next address if available, {@code null} otherwise.
+   * @since 1.0.0
    */
   Address next();
 
@@ -21,6 +23,7 @@ public interface Address extends Iterable<Address> {
    * Interface address.
    *
    * @return returns interface address.
+   * @since 1.0.0
    */
   InetAddress address();
 
@@ -28,6 +31,7 @@ public interface Address extends Iterable<Address> {
    * Netmask for interface address ({@link #address()}).
    *
    * @return returns netmask for ({@link #address()}).
+   * @since 1.0.0
    */
   InetAddress netmask();
 
@@ -35,6 +39,7 @@ public interface Address extends Iterable<Address> {
    * Brodcast address for interface address ({@link #address()}).
    *
    * @return returns brodcast address for ({@link #address()}).
+   * @since 1.0.0
    */
   InetAddress broadcast();
 
@@ -42,6 +47,7 @@ public interface Address extends Iterable<Address> {
    * P2P destination address for interface address ({@link #address()}).
    *
    * @return returns P2P destination address for ({@link #address()}).
+   * @since 1.0.0
    */
   InetAddress destination();
 }

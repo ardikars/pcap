@@ -112,8 +112,8 @@ public class Ip6 extends Ip {
         buffer.writeShort(payloadLength);
         buffer.writeByte(nextHeader.value());
         buffer.writeByte(hopLimit);
-        buffer.writeBytes(sourceAddress.toBytes());
-        buffer.writeBytes(destinationAddress.toBytes());
+        buffer.writeBytes(sourceAddress.address());
+        buffer.writeBytes(destinationAddress.address());
       }
       return buffer;
     }
@@ -271,9 +271,9 @@ public class Ip6 extends Ip {
         index += 1;
         buffer.setByte(index, hopLimit);
         index += 1;
-        buffer.setBytes(index, sourceAddress.toBytes());
+        buffer.setBytes(index, sourceAddress.address());
         index += Inet6Address.IPV6_ADDRESS_LENGTH;
-        buffer.setBytes(index, destinationAddress.toBytes());
+        buffer.setBytes(index, destinationAddress.address());
       }
     }
   }

@@ -171,8 +171,8 @@ public class Ip4 extends Ip {
         buffer.writeByte(ttl);
         buffer.writeByte(protocol.value());
         buffer.writeShort(checksum & 0xffff);
-        buffer.writeBytes(sourceAddress.toBytes());
-        buffer.writeBytes(destinationAddress.toBytes());
+        buffer.writeBytes(sourceAddress.address());
+        buffer.writeBytes(destinationAddress.address());
         if (options != null && headerLength > 5) {
           buffer.writeBytes(options);
         }
@@ -437,9 +437,9 @@ public class Ip4 extends Ip {
         index += 1;
         buffer.setShort(index, checksum);
         index += 2;
-        buffer.setBytes(index, sourceAddress.toBytes());
+        buffer.setBytes(index, sourceAddress.address());
         index += Inet4Address.IPV4_ADDRESS_LENGTH;
-        buffer.setBytes(index, destinationAddress.toBytes());
+        buffer.setBytes(index, destinationAddress.address());
         index += Inet4Address.IPV4_ADDRESS_LENGTH;
         buffer.setBytes(index, options);
       }

@@ -13,6 +13,7 @@ package pcap.spi;
  * Timestamp}, even if that's not what the underlying packet capture mechanism supplies.
  *
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ * @since 1.0.0
  */
 public interface PacketHeader {
 
@@ -20,6 +21,7 @@ public interface PacketHeader {
    * Timestamp per-packet.
    *
    * @return returns timestamp.
+   * @since 1.0.0
    */
   Timestamp timestamp();
 
@@ -27,6 +29,7 @@ public interface PacketHeader {
    * Length of portion present.
    *
    * @return returns length of portion present.
+   * @since 1.0.0
    */
   int captureLength();
 
@@ -34,6 +37,7 @@ public interface PacketHeader {
    * Length this packet (off wire).
    *
    * @return returns length this packet (off wire).
+   * @since 1.0.0
    */
   int length();
 }

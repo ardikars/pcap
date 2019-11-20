@@ -11,7 +11,7 @@ public class MacAddressTest extends BaseTest {
 
   private static final String STRING_MAC_ADDRESS = MacAddress.DUMMY.toString();
   private static final long LONG_MAC_ADDRESS = MacAddress.DUMMY.toLong();
-  private static final byte[] BYTES_MAC_ADDRESS = MacAddress.DUMMY.toBytes();
+  private static final byte[] BYTES_MAC_ADDRESS = MacAddress.DUMMY.address();
 
   @Test
   public void fromStringTest() {

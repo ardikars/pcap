@@ -12,6 +12,7 @@ import java.lang.annotation.RetentionPolicy;
  * <p>
  *
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ * @since 1.0.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

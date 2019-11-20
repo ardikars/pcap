@@ -5,6 +5,7 @@ package pcap.spi;
  * Specify a time interval (elapsed time).
  *
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ * @since 1.0.0
  */
 public interface Timestamp {
 
@@ -12,6 +13,7 @@ public interface Timestamp {
    * This represents the number of whole seconds of elapsed time.
    *
    * @return returns time interval, in second.
+   * @since 1.0.0
    */
   long second();
 
@@ -20,10 +22,15 @@ public interface Timestamp {
    * microseconds. It is always less than one million.
    *
    * @return returns time interval, in micro second.
+   * @since 1.0
    */
   int microSecond();
 
-  /** Timestamp precision. */
+  /**
+   * Timestamp precision.
+   *
+   * @since 1.0.0
+   */
   enum Precision {
     MICRO(0),
     NANO(1);
@@ -39,7 +46,11 @@ public interface Timestamp {
     }
   }
 
-  /** Timestamp type. */
+  /**
+   * Timestamp type.
+   *
+   * @since 1.0.0
+   */
   enum Type {
     HOST(0),
     HOST_LOWPREC(1),

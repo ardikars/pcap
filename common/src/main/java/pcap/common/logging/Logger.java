@@ -3,12 +3,29 @@ package pcap.common.logging;
 
 import pcap.common.annotation.Inclubating;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Logger api specification.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ * @since 1.0.0
+ */
 @Inclubating
 public interface Logger {
 
+  /**
+   * Logger holder name.
+   *
+   * @return returns logger name.
+   * @since 1.0.0
+   */
   String name();
 
+  /**
+   * Check the given level is enabled or not.
+   *
+   * @param level logging level.
+   * @return returns {@code true} if given level is enabled, {@code otherwise}.
+   */
   boolean isEnabled(LogLevel level);
 
   boolean isDebugEnabled();
