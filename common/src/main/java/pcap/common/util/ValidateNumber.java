@@ -81,17 +81,16 @@ public final class ValidateNumber {
    * Ensures that given parameter is not contains non numeric character.
    *
    * @param text test.
-   * @param exception exception.
+   * @param message exception.
    * @throws IllegalArgumentException illegal argument exception.
    */
-  public static void notNumeric(String text, IllegalArgumentException exception)
-      throws IllegalArgumentException {
+  public static void notNumeric(String text, String message) throws IllegalArgumentException {
     Validate.notIllegalArgument(text != null, "Text should be not null.");
     Validate.notIllegalArgument(text.length() > 0, "Text should be not empty.");
     int length = text.length();
     for (int i = 0; i < length; i++) {
       if (!Character.isDigit(text.charAt(i))) {
-        throw exception;
+        throw new IllegalArgumentException(message);
       }
     }
   }
@@ -104,21 +103,21 @@ public final class ValidateNumber {
    * @throws IllegalArgumentException exception.
    */
   public static <T extends Number> void notZero(T number) throws IllegalArgumentException {
-    notZero(number, new IllegalArgumentException("Number \'" + number + "\'" + " is not zero."));
+    notZero(number, "Number \'" + number + "\'" + " is not zero.");
   }
 
   /**
    * Ensures that given parameter is zero.
    *
    * @param number number.
-   * @param exception exception.
+   * @param message exception.
    * @param <T> type.
    * @throws IllegalArgumentException illegal argument exception.
    */
-  public static <T extends Number> void notZero(T number, IllegalArgumentException exception)
+  public static <T extends Number> void notZero(T number, String message)
       throws IllegalArgumentException {
     if (compare(number) != 0) {
-      throw exception;
+      throw new IllegalArgumentException(message);
     }
   }
 
@@ -131,23 +130,22 @@ public final class ValidateNumber {
    */
   public static <T extends Number> void notGreaterThenZero(T number)
       throws IllegalArgumentException {
-    notGreaterThenZero(
-        number, new IllegalArgumentException(number + " is less then or equal to zero."));
+    notGreaterThenZero(number, number + " is less then or equal to zero.");
   }
 
   /**
    * Ensures that given parameter is greateer then zero.
    *
    * @param number number.
-   * @param exception illegal argument exception.
+   * @param message illegal argument exception.
    * @param <T> type.
    * @throws IllegalArgumentException exception.
    */
-  public static <T extends Number> void notGreaterThenZero(
-      T number, IllegalArgumentException exception) throws IllegalArgumentException {
+  public static <T extends Number> void notGreaterThenZero(T number, String message)
+      throws IllegalArgumentException {
     int result = compare(number);
     if (result <= 0) {
-      throw exception;
+      throw new IllegalArgumentException(message);
     }
   }
 
@@ -159,23 +157,22 @@ public final class ValidateNumber {
    * @throws IllegalArgumentException exception.
    */
   public static <T extends Number> void notLessThenZero(T number) throws IllegalArgumentException {
-    notGreaterThenZero(
-        number, new IllegalArgumentException(number + " is greater then or equal to zero."));
+    notGreaterThenZero(number, number + " is greater then or equal to zero.");
   }
 
   /**
    * Ensures that given parameter is less then zero.
    *
    * @param number number.
-   * @param exception illegal argument exception.
+   * @param message illegal argument exception.
    * @param <T> type.
    * @throws IllegalArgumentException exception.
    */
-  public static <T extends Number> void notLessThenZero(
-      T number, IllegalArgumentException exception) throws IllegalArgumentException {
+  public static <T extends Number> void notLessThenZero(T number, String message)
+      throws IllegalArgumentException {
     int result = compare(number);
     if (result >= 0) {
-      throw exception;
+      throw new IllegalArgumentException(message);
     }
   }
 
@@ -188,23 +185,22 @@ public final class ValidateNumber {
    */
   public static <T extends Number> void notGreaterThenOrEqualZero(T number)
       throws IllegalArgumentException {
-    notGreaterThenZero(
-        number, new IllegalArgumentException(number + " is less then or equal to zero."));
+    notGreaterThenZero(number, number + " is less then or equal to zero.");
   }
 
   /**
    * Ensures that given parameter is greateer then zero.
    *
    * @param number number.
-   * @param exception illegal argument exception.
+   * @param message illegal argument exception.
    * @param <T> type.
    * @throws IllegalArgumentException exception.
    */
-  public static <T extends Number> void notGreaterThenOrEqualZero(
-      T number, IllegalArgumentException exception) throws IllegalArgumentException {
+  public static <T extends Number> void notGreaterThenOrEqualZero(T number, String message)
+      throws IllegalArgumentException {
     int result = compare(number);
     if (result < 0) {
-      throw exception;
+      throw new IllegalArgumentException(message);
     }
   }
 
@@ -217,23 +213,22 @@ public final class ValidateNumber {
    */
   public static <T extends Number> void notLessThenOrEqualZero(T number)
       throws IllegalArgumentException {
-    notGreaterThenZero(
-        number, new IllegalArgumentException(number + " is greater then or equal to zero."));
+    notGreaterThenZero(number, number + " is greater then or equal to zero.");
   }
 
   /**
    * Ensures that given parameter is less then zero.
    *
    * @param number number.
-   * @param exception illegal argument exception.
+   * @param message illegal argument exception.
    * @param <T> type.
    * @throws IllegalArgumentException exception.
    */
-  public static <T extends Number> void notLessThenOrEqualZero(
-      T number, IllegalArgumentException exception) throws IllegalArgumentException {
+  public static <T extends Number> void notLessThenOrEqualZero(T number, String message)
+      throws IllegalArgumentException {
     int result = compare(number);
     if (result > 0) {
-      throw exception;
+      throw new IllegalArgumentException(message);
     }
   }
 
