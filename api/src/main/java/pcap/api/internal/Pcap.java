@@ -28,7 +28,7 @@ public class Pcap implements pcap.spi.Pcap {
 
   final Pointer<pcap_mapping.pcap> pcap;
   final Pointer<bpf_mapping.bpf_program> bpf_program;
-  final Pointer<PcapStat> pcap_stat;
+  final Pointer<PcapStatus> pcap_stat;
   final int netmask;
   final int linktype;
 
@@ -42,7 +42,7 @@ public class Pcap implements pcap.spi.Pcap {
     this.pcap = pcap;
     this.bpf_program =
         PcapConstant.SCOPE.allocate(LayoutType.ofStruct(bpf_mapping.bpf_program.class));
-    this.pcap_stat = PcapConstant.SCOPE.allocate(LayoutType.ofStruct(PcapStat.class));
+    this.pcap_stat = PcapConstant.SCOPE.allocate(LayoutType.ofStruct(PcapStatus.class));
     this.netmask = netmask;
     this.linktype = PcapConstant.MAPPING.pcap_datalink(pcap);
     this.filterActivated = false;

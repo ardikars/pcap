@@ -17,7 +17,7 @@ import pcap.spi.PacketHeader;
 @NativeStruct(
     value = "[${timeval}(ts)u32(caplen)u32(len)](pcap_pkthdr)",
     resolutionContext = {Timestamp.class})
-public interface PcapPktHdr extends Struct<PcapPktHdr> {
+public interface PcapPacketHeader extends Struct<PcapPacketHeader> {
 
   @NativeGetter("ts")
   Timestamp timestamp();
@@ -37,10 +37,10 @@ public interface PcapPktHdr extends Struct<PcapPktHdr> {
     private final pcap.spi.Timestamp timestamp;
     private final int captureLangth;
     private final int length;
-    private final Pointer<PcapPktHdr> ptr;
+    private final Pointer<PcapPacketHeader> ptr;
 
     private Impl(
-        pcap.spi.Timestamp timestamp, int captureLangth, int length, Pointer<PcapPktHdr> ptr) {
+        pcap.spi.Timestamp timestamp, int captureLangth, int length, Pointer<PcapPacketHeader> ptr) {
       this.timestamp = timestamp;
       this.captureLangth = captureLangth;
       this.length = length;
@@ -62,7 +62,7 @@ public interface PcapPktHdr extends Struct<PcapPktHdr> {
       return length;
     }
 
-    public Pointer<PcapPktHdr> pointer() {
+    public Pointer<PcapPacketHeader> pointer() {
       return ptr;
     }
   }

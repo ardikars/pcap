@@ -14,7 +14,7 @@ import pcap.spi.Status;
  */
 @Inclubating
 @NativeStruct("[u32(ps_recv)u32(ps_drop)u32(ps_ifdrop)](pcap_stat)")
-public interface PcapStat extends Struct<PcapStat> {
+public interface PcapStatus extends Struct<PcapStatus> {
 
   @NativeGetter("ps_recv")
   int received();

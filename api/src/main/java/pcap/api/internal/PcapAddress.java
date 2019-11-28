@@ -1,13 +1,17 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal;
 
-import java.net.InetAddress;
-import java.util.Iterator;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.api.internal.util.PcapAddressIterator;
-import pcap.api.internal.util.SockAddrParser;
 import pcap.common.annotation.Inclubating;
 import pcap.spi.Address;
+
+import java.foreign.memory.Pointer;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Iterator;
 
 /**
  * {@code Pcap} {@link Address} implementation
@@ -24,11 +28,10 @@ public class PcapAddress implements Address {
   InetAddress destination;
 
   PcapAddress(pcap_mapping.pcap_addr pcap_addr) {
-    SockAddrParser parser = SockAddrParser.getInstance();
-    this.address = parser.parse(pcap_addr.addr$get());
-    this.netmask = parser.parse(pcap_addr.netmask$get());
-    this.broadcast = parser.parse(pcap_addr.broadaddr$get());
-    this.destination = parser.parse(pcap_addr.dstaddr$get());
+    this.address = parse(pcap_addr.addr$get());
+    this.netmask = parse(pcap_addr.netmask$get());
+    this.broadcast = parse(pcap_addr.broadaddr$get());
+    this.destination = parse(pcap_addr.dstaddr$get());
     if (!pcap_addr.next$get().isNull()) {
       this.next = new PcapAddress(pcap_addr.next$get().get());
     }
@@ -77,5 +80,31 @@ public class PcapAddress implements Address {
         .append("\"\n")
         .append("}")
         .toString();
+  }
+
+  private InetAddress parse(Pointer<pcap_mapping.sockaddr> pointer) {
+    try {
+      if (!pointer.isNull()) {
+        pcap_mapping.sockaddr sockaddr = pointer.get();
+        if (sockaddr.sa_family$get() == 2) {
+          byte[] data = new byte[4];
+          for (int i = 0; i < data.length; i++) {
+            data[i] = sockaddr.sa_data$get().get(i + 2);
+          }
+          return Inet4Address.getByAddress(data);
+
+        } else if (sockaddr.sa_family$get() == 10) {
+          byte[] data = new byte[16];
+          for (int i = 0; i < data.length; i++) {
+            data[i] = sockaddr.sa_data$get().get(i);
+          }
+          return Inet6Address.getByAddress(data);
+        }
+      } else {
+        // LOGGER.warn("pointer (null)");
+      }
+    } catch (UnknownHostException e) {
+    }
+    return null;
   }
 }

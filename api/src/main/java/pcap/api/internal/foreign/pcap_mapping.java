@@ -10,8 +10,8 @@ import java.foreign.memory.Callback;
 import java.foreign.memory.Pointer;
 import java.foreign.memory.Struct;
 import pcap.api.internal.PcapHandler;
-import pcap.api.internal.PcapPktHdr;
-import pcap.api.internal.PcapStat;
+import pcap.api.internal.PcapPacketHeader;
+import pcap.api.internal.PcapStatus;
 import pcap.common.annotation.Inclubating;
 
 /**
@@ -20,7 +20,7 @@ import pcap.common.annotation.Inclubating;
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
 @Inclubating
-@NativeHeader(resolutionContext = {PcapPktHdr.class, PcapStat.class})
+@NativeHeader(resolutionContext = {PcapPacketHeader.class, PcapStatus.class})
 public interface pcap_mapping {
 
   @NativeFunction("(u64:u8)u64:u8")
@@ -108,19 +108,19 @@ public interface pcap_mapping {
   int pcap_dispatch(Pointer<pcap> p, int cnt, Callback<PcapHandler> usr, Pointer<Byte> pp);
 
   @NativeFunction("(u64:${pcap}u64:${pcap_pkthdr})u64:u8")
-  Pointer<Byte> pcap_next(Pointer<pcap> p, Pointer<PcapPktHdr> pkthdr_p);
+  Pointer<Byte> pcap_next(Pointer<pcap> p, Pointer<PcapPacketHeader> pkthdr_p);
 
   @NativeFunction("(u64:${pcap}u64:u64:${pcap_pkthdr}u64:u64:u8)i32")
   int pcap_next_ex(
       Pointer<pcap> p,
-      Pointer<? extends Pointer<PcapPktHdr>> pkthdr_p,
+      Pointer<? extends Pointer<PcapPacketHeader>> pkthdr_p,
       Pointer<? extends Pointer<Byte>> buf);
 
   @NativeFunction("(u64:${pcap})v")
   void pcap_breakloop(Pointer<pcap> p);
 
   @NativeFunction("(u64:${pcap}u64:${pcap_stat})i32")
-  int pcap_stats(Pointer<pcap> p, Pointer<PcapStat> stat_p);
+  int pcap_stats(Pointer<pcap> p, Pointer<PcapStatus> stat_p);
 
   @NativeFunction("(u64:${pcap}u64:${bpf_program})i32")
   int pcap_setfilter(Pointer<pcap> p, Pointer<bpf_mapping.bpf_program> program_p);
@@ -174,7 +174,7 @@ public interface pcap_mapping {
 
   @NativeFunction("(u64:${bpf_program}u64:${pcap_pkthdr}u64:u8)i32")
   int pcap_offline_filter(
-      Pointer<bpf_mapping.bpf_program> program, Pointer<PcapPktHdr> pkthdr_p, Pointer<Byte> filter);
+          Pointer<bpf_mapping.bpf_program> program, Pointer<PcapPacketHeader> pkthdr_p, Pointer<Byte> filter);
 
   @NativeFunction("(u64:${pcap})i32")
   int pcap_datalink(Pointer<pcap> p);
@@ -231,7 +231,7 @@ public interface pcap_mapping {
   void pcap_dump_close(Pointer<pcap_dumper> p);
 
   @NativeFunction("(u64:u8u64:${pcap_pkthdr}u64:u8)v")
-  void pcap_dump(Pointer<Byte> p, Pointer<PcapPktHdr> pkthdr_p, Pointer<Byte> buf);
+  void pcap_dump(Pointer<Byte> p, Pointer<PcapPacketHeader> pkthdr_p, Pointer<Byte> buf);
 
   @NativeFunction("(u64:u64:${pcap_if}u64:u8)i32")
   int pcap_findalldevs(Pointer<? extends Pointer<pcap_if>> alldevs, Pointer<Byte> errbuf);

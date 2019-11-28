@@ -29,7 +29,7 @@ public class PcapDumper implements Dumper {
   public void dump(PacketHeader header, PacketBuffer buffer) {
     synchronized (PcapConstant.LOCK) {
       PcapConstant.MAPPING.pcap_dump(
-          reference, ((PcapPktHdr.Impl) header).pointer(), ((PcapBuffer) buffer).pointer());
+          reference, ((PcapPacketHeader.Impl) header).pointer(), ((PcapBuffer) buffer).pointer());
     }
   }
 

@@ -15,6 +15,6 @@ import pcap.common.annotation.Inclubating;
 @FunctionalInterface
 public interface PcapHandler {
 
-  void gotPacket(Pointer<Byte> user, Pointer<PcapPktHdr> header, Pointer<Byte> packets)
+  void gotPacket(Pointer<Byte> user, Pointer<PcapPacketHeader> header, Pointer<Byte> packets)
       throws IllegalAccessException;
 }
