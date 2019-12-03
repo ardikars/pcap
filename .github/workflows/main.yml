@@ -1,16 +1,16 @@
-name: Release
+name: Build
 
 on:
   push:
     branches:
-      - master
+      - development
   pull_request:
     branches:
-      - master
+      - development
 
 jobs:
   hotspot-deployment:
-    name: Deployment
+    name: Test
     strategy:
       fail-fast: false
       matrix:
@@ -36,8 +36,10 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
           architecture: x64
-      - name: Deploy project (JDK-14)
+      - name: Test project (JDK-14)
         run: |
           [ -d /tmp/jdk-14 ] && echo 'JDK-14 is already installed' || ./.github/scripts/install-jdk.sh -w /tmp -u https://download.java.net/java/early_access/panama/1/openjdk-14-panama+1-15_linux-x64_bin.tar.gz --os linux-x64
           export JAVA_HOME=/tmp/jdk-14
-          ./mvnw -B -s .mvn/release-settings.xml deploy -Prelease
+          ./mvnw -B -s .mvn/release-settings.xml -pl !api verify sonar:sonar -Pcoverage -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.organization=ardikars -Dsonar.login=${{ secrets.sonar_token }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

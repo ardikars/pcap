@@ -13,6 +13,6 @@
 api/target
 codec/target
 common/target
-sample/target
+tests/target
 spi/target
 target

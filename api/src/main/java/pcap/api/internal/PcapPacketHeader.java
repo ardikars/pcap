@@ -40,7 +40,10 @@ public interface PcapPacketHeader extends Struct<PcapPacketHeader> {
     private final Pointer<PcapPacketHeader> ptr;
 
     private Impl(
-        pcap.spi.Timestamp timestamp, int captureLangth, int length, Pointer<PcapPacketHeader> ptr) {
+        pcap.spi.Timestamp timestamp,
+        int captureLangth,
+        int length,
+        Pointer<PcapPacketHeader> ptr) {
       this.timestamp = timestamp;
       this.captureLangth = captureLangth;
       this.length = length;

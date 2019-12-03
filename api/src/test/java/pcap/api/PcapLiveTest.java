@@ -4,14 +4,20 @@ import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
-import pcap.spi.*;
+import pcap.spi.Address;
+import pcap.spi.Interface;
+import pcap.spi.Pcap;
+import pcap.spi.Status;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 
+@EnabledOnJre(JRE.JAVA_14)
 @RunWith(JUnitPlatform.class)
 public class PcapLiveTest {
 
@@ -59,9 +65,7 @@ public class PcapLiveTest {
           InterfaceNotSupportTimestampTypeException {
     Interface source = Pcaps.lookupInterface();
     Assertions.assertNotNull(source);
-    Pcap pcap =
-        Pcaps.live(
-            new PcapLive(source));
+    Pcap pcap = Pcaps.live(new PcapLive(source));
     Assertions.assertNotNull(pcap);
     pcap.close();
   }

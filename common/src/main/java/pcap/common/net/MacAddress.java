@@ -1,14 +1,13 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.net;
 
-import pcap.common.annotation.Inclubating;
-import pcap.common.util.NamedNumber;
-import pcap.common.util.Validate;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+import pcap.common.annotation.Inclubating;
+import pcap.common.util.NamedNumber;
+import pcap.common.util.Validate;
 
 /**
  * Wrapper for raw mac address.

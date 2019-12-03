@@ -3,6 +3,8 @@ package pcap.api;
 import java.io.IOException;
 import java.nio.file.Files;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.common.logging.Logger;
@@ -13,6 +15,7 @@ import pcap.spi.Pcap;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 
+@EnabledOnJre(JRE.JAVA_14)
 @RunWith(JUnitPlatform.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PcapDumperTest {

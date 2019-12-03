@@ -1,9 +1,8 @@
 package pcap.spi;
 
+import java.nio.ByteBuffer;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
-
-import java.nio.ByteBuffer;
 
 /**
  * A handle for {@code pcap} api.

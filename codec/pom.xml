@@ -1,79 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
-
     <parent>
-        <groupId>com.ardikars.pcap</groupId>
         <artifactId>pcap</artifactId>
-        <version>0.0.4-SNAPSHOT</version>
+        <groupId>com.ardikars.pcap</groupId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
+
+    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>pcap-codec</artifactId>
 
     <name>Pcap Codec</name>
-    <description>Pcap default codec</description>
+    <description>Crafting network packet</description>
+
+    <properties>
+        <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
+    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.ardikars.pcap</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>pcap-common</artifactId>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>legacy-support</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <source>${java.old.version}</source>
-                            <target>${java.old.version}</target>
-                            <excludes>
-                                <exclude>module-info.java</exclude>
-                            </excludes>
-                            <fork>true</fork>
-                            <compilerArgs combine.children="append">
-                                <!-- <arg>-Xplugin:ErrorProne</arg> -->
-                                <arg>-XDcompilePolicy=simple</arg>
-                                <arg>-J-Xbootclasspath/p:${settings.localRepository}/com/google/errorprone/javac/${java.version}/javac-${java.version}.jar</arg>
-                            </compilerArgs>
-                            <annotationProcessorPaths>
-                                <path>
-                                    <groupId>com.google.errorprone</groupId>
-                                    <artifactId>error_prone_core</artifactId>
-                                    <version>${errorprone.version}</version>
-                                </path>
-                            </annotationProcessorPaths>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>default-jar</id>
-                                <configuration>
-                                    <archive>
-                                        <manifest>
-                                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                        </manifest>
-                                        <manifestEntries>
-                                            <Automatic-Module-Name>pcap.codec</Automatic-Module-Name>
-                                        </manifestEntries>
-                                        <index>true</index>
-                                    </archive>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>

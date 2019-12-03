@@ -174,7 +174,9 @@ public interface pcap_mapping {
 
   @NativeFunction("(u64:${bpf_program}u64:${pcap_pkthdr}u64:u8)i32")
   int pcap_offline_filter(
-          Pointer<bpf_mapping.bpf_program> program, Pointer<PcapPacketHeader> pkthdr_p, Pointer<Byte> filter);
+      Pointer<bpf_mapping.bpf_program> program,
+      Pointer<PcapPacketHeader> pkthdr_p,
+      Pointer<Byte> filter);
 
   @NativeFunction("(u64:${pcap})i32")
   int pcap_datalink(Pointer<pcap> p);

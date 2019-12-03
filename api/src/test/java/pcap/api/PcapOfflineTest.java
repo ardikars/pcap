@@ -1,7 +1,10 @@
 package pcap.api;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.common.logging.Logger;
@@ -10,8 +13,7 @@ import pcap.spi.Pcap;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
+@EnabledOnJre(JRE.JAVA_14)
 @RunWith(JUnitPlatform.class)
 public class PcapOfflineTest {
 
@@ -19,7 +21,7 @@ public class PcapOfflineTest {
 
   private static final int MAX_PACKET = 10;
   private static final String FILTER = "ip";
-  private static final String FILE = "../tools/src/main/resources/pcap/sample.pcapng";
+  private static final String FILE = "src/test/resources/sample.pcapng";
 
   @Test
   public void offlineTest() throws ErrorException {

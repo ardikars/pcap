@@ -56,5 +56,4 @@ public abstract class InetAddress implements Address {
   protected abstract boolean isMcSiteLocal();
 
   protected abstract boolean isMcOrgLocal();
-
 }

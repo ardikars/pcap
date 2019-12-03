@@ -15,7 +15,7 @@ final class PooledDirectMemoryAllocator implements MemoryAllocator {
 
   private final AtomicInteger moreMemoryCounter;
 
-  private final MemoryAllocator heapMemoryAllocator = new DirectMemoryAllocator();
+  private final MemoryAllocator directMemoryAllocator = new DirectMemoryAllocator();
 
   PooledDirectMemoryAllocator(int maxMemoryCapacity) {
     this(
@@ -119,6 +119,7 @@ final class PooledDirectMemoryAllocator implements MemoryAllocator {
 
   private Memory doAllocateForPooledMemory(
       int capacity, int maxCapacity, int readerIndex, int writerIndex, boolean checking) {
-    return heapMemoryAllocator.allocate(capacity, maxCapacity, readerIndex, writerIndex, checking);
+    return directMemoryAllocator.allocate(
+        capacity, maxCapacity, readerIndex, writerIndex, checking);
   }
 }

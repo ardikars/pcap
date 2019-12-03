@@ -19,12 +19,9 @@ public final class HostAndPort {
   private final int port;
 
   private HostAndPort(Builder builder) {
-    Validate.notIllegalArgument(
-        builder.hostName != null, "Hostname should be not null.");
-    Validate.notIllegalArgument(
-        builder.hostAddress != null, "Address sould be not null.");
-    Validate.notIllegalArgument(
-        builder.port >= 0 && builder.port < 65536, "Invalid port.");
+    Validate.notIllegalArgument(builder.hostName != null, "Hostname should be not null.");
+    Validate.notIllegalArgument(builder.hostAddress != null, "Address sould be not null.");
+    Validate.notIllegalArgument(builder.port >= 0 && builder.port < 65536, "Invalid port.");
     if (!DOMAIN_PATTERN.matcher(builder.hostName).matches()) {
       throw new IllegalArgumentException("Invalid hostname.");
     }

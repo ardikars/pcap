@@ -1,5 +1,8 @@
+/** This code is licenced under the GPL version 2. */
 package pcap.api;
 
+import java.foreign.NativeTypes;
+import java.foreign.memory.Pointer;
 import pcap.api.internal.Pcap;
 import pcap.api.internal.PcapConstant;
 import pcap.api.internal.foreign.pcap_mapping;
@@ -7,9 +10,6 @@ import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.spi.exception.ErrorException;
-
-import java.foreign.NativeTypes;
-import java.foreign.memory.Pointer;
 
 @Inclubating
 public class PcapOffline extends Pcaps {
