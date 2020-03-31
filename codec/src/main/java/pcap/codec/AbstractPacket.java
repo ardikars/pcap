@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
+
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.memory.MemoryAllocator;
@@ -117,6 +119,10 @@ public abstract class AbstractPacket implements Packet {
     }
 
     public abstract Builder builder();
+  }
+
+  public <T extends AbstractPacket, R extends Packet> T map(Function<T, R> function) {
+    return (T) this;
   }
 
   /** Packet builder. */
