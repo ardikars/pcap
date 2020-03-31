@@ -6,7 +6,7 @@
     <parent>
         <artifactId>pcap</artifactId>
         <groupId>com.ardikars.pcap</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.5</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -17,6 +17,7 @@
     <description>Integration test module</description>
 
     <properties>
+        <jdk.version>${java.legacy.version}</jdk.version>
         <junit.version>5.5.1</junit.version>
         <junit.runner.version>1.5.2</junit.runner.version>
         <junit.engine.version>5.4.2</junit.engine.version>
@@ -109,8 +110,8 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
                         <configuration>
-                            <source>${java.legacy.version}</source>
-                            <target>${java.legacy.version}</target>
+                            <source>${jdk.version}</source>
+                            <target>${jdk.version}</target>
                             <excludes>
                                 <exclude>module-info.java</exclude>
                             </excludes>
