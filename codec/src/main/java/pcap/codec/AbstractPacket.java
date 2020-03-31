@@ -2,9 +2,7 @@
 package pcap.codec;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -121,8 +119,26 @@ public abstract class AbstractPacket implements Packet {
     public abstract Builder builder();
   }
 
-  public <T extends AbstractPacket, R extends Packet> T map(Function<T, R> function) {
+  public <T extends Packet, R extends Packet> T map(Function<T, R> function) {
     return (T) this;
+  }
+
+  public <T extends Packet> List<T> collectList() {
+    List<T> list = new ArrayList<>();
+    PacketIterator iterator = iterator();
+    while (iterator.hasNext()) {
+      list.add((T) iterator.next());
+    }
+    return list;
+  }
+
+  public <T extends Packet> Set<T> collectSet() {
+    Set<T> set = new HashSet<>();
+    PacketIterator iterator = iterator();
+    while (iterator.hasNext()) {
+      set.add((T) iterator.next());
+    }
+    return set;
   }
 
   /** Packet builder. */
