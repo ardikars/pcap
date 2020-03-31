@@ -7,8 +7,8 @@
  * @since 1.0.0
  */
 module pcap.spi {
-    exports pcap.spi;
-    exports pcap.spi.exception;
-    exports pcap.spi.exception.error;
-    exports pcap.spi.exception.warn;
+  exports pcap.spi;
+  exports pcap.spi.exception;
+  exports pcap.spi.exception.error;
+  exports pcap.spi.exception.warn;
 }

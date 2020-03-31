@@ -114,15 +114,14 @@ public class ArraysTest extends BaseTest {
   @Test
   public void concatenateLong() {
     assertArrayEquals(
-        new long[] {0, 1, 2, 3, 4, 5, 6},
-        Arrays.concatenate(new long[][] {longArray, new long[] {5, 6}}));
+        new long[] {0, 1, 2, 3, 4, 5, 6}, Arrays.concatenate(longArray, new long[] {5, 6}));
   }
 
   @Test
   public void concatenateDouble() {
     assertArrayEquals(
         new double[] {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6},
-        Arrays.concatenate(new double[][] {doubleArray, new double[] {0.5, 0.6}}),
+        Arrays.concatenate(doubleArray, new double[] {0.5, 0.6}),
         maximumDelta);
   }
 
@@ -130,6 +129,6 @@ public class ArraysTest extends BaseTest {
   public void concatenateObject() {
     assertArrayEquals(
         new Object[] {charArray, doubleArray, intArray, floatArray},
-        Arrays.concatenate(new Object[][] {objectArray, new Object[] {intArray, floatArray}}));
+        Arrays.concatenate(objectArray, new Object[] {intArray, floatArray}));
   }
 }

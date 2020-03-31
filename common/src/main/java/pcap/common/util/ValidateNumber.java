@@ -102,7 +102,7 @@ public final class ValidateNumber {
    * @throws IllegalArgumentException exception.
    */
   public static <T extends Number> void notZero(T number) throws IllegalArgumentException {
-    notZero(number, "Number \'" + number + "\'" + " is not zero.");
+    notZero(number, "Number '" + number + "'" + " is not zero.");
   }
 
   /**

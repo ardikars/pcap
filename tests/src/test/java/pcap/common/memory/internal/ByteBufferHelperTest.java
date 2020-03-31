@@ -28,9 +28,7 @@ public class ByteBufferHelperTest {
 
   @Test
   public void directByteBufferAddressTest() {
-    if (hasUnsafe) {
-      assert ByteBufferHelper.directByteBufferAddress(buffer) != 0;
-    }
+    assert !hasUnsafe || ByteBufferHelper.directByteBufferAddress(buffer) != 0;
   }
 
   @Test

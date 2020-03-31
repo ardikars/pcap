@@ -189,9 +189,9 @@ public class NeighborAdvertisement extends AbstractPacket {
     @Override
     public Packet build(Memory buffer) {
       int iscratch = buffer.readInt();
-      this.routerFlag = (iscratch >> 31 & 0x1) == 1 ? true : false;
-      this.solicitedFlag = (iscratch >> 30 & 0x1) == 1 ? true : false;
-      this.overrideFlag = (iscratch >> 29 & 0x1) == 1 ? true : false;
+      this.routerFlag = (iscratch >> 31 & 0x1) == 1;
+      this.solicitedFlag = (iscratch >> 30 & 0x1) == 1;
+      this.overrideFlag = (iscratch >> 29 & 0x1) == 1;
       byte[] ipv6AddrBuffer = new byte[Inet6Address.IPV6_ADDRESS_LENGTH];
       buffer.readBytes(ipv6AddrBuffer);
       this.targetAddress = Inet6Address.valueOf(ipv6AddrBuffer);

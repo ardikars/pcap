@@ -17,12 +17,12 @@ public final class Platforms {
     ANDROID,
     FREEBSD,
     DARWIN,
-    UNKNOWN;
+    UNKNOWN
   }
 
   public enum Architecture {
     _32_BIT,
-    _64_BIT;
+    _64_BIT
   }
 
   private Platforms() {}
@@ -148,7 +148,7 @@ public final class Platforms {
   public static String cpuVersion() {
     final String version = Properties.getProperty("os.version");
     if (Character.isDigit(version.charAt(version.indexOf('v') + 1))) {
-      return String.valueOf("v" + version.charAt(version.indexOf('v') + 1));
+      return "v" + version.charAt(version.indexOf('v') + 1);
     }
     return "";
   }

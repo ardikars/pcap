@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.memory.MemoryAllocator;

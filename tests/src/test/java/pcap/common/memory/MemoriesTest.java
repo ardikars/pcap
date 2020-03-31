@@ -35,9 +35,7 @@ public class MemoriesTest {
     for (int i = 0; i < 10; i++) {
       Memory memory = allocator.allocate(i + 1);
       if (i > 6) {
-        if (!Unsafe.HAS_UNSAFE) {
-          assert memory instanceof ByteBuf;
-        }
+        assert Unsafe.HAS_UNSAFE || memory instanceof ByteBuf;
       }
     }
     allocator.close();

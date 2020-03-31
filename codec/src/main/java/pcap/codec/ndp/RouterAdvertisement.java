@@ -218,8 +218,8 @@ public class RouterAdvertisement extends AbstractPacket {
     public Packet build(Memory buffer) {
       this.currentHopLimit = buffer.readByte();
       int bscratch = buffer.readByte();
-      this.manageFlag = ((bscratch >> 7) & 0x1) == 1 ? true : false;
-      this.otherFlag = ((bscratch >> 6) & 0x1) == 1 ? true : false;
+      this.manageFlag = ((bscratch >> 7) & 0x1) == 1;
+      this.otherFlag = ((bscratch >> 6) & 0x1) == 1;
       this.routerLifetime = buffer.readShort();
       this.reachableTime = buffer.readInt();
       this.retransmitTimer = buffer.readInt();

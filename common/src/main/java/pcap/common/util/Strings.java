@@ -2,6 +2,7 @@
 package pcap.common.util;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
@@ -9,7 +10,7 @@ import pcap.common.annotation.Inclubating;
 public final class Strings {
 
   /** Default charset (UTF-8). */
-  public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+  public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
   private Strings() {}
 

@@ -2,6 +2,7 @@
 package pcap.common.memory;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 abstract class AbstractMemoryWriterAndReaderTest extends BaseTest {
 
@@ -292,12 +293,12 @@ abstract class AbstractMemoryWriterAndReaderTest extends BaseTest {
   protected void doWriteReadCharSequaceTest() {
     String msg = "Hello java!.....";
     int length = msg.length();
-    Charset charset = Charset.forName("ASCII");
+    Charset charset = StandardCharsets.US_ASCII;
     memory.writeCharSequence(msg, charset);
     assert msg.equals(memory.readCharSequence(length, charset));
 
     memory.setIndex(0, 0);
-    charset = Charset.forName("UTF-8");
+    charset = StandardCharsets.UTF_8;
     memory.writeCharSequence(msg, charset);
     assert msg.equals(memory.readCharSequence(length, charset));
   }
