@@ -3,7 +3,6 @@ package pcap.common.proxy.factory;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-
 import pcap.common.annotation.Inclubating;
 import pcap.common.proxy.ObjectInvoker;
 import pcap.common.proxy.ProxyFactory;

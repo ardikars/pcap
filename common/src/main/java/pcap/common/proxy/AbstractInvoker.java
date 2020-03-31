@@ -1,7 +1,6 @@
 package pcap.common.proxy;
 
 import java.lang.reflect.Method;
-
 import pcap.common.annotation.Inclubating;
 import pcap.common.util.Objects;
 

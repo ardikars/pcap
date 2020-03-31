@@ -1,8 +1,7 @@
 package pcap.common.proxy;
 
-import pcap.common.annotation.Inclubating;
-
 import java.lang.reflect.Method;
+import pcap.common.annotation.Inclubating;
 
 @Inclubating
 public interface ObjectInvoker {
