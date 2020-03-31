@@ -32,7 +32,7 @@ jobs:
           architecture: x64
       - name: Build modules (spi, common, codec) [JDK-8]
         run: |
-          ./mvnw -pl !api -B -s .mvn/release-settings.xml clean package -Plegacy-support -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8
+          ./mvnw -pl !api -B -s .mvn/release-settings.xml clean package -Plegacy-support -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8 -Dpcap.unsafe=true
       - name: Build modules (api) [JDK-14]
         run: |
           [ -d /tmp/jdk-14 ] && echo 'JDK-14 is already installed' || ./.github/scripts/install-jdk.sh -w /tmp -u https://download.java.net/java/early_access/panama/1/openjdk-14-panama+1-15_linux-x64_bin.tar.gz --os linux-x64
