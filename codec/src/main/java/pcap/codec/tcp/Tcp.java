@@ -189,7 +189,7 @@ public class Tcp extends AbstractPacket {
           .append(urgentPointer)
           .append('\n')
           .append("\toptions: ")
-          .append(options == null? "[]" : Strings.hex(options))
+          .append(options == null ? "[]" : Strings.hex(options))
           .append('\n')
           .toString();
     }
