@@ -2,6 +2,7 @@
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 module pcap.common {
+  requires net.bytebuddy;
   requires org.apache.logging.log4j;
   requires log4j;
   requires org.slf4j;
