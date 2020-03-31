@@ -25,9 +25,9 @@ Add below configuration to your pom.xml
 
 <dependencies>
     <dependency>
-            <groupId>com.ardikars.pcap</groupId>
-            <artifactId>pcap-codec</artifactId>
-        </dependency>
+        <groupId>com.ardikars.pcap</groupId>
+        <artifactId>pcap-codec</artifactId>
+    </dependency>
     <dependency>
         <groupId>com.ardikars.pcap</groupId>
         <artifactId>pcap-api</artifactId>
@@ -39,7 +39,7 @@ Add below configuration to your pom.xml
         <dependency>
             <groupId>com.ardikars.pcap</groupId>
             <artifactId>pcap</artifactId>
-            <version>0.0.4-SNAPSHOT</version>
+            <version>${PCAP-LATEST-VERSION}</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>

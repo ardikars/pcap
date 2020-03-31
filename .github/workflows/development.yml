@@ -40,4 +40,4 @@ jobs:
           echo "JAVA_HOME_8 = $JAVA_HOME_8"
           echo "JAVA_HOME_14 = $JAVA_HOME_14"
           echo "JAVA_HOME = $JAVA_HOME"
-          ./mvnw -B -s .mvn/release-settings.xml package -Prelease -Plegacy-support -DskipTests
+          ./mvnw -B -s .mvn/release-settings.xml package -Plegacy-support -DskipTests

@@ -1,6 +1,7 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api;
 
+import pcap.common.util.Strings;
 import pcap.spi.Timestamp;
 
 public class PcapLiveOptions {
@@ -54,6 +55,41 @@ public class PcapLiveOptions {
     return this;
   }
 
+  public PcapLiveOptions promiscuous(boolean promiscuous) {
+    this.promiscuous = promiscuous;
+    return this;
+  }
+
+  public PcapLiveOptions rfmon(boolean rfmon) {
+    this.rfmon = rfmon;
+    return this;
+  }
+
+  public PcapLiveOptions timeout(int timeout) {
+    this.timeout = timeout;
+    return this;
+  }
+
+  public PcapLiveOptions timestampType(Timestamp.Type timestampType) {
+    this.timestampType = timestampType;
+    return this;
+  }
+
+  public PcapLiveOptions immediate(boolean immediate) {
+    this.immediate = immediate;
+    return this;
+  }
+
+  public PcapLiveOptions bufferSize(int bufferSize) {
+    this.bufferSize = bufferSize;
+    return this;
+  }
+
+  public PcapLiveOptions timestampPrecision(Timestamp.Precision timestampPrecision) {
+    this.timestampPrecision = timestampPrecision;
+    return this;
+  }
+
   public int snapshotLength() {
     return snapshotLength;
   }
@@ -84,5 +120,19 @@ public class PcapLiveOptions {
 
   public Timestamp.Precision timestampPrecision() {
     return timestampPrecision;
+  }
+
+  @Override
+  public String toString() {
+    return Strings.toStringBuilder(this)
+        .add("snapshotLength", snapshotLength)
+        .add("promiscuous", promiscuous)
+        .add("rfmon", rfmon)
+        .add("timeout", timeout)
+        .add("immediate", immediate)
+        .add("bufferSize", bufferSize)
+        .add("timestampType", timestampType)
+        .add("timestampPrecision", timestampPrecision)
+        .toString();
   }
 }

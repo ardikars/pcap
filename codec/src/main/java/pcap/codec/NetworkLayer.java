@@ -30,6 +30,31 @@ public final class NetworkLayer extends NamedNumber<Short, NetworkLayer> {
   public static final NetworkLayer DOT1Q_VLAN_TAGGED_FRAMES =
       new NetworkLayer((short) 0x8100, "IEEE 802.1Q VLAN-tagged frames");
 
+  /** QinQ: 0x88a8 */
+  public static final NetworkLayer IEEE_802_1_AD = new NetworkLayer((short) 0x88a8, "QinQ");
+  /** RARP: 0x8035 */
+  public static final NetworkLayer RARP = new NetworkLayer((short) 0x8035, "RARP");
+
+  /** Appletalk: 0x809b */
+  public static final NetworkLayer APPLETALK = new NetworkLayer((short) 0x809b, "Appletalk");
+
+  /** IPv6: 0x86dd */
+  public static final NetworkLayer IPV6 = new NetworkLayer((short) 0x86dd, "IPv6");
+
+  /** PPP: 0x880b */
+  public static final NetworkLayer PPP = new NetworkLayer((short) 0x880b, "PPP");
+
+  /** MPLS: 0x8847 */
+  public static final NetworkLayer MPLS = new NetworkLayer((short) 0x8847, "MPLS");
+
+  /** PPPoED Discovery Stage: 0x8863 */
+  public static final NetworkLayer PPPOE_DISCOVERY_STAGE =
+      new NetworkLayer((short) 0x8863, "PPPoED Discovery Stage");
+
+  /** PPPoED Session Stage: 0x8864 */
+  public static final NetworkLayer PPPOE_SESSION_STAGE =
+      new NetworkLayer((short) 0x8864, "PPPoED Session Stage");
+
   /**
    * @param value value
    * @param name name

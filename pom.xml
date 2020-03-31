@@ -7,7 +7,7 @@
     <groupId>com.ardikars.pcap</groupId>
     <artifactId>pcap</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.5</version>
+    <version>0.0.7</version>
 
     <modules>
         <module>spi</module>
@@ -16,6 +16,7 @@
         <module>api</module>
         <module>spring-boot-starter</module>
         <module>tests</module>
+        <module>spring-boot-starter-example</module>
     </modules>
 
     <name>Pcap</name>
@@ -67,12 +68,12 @@
         <dependencies>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>pcap-common</artifactId>
+                <artifactId>pcap-spi</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>pcap-codec</artifactId>
+                <artifactId>pcap-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -82,7 +83,12 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>pcap-spi</artifactId>
+                <artifactId>pcap-codec</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>pcap-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

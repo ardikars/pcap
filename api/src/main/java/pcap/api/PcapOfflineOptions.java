@@ -2,6 +2,7 @@
 package pcap.api;
 
 import pcap.common.annotation.Inclubating;
+import pcap.common.util.Strings;
 import pcap.spi.Timestamp;
 
 @Inclubating
@@ -24,5 +25,10 @@ public class PcapOfflineOptions {
 
   public Timestamp.Precision timestampPrecision() {
     return timestampPrecision;
+  }
+
+  @Override
+  public String toString() {
+    return Strings.toStringBuilder(this).add("timestampPrecision", timestampPrecision).toString();
   }
 }

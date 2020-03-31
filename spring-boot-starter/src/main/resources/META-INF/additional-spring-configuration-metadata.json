@@ -1,0 +1,64 @@
+{
+  "properties": [
+    {
+      "name": "spring.pcap.unsafe",
+      "type": "java.lang.Boolean",
+      "description": "Enable sun.misc.Unsafe for memory processing (only for java 8)",
+      "defaultValue": "false"
+    },
+    {
+      "name": "spring.pcap.live.snapshotLength",
+      "type": "java.lang.Integer",
+      "description": "Specifies the snapshot length to be set on the handle (16 bit).",
+      "defaultValue": "65535"
+    },
+    {
+      "name": "spring.pcap.live.promiscuous",
+      "type": "java.lang.Boolean",
+      "description": "Sets whether promiscuous mode should be set on a capture handle when the handle is activated.",
+      "defaultValue": "true"
+    },
+    {
+      "name": "spring.pcap.live.rfmon",
+      "type": "java.lang.Boolean",
+      "description": "Sets whether monitor mode should be set on a capture handle when the handle is activated.",
+      "defaultValue": "false"
+    },
+    {
+      "name": "spring.pcap.live.timeout",
+      "type": "java.lang.Integer",
+      "description": "Sets the packet buffer timeout that will be used on a capture handle when the handle is activated.",
+      "defaultValue": "2000"
+    },
+    {
+      "name": "spring.pcap.live.immediate",
+      "type": "java.lang.Double",
+      "description": "Sets whether immediate mode should be set on a capture handle when the handle is activated.",
+      "defaultValue": "true"
+    },
+    {
+      "name": "spring.pcap.live.bufferSize",
+      "type": "java.lang.Integer",
+      "description": "Set the packet buffer will be used on a capture handle when the handle is activated.",
+      "defaultValue": "1500"
+    },
+    {
+      "name": "spring.pcap.liva.timestampType",
+      "type": "pcap.spi.Timestamp.Type",
+      "description": "Set the time stamp type returned in captures.",
+      "defaultValue": "HOST"
+    },
+    {
+      "name": "spring.pcap.live.timestampPrecision",
+      "type": "pcap.spi.Timestamp.Precision",
+      "description": "Set the time stamp precision returned in captures.",
+      "defaultValue": "MICRO"
+    },
+    {
+      "name": "spring.pcap.offline.timestampPrecision",
+      "type": "pcap.spi.Timestamp.Precision",
+      "description": "Set the time stamp precision returned in captures.",
+      "defaultValue": "MICRO"
+    }
+  ]
+}

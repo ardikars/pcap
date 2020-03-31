@@ -125,11 +125,14 @@ public final class Memories {
       throws UnsupportedOperationException {
     Validate.notIllegalArgument(size > 0, String.format("size: %d (expected: > 0)", size));
     if (MemoryAllocator.UNSAFE_BUFFER) {
+      Memory memory;
       if (checking) {
-        return new CheckedMemory(memoryAddress, size, size);
+        memory = new CheckedMemory(memoryAddress, size, size);
       } else {
-        return new UncheckedMemory(memoryAddress, size, size);
+        memory = new UncheckedMemory(memoryAddress, size, size);
       }
+      memory.writerIndex(memory.capacity());
+      return memory;
     } else {
       throw new UnsupportedOperationException();
     }
@@ -155,16 +158,19 @@ public final class Memories {
    */
   public static Memory wrap(ByteBuffer buffer, boolean checking) {
     Validate.notIllegalArgument(buffer != null, "buffer: null (expected: non null)");
+    Memory memory;
     if (MemoryAllocator.UNSAFE_BUFFER) {
       int capacity = buffer.capacity();
       long address = ByteBufferHelper.directByteBufferAddress(buffer);
       if (checking) {
-        return new CheckedMemory(buffer, address, capacity, capacity, 0, 0);
+        memory = new CheckedMemory(buffer, address, capacity, capacity, 0, 0);
       }
-      return new UncheckedMemory(buffer, address, capacity, capacity, 0, 0);
+      memory = new UncheckedMemory(buffer, address, capacity, capacity, 0, 0);
     } else {
-      return new ByteBuf(0, buffer, buffer.capacity(), buffer.capacity(), 0, 0);
+      memory = new ByteBuf(0, buffer, buffer.capacity(), buffer.capacity(), 0, 0);
     }
+    memory.writerIndex(memory.capacity());
+    return memory;
   }
 
   /**
@@ -174,7 +180,9 @@ public final class Memories {
    * @return returns {@link Memory}.
    */
   public static Memory wrap(CharSequence hexStream) {
-    return wrap(hexStream, true, new DefaultMemoryAllocator());
+    Memory memory = wrap(hexStream, true, new DefaultMemoryAllocator());
+    memory.writerIndex(memory.capacity());
+    return memory;
   }
 
   /**
@@ -211,15 +219,18 @@ public final class Memories {
   public static Memory wrap(byte[] bytes, boolean checking) {
     Validate.notIllegalArgument(
         bytes != null, String.format("hexStream: null (expected: non null)"));
+    Memory memory;
     if (Unsafe.HAS_UNSAFE) {
       if (checking) {
-        return new CheckedByteArray(0, bytes, bytes.length, bytes.length, 0, 0);
+        memory = new CheckedByteArray(0, bytes, bytes.length, bytes.length, 0, 0);
       } else {
-        return new UncheckedByteArray(0, bytes, bytes.length, bytes.length, 0, 0);
+        memory = new UncheckedByteArray(0, bytes, bytes.length, bytes.length, 0, 0);
       }
     } else {
-      return new ByteBuf(0, ByteBuffer.wrap(bytes), bytes.length, bytes.length, 0, 0);
+      memory = new ByteBuf(0, ByteBuffer.wrap(bytes), bytes.length, bytes.length, 0, 0);
     }
+    memory.writerIndex(memory.capacity());
+    return memory;
   }
 
   /**

@@ -6,6 +6,10 @@ import pcap.common.annotation.Inclubating;
 @Inclubating
 public class Objects {
 
+  public static boolean nonNull(Object object) {
+    return java.util.Objects.nonNull(object);
+  }
+
   public static boolean isHashCode(Method method) {
     return "hashCode".equals(method.getName())
         && Integer.TYPE.equals(method.getReturnType())
