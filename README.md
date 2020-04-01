@@ -10,19 +10,6 @@ Provides high level JVM network packet processing library for rapid development.
 Add below configuration to your pom.xml
 
 ```
-<repositories>
-    <repository>
-        <id>snaphot-repository</id>
-        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-        <releases>
-            <enabled>false</enabled>
-        </releases>
-    </repository>
-</repositories>
-
 <dependencies>
     <dependency>
         <groupId>com.ardikars.pcap</groupId>
