@@ -3,6 +3,8 @@ package pcap.api;
 
 import java.foreign.NativeTypes;
 import java.foreign.memory.Pointer;
+import java.io.File;
+
 import pcap.api.internal.Pcap;
 import pcap.api.internal.PcapConstant;
 import pcap.api.internal.foreign.pcap_mapping;
@@ -19,12 +21,23 @@ public class PcapOffline extends Pcaps {
   private String file; // not null
   private PcapOfflineOptions options; // nullable
 
+  @Deprecated
   public PcapOffline(String file) {
     this(file, new PcapOfflineOptions());
   }
 
+  @Deprecated
   public PcapOffline(String file, PcapOfflineOptions options) {
     this.file = file;
+    this.options = options;
+  }
+
+  public PcapOffline(File file) {
+    this(file, new PcapOfflineOptions());
+  }
+
+  public PcapOffline(File file, PcapOfflineOptions options) {
+    this.file = file.getAbsolutePath();
     this.options = options;
   }
 
