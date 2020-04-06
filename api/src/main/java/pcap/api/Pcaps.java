@@ -122,7 +122,8 @@ public abstract class Pcaps {
         throw new ErrorException(Pointer.toString(errbuf));
       }
       String deviceName = Pointer.toString(device);
-      Optional<Interface> optional = StreamSupport.stream(lookupInterfaces().spliterator(), false)
+      Optional<Interface> optional =
+          StreamSupport.stream(lookupInterfaces().spliterator(), false)
               .filter(iface -> deviceName.equals(iface.name()))
               .findFirst();
       if (!optional.isPresent()) {

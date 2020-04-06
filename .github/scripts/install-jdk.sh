@@ -12,7 +12,7 @@
 #   JAVA_HOME is set to the extracted JDK directory
 #   PATH is prepended with ${JAVA_HOME}/bin
 #
-# (C) 2019 Christian Stein
+# (C) 2020 Christian Stein
 #
 # https://github.com/sormuras/bach/blob/master/install-jdk.sh
 #
@@ -23,7 +23,7 @@ set -o errexit
 
 function initialize() {
     readonly script_name="$(basename "${BASH_SOURCE[0]}")"
-    readonly script_version='2019-10-16'
+    readonly script_version='2020-04-07'
 
     dry=false
     silent=false
@@ -31,6 +31,7 @@ function initialize() {
     emit_java_home=false
 
     feature='ea'
+    eap=('panama valhalla loom metropolis')
     license='GPL' # Force GPLv2+CE
     os='?'
     url='?'
@@ -159,7 +160,7 @@ function determine_latest_jdk() {
     local curl_result
     local url
 
-    number=14
+    number=15
     verbose "Determine latest JDK feature release number, starting with ${number}"
     while [[ ${number} != 99 ]]
     do
@@ -181,7 +182,9 @@ function perform_sanity_checks() {
         feature=${latest_jdk}
     fi
     if [[ ${feature} -lt 9 ]] || [[ ${feature} -gt ${latest_jdk} ]]; then
-        script_exit "Expected feature release number in range of 9 to ${latest_jdk}, but got: ${feature}" 3
+        if [[ ! " ${eap[@]} " =~ " ${feature} " ]]; then
+            script_exit "Expected feature release number in range of 9 to ${latest_jdk}, but got: ${feature}" 3
+        fi
     fi
     if [[ -d "$target" ]]; then
         script_exit "Target directory must not exist, but it does: $(du -hs '${target}')" 3
@@ -198,7 +201,9 @@ function determine_url() {
        10) url="${DOWNLOAD}/GA/jdk10/10.0.2/19aef61b38124481863b1413dce1855f/13/openjdk-10.0.2_${os}_bin.tar.gz"; return;;
        11) url="${DOWNLOAD}/GA/jdk11/9/GPL/openjdk-11.0.2_${os}_bin.tar.gz"; return;;
        12) url="${DOWNLOAD}/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_${os}_bin.tar.gz"; return;;
-       13) url="${DOWNLOAD}/GA/jdk13.0.1/cec27d702aa74d5a8630c65ae61e4305/9/GPL/openjdk-13.0.1_${os}_bin.tar.gz"; return;;
+       13) url="${DOWNLOAD}/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_${os}_bin.tar.gz"; return;;
+       14) url="${DOWNLOAD}/GA/jdk14/076bab302c7b4508975440c56f6cc26a/36/GPL/openjdk-14_${os}_bin.tar.gz"; return;;
+    #  15) is still available from its EA/RC location determined below
     esac
 
     # EA or RC build? Grab URL from HTML source of jdk.java.net/${feature}
@@ -206,7 +211,10 @@ function determine_url() {
     url=$(echo "${candidates}" | grep -Eo "${DOWNLOAD}/.+/jdk${feature}/.*${license}/.*jdk-${feature}.+${os}_bin(.tar.gz|.zip)$" || true)
 
     if [[ -z ${url} ]]; then
-        script_exit "Couldn't determine a download url for ${feature}-${license} on ${os}" 1
+        url=$(echo "${candidates}" | grep "${feature}" | grep "${os}" | grep -e ".tar.gz$" -e ".zip$" || true)
+        if [[ -z ${url} ]]; then
+            script_exit "Couldn't determine a download url for ${feature}-${license} on ${os}" 1
+        fi
     fi
 }
 

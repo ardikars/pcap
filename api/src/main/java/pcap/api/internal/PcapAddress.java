@@ -104,7 +104,7 @@ public class PcapAddress implements Address {
           return Inet6Address.getByAddress(data);
         }
       } else {
-         LOGGER.warn("pointer (null)");
+        LOGGER.warn("pointer (null)");
       }
     } catch (UnknownHostException e) {
       LOGGER.error(e);

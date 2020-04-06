@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  hotspot-deployment:
+  deployment:
     name: Deployment
     strategy:
       fail-fast: false

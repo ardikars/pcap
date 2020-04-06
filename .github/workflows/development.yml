@@ -1,4 +1,4 @@
-name: Build
+name: Build and Test
 
 on:
   push:
@@ -9,49 +9,81 @@ on:
       - development
 
 jobs:
-  hotspot-deployment:
-    name: Test
+  build-and-test:
+    name: Build and Test
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest]
+        os: ['macos-latest', 'ubuntu-latest']
         java: [8]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Installing dependencies
-        run: |
-          git clone https://github.com/the-tcpdump-group/libpcap.git
-          cd libpcap && ./configure --prefix=/usr/local
-          make && mkdir -p ~/Library/Java/Extensions/
-          cp libpcap.*.dylib ~/Library/Java/Extensions/libpcap.dylib
-          cp libpcap.a ~/Library/Java/Extensions/libpcap.a
-          sudo chown $(whoami):admin /dev/bpf*
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 0
       - uses: actions/cache@v1
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          path: ${HOME}/.m2/repository
+          key: pcap-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+            pcap-maven-
+
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+
       - uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
           architecture: x64
-      - name: Installing Panama EA
+
+      - name: actions/setup-panama
         run: |
-          [ -f ~/.m2/repository/jdk-14/Contents/Home/bin/javac ] && echo "" || curl -o jdk.tar.gz https://download.java.net/java/early_access/panama/1/openjdk-14-panama+1-15_osx-x64_bin.tar.gz
-          [ -f ~/.m2/repository/jdk-14/Contents/Home/bin/javac ] && echo "" || tar -xzf jdk.tar.gz
-          [ -f ~/.m2/repository/jdk-14/Contents/Home/bin/javac ] && echo "Already installed" || mv jdk-14.jdk ~/.m2/repository/jdk-14
-      - name: Build modules
+          sudo mkdir -p /usr/local/jvm
+          sudo chown -R $(whoami) /usr/local/jvm
+          ./.github/scripts/install-jdk.sh -f panama -w /tmp -t /usr/local/jvm/panama -v
+        if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest'
+
+
+      - name: actions/setup-pcap
+        run: |
+          find /usr/lib/ -iname "libpcap*"
+          mkdir -p ~/Library/Java/Extensions
+          cp -rf /usr/lib/libpcap.* ~/Library/Java/Extensions
+          sudo chown $(whoami):admin /dev/bpf*
+        if: matrix.os == 'macos-latest'
+
+      - name: actions/setup-pcap
+        run: |
+          sudo apt-get update && sudo apt-get -y install libpcap0.8
+          sudo setcap cap_net_raw,cap_net_admin=eip /usr/local/jvm/panama/bin/java
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: actions/setup-pcap
+        run: |
+          choco install nmap
+        if: matrix.os == 'windows-latest'
+
+
+      - name: Build (Mac OS)
         run: |
           export JAVA_HOME_8=${JAVA_HOME}
-          export JAVA_HOME_14=~/.m2/repository/jdk-14/Contents/Home
+          export JAVA_HOME_14=/usr/local/jvm/panama
           export JAVA_HOME=${JAVA_HOME_14}
           echo "JAVA_HOME_8 = $JAVA_HOME_8"
           echo "JAVA_HOME_14 = $JAVA_HOME_14"
           echo "JAVA_HOME = $JAVA_HOME"
-          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Plegacy-support -Pformat -Psonar -Dsonar.login=${{ secrets.sonar_token }}
+          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Plegacy-support -Pformat -Psonar -Djava.library.path=/usr/lib -Dsonar.login="${{ secrets.sonar_token }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: matrix.os == 'macos-latest'
+
+      - name: Build (Ubuntu)
+        run: |
+          export JAVA_HOME_8=${JAVA_HOME}
+          export JAVA_HOME_14=/usr/local/jvm/panama
+          export JAVA_HOME=${JAVA_HOME_14}
+          echo "JAVA_HOME_8 = $JAVA_HOME_8"
+          echo "JAVA_HOME_14 = $JAVA_HOME_14"
+          echo "JAVA_HOME = $JAVA_HOME"
+          ./mvnw -B -pl '!api' -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Plegacy-support -Pformat
+        if: matrix.os == 'ubuntu-latest'

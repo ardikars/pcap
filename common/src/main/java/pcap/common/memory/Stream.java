@@ -3,18 +3,17 @@ package pcap.common.memory;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-
 import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 public abstract class Stream extends AbstractMemory<Memory[]> {
 
-  final AtomicIntegerFieldUpdater<Stream> positinUpdater = AtomicIntegerFieldUpdater
-          .newUpdater(Stream.class, "position");
+  final AtomicIntegerFieldUpdater<Stream> positinUpdater =
+      AtomicIntegerFieldUpdater.newUpdater(Stream.class, "position");
 
-  final AtomicIntegerFieldUpdater<Stream> baseIndexUpdater = AtomicIntegerFieldUpdater
-          .newUpdater(Stream.class, "baseIndex");
+  final AtomicIntegerFieldUpdater<Stream> baseIndexUpdater =
+      AtomicIntegerFieldUpdater.newUpdater(Stream.class, "baseIndex");
 
   protected volatile int position;
   protected volatile int baseIndex;
