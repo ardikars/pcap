@@ -10,6 +10,8 @@ import java.util.Iterator;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.api.internal.util.PcapAddressIterator;
 import pcap.common.annotation.Inclubating;
+import pcap.common.logging.Logger;
+import pcap.common.logging.LoggerFactory;
 import pcap.spi.Address;
 
 /**
@@ -19,6 +21,8 @@ import pcap.spi.Address;
  */
 @Inclubating
 public class PcapAddress implements Address {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(PcapAddress.class);
 
   Address next;
   InetAddress address;
@@ -88,7 +92,7 @@ public class PcapAddress implements Address {
         if (sockaddr.sa_family$get() == 2) {
           byte[] data = new byte[4];
           for (int i = 0; i < data.length; i++) {
-            data[i] = sockaddr.sa_data$get().get(i + 2);
+            data[i] = sockaddr.sa_data$get().get(i + 2L);
           }
           return Inet4Address.getByAddress(data);
 
@@ -100,9 +104,10 @@ public class PcapAddress implements Address {
           return Inet6Address.getByAddress(data);
         }
       } else {
-        // LOGGER.warn("pointer (null)");
+         LOGGER.warn("pointer (null)");
       }
     } catch (UnknownHostException e) {
+      LOGGER.error(e);
     }
     return null;
   }

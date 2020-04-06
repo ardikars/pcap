@@ -21,8 +21,6 @@ package pcap.common.logging;
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 final class FormattingTuple {
 
-  public static FormattingTuple NULL = new FormattingTuple(null);
-
   private String message;
   private Throwable throwable;
   private Object[] argArray;

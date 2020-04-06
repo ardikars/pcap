@@ -14,30 +14,44 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04]
+        os: [macos-latest]
         java: [8]
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Installing dependencies
+        run: |
+          git clone https://github.com/the-tcpdump-group/libpcap.git
+          cd libpcap && ./configure --prefix=/usr/local
+          make && mkdir -p ~/Library/Java/Extensions/
+          cp libpcap.*.dylib ~/Library/Java/Extensions/libpcap.dylib
+          cp libpcap.a ~/Library/Java/Extensions/libpcap.a
+          sudo chown $(whoami):admin /dev/bpf*
       - uses: actions/checkout@v1
         with:
-          fetch-depth: 1
-      - name: Setting up deployment
-        run: |
-          echo "${{ secrets.mvn_settings_base64 }}" | base64 --decode > .mvn/release-settings.xml
-          gpg --keyserver keyserver.ubuntu.com --recv 3941ec75119f398a
-          echo "${{ secrets.gpg_secring_base64 }}" | base64 --decode > ~/.gnupg/secring.gpg
+          fetch-depth: 0
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
       - uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
           architecture: x64
+      - name: Installing Panama EA
+        run: |
+          [ -f ~/.m2/repository/jdk-14/Contents/Home/bin/javac ] && echo "" || curl -o jdk.tar.gz https://download.java.net/java/early_access/panama/1/openjdk-14-panama+1-15_osx-x64_bin.tar.gz
+          [ -f ~/.m2/repository/jdk-14/Contents/Home/bin/javac ] && echo "" || tar -xzf jdk.tar.gz
+          [ -f ~/.m2/repository/jdk-14/Contents/Home/bin/javac ] && echo "Already installed" || mv jdk-14.jdk ~/.m2/repository/jdk-14
       - name: Build modules
         run: |
-          [ -d /tmp/jdk-14 ] && echo 'JDK-14 is already installed' || ./.github/scripts/install-jdk.sh -w /tmp -u https://download.java.net/java/early_access/panama/1/openjdk-14-panama+1-15_linux-x64_bin.tar.gz --os linux-x64
-          mkdir -p ~/.m2 && cp .mvn/toolchains.xml ~/.m2
           export JAVA_HOME_8=${JAVA_HOME}
-          export JAVA_HOME_14=/tmp/jdk-14
+          export JAVA_HOME_14=~/.m2/repository/jdk-14/Contents/Home
           export JAVA_HOME=${JAVA_HOME_14}
           echo "JAVA_HOME_8 = $JAVA_HOME_8"
           echo "JAVA_HOME_14 = $JAVA_HOME_14"
           echo "JAVA_HOME = $JAVA_HOME"
-          ./mvnw -B -s .mvn/release-settings.xml package -Plegacy-support -DskipTests
+          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Plegacy-support -Pformat -Psonar -Dsonar.login=${{ secrets.sonar_token }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -58,6 +58,40 @@ public interface Pcap extends AutoCloseable {
   <T> void loop(int count, PacketHandler<T> handler, T args) throws BreakException, ErrorException;
 
   /**
+   * processes packets from a live capture or {@code PcapLive} until cnt packets are processed, the
+   * end of the current bufferful of packets is reached when doing a live capture, the end of the
+   * {@code 'savefile'} is reached when reading from a {@code 'savefile'}, {@code Pcap#breakLoop()}
+   * is called, or an error occurs. Thus, when doing a live capture, cnt is the maximum number of
+   * packets to process before returning, but is not a minimum number; when reading a live capture,
+   * only one bufferful of packets is read at a time, so fewer than cnt packets may be processed. A
+   * value of -1 or 0 for cnt causes all the packets received in one buffer to be processed when
+   * reading a live capture, and causes all the packets in the file to be processed when reading a
+   * {@code 'savefile'}.
+   *
+   * <p>(In older versions of libpcap, the behavior when cnt was 0 was undefined; different
+   * platforms and devices behaved differently, so code that must work with older versions of
+   * libpcap should use -1, nor 0, as the value of cnt.)
+   *
+   * <p>callback specifies a {@code PacketHandler} routine to be called with three arguments : a
+   * {@code args} which is passed in the user argument to {@code Pcap#loop()} or {@code
+   * Pcap#dispatch()}, a const struct pcap_pkthdr pointer pointing to the packet time stamp and
+   * lengths, and a {@code args} to the first caplen bytes of data from the packet.
+   *
+   * <p>(In older versions of libpcap, the behavior when cnt was 0 was undefined; different
+   * platforms and devices behaved differently, so code that must work with older versions of
+   * libpcap should use -1, nor 0, as the value of cnt.)
+   *
+   * @param count number of packets.
+   * @param handler {@link PacketHandler} callback function.
+   * @param args user args.
+   * @param <T> args type.
+   * @throws BreakException {@link Pcap#breakLoop()} is called.
+   * @throws ErrorException Generic error.
+   */
+  <T> void dispatch(int count, PacketHandler<T> handler, T args)
+      throws BreakException, ErrorException;;
+
+  /**
    * Represent packet statistics from the start of the run to the time of the call.
    *
    * <p>Supported only on live captures, not on {@code PcapOffline}; no statistics are stored in
@@ -88,6 +122,26 @@ public interface Pcap extends AutoCloseable {
   void send(ByteBuffer directBuffer, int size) throws ErrorException;
 
   /**
+   * Used to specify a direction that packets will be captured. This method isn't necessarily fully
+   * supported on all platforms; some platforms might return an error for all values, and some other
+   * platforms might not support {@link Direction#PCAP_D_OUT}.
+   *
+   * <p>This operation is not supported if a {@code PcapOffline} is being read.
+   *
+   * <p>Below is list of directions:
+   *
+   * <ul>
+   *   <li>{@code PCAP_D_INOUT} is the default direction and it will capture packets received by or
+   *       sent by the device.
+   *   <li>{@code PCAP_D_IN} only capture packets received by the device.
+   *   <li>{@code PCAP_D_OUT} only capture packets sent by the device.
+   * </ul>
+   *
+   * @param direction is one of the constants {@link Direction}.
+   */
+  void setDirection(Direction direction) throws ErrorException;
+
+  /**
    * Close {@code PcapLive} or {@code PcapOffline}. <br>
    * Note: BPF handle will closed automaticly.
    *
@@ -95,4 +149,11 @@ public interface Pcap extends AutoCloseable {
    */
   @Override
   void close();
+
+  /** Used to specify a direction that packets will be captured. */
+  enum Direction {
+    PCAP_D_INOUT,
+    PCAP_D_IN,
+    PCAP_D_OUT
+  }
 }

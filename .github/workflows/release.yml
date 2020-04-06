@@ -23,10 +23,10 @@ jobs:
           fetch-depth: 1
       - uses: actions/cache@v1
         with:
-          path: /tmp/jdk-14
-          key: ${{ runner.os }}-jdk-14-${{ hashFiles('**/pom.xml') }}
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-jdk-14-
+            ${{ runner.os }}-maven-
       - name: Setting up deployment
         run: |
           echo "${{ secrets.mvn_settings_base64 }}" | base64 --decode > .mvn/release-settings.xml
@@ -38,12 +38,11 @@ jobs:
           architecture: x64
       - name: Deploy modules
         run: |
-          [ -d /tmp/jdk-14 ] && echo 'JDK-14 is already installed' || ./.github/scripts/install-jdk.sh -w /tmp -u https://download.java.net/java/early_access/panama/1/openjdk-14-panama+1-15_linux-x64_bin.tar.gz --os linux-x64
-          mkdir -p ~/.m2 && cp .mvn/toolchains.xml ~/.m2
+          [ -d ~/.m2/repository/jdk-14 ] && echo 'JDK-14 is already installed' || ./.github/scripts/install-jdk.sh -w ~/.m2/repository/ -u https://download.java.net/java/early_access/panama/1/openjdk-14-panama+1-15_linux-x64_bin.tar.gz
           export JAVA_HOME_8=${JAVA_HOME}
-          export JAVA_HOME_14=/tmp/jdk-14
+          export JAVA_HOME_14=~/.m2/repository/jdk-14
           export JAVA_HOME=${JAVA_HOME_14}
           echo "JAVA_HOME_8 = $JAVA_HOME_8"
           echo "JAVA_HOME_14 = $JAVA_HOME_14"
           echo "JAVA_HOME = $JAVA_HOME"
-          ./mvnw -B -s .mvn/release-settings.xml deploy -Prelease -Plegacy-support -DskipTests
+          ./mvnw -B -t .mvn/toolchains.xml -s .mvn/release-settings.xml deploy -Prelease -Plegacy-support -DskipTests

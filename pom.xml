@@ -7,7 +7,7 @@
     <groupId>com.ardikars.pcap</groupId>
     <artifactId>pcap</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
 
     <modules>
         <module>spi</module>
@@ -61,6 +61,10 @@
         <slf4j.version>1.7.30</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
         <log4j2.version>2.13.1</log4j2.version>
+
+        <junit.jupiter.api.version>5.6.1</junit.jupiter.api.version>
+        <junit.jupiter.engine.version>5.6.1</junit.jupiter.engine.version>
+        <junit.platform.runner.version>1.6.1</junit.platform.runner.version>
         <aggregate.report.dir>tests/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
     </properties>
 
@@ -91,6 +95,25 @@
                 <artifactId>pcap-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.jupiter.api.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.jupiter.api.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-runner</artifactId>
+                <version>${junit.platform.runner.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -100,7 +123,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-toolchains-plugin</artifactId>
-                    <version>1.1</version>
+                    <version>3.0.0</version>
                     <executions>
                         <execution>
                             <goals>
@@ -141,6 +164,16 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
                     <version>2.5.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.22.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -237,7 +270,7 @@
                 <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
-                    <version>3.6.0.1398</version>
+                    <version>3.7.0.1746</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -315,18 +348,18 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.22.2</version>
-                        <configuration>
-                            <forkCount>3</forkCount>
-                            <reuseForks>true</reuseForks>
-                            <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
-                        </configuration>
-                    </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>sonar</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <sonar.host.url>https://sonarcloud.io/</sonar.host.url>
+                <sonar.organization>ardikars</sonar.organization>
+            </properties>
         </profile>
         <profile>
             <id>release</id>

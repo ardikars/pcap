@@ -6,19 +6,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnJre;
 import org.junit.jupiter.api.condition.JRE;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
-import pcap.spi.Address;
-import pcap.spi.Interface;
-import pcap.spi.Pcap;
-import pcap.spi.Status;
+import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 
 @EnabledOnJre(JRE.JAVA_14)
-@RunWith(JUnitPlatform.class)
+// @RunWith(JUnitPlatform.class)
 public class PcapLiveTest {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PcapLiveTest.class);
@@ -202,6 +197,25 @@ public class PcapLiveTest {
             Assertions.assertNotEquals(header.timestamp().second(), 0L);
           },
           MAX_PACKET);
+    } catch (BreakException e) {
+      LOGGER.warn(e);
+    }
+    pcap.close();
+  }
+
+  @Test
+  public void liveDispatchTest()
+      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException {
+    Interface source = Pcaps.lookupInterface();
+    Assertions.assertNotNull(source);
+    Pcap pcap = Pcaps.live(new PcapLive(source));
+    Assertions.assertNotNull(pcap);
+    AtomicInteger counter = new AtomicInteger();
+    try {
+      pcap.dispatch(1, (args, header, buffer) -> System.out.println(header), "");
     } catch (BreakException e) {
       LOGGER.warn(e);
     }

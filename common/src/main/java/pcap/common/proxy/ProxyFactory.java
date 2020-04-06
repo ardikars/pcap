@@ -7,7 +7,7 @@ import pcap.common.proxy.factory.JdkProxyFactory;
 @Inclubating
 public abstract class ProxyFactory {
 
-  private static volatile ProxyFactory DEFAULT_PROXY_FACTORY;
+  private static ProxyFactory DEFAULT_PROXY_FACTORY;
 
   private static ProxyFactory getDefaultProxyFactory() {
     if (DEFAULT_PROXY_FACTORY == null) {

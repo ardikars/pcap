@@ -163,6 +163,36 @@ public class Pcap implements pcap.spi.Pcap {
     }
   }
 
+  @Override
+  public <T> void dispatch(int count, PacketHandler<T> handler, T args)
+      throws BreakException, ErrorException {
+    synchronized (PcapConstant.LOCK) {
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("Dispatcing {} packets", count);
+      }
+      Callback<PcapHandler> callback =
+          PcapConstant.SCOPE.allocateCallback(
+              PcapHandler.class,
+              (user, header, packets) -> {
+                PacketHeader packetHeader = header.get().packetHeader();
+                handler.gotPacket(
+                    args, packetHeader, new PcapBuffer(packets, packetHeader.captureLength()));
+              });
+      int result = PcapConstant.MAPPING.pcap_dispatch(pcap, count, callback, Pointer.ofNull());
+      if (result < 0) {
+        if (result == -1) {
+          throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
+        } else if (result == -2) {
+          throw new BreakException("");
+        } else {
+          throw new ErrorException("Generic error.");
+        }
+      } else if (result == 0) {
+        LOGGER.debug("No packets were read from a capture.");
+      }
+    }
+  }
+
   /**
    * Represent packet statistics from the start of the run to the time of the call.
    *
@@ -219,6 +249,21 @@ public class Pcap implements pcap.spi.Pcap {
   public void send(ByteBuffer buffer, int size) throws ErrorException {
     int result = PcapConstant.MAPPING.pcap_sendpacket(pcap, Pointer.fromByteBuffer(buffer), size);
     if (result < 0) {
+      throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
+    }
+  }
+
+  @Override
+  public void setDirection(Direction direction) throws ErrorException {
+    int result = 0;
+    if (Direction.PCAP_D_INOUT == direction) {
+      result = PcapConstant.MAPPING.pcap_setdirection(pcap, 0);
+    } else if (Direction.PCAP_D_IN == direction) {
+      result = PcapConstant.MAPPING.pcap_setdirection(pcap, 1);
+    } else if (Direction.PCAP_D_OUT == direction) {
+      result = PcapConstant.MAPPING.pcap_setdirection(pcap, 2);
+    }
+    if (result != 0 && result < 0) {
       throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
     }
   }

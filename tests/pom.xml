@@ -6,7 +6,7 @@
     <parent>
         <artifactId>pcap</artifactId>
         <groupId>com.ardikars.pcap</groupId>
-        <version>0.0.7</version>
+        <version>0.0.8</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -17,10 +17,7 @@
     <description>Integration test module</description>
 
     <properties>
-        <jdk.version>${java.legacy.version}</jdk.version>
-        <junit.version>5.5.1</junit.version>
-        <junit.runner.version>1.5.2</junit.runner.version>
-        <junit.engine.version>5.4.2</junit.engine.version>
+        <jdk.version>${java.version}</jdk.version>
         <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
@@ -36,6 +33,10 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>pcap-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>pcap-api</artifactId>
         </dependency>
 
         <!-- Logging frameworks - completely optional -->
@@ -61,22 +62,32 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.engine.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-runner</artifactId>
-            <version>${junit.runner.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
     <profiles>
         <profile>

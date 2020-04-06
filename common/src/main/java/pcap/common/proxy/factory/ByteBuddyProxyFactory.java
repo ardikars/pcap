@@ -8,12 +8,16 @@ import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.InvocationHandlerAdapter;
 import net.bytebuddy.matcher.ElementMatchers;
 import pcap.common.annotation.Inclubating;
+import pcap.common.logging.Logger;
+import pcap.common.logging.LoggerFactory;
 import pcap.common.proxy.ObjectInvoker;
 import pcap.common.proxy.ProxyFactory;
 import pcap.common.util.Objects;
 
 @Inclubating
 public class ByteBuddyProxyFactory extends ProxyFactory {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ByteBuddyProxyFactory.class);
 
   @Override
   public <T> T createInvokerProxy(
@@ -30,13 +34,13 @@ public class ByteBuddyProxyFactory extends ProxyFactory {
     try {
       return (T) proxyType.getDeclaredConstructor().newInstance();
     } catch (InstantiationException e) {
-      e.printStackTrace();
+      LOGGER.error(e);
     } catch (IllegalAccessException e) {
-      e.printStackTrace();
+      LOGGER.error(e);
     } catch (InvocationTargetException e) {
-      e.printStackTrace();
+      LOGGER.error(e);
     } catch (NoSuchMethodException e) {
-      e.printStackTrace();
+      LOGGER.error(e);
     }
     return null;
   }

@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnJre;
 import org.junit.jupiter.api.condition.JRE;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.spi.Pcap;
@@ -14,7 +12,7 @@ import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
 
 @EnabledOnJre(JRE.JAVA_14)
-@RunWith(JUnitPlatform.class)
+// @RunWith(JUnitPlatform.class)
 public class PcapOfflineTest {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PcapOfflineTest.class);

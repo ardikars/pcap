@@ -7,7 +7,7 @@ import pcap.common.annotation.Inclubating;
 @Inclubating
 public abstract class LoggerFactory {
 
-  private static volatile LoggerFactory DEFAULT_LOGGER_FACTORY;
+  private static LoggerFactory DEFAULT_LOGGER_FACTORY;
 
   private static LoggerFactory getDefaultLoggerFactory() {
     if (DEFAULT_LOGGER_FACTORY == null) {

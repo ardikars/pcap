@@ -2,11 +2,19 @@ package pcap.common.memory;
 
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+
 import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 public abstract class Stream extends AbstractMemory<Memory[]> {
+
+  final AtomicIntegerFieldUpdater<Stream> positinUpdater = AtomicIntegerFieldUpdater
+          .newUpdater(Stream.class, "position");
+
+  final AtomicIntegerFieldUpdater<Stream> baseIndexUpdater = AtomicIntegerFieldUpdater
+          .newUpdater(Stream.class, "baseIndex");
 
   protected volatile int position;
   protected volatile int baseIndex;
@@ -19,7 +27,7 @@ public abstract class Stream extends AbstractMemory<Memory[]> {
       int readerIndex,
       int writerIndex) {
     super(buffer, capacity, maxCapacity, readerIndex, writerIndex);
-    this.baseIndex = baseIndex;
+    baseIndexUpdater.set(this, baseIndex);
   }
 
   public static Stream stream(Memory[] memories, boolean checked) {
@@ -78,9 +86,9 @@ public abstract class Stream extends AbstractMemory<Memory[]> {
   }
 
   protected Memory getMemory(int index) {
-    this.position = 0;
+    positinUpdater.set(this, 0);
     for (Memory memory : this.buffer) {
-      this.position += memory.capacity();
+      positinUpdater.addAndGet(this, memory.capacity());
       if (index < this.position) {
         return memory;
       }

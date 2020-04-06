@@ -7,6 +7,7 @@ import java.foreign.memory.Pointer;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 import pcap.api.internal.PcapConstant;
 import pcap.api.internal.PcapInterface;
@@ -121,12 +122,13 @@ public abstract class Pcaps {
         throw new ErrorException(Pointer.toString(errbuf));
       }
       String deviceName = Pointer.toString(device);
-      Interface pcapInterface =
-          StreamSupport.stream(lookupInterfaces().spliterator(), false)
+      Optional<Interface> optional = StreamSupport.stream(lookupInterfaces().spliterator(), false)
               .filter(iface -> deviceName.equals(iface.name()))
-              .findFirst()
-              .get();
-      return pcapInterface;
+              .findFirst();
+      if (!optional.isPresent()) {
+        throw new ErrorException("Device not found!");
+      }
+      return optional.get();
     }
   }
 
