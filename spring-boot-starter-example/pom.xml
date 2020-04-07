@@ -18,8 +18,7 @@
 
     <properties>
         <jdk.version>${java.version}</jdk.version>
-        <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}
-        </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencies>
@@ -29,7 +28,7 @@
             <version>1.7.30</version>
         </dependency>
         <dependency>
-            <groupId>com.ardikars.pcap</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>pcap-spring-boot-starter</artifactId>
         </dependency>
     </dependencies>

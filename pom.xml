@@ -119,6 +119,11 @@
                 <artifactId>pcap-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>pcap-spring-boot-starter-example</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.junit.jupiter</groupId>

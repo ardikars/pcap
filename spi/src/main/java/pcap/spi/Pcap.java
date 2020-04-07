@@ -154,6 +154,23 @@ public interface Pcap extends AutoCloseable {
   enum Direction {
     PCAP_D_INOUT,
     PCAP_D_IN,
-    PCAP_D_OUT
+    PCAP_D_OUT;
+
+    private static final Direction[] directions = values();
+
+    /**
+     * Get pcap direction from string.
+     *
+     * @param value string value.
+     * @return returns {@link Direction}.
+     */
+    public static Direction fromString(String value) {
+      for (Direction direction : directions) {
+        if (direction.name().equals(value)) {
+          return direction;
+        }
+      }
+      return PCAP_D_INOUT;
+    }
   }
 }

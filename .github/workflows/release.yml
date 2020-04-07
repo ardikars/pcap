@@ -18,29 +18,41 @@ jobs:
         java: [8]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+          architecture: x64
+      - name: actions/setup-panama
+        run: |
+          sudo mkdir -p /usr/local/jvm
+          sudo chown -R $(whoami) /usr/local/jvm
+          ./.github/scripts/install-jdk.sh -f panama -w /tmp -t /usr/local/jvm/panama -v
+
+
       - name: Setting up deployment
         run: |
           echo "${{ secrets.mvn_settings_base64 }}" | base64 --decode > .mvn/release-settings.xml
           gpg --keyserver keyserver.ubuntu.com --recv 3941ec75119f398a
           echo "${{ secrets.gpg_secring_base64 }}" | base64 --decode > ~/.gnupg/secring.gpg
-      - uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-          architecture: x64
+
+
       - name: Deploy modules
         run: |
-          [ -d ~/.m2/repository/jdk-14 ] && echo 'JDK-14 is already installed' || ./.github/scripts/install-jdk.sh -w ~/.m2/repository/ -u https://download.java.net/java/early_access/panama/1/openjdk-14-panama+1-15_linux-x64_bin.tar.gz
           export JAVA_HOME_8=${JAVA_HOME}
-          export JAVA_HOME_14=~/.m2/repository/jdk-14
+          export JAVA_HOME_14=/usr/local/jvm/panama
           export JAVA_HOME=${JAVA_HOME_14}
           echo "JAVA_HOME_8 = $JAVA_HOME_8"
           echo "JAVA_HOME_14 = $JAVA_HOME_14"

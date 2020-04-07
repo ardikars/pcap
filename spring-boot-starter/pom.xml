@@ -23,19 +23,19 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.ardikars.pcap</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>pcap-spi</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.ardikars.pcap</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>pcap-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.ardikars.pcap</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>pcap-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.ardikars.pcap</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>pcap-codec</artifactId>
         </dependency>
         <dependency>

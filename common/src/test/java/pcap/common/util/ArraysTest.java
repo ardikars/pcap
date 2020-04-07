@@ -2,6 +2,7 @@
 package pcap.common.util;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -130,5 +131,11 @@ public class ArraysTest extends BaseTest {
     assertArrayEquals(
         new Object[] {charArray, doubleArray, intArray, floatArray},
         Arrays.concatenate(objectArray, new Object[] {intArray, floatArray}));
+  }
+
+  @Test
+  public void toStringTest() {
+    String string = Arrays.toString(new int[] {1, 2});
+    assertNotNull(string);
   }
 }

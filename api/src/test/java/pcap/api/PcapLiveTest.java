@@ -4,16 +4,16 @@ import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnJre;
-import org.junit.jupiter.api.condition.JRE;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 
-@EnabledOnJre(JRE.JAVA_14)
-// @RunWith(JUnitPlatform.class)
+// @EnabledOnJre(JRE.JAVA_14)
+@RunWith(JUnitPlatform.class)
 public class PcapLiveTest {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PcapLiveTest.class);
