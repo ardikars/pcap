@@ -85,5 +85,5 @@ jobs:
           echo "JAVA_HOME_8 = $JAVA_HOME_8"
           echo "JAVA_HOME_14 = $JAVA_HOME_14"
           echo "JAVA_HOME = $JAVA_HOME"
-          ./mvnw -B -pl '!api' -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Plegacy-support -Pformat
+          ./mvnw -pl '!api,!spring-boot-starter,!spring-boot-starter-example' -t .mvn/toolchains.xml clean package -Dpcap.unsafe=true jacoco:report-aggregate -Pcoverage -Plegacy-support -Pformat
         if: matrix.os == 'ubuntu-latest'

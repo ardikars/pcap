@@ -17,7 +17,7 @@
     <description>Integration test module</description>
 
     <properties>
-        <jdk.version>${java.version}</jdk.version>
+        <jdk.version>${java.legacy.version}</jdk.version>
         <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
@@ -33,10 +33,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>pcap-spi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>pcap-api</artifactId>
         </dependency>
 
         <!-- Logging frameworks - completely optional -->
