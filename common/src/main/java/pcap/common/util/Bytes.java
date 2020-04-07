@@ -43,9 +43,9 @@ public final class Bytes {
    */
   public static byte[] toByteArray(final short value, final ByteOrder bo) {
     if (bo.equals(ByteOrder.BIG_ENDIAN)) {
-      return new byte[] {(byte) (value >> 0 & 0xff), (byte) ((value >> 8) & 0xff)};
+      return new byte[] {(byte) (value >> 0 & 0xff), (byte) (value >> 8 & 0xff)};
     } else {
-      return new byte[] {(byte) (value >> 8 & 0xff), (byte) ((value >> 0) & 0xff)};
+      return new byte[] {(byte) (value >> 8 & 0xff), (byte) (value >> 0 & 0xff)};
     }
   }
 

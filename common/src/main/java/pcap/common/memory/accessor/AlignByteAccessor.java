@@ -63,14 +63,14 @@ public class AlignByteAccessor extends AbstractByteAccessor {
 
   @Override
   public void setShort(byte[] buffer, int index, int val) {
-    UNSAFE.putByte(buffer, BYTE_ARRAY_OFFSET + index, (byte) (val >>> 8));
-    UNSAFE.putByte(buffer, BYTE_ARRAY_OFFSET + index + 1, (byte) val);
+    UNSAFE.putByte(buffer, (long) BYTE_ARRAY_OFFSET + index, (byte) (val >>> 8));
+    UNSAFE.putByte(buffer, (long) BYTE_ARRAY_OFFSET + index + 1, (byte) val);
   }
 
   @Override
   public void setShortLE(byte[] buffer, int index, int val) {
-    UNSAFE.putByte(buffer, BYTE_ARRAY_OFFSET + index, (byte) val);
-    UNSAFE.putByte(buffer, BYTE_ARRAY_OFFSET + index + 1, (byte) (val >>> 8));
+    UNSAFE.putByte(buffer, (long) BYTE_ARRAY_OFFSET + index, (byte) val);
+    UNSAFE.putByte(buffer, (long) BYTE_ARRAY_OFFSET + index + 1, (byte) (val >>> 8));
   }
 
   @Override

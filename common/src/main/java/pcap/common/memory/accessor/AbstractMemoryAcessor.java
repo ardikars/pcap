@@ -52,7 +52,7 @@ abstract class AbstractMemoryAcessor implements MemoryAccessor {
 
   @Override
   public void getBytes(long srcAddr, int index, byte[] dst, int dstIndex, int size) {
-    UNSAFE.copyMemory(null, srcAddr + (long) index, dst, BYTE_ARRAY_OFFSET + dstIndex, size);
+    UNSAFE.copyMemory(null, srcAddr + (long) index, dst, (long) BYTE_ARRAY_OFFSET + dstIndex, size);
   }
 
   @Override

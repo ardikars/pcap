@@ -323,8 +323,9 @@ public final class Strings {
    * @return hex string.
    */
   public static String hex(final String value) {
-    Validate.notIllegalArgument(
-        value != null && !value.isEmpty(), "Value should be not null and empty.");
+    if (value == null) {
+      throw new IllegalArgumentException("Value should be not null and empty.");
+    }
     return hex(value.getBytes(DEFAULT_CHARSET));
   }
 
@@ -336,9 +337,12 @@ public final class Strings {
    * @return hex string.
    */
   public static String hex(final String value, Charset charset) {
-    Validate.notIllegalArgument(
-        value != null && !value.isEmpty(), "Value should be not null and empty.");
-    Validate.notIllegalArgument(charset != null, "Charset should be not null.");
+    if (value == null) {
+      throw new IllegalArgumentException("Value should be not null and empty.");
+    }
+    if (charset == null) {
+      throw new IllegalArgumentException("Charset should be not null.");
+    }
     return hex(value.getBytes(charset));
   }
 
