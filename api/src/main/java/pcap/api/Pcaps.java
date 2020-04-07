@@ -163,12 +163,10 @@ public abstract class Pcaps {
     Iterator<Address> addressIterator = source.addresses().iterator();
     while (addressIterator.hasNext()) {
       Address next = addressIterator.next();
-      if (next.address() != null && !next.address().isLoopbackAddress()) {
-        if (next.address() instanceof java.net.Inet4Address) {
-          Inet4Address inet4Address = Inet4Address.valueOf(next.address().getAddress());
-          if (!inet4Address.equals(Inet4Address.ZERO)) {
-            return inet4Address;
-          }
+      if (next.address() != null && !next.address().isLoopbackAddress() && next.address() instanceof java.net.Inet4Address) {
+        Inet4Address inet4Address = Inet4Address.valueOf(next.address().getAddress());
+        if (!inet4Address.equals(Inet4Address.ZERO)) {
+          return inet4Address;
         }
       }
     }
@@ -186,12 +184,10 @@ public abstract class Pcaps {
     Iterator<Address> addressIterator = source.addresses().iterator();
     while (addressIterator.hasNext()) {
       Address next = addressIterator.next();
-      if (next.address() != null && !next.address().isLoopbackAddress()) {
-        if (next.address() instanceof java.net.Inet6Address) {
-          Inet6Address inet6Address = Inet6Address.valueOf(next.address().getAddress());
-          if (!inet6Address.equals(Inet6Address.ZERO.ZERO)) {
-            return inet6Address;
-          }
+      if (next.address() != null && !next.address().isLoopbackAddress() && next.address() instanceof java.net.Inet6Address) {
+        Inet6Address inet6Address = Inet6Address.valueOf(next.address().getAddress());
+        if (!inet6Address.equals(Inet6Address.ZERO)) {
+          return inet6Address;
         }
       }
     }
