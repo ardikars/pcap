@@ -17,6 +17,7 @@
         <module>spring-boot-starter</module>
         <module>tests</module>
         <module>spring-boot-starter-example</module>
+        <module>docs</module>
     </modules>
 
     <name>Pcap</name>
@@ -66,6 +67,9 @@
         <junit.jupiter.engine.version>5.6.1</junit.jupiter.engine.version>
         <junit.platform.runner.version>1.6.1</junit.platform.runner.version>
 
+        <asciidoctor.maven.plugin.version>2.0.0-RC.1</asciidoctor.maven.plugin.version>
+        <asciidoctorj.version>2.2.0</asciidoctorj.version>
+        <jruby.version>9.2.9.0</jruby.version>
         <fmt.maven.plugin.version>2.9</fmt.maven.plugin.version>
         <jacoco.maven.plugin.version>0.8.5</jacoco.maven.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.8</nexus.staging.maven.plugin.version>

@@ -1,0 +1,3 @@
+== About this project
+
+Provides high level JVM network packet processing library for rapid development.

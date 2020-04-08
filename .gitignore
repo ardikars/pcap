@@ -17,4 +17,5 @@ tests/target
 spring-boot-starter/target
 spring-boot-starter-example/target
 spi/target
+docs/target
 target
