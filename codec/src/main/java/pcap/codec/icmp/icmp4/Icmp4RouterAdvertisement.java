@@ -33,6 +33,6 @@ public class Icmp4RouterAdvertisement extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp4.ICMP4_REGISTRY.add(ROUTER_ADVERTISEMENT);
+    Icmp.IcmpTypeAndCode.ICMP4_REGISTRY.add(ROUTER_ADVERTISEMENT);
   }
 }

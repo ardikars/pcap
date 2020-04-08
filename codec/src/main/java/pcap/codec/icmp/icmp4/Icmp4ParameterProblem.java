@@ -39,8 +39,8 @@ public class Icmp4ParameterProblem extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp4.ICMP4_REGISTRY.add(POINTER_INDICATES_THE_ERROR);
-    Icmp4.ICMP4_REGISTRY.add(MISSING_REQUIRED_OPTION);
-    Icmp4.ICMP4_REGISTRY.add(BAD_LENGTH);
+    Icmp.IcmpTypeAndCode.ICMP4_REGISTRY.add(POINTER_INDICATES_THE_ERROR);
+    Icmp.IcmpTypeAndCode.ICMP4_REGISTRY.add(MISSING_REQUIRED_OPTION);
+    Icmp.IcmpTypeAndCode.ICMP4_REGISTRY.add(BAD_LENGTH);
   }
 }

@@ -35,6 +35,6 @@ public class Icmp6InverseNeighborDiscoverySolicitation extends Icmp.IcmpTypeAndC
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(INVERSE_NEIGHBOR_DISCOVERY_SOLICITATION);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(INVERSE_NEIGHBOR_DISCOVERY_SOLICITATION);
   }
 }

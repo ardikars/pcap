@@ -36,7 +36,7 @@ public class Icmp4TimeExceeded extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp4.ICMP4_REGISTRY.add(TTL_EXPIRED_IN_TRANSIT);
-    Icmp4.ICMP4_REGISTRY.add(FRAGMENT_REASSEMBLY_TIME_EXEEDED);
+    Icmp.IcmpTypeAndCode.ICMP4_REGISTRY.add(TTL_EXPIRED_IN_TRANSIT);
+    Icmp.IcmpTypeAndCode.ICMP4_REGISTRY.add(FRAGMENT_REASSEMBLY_TIME_EXEEDED);
   }
 }

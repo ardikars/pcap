@@ -33,6 +33,6 @@ public class Icmp6MobilePrefixAdvertisement extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(MOBILE_PREFIX_ADVERTISEMENT);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(MOBILE_PREFIX_ADVERTISEMENT);
   }
 }

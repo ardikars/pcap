@@ -32,6 +32,6 @@ public class Icmp6EchoReply extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(ECHO_REPLY);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(ECHO_REPLY);
   }
 }

@@ -33,6 +33,6 @@ public class Icmp6RouterAdvertisement extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(ROUTER_ADVERTISEMENT);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(ROUTER_ADVERTISEMENT);
   }
 }

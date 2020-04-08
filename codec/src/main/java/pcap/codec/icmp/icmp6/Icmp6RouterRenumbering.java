@@ -39,8 +39,8 @@ public class Icmp6RouterRenumbering extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(ROUTER_RENUMBERING_COMMAND);
-    Icmp6.ICMP6_REGISTRY.add(ROUTER_RENUMBERING_RESULT);
-    Icmp6.ICMP6_REGISTRY.add(SEQUENCE_NUMBER_RESET);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(ROUTER_RENUMBERING_COMMAND);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(ROUTER_RENUMBERING_RESULT);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(SEQUENCE_NUMBER_RESET);
   }
 }

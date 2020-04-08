@@ -33,6 +33,6 @@ public class Icmp6RedirectMessage extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(REDIRECT_MESSAGE);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(REDIRECT_MESSAGE);
   }
 }

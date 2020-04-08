@@ -35,6 +35,6 @@ public class Icmp6InverseNeighborDiscoveryAdvertisement extends Icmp.IcmpTypeAnd
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(INVERSE_NEIGHBOR_DISCOVERY_ADVERTISEMENT);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(INVERSE_NEIGHBOR_DISCOVERY_ADVERTISEMENT);
   }
 }

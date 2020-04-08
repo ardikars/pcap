@@ -33,6 +33,6 @@ public class Icmp6EchoRequest extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(ECHO_REQUEST);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(ECHO_REQUEST);
   }
 }

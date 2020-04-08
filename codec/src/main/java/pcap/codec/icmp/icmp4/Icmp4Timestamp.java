@@ -32,6 +32,6 @@ public class Icmp4Timestamp extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp4.ICMP4_REGISTRY.add(TIMESTAMP);
+    Icmp.IcmpTypeAndCode.ICMP4_REGISTRY.add(TIMESTAMP);
   }
 }

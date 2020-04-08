@@ -34,6 +34,6 @@ public class Icmp6HomeAgentAddressDiscoveryReply extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(HOME_AGENT_ADDRESS_DISCOVERY_REPLY);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(HOME_AGENT_ADDRESS_DISCOVERY_REPLY);
   }
 }

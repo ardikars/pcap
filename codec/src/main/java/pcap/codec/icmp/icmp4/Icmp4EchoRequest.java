@@ -33,6 +33,6 @@ public class Icmp4EchoRequest extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp4.ICMP4_REGISTRY.add(ECHO_REQUEST);
+    Icmp.IcmpTypeAndCode.ICMP4_REGISTRY.add(ECHO_REQUEST);
   }
 }

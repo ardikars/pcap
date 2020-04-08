@@ -33,6 +33,6 @@ public class Icmp6NeighborAdvertisement extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(NEIGHBOR_ADVERTISEMENT);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(NEIGHBOR_ADVERTISEMENT);
   }
 }

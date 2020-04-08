@@ -26,6 +26,6 @@ public class Icmp4RedirectMessage extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp4.ICMP4_REGISTRY.add(REDIRECT_DATAGRAM_FOR_NETWORK);
+    Icmp.IcmpTypeAndCode.ICMP4_REGISTRY.add(REDIRECT_DATAGRAM_FOR_NETWORK);
   }
 }

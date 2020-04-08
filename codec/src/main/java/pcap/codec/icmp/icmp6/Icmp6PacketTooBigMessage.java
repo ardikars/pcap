@@ -43,6 +43,6 @@ public class Icmp6PacketTooBigMessage extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(PACKET_TOO_BIG_MESSAGE);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(PACKET_TOO_BIG_MESSAGE);
   }
 }

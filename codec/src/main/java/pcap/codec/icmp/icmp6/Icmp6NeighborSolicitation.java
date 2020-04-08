@@ -33,6 +33,6 @@ public class Icmp6NeighborSolicitation extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(NEIGHBOR_SOLICITATION);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(NEIGHBOR_SOLICITATION);
   }
 }

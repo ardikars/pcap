@@ -36,7 +36,7 @@ public class Icmp6TimeExceeded extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(HOP_LIMIT_EXCEEDED_IN_TRANSIT);
-    Icmp6.ICMP6_REGISTRY.add(FRAGMENT_REASSEMBLY_TIME_EXCEEDED);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(HOP_LIMIT_EXCEEDED_IN_TRANSIT);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(FRAGMENT_REASSEMBLY_TIME_EXCEEDED);
   }
 }

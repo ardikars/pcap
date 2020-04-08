@@ -33,6 +33,6 @@ public class Icmp6MobilePrefixSolicitation extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(MOBILE_PREFIX_SOLICITATION);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(MOBILE_PREFIX_SOLICITATION);
   }
 }

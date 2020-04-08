@@ -33,6 +33,6 @@ public class Icmp4RouterSolicitation extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp4.ICMP4_REGISTRY.add(ROUTER_DISCOVERY_SELECTION_SOLICITATION);
+    Icmp.IcmpTypeAndCode.ICMP4_REGISTRY.add(ROUTER_DISCOVERY_SELECTION_SOLICITATION);
   }
 }

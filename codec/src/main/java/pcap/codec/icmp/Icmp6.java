@@ -1,8 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.icmp;
 
-import java.util.Collection;
-import java.util.HashSet;
 import pcap.codec.AbstractPacket;
 import pcap.codec.Packet;
 import pcap.codec.icmp.icmp6.*;
@@ -14,9 +12,6 @@ import pcap.common.util.Validate;
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 public class Icmp6 extends AbstractPacket {
-
-  public static final Collection<Icmp.IcmpTypeAndCode> ICMP6_REGISTRY =
-      new HashSet<Icmp.IcmpTypeAndCode>();
 
   private final Header header;
   private final Packet payload;
@@ -109,7 +104,7 @@ public class Icmp6 extends AbstractPacket {
     public Packet build(Memory buffer) {
       byte type = buffer.readByte();
       byte code = buffer.readByte();
-      super.typeAndCode = Icmp.findIcmpTypeAndCode(type, code, Icmp6.ICMP6_REGISTRY);
+      super.typeAndCode = Icmp.findIcmpTypeAndCode(type, code, Icmp.IcmpTypeAndCode.ICMP6_REGISTRY);
       super.checksum = buffer.readShort();
       this.buffer = buffer;
       this.payloadBuffer = buffer.slice();

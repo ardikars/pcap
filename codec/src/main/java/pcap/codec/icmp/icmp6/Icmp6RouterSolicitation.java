@@ -33,6 +33,6 @@ public class Icmp6RouterSolicitation extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(ROUTER_SOLICITATION);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(ROUTER_SOLICITATION);
   }
 }

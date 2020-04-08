@@ -33,6 +33,6 @@ public class Icmp6MulticastListenerDone extends Icmp.IcmpTypeAndCode {
   }
 
   static {
-    Icmp6.ICMP6_REGISTRY.add(MULTICAST_LISTENER_DONE);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(MULTICAST_LISTENER_DONE);
   }
 }
