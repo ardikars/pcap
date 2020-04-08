@@ -1,3 +1,4 @@
+/** This code is licenced under the GPL version 2. */
 package pcap.spring.boot.starter;
 
 import java.nio.ByteBuffer;
