@@ -3,10 +3,10 @@ name: Deploy Documentations
 on:
   push:
     branches:
-      - development
+      - docs
   pull_request:
     branches:
-      - development
+      - docs
 
 jobs:
   build-and-test:

@@ -1,14 +1,3 @@
-image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=alert_status["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
-image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=bugs["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
-image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=code_smells["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
-image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=coverage["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
-image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=duplicated_lines_density["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
-image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=ncloc["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
-image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=sqale_rating["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
-image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=reliability_rating["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
-image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=security_rating["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
-image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=sqale_index["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
-image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=vulnerabilities["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
 
 include::intro.adoc[]
 

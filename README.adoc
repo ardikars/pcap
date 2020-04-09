@@ -1,0 +1,81 @@
+
+== Pcap
+
+image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=sqale_rating["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
+image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=reliability_rating["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
+image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=security_rating["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
+image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=vulnerabilities["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
+image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=bugs["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
+image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=ncloc["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
+image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=coverage["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
+image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=code_smells["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
+image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=duplicated_lines_density["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
+image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=sqale_index["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
+//image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=alert_status["Coverage" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
+
+
+== About this project
+
+Provides high level JVM network packet processing library for rapid development.
+
+
+== Building
+
+To build the source you will need to install:
+
+- Libpcap (Unix based system) or Npcap (for Windows)
+- JDK 8 and JDK 14 (with Panama EA)
+
+Pcap uses Maven for most build-related activities, and you
+should be able to get off the ground quite quickly by cloning the
+project and typing:
+
+[indent=0]
+----
+$ export JAVA_HOME_8=<PATH TO JDK 8>
+$ export JAVA_HOME_14=<PATH TO JDK 14 (with Panama EA)>
+$ exprrt JAVA_HOME=${JAVA_HOME_14}
+$ ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Plegacy-support -Pformat
+----
+
+NOTE: Don't forget to install JDK 8 for activating `legacy-support` profile and set `JAVA_HOME_8` as environment
+variable to the installation path. JDK 14 (with panama ea) is required for building `api` module and you need to
+set `JAVA_HOME_14` as environment variable also to the installation path. Your `JAVA_HOME` path should be same
+as `JAVA_HOME_14` and when executing above command you need to specify the `toolchains.xml` configuration by adding
+`MVN_OPTS` like `-t ./mvn/toolchains.xml`.
+
+NOTE: You can also install Maven (>=3.5.4) yourself and run the `mvn` command
+instead of `./mvnw`.
+
+For hints on how to build the project look in `.github/workflows/developement.yml` if there
+is one. There should be a "script" and maybe "maven package" command.
+
+
+== Usage
+
+Add below configuration to your pom.xml
+
+```pom
+<dependencies>
+    <dependency>
+        <groupId>com.ardikars.pcap</groupId>
+        <artifactId>pcap-codec</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.ardikars.pcap</groupId>
+        <artifactId>pcap-api</artifactId>
+    </dependency>
+</dependencies>
+
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.ardikars.pcap</groupId>
+            <artifactId>pcap</artifactId>
+            <version>${PCAP-LATEST-VERSION}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+```
