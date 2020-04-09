@@ -14,7 +14,7 @@ public class QuartetTest extends BaseTest {
     Quartet<Integer, Float, Long, String> quartet = Tuple.of(1, 1.1F, 1L, "nol");
     Assertions.assertEquals(Integer.valueOf(1), quartet.left());
     Assertions.assertEquals(Float.valueOf(1.1F), quartet.middleLeft());
-    Assertions.assertEquals(Integer.valueOf(1), quartet.left());
-    Assertions.assertEquals(Integer.valueOf(1), quartet.left());
+    Assertions.assertEquals(Long.valueOf(1L), quartet.middleRight());
+    Assertions.assertEquals("nol", quartet.right());
   }
 }
