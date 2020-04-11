@@ -25,7 +25,7 @@ public class PcapLiveOptions {
             ? null
             : Timestamp.Type.valueOf(System.getProperty("pcap.timestampType")),
         Boolean.valueOf(System.getProperty("pcap.immediate", "true")),
-        Integer.valueOf(System.getProperty("pcap.bufferSize", "65535")),
+        Integer.valueOf(System.getProperty("pcap.bufferSize", "0")),
         System.getProperty("pcap.timestampPrecision", "MICRO").equalsIgnoreCase("MICRO")
             ? Timestamp.Precision.MICRO
             : Timestamp.Precision.NANO);

@@ -169,7 +169,6 @@ public final class Memories {
     } else {
       memory = new ByteBuf(0, buffer, buffer.capacity(), buffer.capacity(), 0, 0);
     }
-    memory.writerIndex(memory.capacity());
     return memory;
   }
 
@@ -181,7 +180,6 @@ public final class Memories {
    */
   public static Memory wrap(CharSequence hexStream) {
     Memory memory = wrap(hexStream, true, new DefaultMemoryAllocator());
-    memory.writerIndex(memory.capacity());
     return memory;
   }
 
@@ -229,7 +227,6 @@ public final class Memories {
     } else {
       memory = new ByteBuf(0, ByteBuffer.wrap(bytes), bytes.length, bytes.length, 0, 0);
     }
-    memory.writerIndex(memory.capacity());
     return memory;
   }
 

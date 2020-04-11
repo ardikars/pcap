@@ -45,7 +45,9 @@ public class PcapInterface implements Interface {
     this.name = Pointer.toString(pcap_if.name$get());
     this.description = Pointer.toString(pcap_if.description$get());
     this.flags = pcap_if.flags$get();
-    this.addresses = new PcapAddress(pcap_if.addresses$get().get());
+    if (!pcap_if.addresses$get().isNull()) {
+      this.addresses = new PcapAddress(pcap_if.addresses$get().get());
+    }
     if (!pcap_if.next$get().isNull()) {
       this.next = new PcapInterface(pcap_if.next$get().get());
     }

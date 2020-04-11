@@ -102,9 +102,11 @@ public class PcapLive extends Pcaps {
           != PcapConstant.OK) {
         throw new ActivatedException("Error occurred when set immediate mode.");
       }
-      if (PcapConstant.MAPPING.pcap_set_buffer_size(pointer, options.bufferSize())
-          != PcapConstant.OK) {
-        throw new ActivatedException("Error occurred when set buffer size.");
+      if (options.bufferSize() != 0) {
+        if (PcapConstant.MAPPING.pcap_set_buffer_size(pointer, options.bufferSize())
+            != PcapConstant.OK) {
+          throw new ActivatedException("Error occurred when set buffer size.");
+        }
       }
       result =
           PcapConstant.MAPPING.pcap_set_tstamp_precision(

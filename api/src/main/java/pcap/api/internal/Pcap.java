@@ -158,7 +158,7 @@ public class Pcap implements pcap.spi.Pcap {
       } else if (result == -2) {
         throw new BreakException("");
       } else {
-        throw new ErrorException("Generic error.");
+        throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
       }
     }
   }
