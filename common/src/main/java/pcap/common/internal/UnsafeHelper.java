@@ -47,7 +47,7 @@ public final class UnsafeHelper {
    */
   public static Unsafe getUnsafe() {
     if (!isUnsafeAvailable()) {
-      new UnsupportedOperationException("sun.misc.Unsafe unavailable.");
+      throw new UnsupportedOperationException("sun.misc.Unsafe unavailable.");
     }
     return UNSAFE;
   }
