@@ -3,6 +3,7 @@ package pcap.common.memory;
 
 import java.nio.ByteBuffer;
 import pcap.common.annotation.Inclubating;
+import pcap.common.internal.Unsafe;
 import pcap.common.internal.UnsafeHelper;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
@@ -206,7 +207,7 @@ class UncheckedMemory extends AbstractMemory<ByteBuffer> {
   @Override
   public void release() {
     if (!freed) {
-      UnsafeHelper.getUnsafe().freeMemory(memoryAddress());
+      Unsafe.UNSAFE.freeMemory(memoryAddress());
       freed = true;
     }
   }

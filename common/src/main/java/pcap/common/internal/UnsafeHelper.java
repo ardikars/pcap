@@ -1,8 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.internal;
 
-// import java.lang.invoke.MethodHandles;
-// import java.lang.invoke.VarHandle;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -16,6 +14,7 @@ import pcap.common.annotation.Inclubating;
 import pcap.common.util.Platforms;
 import pcap.common.util.Properties;
 import pcap.common.util.Reflections;
+// comment below code in case of development on jdk-14
 import sun.misc.Unsafe;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
@@ -139,19 +138,6 @@ public final class UnsafeHelper {
             });
     return maybeUnsafe;
   }
-
-  //  private static Object findUnsafe9() {
-  //    try {
-  //      VarHandle privateIntHandle =
-  //          MethodHandles.privateLookupIn(Unsafe.class, MethodHandles.lookup())
-  //              .findStaticVarHandle(Unsafe.class, "theUnsafe", Unsafe.class);
-  //      return privateIntHandle.get();
-  //    } catch (NoSuchFieldException e) {
-  //      return e;
-  //    } catch (IllegalAccessException e) {
-  //      return e;
-  //    }
-  //  }
 
   /** Java9 has jdk.internal.misc.Unsafe and not all methods are propagated to sun.misc.Unsafe. */
   @SuppressWarnings("checkstyle:magicnumber")

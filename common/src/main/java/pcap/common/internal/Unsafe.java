@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+
 import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
@@ -88,6 +89,16 @@ public class Unsafe {
     UnsafeHelper.UNSAFE.copyMemory(srcBase, srcOffset, destBase, destOffset, bytes);
   }
 
+  /** @see #getInt(Object, long) */
+  public boolean getBoolean(Object o, long offset) {
+    return UnsafeHelper.UNSAFE.getBoolean(o, offset);
+  }
+
+  /** @see #putInt(Object, long, int) */
+  public void putBoolean(Object o, long offset, boolean x) {
+    UnsafeHelper.UNSAFE.putBoolean(o, offset, x);
+  }
+
   /**
    * Fetches a value from a given memory address. If the address is zero, or does not point into a
    * block obtained from {@link #allocateMemory}, the results are undefined.
@@ -134,6 +145,11 @@ public class Unsafe {
    */
   public void putByte(Object object, long address, byte x) {
     UnsafeHelper.UNSAFE.putByte(object, address, x);
+  }
+
+  /** @see #putInt(Object, long, int) */
+  public void putChar(Object o, long offset, char x) {
+    UnsafeHelper.UNSAFE.putChar(o, offset, x);
   }
 
   /**
@@ -277,6 +293,11 @@ public class Unsafe {
     UnsafeHelper.UNSAFE.putFloat(address, x);
   }
 
+  /** @see #putInt(Object, long, int) */
+  public void putFloat(Object o, long offset, float x) {
+    UnsafeHelper.UNSAFE.putFloat(o, offset, x);
+  }
+
   /**
    * @param address memory address.
    * @see #getByte(long)
@@ -292,6 +313,11 @@ public class Unsafe {
    */
   public void putDouble(long address, double x) {
     UnsafeHelper.UNSAFE.putDouble(address, x);
+  }
+
+  /** @see #putInt(Object, long, int) */
+  public void putDouble(Object o, long offset, double x) {
+    Unsafe.UNSAFE.putDouble(o, offset, x);
   }
 
   /**
@@ -312,6 +338,41 @@ public class Unsafe {
    */
   public long objectFieldOffset(Field f) {
     return UnsafeHelper.UNSAFE.objectFieldOffset(f);
+  }
+
+  /**
+   * Reports the location of a given static field, in conjunction with {@link
+   * #staticFieldOffset}.
+   * <p>Fetch the base "Object", if any, with which static fields of the
+   * given class can be accessed via methods like {@link #getInt(Object,
+   * long)}.  This value may be null.  This value may refer to an object
+   * which is a "cookie", not guaranteed to be a real Object, and it should
+   * not be used in any way except as argument to the get and put routines in
+   * this class.
+   */
+  public Object staticFieldBase(Field f) {
+    return UnsafeHelper.UNSAFE.staticFieldBase(f);
+  }
+
+  /**
+   * Reports the location of a given static field, in conjunction with {@link
+   * #staticFieldBase}.
+   * <p>Do not expect to perform any sort of arithmetic on this offset;
+   * it is just a cookie which is passed to the unsafe heap memory accessors.
+   *
+   * <p>Any given field will always have the same offset, and no two distinct
+   * fields of the same class will ever have the same offset.
+   *
+   * <p>As of 1.4.1, offsets for fields are represented as long values,
+   * although the Sun JVM does not use the most significant 32 bits.
+   * It is hard to imagine a JVM technology which needs more than
+   * a few bits to encode an offset within a non-array object,
+   * However, for consistency with other methods in this class,
+   * this method reports its result as a long value.
+   * @see #getInt(Object, long)
+   */
+  public long staticFieldOffset(Field f) {
+    return UnsafeHelper.UNSAFE.staticFieldOffset(f);
   }
 
   /**
