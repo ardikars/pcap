@@ -22,10 +22,7 @@ import sun.misc.Unsafe;
 @Inclubating
 public final class UnsafeHelper {
 
-  private static final UnsupportedOperationException UNSUPPORTED_OPERATION_EXCEPTION =
-      new UnsupportedOperationException("sun.misc.Unsafe unavailable.");
-
-  private static final Unsafe UNSAFE;
+  static final Unsafe UNSAFE;
   private static final boolean UNSAFE_AVAILABLE;
   private static final boolean UNALIGNED;
   private static final List<Throwable> NO_UNSAFE_CAUSES;
@@ -50,7 +47,7 @@ public final class UnsafeHelper {
    */
   public static Unsafe getUnsafe() {
     if (!isUnsafeAvailable()) {
-      throw UNSUPPORTED_OPERATION_EXCEPTION;
+      new UnsupportedOperationException("sun.misc.Unsafe unavailable.");
     }
     return UNSAFE;
   }

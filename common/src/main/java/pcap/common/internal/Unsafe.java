@@ -1,6 +1,7 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.internal;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
@@ -13,13 +14,20 @@ import pcap.common.annotation.Inclubating;
 public class Unsafe {
 
   public static final boolean HAS_UNSAFE = UnsafeHelper.isUnsafeAvailable();
+  public static final Unsafe UNSAFE = HAS_UNSAFE ? new Unsafe() : null;
+
+  private Unsafe() {
+    if (!UnsafeHelper.isUnsafeAvailable()) {
+      throw new RuntimeException("sun.misc.Unsafe is not available.");
+    }
+  }
 
   public int arrayBaseOffset(Class<?> arrayClass) {
-    return UnsafeHelper.getUnsafe().arrayBaseOffset(arrayClass);
+    return UnsafeHelper.UNSAFE.arrayBaseOffset(arrayClass);
   }
 
   public long allocateMemory(long bytes) {
-    return UnsafeHelper.getUnsafe().allocateMemory(bytes);
+    return UnsafeHelper.UNSAFE.allocateMemory(bytes);
   }
 
   /**
@@ -44,7 +52,7 @@ public class Unsafe {
    * @return returns memory address.
    */
   public long reallocateMemory(long address, long bytes) {
-    return UnsafeHelper.getUnsafe().reallocateMemory(address, bytes);
+    return UnsafeHelper.UNSAFE.reallocateMemory(address, bytes);
   }
 
   /**
@@ -63,7 +71,7 @@ public class Unsafe {
    * @param address memory address.
    */
   public void freeMemory(long address) {
-    UnsafeHelper.getUnsafe().freeMemory(address);
+    UnsafeHelper.UNSAFE.freeMemory(address);
   }
 
   /**
@@ -77,7 +85,7 @@ public class Unsafe {
    */
   public void copyMemory(
       Object srcBase, long srcOffset, Object destBase, long destOffset, long bytes) {
-    UnsafeHelper.getUnsafe().copyMemory(srcBase, srcOffset, destBase, destOffset, bytes);
+    UnsafeHelper.UNSAFE.copyMemory(srcBase, srcOffset, destBase, destOffset, bytes);
   }
 
   /**
@@ -88,7 +96,19 @@ public class Unsafe {
    * @see #allocateMemory
    */
   public byte getByte(long address) {
-    return UnsafeHelper.getUnsafe().getByte(address);
+    return UnsafeHelper.UNSAFE.getByte(address);
+  }
+
+  /**
+   * Fetches a value from a given memory address. If the address is zero, or does not point into a
+   * block obtained from {@link #allocateMemory}, the results are undefined.
+   *
+   * @param object object.
+   * @param address memory address.
+   * @see #allocateMemory
+   */
+  public byte getByte(Object object, long address) {
+    return UnsafeHelper.UNSAFE.getByte(object, address);
   }
 
   /**
@@ -100,7 +120,20 @@ public class Unsafe {
    * @see #getByte(long)
    */
   public void putByte(long address, byte x) {
-    UnsafeHelper.getUnsafe().putByte(address, x);
+    UnsafeHelper.UNSAFE.putByte(address, x);
+  }
+
+  /**
+   * Stores a value into a given memory address. If the address is zero, or does not point into a
+   * block obtained from {@link #allocateMemory}, the results are undefined.
+   *
+   * @param object object.
+   * @param address memory address.
+   * @param x value.
+   * @see #getByte(long)
+   */
+  public void putByte(Object object, long address, byte x) {
+    UnsafeHelper.UNSAFE.putByte(object, address, x);
   }
 
   /**
@@ -108,7 +141,16 @@ public class Unsafe {
    * @see #getByte(long)
    */
   public short getShort(long address) {
-    return UnsafeHelper.getUnsafe().getShort(address);
+    return UnsafeHelper.UNSAFE.getShort(address);
+  }
+
+  /**
+   * @param object object.
+   * @param address memory address.
+   * @see #getInt(long)
+   */
+  public short getShort(Object object, long address) {
+    return UnsafeHelper.UNSAFE.getShort(object, address);
   }
 
   /**
@@ -117,7 +159,16 @@ public class Unsafe {
    * @see #putByte(long, byte)
    */
   public void putShort(long address, short x) {
-    UnsafeHelper.getUnsafe().putShort(address, x);
+    UnsafeHelper.UNSAFE.putShort(address, x);
+  }
+
+  /**
+   * @param object object.
+   * @param address memory address.
+   * @param x value.
+   */
+  public void putShort(Object object, long address, short x) {
+    UnsafeHelper.UNSAFE.putShort(object, address, x);
   }
 
   /**
@@ -125,7 +176,7 @@ public class Unsafe {
    * @see #getByte(long)
    */
   public char getChar(long address) {
-    return UnsafeHelper.getUnsafe().getChar(address);
+    return UnsafeHelper.UNSAFE.getChar(address);
   }
 
   /**
@@ -134,7 +185,7 @@ public class Unsafe {
    * @see #putByte(long, byte)
    */
   public void putChar(long address, char x) {
-    UnsafeHelper.getUnsafe().putChar(address, x);
+    UnsafeHelper.UNSAFE.putChar(address, x);
   }
 
   /**
@@ -142,7 +193,16 @@ public class Unsafe {
    * @see #getByte(long)
    */
   public int getInt(long address) {
-    return UnsafeHelper.getUnsafe().getInt(address);
+    return UnsafeHelper.UNSAFE.getInt(address);
+  }
+
+  /**
+   * @param object object.
+   * @param address memory address.
+   * @see #getByte(long)
+   */
+  public int getInt(Object object, long address) {
+    return UnsafeHelper.UNSAFE.getInt(object, address);
   }
 
   /**
@@ -151,7 +211,17 @@ public class Unsafe {
    * @see #putByte(long, byte)
    */
   public void putInt(long address, int x) {
-    UnsafeHelper.getUnsafe().putInt(address, x);
+    UnsafeHelper.UNSAFE.putInt(address, x);
+  }
+
+  /**
+   * @param object object.
+   * @param address memory address.
+   * @param x value.
+   * @see #putByte(long, byte)
+   */
+  public void putInt(Object object, long address, int x) {
+    UnsafeHelper.UNSAFE.putInt(object, address, x);
   }
 
   /**
@@ -159,7 +229,16 @@ public class Unsafe {
    * @see #getByte(long)
    */
   public long getLong(long address) {
-    return UnsafeHelper.getUnsafe().getLong(address);
+    return UnsafeHelper.UNSAFE.getLong(address);
+  }
+
+  /**
+   * @param object object.
+   * @param address memory address.
+   * @see #getByte(long)
+   */
+  public long getLong(Object object, long address) {
+    return UnsafeHelper.UNSAFE.getLong(object, address);
   }
 
   /**
@@ -168,7 +247,17 @@ public class Unsafe {
    * @see #putByte(long, byte)
    */
   public void putLong(long address, long x) {
-    UnsafeHelper.getUnsafe().putLong(address, x);
+    UnsafeHelper.UNSAFE.putLong(address, x);
+  }
+
+  /**
+   * @param object object.
+   * @param address memory address.
+   * @param x value.
+   * @see #putByte(long, byte)
+   */
+  public void putLong(Object object, long address, long x) {
+    UnsafeHelper.UNSAFE.putLong(object, address, x);
   }
 
   /**
@@ -176,7 +265,7 @@ public class Unsafe {
    * @see #getByte(long)
    */
   public float getFloat(long address) {
-    return UnsafeHelper.getUnsafe().getFloat(address);
+    return UnsafeHelper.UNSAFE.getFloat(address);
   }
 
   /**
@@ -185,7 +274,7 @@ public class Unsafe {
    * @see #putByte(long, byte)
    */
   public void putFloat(long address, float x) {
-    UnsafeHelper.getUnsafe().putFloat(address, x);
+    UnsafeHelper.UNSAFE.putFloat(address, x);
   }
 
   /**
@@ -193,7 +282,7 @@ public class Unsafe {
    * @see #getByte(long)
    */
   public double getDouble(long address) {
-    return UnsafeHelper.getUnsafe().getDouble(address);
+    return UnsafeHelper.UNSAFE.getDouble(address);
   }
 
   /**
@@ -202,7 +291,27 @@ public class Unsafe {
    * @see #putByte(long, byte)
    */
   public void putDouble(long address, double x) {
-    UnsafeHelper.getUnsafe().putDouble(address, x);
+    UnsafeHelper.UNSAFE.putDouble(address, x);
+  }
+
+  /**
+   * Reports the location of a given field in the storage allocation of its class. Do not expect to
+   * perform any sort of arithmetic on this offset; it is just a cookie which is passed to the
+   * unsafe heap memory accessors.
+   *
+   * <p>Any given field will always have the same offset and base, and no two distinct fields of the
+   * same class will ever have the same offset and base.
+   *
+   * <p>As of 1.4.1, offsets for fields are represented as long values, although the Sun JVM does
+   * not use the most significant 32 bits. However, JVM implementations which store static fields at
+   * absolute addresses can use long offsets and null base pointers to express the field locations
+   * in a form usable by {@link #getInt(Object,long)}. Therefore, code which will be ported to such
+   * JVMs on 64-bit platforms must preserve all bits of static field offsets.
+   *
+   * @see #getInt(Object, long)
+   */
+  public long objectFieldOffset(Field f) {
+    return UnsafeHelper.UNSAFE.objectFieldOffset(f);
   }
 
   /**
@@ -221,10 +330,10 @@ public class Unsafe {
                 try {
                   // See https://bugs.openjdk.java.net/browse/JDK-8171377
                   Method m =
-                      UnsafeHelper.getUnsafe()
+                      UnsafeHelper.UNSAFE
                           .getClass()
                           .getDeclaredMethod("invokeCleaner", ByteBuffer.class);
-                  m.invoke(UnsafeHelper.getUnsafe(), buffer);
+                  m.invoke(UnsafeHelper.UNSAFE, buffer);
                   return m;
                 } catch (NoSuchMethodException e) {
                   return e;

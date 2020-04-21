@@ -3,14 +3,13 @@ package pcap.common.memory.accessor;
 
 import java.nio.ByteBuffer;
 import pcap.common.annotation.Inclubating;
-import pcap.common.internal.UnsafeHelper;
-import sun.misc.Unsafe;
+import pcap.common.internal.Unsafe;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 abstract class AbstractByteAccessor implements ByteAccessor {
 
-  static final Unsafe UNSAFE = UnsafeHelper.getUnsafe();
+  static final Unsafe UNSAFE = Unsafe.UNSAFE;
 
   static final int BYTE_ARRAY_OFFSET = UNSAFE.arrayBaseOffset(byte[].class);
 

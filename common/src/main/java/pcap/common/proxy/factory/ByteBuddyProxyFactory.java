@@ -20,6 +20,7 @@ public class ByteBuddyProxyFactory extends ProxyFactory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ByteBuddyProxyFactory.class);
 
+  @SuppressWarnings("unchecked")
   @Override
   public <T> T createInvokerProxy(
       ClassLoader classLoader, ObjectInvoker invoker, Class<?>... proxyClasses) {

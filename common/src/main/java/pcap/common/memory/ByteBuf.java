@@ -261,7 +261,7 @@ class ByteBuf extends AbstractMemory<ByteBuffer> {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Unsafe is available.");
       }
-      Unsafe unsafe = new Unsafe();
+      Unsafe unsafe = Unsafe.UNSAFE;
       method = unsafe.bufferCleaner();
       if (method != null) {
         if (LOGGER.isDebugEnabled()) {

@@ -4,14 +4,13 @@ package pcap.common.memory.accessor;
 import java.nio.ByteBuffer;
 import pcap.common.annotation.Inclubating;
 import pcap.common.internal.ByteBufferHelper;
-import pcap.common.internal.UnsafeHelper;
-import sun.misc.Unsafe;
+import pcap.common.internal.Unsafe;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 abstract class AbstractMemoryAcessor implements MemoryAccessor {
 
-  static final Unsafe UNSAFE = UnsafeHelper.getUnsafe();
+  static final Unsafe UNSAFE = Unsafe.UNSAFE;
 
   static final int BYTE_ARRAY_OFFSET = UNSAFE.arrayBaseOffset(byte[].class);
 
@@ -47,7 +46,7 @@ abstract class AbstractMemoryAcessor implements MemoryAccessor {
 
   @Override
   public void getBytes(long srcAddr, int index, long dstAddr, int dstIndex, int size) {
-    UNSAFE.copyMemory(srcAddr + index, dstAddr + dstIndex, size);
+    UNSAFE.copyMemory(null, srcAddr + index, null, dstAddr + dstIndex, size);
   }
 
   @Override
@@ -57,7 +56,7 @@ abstract class AbstractMemoryAcessor implements MemoryAccessor {
 
   @Override
   public void setBytes(long dstAddr, int index, long srcAddr, int srcIndex, int size) {
-    UNSAFE.copyMemory(srcAddr + srcIndex, dstAddr + index, size);
+    UNSAFE.copyMemory(null, srcAddr + srcIndex, null, dstAddr + index, size);
   }
 
   @Override

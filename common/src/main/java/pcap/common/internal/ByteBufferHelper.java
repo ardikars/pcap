@@ -15,11 +15,13 @@ import pcap.common.util.Reflections;
 @Inclubating
 public final class ByteBufferHelper {
 
+  private static final Unsafe UNSAFE = Unsafe.UNSAFE;
+
   private static long BUFFER_ADDRESS_FIELD_OFFSET = -1;
   private static final Constructor<?> DIRECT_BUFFER_CONSTRUCTOR;
 
   public static long directByteBufferAddress(ByteBuffer buffer) {
-    return UnsafeHelper.getUnsafe().getLong(buffer, BUFFER_ADDRESS_FIELD_OFFSET);
+    return UNSAFE.getLong(buffer, BUFFER_ADDRESS_FIELD_OFFSET);
   }
 
   /**
@@ -45,13 +47,10 @@ public final class ByteBufferHelper {
   /**
    * Find buffer address field.
    *
-   * @param unsafe {@link sun.misc.Unsafe} object.
    * @return returns buffer address field, or returns exception on failure.
    * @since 1.2.3
    */
-  private static Object findBufferAddressField(
-      final ByteBuffer direct, final sun.misc.Unsafe unsafe) {
-    final sun.misc.Unsafe finalUnsafe = unsafe;
+  private static Object findBufferAddressField(final ByteBuffer direct) {
     final Object maybeAddressField =
         AccessController.doPrivileged(
             new PrivilegedAction<Object>() {
@@ -59,8 +58,8 @@ public final class ByteBufferHelper {
               public Object run() {
                 try {
                   final Field field = Buffer.class.getDeclaredField("address");
-                  final long offset = finalUnsafe.objectFieldOffset(field);
-                  final long address = finalUnsafe.getLong(direct, offset);
+                  final long offset = UNSAFE.objectFieldOffset(field);
+                  final long address = UNSAFE.getLong(direct, offset);
                   if (address == 0) {
                     // if it's buffer is direct buffer, address will no not 0.
                     return new IllegalStateException("Non direct buffer.");
@@ -102,12 +101,11 @@ public final class ByteBufferHelper {
 
   static {
     Constructor<?> directBufferConstructor;
-    if (UnsafeHelper.getUnsafe() != null) {
+    if (UNSAFE != null) {
       ByteBuffer direct = ByteBuffer.allocateDirect(1);
-      Object maybeBufferAddressField = findBufferAddressField(direct, UnsafeHelper.getUnsafe());
+      Object maybeBufferAddressField = findBufferAddressField(direct);
       if (maybeBufferAddressField instanceof Field) {
-        BUFFER_ADDRESS_FIELD_OFFSET =
-            UnsafeHelper.getUnsafe().objectFieldOffset((Field) maybeBufferAddressField);
+        BUFFER_ADDRESS_FIELD_OFFSET = UNSAFE.objectFieldOffset((Field) maybeBufferAddressField);
       }
       long address = -1;
       try {
