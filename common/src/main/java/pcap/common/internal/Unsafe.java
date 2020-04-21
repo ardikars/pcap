@@ -16,7 +16,7 @@ public class Unsafe {
   public static final boolean HAS_UNSAFE = UnsafeHelper.isUnsafeAvailable();
   public static final Unsafe UNSAFE = HAS_UNSAFE ? new Unsafe() : null;
 
-  private Unsafe() {
+  Unsafe() {
     if (!UnsafeHelper.isUnsafeAvailable()) {
       throw new RuntimeException("sun.misc.Unsafe is not available.");
     }
