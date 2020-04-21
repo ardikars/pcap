@@ -65,7 +65,7 @@
 
         <junit.jupiter.api.version>5.6.1</junit.jupiter.api.version>
         <junit.jupiter.engine.version>5.6.1</junit.jupiter.engine.version>
-        <junit.platform.runner.version>1.6.1</junit.platform.runner.version>
+        <junit.platform.runner.version>1.6.2</junit.platform.runner.version>
 
         <asciidoctor.maven.plugin.version>2.0.0-RC.1</asciidoctor.maven.plugin.version>
         <asciidoctorj.version>2.2.0</asciidoctorj.version>
