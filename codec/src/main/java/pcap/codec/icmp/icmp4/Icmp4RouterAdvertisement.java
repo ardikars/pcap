@@ -2,7 +2,6 @@
 package pcap.codec.icmp.icmp4;
 
 import pcap.codec.icmp.Icmp;
-import pcap.codec.icmp.Icmp4;
 import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */

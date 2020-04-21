@@ -2,7 +2,6 @@
 package pcap.codec.icmp.icmp6;
 
 import pcap.codec.icmp.Icmp;
-import pcap.codec.icmp.Icmp6;
 import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
@@ -66,7 +65,8 @@ public class Icmp6DestinationUnreachable extends Icmp.IcmpTypeAndCode {
 
   static {
     Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(NO_ROUTE_TO_DESTINATION);
-    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(COMMUNICATION_WITH_DESTINATION_ADMINIS_TRATIVELY_PROHIBITED);
+    Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(
+        COMMUNICATION_WITH_DESTINATION_ADMINIS_TRATIVELY_PROHIBITED);
     Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(BEYOND_SCOPE_OF_SOURCE_ADDRESS);
     Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(ADDRESS_UNREACHABLE);
     Icmp.IcmpTypeAndCode.ICMP6_REGISTRY.add(PORT_UNREACHABLE);

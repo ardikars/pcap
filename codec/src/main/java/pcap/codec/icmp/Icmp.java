@@ -2,7 +2,6 @@
 package pcap.codec.icmp;
 
 import java.util.*;
-
 import pcap.codec.AbstractPacket;
 import pcap.codec.Packet;
 import pcap.codec.UnknownPacket;
@@ -78,10 +77,10 @@ public abstract class Icmp extends AbstractPacket {
   public static class IcmpTypeAndCode extends NamedNumber<Byte, IcmpTypeAndCode> {
 
     protected static final Collection<Icmp.IcmpTypeAndCode> ICMP4_REGISTRY =
-            new HashSet<IcmpTypeAndCode>();
+        new HashSet<IcmpTypeAndCode>();
 
     protected static final Collection<Icmp.IcmpTypeAndCode> ICMP6_REGISTRY =
-            new HashSet<Icmp.IcmpTypeAndCode>();
+        new HashSet<Icmp.IcmpTypeAndCode>();
 
     public static final IcmpTypeAndCode NEIGHBOR_SOLICITATION =
         new IcmpTypeAndCode((byte) 0x87, (byte) 0x0, "Neighbor Solicitation");
