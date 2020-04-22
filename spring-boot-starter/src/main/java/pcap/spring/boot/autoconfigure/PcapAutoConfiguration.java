@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,7 @@ public class PcapAutoConfiguration {
   private final SpringProperties springProperties;
 
   @Bean("defaultPcapLiveOptions")
+  @ConditionalOnMissingBean(PcapLiveOptions.class)
   public PcapLiveOptions pcapLiveOptions() {
     PcapLiveOptions options = new PcapLiveOptions();
     if (Objects.nonNull(springProperties.getPcap())
@@ -65,6 +67,7 @@ public class PcapAutoConfiguration {
   }
 
   @Bean("defaultPcapOfflineOptions")
+  @ConditionalOnMissingBean(PcapOfflineOptions.class)
   public PcapOfflineOptions pcapOfflineOptions() {
     PcapOfflineOptions options = new PcapOfflineOptions();
     if (Objects.nonNull(springProperties.getPcap())
@@ -78,6 +81,7 @@ public class PcapAutoConfiguration {
   }
 
   @Bean("defaultSource")
+  @ConditionalOnMissingBean(Interface.class)
   public Interface source() {
     try {
       return Pcaps.lookupInterface();
@@ -102,6 +106,7 @@ public class PcapAutoConfiguration {
   }
 
   @Bean("defaultMacAddress")
+  @ConditionalOnMissingBean(MacAddress.class)
   public MacAddress macAddress(@Qualifier("defaultSource") Interface source) {
     if (!Platforms.isWindows()) {
       try {

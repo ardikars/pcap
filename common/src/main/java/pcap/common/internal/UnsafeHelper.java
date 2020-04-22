@@ -14,8 +14,9 @@ import pcap.common.annotation.Inclubating;
 import pcap.common.util.Platforms;
 import pcap.common.util.Properties;
 import pcap.common.util.Reflections;
+
 // comment below code in case of development on jdk-14
-import sun.misc.Unsafe;
+// import sun.misc.Unsafe;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating

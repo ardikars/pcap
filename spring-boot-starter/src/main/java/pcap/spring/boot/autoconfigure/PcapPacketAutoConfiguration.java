@@ -1,6 +1,10 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.spring.boot.autoconfigure;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
 import pcap.codec.DataLinkLayer;
 import pcap.codec.NetworkLayer;
@@ -15,11 +19,26 @@ import pcap.codec.ip.Ip6;
 import pcap.codec.ip.ip6.*;
 import pcap.codec.tcp.Tcp;
 import pcap.codec.udp.Udp;
+import pcap.common.logging.Logger;
+import pcap.common.logging.LoggerFactory;
 
 @Configuration("pcapPacketAutoConfiguration")
-public class PcapPacketAutoConfiguration {
+public class PcapPacketAutoConfiguration implements InitializingBean, ApplicationContextAware {
 
-  public PcapPacketAutoConfiguration() {
+  private static final Logger LOGGER = LoggerFactory.getLogger(PcapPacketAutoConfiguration.class);
+
+  private ApplicationContext applicationContext;
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Enable pcap packet.");
+    }
     DataLinkLayer.register(DataLinkLayer.EN10MB, new Ethernet.Builder());
     NetworkLayer.register(NetworkLayer.ARP, new Arp.Builder());
     NetworkLayer.register(NetworkLayer.IPV4, new Ip4.Builder());
