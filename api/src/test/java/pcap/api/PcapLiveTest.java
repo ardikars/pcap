@@ -1,14 +1,17 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api;
 
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import pcap.api.handler.EventLoopHandler;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
+import pcap.common.util.Hexs;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
@@ -21,6 +24,24 @@ public class PcapLiveTest {
 
   private static final int MAX_PACKET = 10;
   private static final String FILTER = "ip";
+
+  /**
+   * Decode raw packet into hex string.
+   *
+   * @param <T> args type.
+   * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+   */
+  public interface HexHandler<T> extends EventLoopHandler<T> {
+
+    @Override
+    default void gotPacket(T args, PacketHeader header, PacketBuffer buffer) {
+      ByteBuffer buteBuf = buffer.buffer();
+      String hex = Hexs.toHexString(buteBuf, 0, buteBuf.capacity());
+      gotPacket(args, header, hex);
+    }
+
+    void gotPacket(T args, PacketHeader header, String buffer);
+  }
 
   @Test
   public void iterateInterfaceTest() throws ErrorException {
@@ -90,6 +111,38 @@ public class PcapLiveTest {
             Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
             Assertions.assertNotEquals(header.timestamp().second(), 0L);
           },
+          MAX_PACKET);
+    } catch (BreakException e) {
+      LOGGER.warn(e);
+    }
+    pcap.close();
+  }
+
+  @Test
+  public void liveEventLoopTest()
+      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException {
+    Interface source = Pcaps.lookupInterface();
+    Assertions.assertNotNull(source);
+    Pcap pcap = Pcaps.live(new PcapLive(source));
+    Assertions.assertNotNull(pcap);
+    try {
+      pcap.loop(
+          MAX_PACKET,
+          (HexHandler)
+              (args, header, buffer) -> {
+                Assertions.assertEquals(args, MAX_PACKET);
+                Assertions.assertNotNull(buffer);
+                Assertions.assertNotNull(buffer);
+                Assertions.assertNotNull(header);
+                Assertions.assertNotEquals(header.captureLength(), 0);
+                Assertions.assertNotEquals(header.length(), 0);
+                Assertions.assertNotNull(header.timestamp());
+                Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
+                Assertions.assertNotEquals(header.timestamp().second(), 0L);
+              },
           MAX_PACKET);
     } catch (BreakException e) {
       LOGGER.warn(e);

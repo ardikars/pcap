@@ -17,7 +17,7 @@ public class PcapBuffer implements PacketBuffer {
   private final Pointer<Byte> pointer;
   private final ByteBuffer buffer;
 
-  public PcapBuffer(Pointer<Byte> pointer, int size) throws IllegalAccessException {
+  public PcapBuffer(Pointer<Byte> pointer, int size) {
     this.pointer = pointer;
     this.buffer = pointer.asDirectByteBuffer(size);
   }

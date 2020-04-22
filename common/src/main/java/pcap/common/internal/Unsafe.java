@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-
 import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
@@ -341,34 +340,31 @@ public class Unsafe {
   }
 
   /**
-   * Reports the location of a given static field, in conjunction with {@link
-   * #staticFieldOffset}.
-   * <p>Fetch the base "Object", if any, with which static fields of the
-   * given class can be accessed via methods like {@link #getInt(Object,
-   * long)}.  This value may be null.  This value may refer to an object
-   * which is a "cookie", not guaranteed to be a real Object, and it should
-   * not be used in any way except as argument to the get and put routines in
-   * this class.
+   * Reports the location of a given static field, in conjunction with {@link #staticFieldOffset}.
+   *
+   * <p>Fetch the base "Object", if any, with which static fields of the given class can be accessed
+   * via methods like {@link #getInt(Object, long)}. This value may be null. This value may refer to
+   * an object which is a "cookie", not guaranteed to be a real Object, and it should not be used in
+   * any way except as argument to the get and put routines in this class.
    */
   public Object staticFieldBase(Field f) {
     return UnsafeHelper.UNSAFE.staticFieldBase(f);
   }
 
   /**
-   * Reports the location of a given static field, in conjunction with {@link
-   * #staticFieldBase}.
-   * <p>Do not expect to perform any sort of arithmetic on this offset;
-   * it is just a cookie which is passed to the unsafe heap memory accessors.
+   * Reports the location of a given static field, in conjunction with {@link #staticFieldBase}.
    *
-   * <p>Any given field will always have the same offset, and no two distinct
-   * fields of the same class will ever have the same offset.
+   * <p>Do not expect to perform any sort of arithmetic on this offset; it is just a cookie which is
+   * passed to the unsafe heap memory accessors.
    *
-   * <p>As of 1.4.1, offsets for fields are represented as long values,
-   * although the Sun JVM does not use the most significant 32 bits.
-   * It is hard to imagine a JVM technology which needs more than
-   * a few bits to encode an offset within a non-array object,
-   * However, for consistency with other methods in this class,
-   * this method reports its result as a long value.
+   * <p>Any given field will always have the same offset, and no two distinct fields of the same
+   * class will ever have the same offset.
+   *
+   * <p>As of 1.4.1, offsets for fields are represented as long values, although the Sun JVM does
+   * not use the most significant 32 bits. It is hard to imagine a JVM technology which needs more
+   * than a few bits to encode an offset within a non-array object, However, for consistency with
+   * other methods in this class, this method reports its result as a long value.
+   *
    * @see #getInt(Object, long)
    */
   public long staticFieldOffset(Field f) {

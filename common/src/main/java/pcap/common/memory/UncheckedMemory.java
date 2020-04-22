@@ -4,7 +4,6 @@ package pcap.common.memory;
 import java.nio.ByteBuffer;
 import pcap.common.annotation.Inclubating;
 import pcap.common.internal.Unsafe;
-import pcap.common.internal.UnsafeHelper;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
