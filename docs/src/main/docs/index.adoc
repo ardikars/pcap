@@ -1,10 +1,12 @@
 
 include::intro.adoc[]
 
-== Building
-
-include::building.adoc[]
-
 == Usage
 
 include::usage.adoc[]
+
+include::springboot-properties.adoc[]
+
+== Building
+
+include::building.adoc[]

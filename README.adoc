@@ -19,6 +19,91 @@ image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap
 Provides high level JVM network packet processing library for rapid development.
 
 
+== Usage
+
+Add below configuration to your pom.xml
+
+```pom
+<dependencies>
+    <dependency>
+        <groupId>com.ardikars.pcap</groupId>
+        <artifactId>pcap-codec</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.ardikars.pcap</groupId>
+        <artifactId>pcap-api</artifactId>
+    </dependency>
+</dependencies>
+
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.ardikars.pcap</groupId>
+            <artifactId>pcap</artifactId>
+            <version>${PCAP-LATEST-VERSION}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+```
+
+== Spring boot properties
+
+[%header,cols=4*]
+|===
+|Property name
+|Options
+|Default value
+|Description
+
+|spring.pcap.live.snapshotLength
+|16 bit unsigned integer
+|65535
+|Specifies the snapshot length to be set on the handle (16 bit).
+
+|spring.pcap.live.promiscuous
+|true or false
+|true
+|Sets whether promiscuous mode should be set on a capture handle when the handle is activated.
+
+|spring.pcap.live.rfmon
+|true or false
+|false
+|Sets whether monitor mode should be set on a capture handle when the handle is activated.
+
+|spring.pcap.live.timeout
+|32 bit integer
+|2000
+|Sets the packet buffer timeout that will be used on a capture handle when the handle is activated.
+
+|spring.pcap.live.immediate
+|true or false
+|Sets whether immediate mode should be set on a capture handle when the handle is activated.
+|true
+
+|spring.pcap.live.bufferSize
+|32 bit integer
+|Set the packet buffer will be used on a capture handle when the handle is activated.
+|1500
+
+|spring.pcap.liva.timestampType
+|HOST or HOST_LOWPREC or HOST_HIPREC or ADAPTER or ADAPTER_UNSYNCED
+|Set the time stamp type returned in captures.
+|HOST
+
+|spring.pcap.live.timestampPrecision
+|MICRO or NANO
+|MICRO
+|Set the time stamp precision returned in captures.
+
+|spring.pcap.offline.timestampPrecision
+|MICRO or NANO
+|MICRO
+|Set the time stamp precision returned in captures.
+|===
+
+
 == Building
 
 To build the source you will need to install:
@@ -49,33 +134,3 @@ instead of `./mvnw`.
 
 For hints on how to build the project look in `.github/workflows/developement.yml` if there
 is one. There should be a "script" and maybe "maven package" command.
-
-
-== Usage
-
-Add below configuration to your pom.xml
-
-```pom
-<dependencies>
-    <dependency>
-        <groupId>com.ardikars.pcap</groupId>
-        <artifactId>pcap-codec</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.ardikars.pcap</groupId>
-        <artifactId>pcap-api</artifactId>
-    </dependency>
-</dependencies>
-
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>com.ardikars.pcap</groupId>
-            <artifactId>pcap</artifactId>
-            <version>${PCAP-LATEST-VERSION}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
-```
