@@ -1,9 +1,7 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.spring.boot.starter;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,17 +10,22 @@ import pcap.api.PcapLiveOptions;
 import pcap.api.PcapOfflineOptions;
 import pcap.api.Pcaps;
 import pcap.api.handler.EventLoopHandler;
+import pcap.common.logging.Logger;
+import pcap.common.logging.LoggerFactory;
 import pcap.common.net.MacAddress;
 import pcap.spi.Interface;
 import pcap.spi.Pcap;
 import pcap.spring.boot.autoconfigure.annotation.EnablePcapPacket;
 import pcap.spring.boot.autoconfigure.handler.PcapPacketHandler;
 
-@Slf4j
+import java.util.concurrent.atomic.AtomicInteger;
+
 @RequiredArgsConstructor
 @SpringBootApplication
 @EnablePcapPacket
 public class PcapApplication implements CommandLineRunner {
+
+  private static Logger log = LoggerFactory.getLogger(PcapApplication.class);
 
   private final PcapLiveOptions pcapLiveOptions;
   private final PcapOfflineOptions pcapOfflineOptions;
