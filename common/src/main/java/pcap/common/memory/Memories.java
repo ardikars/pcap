@@ -1,15 +1,16 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
-import java.nio.ByteBuffer;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
 import pcap.common.annotation.Inclubating;
 import pcap.common.internal.ByteBufferHelper;
 import pcap.common.internal.Unsafe;
 import pcap.common.util.Hexs;
 import pcap.common.util.Validate;
+
+import java.nio.ByteBuffer;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -246,7 +247,7 @@ public final class Memories {
     Memory memory = allocator().allocate(capacity, maxCapacity);
     int index = 0;
     for (int i = 0; i < memories.length; i++) {
-      memory.setBytes(index, memories[i]);
+      memory.setBytes(index, memories[i], 0, memories[i].capacity());
       index += memories[i].capacity();
     }
     return memory;
