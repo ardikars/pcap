@@ -2,6 +2,7 @@
 package pcap.spi;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.TimeoutException;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
 
@@ -57,6 +58,19 @@ public interface Pcap extends AutoCloseable {
    * @since 1.0.0
    */
   <T> void loop(int count, PacketHandler<T> handler, T args) throws BreakException, ErrorException;
+
+  /**
+   * Reads the next packet and returns a success/failure indication.
+   *
+   * @param packetBuffer packet buffer.
+   * @param packetHeader packet header.
+   * @throws BreakException there are no more packets to read from `savefile`.
+   * @throws TimeoutException if packets are being read from a `live capture` and the packet buffer
+   *     timeout expired.
+   * @since 1.0.0
+   */
+  void nextEx(PacketBuffer packetBuffer, PacketHeader packetHeader)
+      throws BreakException, TimeoutException, ErrorException;
 
   /**
    * processes packets from a live capture or {@code PcapLive} until cnt packets are processed, the
@@ -150,6 +164,15 @@ public interface Pcap extends AutoCloseable {
    */
   @Override
   void close();
+
+  /**
+   * Create empty pointer.
+   *
+   * @param cls a class, ex {@link PacketHeader} and {@link PacketBuffer}.
+   * @param <T> pointer type.
+   * @return
+   */
+  <T> T allocate(Class<T> cls) throws IllegalArgumentException;
 
   /** Used to specify a direction that packets will be captured. */
   enum Direction {

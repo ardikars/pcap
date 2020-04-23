@@ -1,12 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal;
 
-import java.foreign.memory.Callback;
-import java.foreign.memory.LayoutType;
-import java.foreign.memory.Pointer;
-import java.nio.ByteBuffer;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 import pcap.api.PcapLive;
 import pcap.api.PcapOffline;
 import pcap.api.handler.EventLoopHandler;
@@ -18,6 +12,15 @@ import pcap.common.logging.LoggerFactory;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
+
+import java.foreign.NativeTypes;
+import java.foreign.memory.Callback;
+import java.foreign.memory.LayoutType;
+import java.foreign.memory.Pointer;
+import java.nio.ByteBuffer;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeoutException;
 
 /**
  * {@code Pcap} handle.
@@ -34,14 +37,12 @@ public class Pcap implements pcap.spi.Pcap {
   final Pointer<PcapStatus> pcap_stat;
   final int netmask;
   final int linktype;
-
+  private final Queue<Runnable> loopEvent = new LinkedBlockingQueue<>();
   boolean filterActivated;
-
   /** Event loop handler for {@link #loop(int, PacketHandler, Object)}. */
   private volatile boolean loopTerminated;
 
   private volatile int loopResult;
-  private final Queue<Runnable> loopEvent = new LinkedBlockingQueue<>();
 
   public Pcap(Pointer<pcap_mapping.pcap> pcap) {
     this(pcap, 0xFFFFFF00);
@@ -163,11 +164,12 @@ public class Pcap implements pcap.spi.Pcap {
                           PcapHandler.class,
                           (user, header, packets) -> {
                             PacketHeader packetHeader = header.get().packetHeader();
-                            PcapBuffer buffer =
-                                new PcapBuffer(packets, packetHeader.captureLength());
+                            PacketBuffer packetBuffer =
+                                PcapPacketBuffer.fromReference(
+                                    packets, packetHeader.captureLength());
                             loopEvent.offer(
                                 () -> {
-                                  handler.gotPacket(args, packetHeader, buffer);
+                                  handler.gotPacket(args, packetHeader, packetBuffer);
                                 });
                           });
                   int result =
@@ -211,7 +213,9 @@ public class Pcap implements pcap.spi.Pcap {
                 (user, header, packets) -> {
                   PacketHeader packetHeader = header.get().packetHeader();
                   handler.gotPacket(
-                      args, packetHeader, new PcapBuffer(packets, packetHeader.captureLength()));
+                      args,
+                      packetHeader,
+                      PcapPacketBuffer.fromReference(packets, packetHeader.captureLength()));
                 });
 
         int result = PcapConstant.MAPPING.pcap_loop(pcap, count, callback, Pointer.ofNull());
@@ -222,6 +226,34 @@ public class Pcap implements pcap.spi.Pcap {
         } else {
           throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
         }
+      }
+    }
+  }
+
+  @Override
+  public void nextEx(PacketBuffer packetBuffer, PacketHeader packetHeader)
+      throws BreakException, TimeoutException, ErrorException {
+    PcapPacketHeader.Impl pcap_packet_header = (PcapPacketHeader.Impl) packetHeader;
+    PcapPacketBuffer pcap_packet_buffer = (PcapPacketBuffer) packetBuffer;
+
+    int result =
+        PcapConstant.MAPPING.pcap_next_ex(pcap, pcap_packet_header.ptr, pcap_packet_buffer.ptr);
+
+    if (result == 0) {
+      throw new TimeoutException("");
+    } else if (result == 1) {
+      PcapPacketHeader pcapPacketHeader = pcap_packet_header.ptr.get().get();
+      Pointer<Byte> pointer = pcap_packet_buffer.ptr.get();
+
+      pcap_packet_header.timestamp = pcapPacketHeader.timestamp().timestamp();
+      pcap_packet_header.captureLangth = pcapPacketHeader.captureLength();
+      pcap_packet_header.length = pcapPacketHeader.length();
+      pcap_packet_buffer.buffer = pointer.asDirectByteBuffer(pcapPacketHeader.captureLength());
+    } else {
+      if (result == -2) {
+        throw new BreakException("");
+      } else {
+        throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
       }
     }
   }
@@ -239,7 +271,9 @@ public class Pcap implements pcap.spi.Pcap {
               (user, header, packets) -> {
                 PacketHeader packetHeader = header.get().packetHeader();
                 handler.gotPacket(
-                    args, packetHeader, new PcapBuffer(packets, packetHeader.captureLength()));
+                    args,
+                    packetHeader,
+                    PcapPacketBuffer.fromReference(packets, packetHeader.captureLength()));
               });
       int result = PcapConstant.MAPPING.pcap_dispatch(pcap, count, callback, Pointer.ofNull());
       if (result < 0) {
@@ -345,5 +379,22 @@ public class Pcap implements pcap.spi.Pcap {
         PcapConstant.MAPPING.pcap_close(pcap);
       }
     }
+  }
+
+  @Override
+  public <T> T allocate(Class<T> cls) {
+    final Pointer<Pointer<PcapPacketHeader>> pcap_ptr_to_packet_header =
+        PcapConstant.SCOPE.allocate(LayoutType.ofStruct(PcapPacketHeader.class).pointer());
+    final Pointer<Pointer<Byte>> pcap_ptr_to_buffer =
+        PcapConstant.SCOPE.allocate(NativeTypes.UINT8.pointer());
+    if (cls.isAssignableFrom(PacketBuffer.class)) {
+      return (T) PcapPacketBuffer.fromPointer(pcap_ptr_to_buffer, 0);
+    } else if (cls.isAssignableFrom(PacketHeader.class)) {
+      return (T)
+          PcapPacketHeader.Impl.fromPointer(
+              pcap_ptr_to_packet_header, new Timestamp.Impl(0, 0), 0, 0);
+    }
+    throw new IllegalArgumentException(
+        "A class (" + cls + ") doesn't supported for this operation.");
   }
 }

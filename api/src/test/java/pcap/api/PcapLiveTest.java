@@ -1,9 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api;
 
-import java.nio.ByteBuffer;
-import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -16,6 +13,12 @@ import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 
+import java.nio.ByteBuffer;
+import java.util.Iterator;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
+
 // @EnabledOnJre(JRE.JAVA_14)
 @RunWith(JUnitPlatform.class)
 public class PcapLiveTest {
@@ -24,24 +27,6 @@ public class PcapLiveTest {
 
   private static final int MAX_PACKET = 10;
   private static final String FILTER = "ip";
-
-  /**
-   * Decode raw packet into hex string.
-   *
-   * @param <T> args type.
-   * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
-   */
-  public interface HexHandler<T> extends EventLoopHandler<T> {
-
-    @Override
-    default void gotPacket(T args, PacketHeader header, PacketBuffer buffer) {
-      ByteBuffer buteBuf = buffer.buffer();
-      String hex = Hexs.toHexString(buteBuf, 0, buteBuf.capacity());
-      gotPacket(args, header, hex);
-    }
-
-    void gotPacket(T args, PacketHeader header, String buffer);
-  }
 
   @Test
   public void iterateInterfaceTest() throws ErrorException {
@@ -274,5 +259,52 @@ public class PcapLiveTest {
       LOGGER.warn(e);
     }
     pcap.close();
+  }
+
+  @Test
+  public void liveNextExTest()
+      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException {
+    Interface source = Pcaps.lookupInterface();
+    Assertions.assertNotNull(source);
+    Pcap pcap = Pcaps.live(new PcapLive(source));
+    Assertions.assertNotNull(pcap);
+    PacketHeader packetHeader = pcap.allocate(PacketHeader.class);
+    PacketBuffer packetBuffer = pcap.allocate(PacketBuffer.class);
+    IntStream.range(0, 10)
+        .forEach(
+            value -> {
+              try {
+                pcap.nextEx(packetBuffer, packetHeader);
+                System.out.println(packetHeader);
+              } catch (BreakException e) {
+                // ok
+              } catch (TimeoutException e) {
+                // ok
+              } catch (ErrorException e) {
+                e.printStackTrace();
+              }
+            });
+    pcap.close();
+  }
+
+  /**
+   * Decode raw packet into hex string.
+   *
+   * @param <T> args type.
+   * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+   */
+  public interface HexHandler<T> extends EventLoopHandler<T> {
+
+    @Override
+    default void gotPacket(T args, PacketHeader header, PacketBuffer buffer) {
+      ByteBuffer buteBuf = buffer.buffer();
+      String hex = Hexs.toHexString(buteBuf, 0, buteBuf.capacity());
+      gotPacket(args, header, hex);
+    }
+
+    void gotPacket(T args, PacketHeader header, String buffer);
   }
 }

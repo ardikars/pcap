@@ -1,12 +1,13 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal;
 
+import pcap.common.annotation.Inclubating;
+import pcap.spi.PacketHeader;
+
 import java.foreign.annotations.NativeGetter;
 import java.foreign.annotations.NativeStruct;
 import java.foreign.memory.Pointer;
 import java.foreign.memory.Struct;
-import pcap.common.annotation.Inclubating;
-import pcap.spi.PacketHeader;
 
 /**
  * Wrapper for {@code pcap_pkthdr}
@@ -29,25 +30,44 @@ public interface PcapPacketHeader extends Struct<PcapPacketHeader> {
   int length();
 
   default PacketHeader packetHeader() {
-    return new Impl(timestamp().timestamp(), captureLength(), length(), ptr());
+    return Impl.fromReference(ptr(), timestamp().timestamp(), captureLength(), length());
   }
 
   class Impl implements PacketHeader {
 
-    private final pcap.spi.Timestamp timestamp;
-    private final int captureLangth;
-    private final int length;
-    private final Pointer<PcapPacketHeader> ptr;
+    Pointer<Pointer<PcapPacketHeader>> ptr;
+    Pointer<PcapPacketHeader> ref;
+    pcap.spi.Timestamp timestamp;
+    int captureLangth;
+    int length;
 
-    private Impl(
+    Impl(
+        Pointer<Pointer<PcapPacketHeader>> ptr,
+        Pointer<PcapPacketHeader> ref,
         pcap.spi.Timestamp timestamp,
         int captureLangth,
-        int length,
-        Pointer<PcapPacketHeader> ptr) {
+        int length) {
+      this.ptr = ptr;
+      this.ref = ref;
       this.timestamp = timestamp;
       this.captureLangth = captureLangth;
       this.length = length;
-      this.ptr = ptr;
+    }
+
+    static Impl fromPointer(
+        Pointer<Pointer<PcapPacketHeader>> ptr,
+        pcap.spi.Timestamp timestamp,
+        int captureLangth,
+        int length) {
+      return new Impl(ptr, ptr.get(), timestamp, captureLangth, length);
+    }
+
+    static Impl fromReference(
+        Pointer<PcapPacketHeader> reference,
+        pcap.spi.Timestamp timestamp,
+        int captureLangth,
+        int length) {
+      return new Impl(null, reference, timestamp, captureLangth, length);
     }
 
     @Override
@@ -65,8 +85,16 @@ public interface PcapPacketHeader extends Struct<PcapPacketHeader> {
       return length;
     }
 
-    public Pointer<PcapPacketHeader> pointer() {
-      return ptr;
+    @Override
+    public String toString() {
+      return "PacketHeader{"
+          + "timestamp="
+          + timestamp
+          + ", captureLangth="
+          + captureLangth
+          + ", length="
+          + length
+          + '}';
     }
   }
 }
