@@ -15,6 +15,7 @@ public class Ethernet extends AbstractPacket {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   private Ethernet(final Builder builder) {
     this.header = new Header(builder);
@@ -25,6 +26,7 @@ public class Ethernet extends AbstractPacket {
     } else {
       this.payload = null;
     }
+    this.builder = builder;
   }
 
   public static final Ethernet newPacket(final Memory buffer) {
@@ -39,6 +41,16 @@ public class Ethernet extends AbstractPacket {
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
   }
 
   public static class Header extends AbstractPacket.Header {
@@ -161,6 +173,7 @@ public class Ethernet extends AbstractPacket {
 
     @Override
     public Ethernet build(final Memory buffer) {
+      resetIndex(buffer);
       byte[] hardwareAddressBuffer;
       hardwareAddressBuffer = new byte[MacAddress.MAC_ADDRESS_LENGTH];
       buffer.readBytes(hardwareAddressBuffer);
@@ -177,13 +190,14 @@ public class Ethernet extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(0, Header.ETHERNET_HEADER_LENGTH);
+        reset(readerIndex, Header.ETHERNET_HEADER_LENGTH);
       }
     }
 
     @Override
     public void reset(int offset, int length) {
       if (buffer != null) {
+        resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(destinationMacAddress != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(sourceMacAddress != null, ILLEGAL_HEADER_EXCEPTION);

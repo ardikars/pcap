@@ -16,6 +16,7 @@ public class Ip6 extends Ip {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   private Ip6(final Builder builder) {
     this.header = new Header(builder);
@@ -26,6 +27,7 @@ public class Ip6 extends Ip {
     } else {
       this.payload = null;
     }
+    this.builder = builder;
   }
 
   @Override
@@ -36,6 +38,16 @@ public class Ip6 extends Ip {
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
   }
 
   public static final class Header extends AbstractPacketHeader {
@@ -226,6 +238,7 @@ public class Ip6 extends Ip {
 
     @Override
     public Packet build(final Memory buffer) {
+      resetIndex(buffer);
       int iscratch = buffer.readInt();
       this.trafficClass = (byte) (iscratch >> 20 & 0xff);
       this.flowLabel = iscratch & 0xfffff;
@@ -246,7 +259,7 @@ public class Ip6 extends Ip {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(0, Header.IPV6_HEADER_LENGTH);
+        reset(readerIndex, Header.IPV6_HEADER_LENGTH);
       }
     }
 

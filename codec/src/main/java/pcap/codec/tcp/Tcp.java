@@ -15,6 +15,7 @@ public class Tcp extends AbstractPacket {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   private Tcp(final Builder builder) {
     this.header = new Header(builder);
@@ -26,6 +27,7 @@ public class Tcp extends AbstractPacket {
     } else {
       this.payload = null;
     }
+    this.builder = builder;
   }
 
   @Override
@@ -36,6 +38,16 @@ public class Tcp extends AbstractPacket {
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
   }
 
   public static final class Header extends AbstractPacket.Header {
@@ -285,6 +297,7 @@ public class Tcp extends AbstractPacket {
 
     @Override
     public Packet build(Memory buffer) {
+      resetIndex(buffer);
       this.sourcePort = buffer.readShort();
       this.destinationPort = buffer.readShort();
       this.sequence = buffer.readInt();
@@ -313,7 +326,7 @@ public class Tcp extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(0, Header.TCP_HEADER_LENGTH);
+        reset(readerIndex, Header.TCP_HEADER_LENGTH);
       }
     }
 

@@ -49,7 +49,14 @@ public abstract class AbstractPacket implements Packet {
 
   @Override
   public <T extends Packet> T getFirst(Class<T> clazz) {
-    return this.iterator().hasNext() ? (T) this.iterator().next() : null;
+    final PacketIterator iterator = this.iterator();
+    while (iterator.hasNext()) {
+      Packet packet = iterator.next();
+      if (packet.getClass().isAssignableFrom(clazz)) {
+        return (T) packet;
+      }
+    }
+    return null;
   }
 
   @Override
@@ -57,7 +64,9 @@ public abstract class AbstractPacket implements Packet {
     Iterator<Packet> iterator = this.iterator();
     Packet packet = null;
     while (iterator.hasNext()) {
-      packet = iterator.next();
+      if (packet.getClass().isAssignableFrom(clazz)) {
+        packet = iterator.next();
+      }
     }
     return (T) packet;
   }
@@ -78,6 +87,10 @@ public abstract class AbstractPacket implements Packet {
       }
     }
   }
+
+  public abstract Builder builder();
+
+  public abstract Memory buffer();
 
   public abstract static class Header implements Packet.Header {
 
@@ -118,8 +131,8 @@ public abstract class AbstractPacket implements Packet {
     public abstract Builder builder();
   }
 
-  public <T extends Packet, R extends Packet> T map(Function<T, R> function) {
-    return (T) this;
+  public <T extends Packet, R extends Packet> R map(Function<T, R> function) {
+    return function.apply((T) this);
   }
 
   public <T extends Packet> List<T> collectList() {
@@ -143,6 +156,18 @@ public abstract class AbstractPacket implements Packet {
   /** Packet builder. */
   public abstract static class Builder
       implements pcap.common.util.Builder<Packet, Memory>, Serializable {
+
+    protected int readerIndex = -1;
+    protected int writerIndex = -1;
+
+    protected void resetIndex(Memory buffer) {
+      if (readerIndex < 0 || writerIndex < 0) {
+        this.readerIndex = buffer.readerIndex();
+        this.writerIndex = buffer.writerIndex();
+      } else {
+        buffer.setIndex(readerIndex, buffer.capacity());
+      }
+    }
 
     public void reset() {
       reset(-1, -1);

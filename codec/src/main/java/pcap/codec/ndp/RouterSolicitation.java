@@ -14,6 +14,7 @@ public class RouterSolicitation extends AbstractPacket {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   /**
    * Builde Router Solicitation packet.
@@ -24,6 +25,7 @@ public class RouterSolicitation extends AbstractPacket {
     this.header = new Header(builder);
     this.payload = null;
     this.payloadBuffer = builder.payloadBuffer;
+    this.builder = builder;
   }
 
   @Override
@@ -34,6 +36,16 @@ public class RouterSolicitation extends AbstractPacket {
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
   }
 
   public static class Header extends AbstractPacket.Header {
@@ -125,6 +137,7 @@ public class RouterSolicitation extends AbstractPacket {
 
     @Override
     public Packet build(Memory buffer) {
+      resetIndex(buffer);
       buffer.readInt();
       this.options =
           (NeighborDiscoveryOptions) new NeighborDiscoveryOptions.Builder().build(buffer);

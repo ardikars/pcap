@@ -1,0 +1,14 @@
+spring:
+  pcap:
+    unsafe: false
+    live:
+      snapshotLength: 1500
+      promiscuous: true
+      rfmon: false
+      timeout: 1000
+      immediate: true
+      bufferSize: 1000
+      timestampType: HOST
+      timestampPrecision: MICRO
+    offline:
+      timestampPrecision: MICRO

@@ -15,6 +15,7 @@ public class NeighborAdvertisement extends AbstractPacket {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   /**
    * Build Neighbor Advertisement packet.
@@ -25,6 +26,7 @@ public class NeighborAdvertisement extends AbstractPacket {
     this.header = new Header(builder);
     this.payload = null;
     this.payloadBuffer = builder.payloadBuffer;
+    this.builder = builder;
   }
 
   @Override
@@ -35,6 +37,28 @@ public class NeighborAdvertisement extends AbstractPacket {
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
+  }
+
+  @Override
+  public String toString() {
+    return new StringBuilder("[ NeighborAdvertisement Header (")
+        .append(header().length())
+        .append(" bytes) ]")
+        .append('\n')
+        .append(header)
+        .append("\tpayload: ")
+        .append(payload != null ? payload.getClass().getSimpleName() : "")
+        .toString();
   }
 
   public static final class Header extends AbstractPacket.Header {
@@ -132,18 +156,6 @@ public class NeighborAdvertisement extends AbstractPacket {
     }
   }
 
-  @Override
-  public String toString() {
-    return new StringBuilder("[ NeighborAdvertisement Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
-        .toString();
-  }
-
   public static class Builder extends AbstractPacket.Builder {
 
     private boolean routerFlag;
@@ -188,6 +200,7 @@ public class NeighborAdvertisement extends AbstractPacket {
 
     @Override
     public Packet build(Memory buffer) {
+      resetIndex(buffer);
       int iscratch = buffer.readInt();
       this.routerFlag = (iscratch >> 31 & 0x1) == 1;
       this.solicitedFlag = (iscratch >> 30 & 0x1) == 1;

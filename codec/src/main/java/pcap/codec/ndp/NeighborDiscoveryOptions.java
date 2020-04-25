@@ -20,6 +20,7 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   /**
    * Builde Neighbor Discovery Options packet.
@@ -30,6 +31,7 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
     this.header = new Header(builder);
     this.payload = null;
     payloadBuffer = builder.payloadBuffer;
+    this.builder = builder;
   }
 
   @Override
@@ -40,6 +42,16 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
   }
 
   public static class Header extends AbstractPacket.Header {
@@ -222,6 +234,7 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
 
     @Override
     public Packet build(Memory buffer) {
+      resetIndex(buffer);
       while (buffer.isReadable(2)) {
         final OptionType type = OptionType.REGISTRY.get(buffer.readByte());
         byte lengthField = buffer.readByte();

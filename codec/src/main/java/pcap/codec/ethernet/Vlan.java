@@ -17,6 +17,7 @@ public class Vlan extends AbstractPacket {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   private Vlan(final Builder builder) {
     this.header = new Header(builder);
@@ -27,6 +28,7 @@ public class Vlan extends AbstractPacket {
     } else {
       this.payload = null;
     }
+    this.builder = builder;
   }
 
   public static Vlan newPacket(final Memory buffer) {
@@ -41,6 +43,28 @@ public class Vlan extends AbstractPacket {
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
+  }
+
+  @Override
+  public String toString() {
+    return new StringBuilder("[ Vlan Header (")
+        .append(header().length())
+        .append(" bytes) ]")
+        .append('\n')
+        .append(header)
+        .append("\tpayload: ")
+        .append(payload != null ? payload.getClass().getSimpleName() : "")
+        .toString();
   }
 
   public static final class Header extends AbstractPacket.Header {
@@ -93,9 +117,8 @@ public class Vlan extends AbstractPacket {
     public Memory buffer() {
       if (buffer == null) {
         buffer = ALLOCATOR.allocate(length());
-        buffer.setShort(0, 0x8100); // IEEE 802.1Q VLAN-tagged frames
-        buffer.setShort(
-            2,
+        buffer.writeShort(0x8100); // IEEE 802.1Q VLAN-tagged frames
+        buffer.writeShort(
             ((priorityCodePoint.value() << 13) & 0x07)
                 | ((canonicalFormatIndicator << 14) & 0x01)
                 | (vlanIdentifier & 0x0fff));
@@ -125,18 +148,6 @@ public class Vlan extends AbstractPacket {
           .append('\n')
           .toString();
     }
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder("[ Vlan Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
-        .toString();
   }
 
   public static final class Builder extends AbstractPacket.Builder {
@@ -181,6 +192,7 @@ public class Vlan extends AbstractPacket {
 
     @Override
     public Vlan build(final Memory buffer) {
+      resetIndex(buffer);
       short tci = buffer.readShort();
       short type = buffer.readShort();
       this.priorityCodePoint = PriorityCodePoint.valueOf((byte) (tci >> 13 & 0x07));
@@ -195,7 +207,7 @@ public class Vlan extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(0, Header.VLAN_HEADER_LENGTH);
+        reset(readerIndex, Header.VLAN_HEADER_LENGTH);
       }
     }
 
@@ -242,6 +254,17 @@ public class Vlan extends AbstractPacket {
     private static final Map<Byte, PriorityCodePoint> REGISTRY =
         new HashMap<Byte, PriorityCodePoint>();
 
+    static {
+      REGISTRY.put(BK.value(), BK);
+      REGISTRY.put(BE.value(), BE);
+      REGISTRY.put(EE.value(), EE);
+      REGISTRY.put(CA.value(), CA);
+      REGISTRY.put(VI.value(), VI);
+      REGISTRY.put(VO.value(), VO);
+      REGISTRY.put(IC.value(), IC);
+      REGISTRY.put(NC.value(), NC);
+    }
+
     protected PriorityCodePoint(Byte value, String name) {
       super(value, name);
     }
@@ -269,17 +292,6 @@ public class Vlan extends AbstractPacket {
     public static PriorityCodePoint register(final PriorityCodePoint priorityCodePoint) {
       REGISTRY.put(priorityCodePoint.value(), priorityCodePoint);
       return priorityCodePoint;
-    }
-
-    static {
-      REGISTRY.put(BK.value(), BK);
-      REGISTRY.put(BE.value(), BE);
-      REGISTRY.put(EE.value(), EE);
-      REGISTRY.put(CA.value(), CA);
-      REGISTRY.put(VI.value(), VI);
-      REGISTRY.put(VO.value(), VO);
-      REGISTRY.put(IC.value(), IC);
-      REGISTRY.put(NC.value(), NC);
     }
   }
 }

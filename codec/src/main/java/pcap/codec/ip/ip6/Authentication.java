@@ -15,6 +15,7 @@ public class Authentication extends AbstractPacket {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   private Authentication(final Builder builder) {
     this.header = new Header(builder);
@@ -25,16 +26,27 @@ public class Authentication extends AbstractPacket {
     } else {
       payload = null;
     }
+    this.builder = builder;
   }
 
   @Override
-  public Packet.Header header() {
+  public Header header() {
     return header;
   }
 
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
   }
 
   public static final class Header extends AbstractPacket.Header {
@@ -101,13 +113,13 @@ public class Authentication extends AbstractPacket {
     public Memory buffer() {
       if (buffer == null) {
         buffer = ALLOCATOR.allocate(length());
-        buffer.setByte(0, nextHeader.value());
-        buffer.setByte(1, payloadLength);
-        buffer.setShort(2, (short) 0); // reserved
-        buffer.setInt(4, sequenceNumber);
-        buffer.setInt(8, securityParameterIndex);
+        buffer.writeByte(nextHeader.value());
+        buffer.writeByte(payloadLength);
+        buffer.writeShort((short) 0); // reserved
+        buffer.writeInt(sequenceNumber);
+        buffer.writeInt(securityParameterIndex);
         if (integrityCheckValue != null) {
-          buffer.setBytes(12, integrityCheckValue);
+          buffer.writeBytes(integrityCheckValue);
         }
       }
       return buffer;
@@ -203,6 +215,7 @@ public class Authentication extends AbstractPacket {
 
     @Override
     public Packet build(final Memory buffer) {
+      resetIndex(buffer);
       this.nextHeader = TransportLayer.valueOf(buffer.readByte());
       this.payloadLength = buffer.readByte();
       buffer.skipBytes(2); // reserved
@@ -220,7 +233,7 @@ public class Authentication extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(0, Header.FIXED_HEADER_LENGTH);
+        reset(readerIndex, Header.FIXED_HEADER_LENGTH);
       }
     }
 

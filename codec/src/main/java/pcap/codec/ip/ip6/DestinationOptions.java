@@ -1,6 +1,7 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.ip.ip6;
 
+import pcap.codec.AbstractPacket;
 import pcap.codec.Packet;
 import pcap.codec.TransportLayer;
 import pcap.codec.ip.Ip6;
@@ -14,6 +15,7 @@ public class DestinationOptions extends Options {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   private DestinationOptions(final Builder builder) {
     this.header = new Header(builder);
@@ -24,6 +26,7 @@ public class DestinationOptions extends Options {
     } else {
       this.payload = null;
     }
+    this.builder = builder;
   }
 
   @Override
@@ -34,6 +37,16 @@ public class DestinationOptions extends Options {
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
   }
 
   public static final class Header extends Options.Header {
@@ -82,6 +95,7 @@ public class DestinationOptions extends Options {
 
     @Override
     public Packet build(final Memory buffer) {
+      resetIndex(buffer);
       nextHeader = TransportLayer.valueOf(buffer.readByte());
       extensionLength = buffer.readInt();
       options =
@@ -96,7 +110,7 @@ public class DestinationOptions extends Options {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(0, Header.FIXED_OPTIONS_LENGTH);
+        reset(readerIndex, Header.FIXED_OPTIONS_LENGTH);
       }
     }
 

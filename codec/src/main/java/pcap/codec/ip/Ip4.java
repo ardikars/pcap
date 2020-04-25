@@ -2,6 +2,8 @@
 package pcap.codec.ip;
 
 import java.util.Arrays;
+
+import pcap.codec.AbstractPacket;
 import pcap.codec.Packet;
 import pcap.codec.TransportLayer;
 import pcap.common.annotation.Inclubating;
@@ -15,6 +17,7 @@ public class Ip4 extends Ip {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   private Ip4(final Builder builder) {
     this.header = new Header(builder);
@@ -25,6 +28,7 @@ public class Ip4 extends Ip {
     } else {
       payload = null;
     }
+    this.builder = builder;
   }
 
   @Override
@@ -35,6 +39,16 @@ public class Ip4 extends Ip {
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
   }
 
   public static final class Header extends AbstractPacketHeader {
@@ -352,6 +366,7 @@ public class Ip4 extends Ip {
 
     @Override
     public Packet build(final Memory buffer) {
+      resetIndex(buffer);
       this.headerLength = (byte) (buffer.readByte() & 0xf);
       byte tmp = buffer.readByte();
       this.diffServ = (byte) ((tmp >> 2) & 0x3f);
@@ -398,7 +413,7 @@ public class Ip4 extends Ip {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(0, Header.IPV4_HEADER_LENGTH);
+        reset(readerIndex, Header.IPV4_HEADER_LENGTH);
       }
     }
 
