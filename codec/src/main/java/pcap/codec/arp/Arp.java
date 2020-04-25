@@ -20,6 +20,7 @@ public class Arp extends AbstractPacket {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   private Arp(final Builder builder) {
     this.header = new Header(builder);
@@ -30,6 +31,7 @@ public class Arp extends AbstractPacket {
     } else {
       this.payload = null;
     }
+    this.builder = builder;
   }
 
   @Override
@@ -40,6 +42,16 @@ public class Arp extends AbstractPacket {
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
   }
 
   public static final Arp newPacket(final Memory buffer) {
@@ -262,6 +274,7 @@ public class Arp extends AbstractPacket {
 
     @Override
     public Arp build(final Memory buffer) {
+      resetIndex(buffer);
       this.hardwareType = DataLinkLayer.valueOf(buffer.readShort());
       this.protocolType = NetworkLayer.valueOf(buffer.readShort());
       this.hardwareAddressLength = buffer.readByte();
@@ -290,13 +303,14 @@ public class Arp extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(0, Header.ARP_HEADER_LENGTH);
+        reset(readerIndex, Header.ARP_HEADER_LENGTH);
       }
     }
 
     @Override
     public void reset(int offset, int length) {
       if (buffer != null) {
+        resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(hardwareType != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(protocolType != null, ILLEGAL_HEADER_EXCEPTION);

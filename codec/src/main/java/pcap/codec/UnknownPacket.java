@@ -21,11 +21,13 @@ public class UnknownPacket extends AbstractPacket {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   private UnknownPacket(final Builder builder) {
     this.header = new Header(builder);
     this.payload = null;
     payloadBuffer = builder.payloadBuffer;
+    this.builder = builder;
   }
 
   public static UnknownPacket newPacket(final Memory buffer) {
@@ -40,6 +42,16 @@ public class UnknownPacket extends AbstractPacket {
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
   }
 
   public static final class Header extends AbstractPacket.Header {

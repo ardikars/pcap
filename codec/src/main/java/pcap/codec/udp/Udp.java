@@ -14,6 +14,7 @@ public class Udp extends AbstractPacket {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   private Udp(final Builder builder) {
     this.header = new Header(builder);
@@ -25,6 +26,7 @@ public class Udp extends AbstractPacket {
     } else {
       this.payload = null;
     }
+    this.builder = builder;
   }
 
   @Override
@@ -35,6 +37,16 @@ public class Udp extends AbstractPacket {
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
   }
 
   public static class Header extends AbstractPacket.Header {
@@ -169,6 +181,7 @@ public class Udp extends AbstractPacket {
 
     @Override
     public Packet build(Memory buffer) {
+      resetIndex(buffer);
       this.sourcePort = buffer.readShort();
       this.destinationPort = buffer.readShort();
       this.length = buffer.readShort();
@@ -181,7 +194,7 @@ public class Udp extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(0, Header.UDP_HEADER_LENGTH);
+        reset(readerIndex, Header.UDP_HEADER_LENGTH);
       }
     }
 

@@ -17,6 +17,7 @@ public class Fragment extends AbstractPacket {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   private Fragment(final Builder builder) {
     this.header = new Header(builder);
@@ -27,16 +28,27 @@ public class Fragment extends AbstractPacket {
     } else {
       this.payload = null;
     }
+    this.builder = builder;
   }
 
   @Override
-  public Packet.Header header() {
+  public Header header() {
     return header;
   }
 
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
   }
 
   public static final class Header extends AbstractPacket.Header {
@@ -170,6 +182,7 @@ public class Fragment extends AbstractPacket {
 
     @Override
     public Fragment build(final Memory buffer) {
+      resetIndex(buffer);
       this.nextHeader = TransportLayer.valueOf(buffer.readByte());
       buffer.readByte(); // reserved
       short sscratch = buffer.readShort();
@@ -184,7 +197,7 @@ public class Fragment extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(0, Header.FIXED_FRAGMENT_HEADER_LENGTH);
+        reset(readerIndex, Header.FIXED_FRAGMENT_HEADER_LENGTH);
       }
     }
 

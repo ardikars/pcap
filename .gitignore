@@ -2,6 +2,7 @@
 .idea
 *.jar
 *.class
+*.log
 
 .gnupg/*.gpg-agent*
 .gnupg/private-keys*

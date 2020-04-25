@@ -13,6 +13,7 @@ public class RouterAdvertisement extends AbstractPacket {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   /**
    * Builder Router Advertisement packet.
@@ -23,6 +24,7 @@ public class RouterAdvertisement extends AbstractPacket {
     this.header = new Header(builder);
     this.payload = null;
     this.payloadBuffer = builder.payloadBuffer;
+    this.builder = builder;
   }
 
   @Override
@@ -33,6 +35,16 @@ public class RouterAdvertisement extends AbstractPacket {
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
   }
 
   public static class Header extends AbstractPacket.Header {
@@ -216,6 +228,7 @@ public class RouterAdvertisement extends AbstractPacket {
 
     @Override
     public Packet build(Memory buffer) {
+      resetIndex(buffer);
       this.currentHopLimit = buffer.readByte();
       int bscratch = buffer.readByte();
       this.manageFlag = ((bscratch >> 7) & 0x1) == 1;

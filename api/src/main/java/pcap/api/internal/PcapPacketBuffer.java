@@ -1,11 +1,10 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal;
 
-import pcap.common.annotation.Inclubating;
-import pcap.spi.PacketBuffer;
-
 import java.foreign.memory.Pointer;
 import java.nio.ByteBuffer;
+import pcap.common.annotation.Inclubating;
+import pcap.spi.PacketBuffer;
 
 /**
  * Wrapper for {@code pcap} packet buffer.

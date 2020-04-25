@@ -19,6 +19,7 @@ public class Routing extends AbstractPacket {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   private Routing(final Builder builder) {
     this.header = new Header(builder);
@@ -29,6 +30,7 @@ public class Routing extends AbstractPacket {
     } else {
       this.payload = null;
     }
+    this.builder = builder;
   }
 
   @Override
@@ -39,6 +41,16 @@ public class Routing extends AbstractPacket {
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
   }
 
   public static final class Header extends Ip6.ExtensionHeader {
@@ -202,6 +214,7 @@ public class Routing extends AbstractPacket {
 
     @Override
     public Routing build(final Memory buffer) {
+      resetIndex(buffer);
       this.nextHeader = TransportLayer.valueOf(buffer.readByte());
       this.extensionLength = buffer.readByte();
       this.routingType = Type.valueOf(buffer.readByte());
@@ -216,7 +229,7 @@ public class Routing extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(0, Header.FIXED_ROUTING_HEADER_LENGTH + routingData.length);
+        reset(readerIndex, Header.FIXED_ROUTING_HEADER_LENGTH + routingData.length);
       }
     }
 

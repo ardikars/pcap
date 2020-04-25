@@ -15,6 +15,7 @@ public class Icmp4 extends AbstractPacket {
 
   private final Header header;
   private final Packet payload;
+  private final Builder builder;
 
   private Icmp4(Builder builder) {
     this.header = new Header(builder);
@@ -26,6 +27,7 @@ public class Icmp4 extends AbstractPacket {
     } else {
       this.payload = null;
     }
+    this.builder = builder;
   }
 
   @Override
@@ -36,6 +38,16 @@ public class Icmp4 extends AbstractPacket {
   @Override
   public Packet payload() {
     return payload;
+  }
+
+  @Override
+  public Builder builder() {
+    return builder;
+  }
+
+  @Override
+  public Memory buffer() {
+    return header().buffer();
   }
 
   public static class Header extends Icmp.AbstractPacketHeader {
@@ -104,6 +116,7 @@ public class Icmp4 extends AbstractPacket {
 
     @Override
     public Packet build(Memory buffer) {
+      resetIndex(buffer);
       byte type = buffer.readByte();
       byte code = buffer.readByte();
       super.typeAndCode = Icmp.findIcmpTypeAndCode(type, code, Icmp.IcmpTypeAndCode.ICMP4_REGISTRY);
@@ -136,7 +149,7 @@ public class Icmp4 extends AbstractPacket {
     @Override
     public void reset() {
       if (buffer != null) {
-        reset(0, Header.ICMP_HEADER_LENGTH);
+        reset(readerIndex, Header.ICMP_HEADER_LENGTH);
       }
     }
 

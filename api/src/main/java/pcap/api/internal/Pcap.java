@@ -1,6 +1,14 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal;
 
+import java.foreign.NativeTypes;
+import java.foreign.memory.Callback;
+import java.foreign.memory.LayoutType;
+import java.foreign.memory.Pointer;
+import java.nio.ByteBuffer;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeoutException;
 import pcap.api.PcapLive;
 import pcap.api.PcapOffline;
 import pcap.api.handler.EventLoopHandler;
@@ -12,15 +20,6 @@ import pcap.common.logging.LoggerFactory;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
-
-import java.foreign.NativeTypes;
-import java.foreign.memory.Callback;
-import java.foreign.memory.LayoutType;
-import java.foreign.memory.Pointer;
-import java.nio.ByteBuffer;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeoutException;
 
 /**
  * {@code Pcap} handle.

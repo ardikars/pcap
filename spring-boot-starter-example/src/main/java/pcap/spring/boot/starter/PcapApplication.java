@@ -1,6 +1,7 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.spring.boot.starter;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,8 +18,6 @@ import pcap.spi.Interface;
 import pcap.spi.Pcap;
 import pcap.spring.boot.autoconfigure.annotation.EnablePcapPacket;
 import pcap.spring.boot.autoconfigure.handler.PcapPacketHandler;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor
 @SpringBootApplication
