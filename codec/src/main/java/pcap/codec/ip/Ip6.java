@@ -8,11 +8,31 @@ import pcap.codec.ip.ip6.*;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.net.Inet6Address;
+import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 public class Ip6 extends Ip {
+
+  public static final TransportLayer IPV6_ROUTING =
+      new TransportLayer((byte) 43, "Routing Header for IPv6.");
+  public static final TransportLayer IPV6_FRAGMENT =
+      new TransportLayer((byte) 44, "Fragment Header for IPv6.");
+  public static final TransportLayer IPV6_HOPOPT =
+      new TransportLayer((byte) 0, "IPv6 Hop by Hop NeighborDiscoveryOptions.");
+  public static final TransportLayer IPV6_DSTOPT =
+      new TransportLayer((byte) 60, "IPv6 Destination NeighborDiscoveryOptions.");
+  public static final TransportLayer IPV6_AH =
+      new TransportLayer((byte) 51, "IPv6 Authentication Header.");
+
+  static {
+    TransportLayer.register(IPV6_AH, new Authentication.Builder());
+    TransportLayer.register(IPV6_DSTOPT, new DestinationOptions.Builder());
+    TransportLayer.register(IPV6_ROUTING, new Routing.Builder());
+    TransportLayer.register(IPV6_FRAGMENT, new Fragment.Builder());
+    TransportLayer.register(IPV6_HOPOPT, new HopByHopOptions.Builder());
+  }
 
   private final Header header;
   private final Packet payload;
@@ -48,6 +68,14 @@ public class Ip6 extends Ip {
   @Override
   public Builder builder() {
     return builder;
+  }
+
+  @Override
+  public String toString() {
+    return Strings.toStringBuilder(this)
+        .add("header", header)
+        .add("payload", payload == null ? payload.getClass().getSimpleName() : "(None)")
+        .toString();
   }
 
   public static final class Header extends AbstractPacketHeader {
@@ -137,45 +165,17 @@ public class Ip6 extends Ip {
 
     @Override
     public String toString() {
-      return new StringBuilder()
-          .append("\tversion: ")
-          .append(version)
-          .append('\n')
-          .append("\ttrafficClass: ")
-          .append(trafficClass)
-          .append('\n')
-          .append("\tflowLabel: ")
-          .append(flowLabel)
-          .append('\n')
-          .append("\tpayloadLength: ")
-          .append(payloadLength)
-          .append('\n')
-          .append("\tnextHeader: ")
-          .append(nextHeader)
-          .append('\n')
-          .append("\thopLimit: ")
-          .append(hopLimit)
-          .append('\n')
-          .append("\tsourceAddress: ")
-          .append(sourceAddress)
-          .append('\n')
-          .append("\tdestinationAddress: ")
-          .append(destinationAddress)
-          .append('\n')
+      return Strings.toStringBuilder(this)
+          .add("version", version)
+          .add("trafficClass", trafficClass & 0xFF)
+          .add("flowLabel", flowLabel)
+          .add("payloadLength", payloadLength)
+          .add("nextHeader", nextHeader)
+          .add("hopLimit", hopLimit)
+          .add("sourceAddress", sourceAddress)
+          .add("destinationAddress", destinationAddress)
           .toString();
     }
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder("[ Ip6 Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
-        .toString();
   }
 
   public static final class Builder extends AbstractPaketBuilder {
@@ -240,8 +240,8 @@ public class Ip6 extends Ip {
     public Packet build(final Memory buffer) {
       resetIndex(buffer);
       int iscratch = buffer.readInt();
-      this.trafficClass = (byte) (iscratch >> 20 & 0xff);
-      this.flowLabel = iscratch & 0xfffff;
+      this.trafficClass = (byte) (iscratch >> 20 & 0xFF);
+      this.flowLabel = iscratch & 0xFFFFF;
       this.payloadLength = buffer.readShort();
       this.nextHeader = TransportLayer.valueOf(buffer.readByte());
       this.hopLimit = buffer.readByte();
@@ -257,14 +257,12 @@ public class Ip6 extends Ip {
     }
 
     @Override
-    public void reset() {
-      if (buffer != null) {
-        reset(readerIndex, Header.IPV6_HEADER_LENGTH);
-      }
+    public Builder reset() {
+      return reset(readerIndex, Header.IPV6_HEADER_LENGTH);
     }
 
     @Override
-    public void reset(int offset, int length) {
+    public Builder reset(int offset, int length) {
       if (buffer != null) {
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(trafficClass >= 0, ILLEGAL_HEADER_EXCEPTION);
@@ -275,7 +273,7 @@ public class Ip6 extends Ip {
         Validate.notIllegalArgument(sourceAddress != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(destinationAddress != null, ILLEGAL_HEADER_EXCEPTION);
         int index = offset;
-        int scratch = ((trafficClass << 20) & 0xff) | (flowLabel & 0xfffff);
+        int scratch = ((trafficClass << 20) & 0xFF) | (flowLabel & 0xFFFFF);
         buffer.setInt(offset, scratch);
         index += 4;
         buffer.setShort(offset, payloadLength);
@@ -288,27 +286,9 @@ public class Ip6 extends Ip {
         index += Inet6Address.IPV6_ADDRESS_LENGTH;
         buffer.setBytes(index, destinationAddress.address());
       }
+      return this;
     }
   }
 
   public abstract static class ExtensionHeader extends AbstractPacket.Header {}
-
-  public static final TransportLayer IPV6_ROUTING =
-      new TransportLayer((byte) 43, "Routing Header for IPv6.");
-  public static final TransportLayer IPV6_FRAGMENT =
-      new TransportLayer((byte) 44, "Fragment Header for IPv6.");
-  public static final TransportLayer IPV6_HOPOPT =
-      new TransportLayer((byte) 0, "IPv6 Hop by Hop NeighborDiscoveryOptions.");
-  public static final TransportLayer IPV6_DSTOPT =
-      new TransportLayer((byte) 60, "IPv6 Destination NeighborDiscoveryOptions.");
-  public static final TransportLayer IPV6_AH =
-      new TransportLayer((byte) 51, "IPv6 Authentication Header.");
-
-  static {
-    TransportLayer.register(IPV6_AH, new Authentication.Builder());
-    TransportLayer.register(IPV6_DSTOPT, new DestinationOptions.Builder());
-    TransportLayer.register(IPV6_ROUTING, new Routing.Builder());
-    TransportLayer.register(IPV6_FRAGMENT, new Fragment.Builder());
-    TransportLayer.register(IPV6_HOPOPT, new HopByHopOptions.Builder());
-  }
 }

@@ -9,6 +9,7 @@ import pcap.codec.Packet;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.util.NamedNumber;
+import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
@@ -57,13 +58,9 @@ public class Vlan extends AbstractPacket {
 
   @Override
   public String toString() {
-    return new StringBuilder("[ Vlan Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
+    return Strings.toStringBuilder(this)
+        .add("header", header)
+        .add("payload", payload != null ? payload.getClass().getSimpleName() : "(None)")
         .toString();
   }
 
@@ -133,19 +130,11 @@ public class Vlan extends AbstractPacket {
 
     @Override
     public String toString() {
-      return new StringBuilder()
-          .append("\tpriorityCodePoint: ")
-          .append(priorityCodePoint)
-          .append('\n')
-          .append("\tcanonicalFormatIndicator: ")
-          .append(canonicalFormatIndicator)
-          .append('\n')
-          .append("\tvlanIdentifier: ")
-          .append(vlanIdentifier)
-          .append('\n')
-          .append("\ttype: ")
-          .append(type)
-          .append('\n')
+      return Strings.toStringBuilder(this)
+          .add("priorityCodePoint", priorityCodePoint)
+          .add("canonicalFormatIndicator", canonicalFormatIndicator)
+          .add("vlanIdentifier", vlanIdentifier)
+          .add("type", type)
           .toString();
     }
   }
@@ -205,14 +194,12 @@ public class Vlan extends AbstractPacket {
     }
 
     @Override
-    public void reset() {
-      if (buffer != null) {
-        reset(readerIndex, Header.VLAN_HEADER_LENGTH);
-      }
+    public Builder reset() {
+      return reset(readerIndex, Header.VLAN_HEADER_LENGTH);
     }
 
     @Override
-    public void reset(int offset, int length) {
+    public Builder reset(int offset, int length) {
       if (buffer != null) {
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(priorityCodePoint != null, ILLEGAL_HEADER_EXCEPTION);
@@ -228,6 +215,7 @@ public class Vlan extends AbstractPacket {
         index += 2;
         buffer.setShort(index, type.value());
       }
+      return this;
     }
   }
 

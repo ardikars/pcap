@@ -169,12 +169,12 @@ public abstract class AbstractPacket implements Packet {
       }
     }
 
-    public void reset() {
-      reset(-1, -1);
+    public Builder reset() {
+      return reset(-1, -1);
     }
 
-    public void reset(int offset, int length) {
-      throw new UnsupportedOperationException("Not implemented yet.");
+    public Builder reset(int offset, int length) {
+      return this;
     }
   }
 

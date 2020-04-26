@@ -1,5 +1,10 @@
 package pcap.tools.commons;
 
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.concurrent.TimeoutException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pcap.api.PcapLive;
@@ -21,13 +26,6 @@ import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.WarningException;
 import pcap.spi.exception.error.*;
-
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.security.spec.RSAOtherPrimeInfo;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.concurrent.TimeoutException;
 
 @RequiredArgsConstructor
 @Component

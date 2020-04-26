@@ -69,16 +69,10 @@ public abstract class Options extends AbstractPacket {
 
     @Override
     public String toString() {
-      return new StringBuilder()
-          .append("\t\tnextHeader: ")
-          .append(nextHeader)
-          .append('\n')
-          .append("\t\textensionLength: ")
-          .append(extensionLength)
-          .append('\n')
-          .append("\t\toptions: ")
-          .append(Strings.hex(options))
-          .append('\n')
+      return Strings.toStringBuilder(this)
+          .add("nextHeader", nextHeader)
+          .add("extensionLength", extensionLength)
+          .add("options", Strings.hex(options))
           .toString();
     }
   }

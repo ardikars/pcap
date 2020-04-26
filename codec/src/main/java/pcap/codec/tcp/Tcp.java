@@ -50,6 +50,11 @@ public class Tcp extends AbstractPacket {
     return header().buffer();
   }
 
+  @Override
+  public String toString() {
+    return Strings.toStringBuilder(this).add("header", header).add("payload", payload).toString();
+  }
+
   public static final class Header extends AbstractPacket.Header {
 
     public static final int TCP_HEADER_LENGTH = 20;
@@ -172,51 +177,19 @@ public class Tcp extends AbstractPacket {
 
     @Override
     public String toString() {
-      return new StringBuilder()
-          .append("\tsourcePort: ")
-          .append(sourcePort)
-          .append('\n')
-          .append("\tdestinationPort: ")
-          .append(destinationPort)
-          .append('\n')
-          .append("\tsequence: ")
-          .append(sequence)
-          .append('\n')
-          .append("\tacknowledge: ")
-          .append(acknowledge)
-          .append('\n')
-          .append("\tdataOffset: ")
-          .append(dataOffset)
-          .append('\n')
-          .append("\tflags: ")
-          .append(flags)
-          .append('\n')
-          .append("\twindowSize: ")
-          .append(windowSize)
-          .append('\n')
-          .append("\tchecksum: ")
-          .append(checksum)
-          .append('\n')
-          .append("\turgentPointer: ")
-          .append(urgentPointer)
-          .append('\n')
-          .append("\toptions: ")
-          .append(options == null ? "[]" : Strings.hex(options))
-          .append('\n')
+      return Strings.toStringBuilder(this)
+          .add("sourcePort", sourcePort & 0xFFFF)
+          .add("destinationPort", destinationPort & 0xFFFF)
+          .add("sequence", (sequence & 0xFFFFFFFFL))
+          .add("acknowledge", (acknowledge & 0xFFFFFFFFL))
+          .add("dataOffset", dataOffset & 0xFF)
+          .add("flags", flags)
+          .add("windowSize", windowSize & 0xFFFF)
+          .add("checksum", checksum & 0xFFFF)
+          .add("urgentPointer", urgentPointer & 0xFF)
+          .add("options", Strings.hex(options))
           .toString();
     }
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder("[ Tcp Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
-        .toString();
   }
 
   public static class Builder extends AbstractPacket.Builder {
@@ -324,14 +297,12 @@ public class Tcp extends AbstractPacket {
     }
 
     @Override
-    public void reset() {
-      if (buffer != null) {
-        reset(readerIndex, Header.TCP_HEADER_LENGTH);
-      }
+    public Builder reset() {
+      return reset(readerIndex, Header.TCP_HEADER_LENGTH);
     }
 
     @Override
-    public void reset(int offset, int length) {
+    public Builder reset(int offset, int length) {
       if (buffer != null) {
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(sourcePort >= 0, ILLEGAL_HEADER_EXCEPTION);
@@ -366,6 +337,7 @@ public class Tcp extends AbstractPacket {
           buffer.setBytes(index, options);
         }
       }
+      return this;
     }
   }
 }

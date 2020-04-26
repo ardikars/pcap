@@ -119,36 +119,12 @@ public class ArpSpoof {
         while (cnt != 0) {
           cnt--;
           pcap.send(targetBuffer, targetBuffer.capacity());
-            pcap.send(hostBuffer, hostBuffer.capacity());
+          pcap.send(hostBuffer, hostBuffer.capacity());
           try {
             Thread.sleep(5000);
           } catch (InterruptedException e) {
             if (ownOrHostBoth.equals("own")) {
-              //                toTarget
-              //                        .header()
-              //                        .builder()
-              //                        .destinationMacAddress(targetMacAddres)
-              //                        .sourceMacAddress(ownMacAddress)
-              //                        .reset();
-              //                arpToTarget
-              //                        .header()
-              //                        .builder()
-              //                        .targetProtocolAddress(targetInet4Adress)
-              //                        .targetHardwareAddress(targetMacAddres)
-              //                        .senderProtocolAddress(hostInet4Address)
-              //                        .senderHardwareAddress(hostMacAddress)
-              //                        .reset();
-              //                IntStream.range(0, 5)
-              //                        .forEach(
-              //                                value -> {
-              //                                  try {
-              //                                    pcap.send(targetBuffer,
-              // targetBuffer.capacity());
-              //                                    pcap.send(hostBuffer, hostBuffer.capacity());
-              //                                  } catch (ErrorException ex) {
-              //                                    log.warn(ex);
-              //                                  }
-              //                                });
+
             } else if (ownOrHostBoth.equals("host")) {
 
             } else {

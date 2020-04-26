@@ -54,12 +54,19 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
     return header().buffer();
   }
 
+  @Override
+  public String toString() {
+    return Strings.toStringBuilder(this)
+        .add("header", header)
+        .add("payload", payload == null ? payload.getClass().getSimpleName() : "(None)")
+        .toString();
+  }
+
   public static class Header extends AbstractPacket.Header {
 
     private final List<Option> options;
-    private int length;
-
     private final Builder builder;
+    private int length;
 
     private Header(Builder builder) {
       this.options = builder.options;
@@ -115,18 +122,6 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
     }
   }
 
-  @Override
-  public String toString() {
-    return new StringBuilder("[ NeighborDiscoveryOptions Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
-        .toString();
-  }
-
   public static class OptionType extends NamedNumber<Byte, OptionType> {
 
     public static final OptionType SOURCE_LINK_LAYER_ADDRESS =
@@ -144,16 +139,16 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
 
     private static Map<Byte, OptionType> REGISTRY = new HashMap<Byte, OptionType>();
 
-    protected OptionType(Byte value, String name) {
-      super(value, name);
-    }
-
     static {
       REGISTRY.put(SOURCE_LINK_LAYER_ADDRESS.value(), SOURCE_LINK_LAYER_ADDRESS);
       REGISTRY.put(TARGET_LINK_LAYER_ADDRESS.value(), TARGET_LINK_LAYER_ADDRESS);
       REGISTRY.put(PREFIX_INFORMATION.value(), PREFIX_INFORMATION);
       REGISTRY.put(REDIRECT_HEADER.value(), REDIRECT_HEADER);
       REGISTRY.put(MTU.value(), MTU);
+    }
+
+    protected OptionType(Byte value, String name) {
+      super(value, name);
     }
   }
 
@@ -205,12 +200,9 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
 
     @Override
     public String toString() {
-      return new StringBuilder("[")
-          .append("Type: ")
-          .append(this.type())
-          .append(", Data: ")
-          .append(Strings.hex(this.data()))
-          .append("]")
+      return Strings.toStringBuilder(this)
+          .add("type", type())
+          .add("data", Strings.hex(data()))
           .toString();
     }
   }

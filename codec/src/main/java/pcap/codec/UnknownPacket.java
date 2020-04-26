@@ -4,6 +4,7 @@ package pcap.codec;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.util.NamedNumber;
+import pcap.common.util.Strings;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -54,6 +55,11 @@ public class UnknownPacket extends AbstractPacket {
     return header().buffer();
   }
 
+  @Override
+  public String toString() {
+    return Strings.toStringBuilder(this).toString();
+  }
+
   public static final class Header extends AbstractPacket.Header {
 
     private final Memory buffer;
@@ -88,18 +94,8 @@ public class UnknownPacket extends AbstractPacket {
 
     @Override
     public String toString() {
-      return new StringBuilder().append("\tbuffer: ").append(buffer).append('\n').toString();
+      return Strings.toStringBuilder(this).add("buffer", buffer).toString();
     }
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder("[ UnknownPacket Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .toString();
   }
 
   public static final class Builder extends AbstractPacket.Builder {
@@ -123,13 +119,13 @@ public class UnknownPacket extends AbstractPacket {
     }
 
     @Override
-    public void reset() {
-      // nothing to do
+    public Builder reset() {
+      return this;
     }
 
     @Override
-    public void reset(int offset, int length) {
-      // do nothing
+    public Builder reset(int offset, int length) {
+      return this;
     }
   }
 }
