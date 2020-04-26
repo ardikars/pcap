@@ -49,6 +49,14 @@ public class Authentication extends AbstractPacket {
     return header().buffer();
   }
 
+  @Override
+  public String toString() {
+    return Strings.toStringBuilder(this)
+        .add("header", header)
+        .add("payload", payload == null ? payload.getClass().getSimpleName() : "(None)")
+        .toString();
+  }
+
   public static final class Header extends AbstractPacket.Header {
 
     public static final byte FIXED_HEADER_LENGTH = 12; // bytes
@@ -132,36 +140,14 @@ public class Authentication extends AbstractPacket {
 
     @Override
     public String toString() {
-      return new StringBuilder()
-          .append("\t\tnextHeader: ")
-          .append(nextHeader)
-          .append('\n')
-          .append("\t\tpayloadLength: ")
-          .append(payloadLength)
-          .append('\n')
-          .append("\t\tsecurityParameterIndex: ")
-          .append(securityParameterIndex)
-          .append('\n')
-          .append("\t\tsequenceNumber: ")
-          .append(sequenceNumber)
-          .append('\n')
-          .append("\t\tintegrityCheckValue: ")
-          .append(Strings.hex(integrityCheckValue))
-          .append('\n')
+      return Strings.toStringBuilder(this)
+          .add("nextHeader", nextHeader)
+          .add("payloadLength", payloadLength)
+          .add("securityParameterIndex", securityParameterIndex)
+          .add("sequenceNumber", sequenceNumber)
+          .add("integrityCheckValue", Strings.hex(integrityCheckValue))
           .toString();
     }
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder("\t[ Authentication Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\t\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
-        .toString();
   }
 
   public static final class Builder extends AbstractPacket.Builder {
@@ -231,14 +217,12 @@ public class Authentication extends AbstractPacket {
     }
 
     @Override
-    public void reset() {
-      if (buffer != null) {
-        reset(readerIndex, Header.FIXED_HEADER_LENGTH);
-      }
+    public Builder reset() {
+      return reset(readerIndex, Header.FIXED_HEADER_LENGTH);
     }
 
     @Override
-    public void reset(int offset, int length) {
+    public Builder reset(int offset, int length) {
       if (buffer != null) {
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(nextHeader != null, ILLEGAL_HEADER_EXCEPTION);
@@ -257,6 +241,7 @@ public class Authentication extends AbstractPacket {
         index += 4;
         buffer.setBytes(index, integrityCheckValue);
       }
+      return this;
     }
   }
 }

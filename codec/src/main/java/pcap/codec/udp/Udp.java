@@ -6,6 +6,7 @@ import pcap.codec.ApplicationLayer;
 import pcap.codec.Packet;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
+import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
@@ -47,6 +48,14 @@ public class Udp extends AbstractPacket {
   @Override
   public Memory buffer() {
     return header().buffer();
+  }
+
+  @Override
+  public String toString() {
+    return Strings.toStringBuilder(this)
+        .add("header", header)
+        .add("payload", payload == null ? payload.getClass().getSimpleName() : "(None)")
+        .toString();
   }
 
   public static class Header extends AbstractPacket.Header {
@@ -110,33 +119,13 @@ public class Udp extends AbstractPacket {
 
     @Override
     public String toString() {
-      return new StringBuilder()
-          .append("\tsourcePort: ")
-          .append(sourcePort)
-          .append('\n')
-          .append("\tdestinationPort: ")
-          .append(destinationPort)
-          .append('\n')
-          .append("\tlength: ")
-          .append(length)
-          .append('\n')
-          .append("\tchecksum: ")
-          .append(checksum)
-          .append('\n')
+      return Strings.toStringBuilder(this)
+          .add("sourcePort", sourcePort & 0xFFFF)
+          .add("destinationPort", destinationPort & 0xFFFF)
+          .add("length", length)
+          .add("checksum", checksum & 0xFFFF)
           .toString();
     }
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder("[ Udp Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
-        .toString();
   }
 
   public static class Builder extends AbstractPacket.Builder {
@@ -192,14 +181,12 @@ public class Udp extends AbstractPacket {
     }
 
     @Override
-    public void reset() {
-      if (buffer != null) {
-        reset(readerIndex, Header.UDP_HEADER_LENGTH);
-      }
+    public Builder reset() {
+      return reset(readerIndex, Header.UDP_HEADER_LENGTH);
     }
 
     @Override
-    public void reset(int offset, int length) {
+    public Builder reset(int offset, int length) {
       if (buffer != null) {
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(sourcePort >= 0, ILLEGAL_HEADER_EXCEPTION);
@@ -215,6 +202,7 @@ public class Udp extends AbstractPacket {
         index += 2;
         buffer.setShort(index, checksum);
       }
+      return this;
     }
   }
 }

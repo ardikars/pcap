@@ -53,6 +53,14 @@ public class Routing extends AbstractPacket {
     return header().buffer();
   }
 
+  @Override
+  public String toString() {
+    return Strings.toStringBuilder(this)
+        .add("header", header)
+        .add("payload", payload == null ? payload.getClass().getSimpleName() : "(None)")
+        .toString();
+  }
+
   public static final class Header extends Ip6.ExtensionHeader {
 
     public static final int FIXED_ROUTING_HEADER_LENGTH = 4;
@@ -126,22 +134,12 @@ public class Routing extends AbstractPacket {
 
     @Override
     public String toString() {
-      return new StringBuilder()
-          .append("\t\tnextHeader: ")
-          .append(nextHeader)
-          .append('\n')
-          .append("\t\textensionLength: ")
-          .append(extensionLength)
-          .append('\n')
-          .append("\t\troutingType: ")
-          .append(routingType)
-          .append('\n')
-          .append("\t\tsegmentLeft: ")
-          .append(segmentLeft)
-          .append('\n')
-          .append("\t\troutingData: ")
-          .append(Strings.hex(routingData))
-          .append('\n')
+      return Strings.toStringBuilder(this)
+          .add("nextHeader", nextHeader)
+          .add("extensionLength", extensionLength)
+          .add("routingType", routingType)
+          .add("segmentLeft", segmentLeft)
+          .add("routingData", Strings.hex(routingData))
           .toString();
     }
 
@@ -149,18 +147,6 @@ public class Routing extends AbstractPacket {
     public Builder builder() {
       return builder;
     }
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder("\t[ Routing Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\t\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
-        .toString();
   }
 
   public static final class Builder extends AbstractPacket.Builder {
@@ -227,14 +213,12 @@ public class Routing extends AbstractPacket {
     }
 
     @Override
-    public void reset() {
-      if (buffer != null) {
-        reset(readerIndex, Header.FIXED_ROUTING_HEADER_LENGTH + routingData.length);
-      }
+    public Builder reset() {
+      return reset(readerIndex, Header.FIXED_ROUTING_HEADER_LENGTH + routingData.length);
     }
 
     @Override
-    public void reset(int offset, int length) {
+    public Builder reset(int offset, int length) {
       if (buffer != null) {
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(nextHeader != null, ILLEGAL_HEADER_EXCEPTION);
@@ -253,6 +237,7 @@ public class Routing extends AbstractPacket {
         index += 1;
         buffer.setBytes(index, routingData);
       }
+      return this;
     }
   }
 
@@ -292,6 +277,15 @@ public class Routing extends AbstractPacket {
 
     private static Map<Byte, Type> REGISTRY = new HashMap<Byte, Type>();
 
+    static {
+      REGISTRY.put(DEPRECATED_01.value(), DEPRECATED_01);
+      REGISTRY.put(DEPRECATED_02.value(), DEPRECATED_02);
+      REGISTRY.put(ALLOWED_01.value(), ALLOWED_01);
+      REGISTRY.put(ALLOWED_02.value(), ALLOWED_02);
+      REGISTRY.put(PRIVATE_USE_01.value(), PRIVATE_USE_01);
+      REGISTRY.put(PRIVATE_USE_02.value(), PRIVATE_USE_02);
+    }
+
     protected Type(Byte value, String name) {
       super(value, name);
     }
@@ -319,15 +313,6 @@ public class Routing extends AbstractPacket {
     public static Type register(final Type type) {
       REGISTRY.put(type.value(), type);
       return type;
-    }
-
-    static {
-      REGISTRY.put(DEPRECATED_01.value(), DEPRECATED_01);
-      REGISTRY.put(DEPRECATED_02.value(), DEPRECATED_02);
-      REGISTRY.put(ALLOWED_01.value(), ALLOWED_01);
-      REGISTRY.put(ALLOWED_02.value(), ALLOWED_02);
-      REGISTRY.put(PRIVATE_USE_01.value(), PRIVATE_USE_01);
-      REGISTRY.put(PRIVATE_USE_02.value(), PRIVATE_USE_02);
     }
   }
 }

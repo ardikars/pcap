@@ -8,6 +8,7 @@ import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.net.Inet6Address;
 import pcap.common.util.NamedNumber;
+import pcap.common.util.Strings;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -51,13 +52,9 @@ public class NeighborAdvertisement extends AbstractPacket {
 
   @Override
   public String toString() {
-    return new StringBuilder("[ NeighborAdvertisement Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
+    return Strings.toStringBuilder(this)
+        .add("header", header)
+        .add("payload", payload == null ? payload.getClass().getSimpleName() : "(None)")
         .toString();
   }
 
@@ -136,22 +133,12 @@ public class NeighborAdvertisement extends AbstractPacket {
 
     @Override
     public String toString() {
-      return new StringBuilder()
-          .append("\trouterFlag: ")
-          .append(routerFlag)
-          .append('\n')
-          .append("\tsolicitedFlag: ")
-          .append(solicitedFlag)
-          .append('\n')
-          .append("\toverrideFlag: ")
-          .append(overrideFlag)
-          .append('\n')
-          .append("\ttargetAddress: ")
-          .append(targetAddress)
-          .append('\n')
-          .append("\toptions: ")
-          .append(options)
-          .append('\n')
+      return Strings.toStringBuilder(this)
+          .add("routerFlag", routerFlag)
+          .add("solicitedFlag", solicitedFlag)
+          .add("overrideFlag", overrideFlag)
+          .add("targetAddress", targetAddress)
+          .add("options", options)
           .toString();
     }
   }

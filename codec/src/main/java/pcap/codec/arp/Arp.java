@@ -12,6 +12,7 @@ import pcap.common.memory.Memory;
 import pcap.common.net.Inet4Address;
 import pcap.common.net.MacAddress;
 import pcap.common.util.NamedNumber;
+import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
@@ -34,6 +35,10 @@ public class Arp extends AbstractPacket {
     this.builder = builder;
   }
 
+  public static final Arp newPacket(final Memory buffer) {
+    return new Builder().build(buffer);
+  }
+
   @Override
   public Header header() {
     return header;
@@ -54,8 +59,12 @@ public class Arp extends AbstractPacket {
     return header().buffer();
   }
 
-  public static final Arp newPacket(final Memory buffer) {
-    return new Builder().build(buffer);
+  @Override
+  public String toString() {
+    return Strings.toStringBuilder(this)
+        .add("header", header)
+        .add("payload", payload != null ? payload.getClass().getSimpleName() : "(None)")
+        .toString();
   }
 
   public static final class Header extends AbstractPacket.Header {
@@ -158,48 +167,18 @@ public class Arp extends AbstractPacket {
 
     @Override
     public String toString() {
-      return new StringBuilder()
-          .append("\thardwareType: ")
-          .append(hardwareType)
-          .append('\n')
-          .append("\tprotocolType: ")
-          .append(protocolType)
-          .append('\n')
-          .append("\thardwareAddressLength: ")
-          .append(hardwareAddressLength)
-          .append('\n')
-          .append("\tprotocolAddressLength: ")
-          .append(protocolAddressLength)
-          .append('\n')
-          .append("\toperationCode: ")
-          .append(operationCode)
-          .append('\n')
-          .append("\tsenderHardwareAddress: ")
-          .append(senderHardwareAddress)
-          .append('\n')
-          .append("\tsenderProtocolAddress: ")
-          .append(senderProtocolAddress)
-          .append('\n')
-          .append("\ttargetHardwareAddress: ")
-          .append(targetHardwareAddress)
-          .append('\n')
-          .append("\ttargetProtocolAddress: ")
-          .append(targetProtocolAddress)
-          .append('\n')
+      return Strings.toStringBuilder(this)
+          .add("hardwareType", hardwareType)
+          .add("protocolType", protocolType)
+          .add("hardwareAddressLength", hardwareAddressLength)
+          .add("protocolAddressLength", protocolAddressLength)
+          .add("operationCode", operationCode)
+          .add("senderHardwareAddress", senderHardwareAddress)
+          .add("senderProtocolAddress", senderProtocolAddress)
+          .add("targetHardwareAddress", targetHardwareAddress)
+          .add("targetProtocolAddress", targetProtocolAddress)
           .toString();
     }
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder("[ Arp Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
-        .toString();
   }
 
   public static final class Builder extends AbstractPacket.Builder {
@@ -269,6 +248,9 @@ public class Arp extends AbstractPacket {
 
     @Override
     public Arp build() {
+      if (buffer != null) {
+        return build(buffer);
+      }
       return new Arp(this);
     }
 
@@ -301,14 +283,12 @@ public class Arp extends AbstractPacket {
     }
 
     @Override
-    public void reset() {
-      if (buffer != null) {
-        reset(readerIndex, Header.ARP_HEADER_LENGTH);
-      }
+    public Builder reset() {
+      return reset(readerIndex, Header.ARP_HEADER_LENGTH);
     }
 
     @Override
-    public void reset(int offset, int length) {
+    public Builder reset(int offset, int length) {
       if (buffer != null) {
         resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
@@ -339,6 +319,7 @@ public class Arp extends AbstractPacket {
         index += MacAddress.MAC_ADDRESS_LENGTH;
         buffer.setBytes(index, targetProtocolAddress.address());
       }
+      return this;
     }
   }
 
@@ -351,6 +332,11 @@ public class Arp extends AbstractPacket {
     public static final OperationCode UNKNOWN = new OperationCode((short) -1, "Unknown");
 
     private static final Map<Short, OperationCode> REGISTRY = new HashMap<Short, OperationCode>();
+
+    static {
+      REGISTRY.put(ARP_REQUEST.value(), ARP_REQUEST);
+      REGISTRY.put(ARP_REPLY.value(), ARP_REPLY);
+    }
 
     public OperationCode(Short value, String name) {
       super(value, name);
@@ -383,11 +369,6 @@ public class Arp extends AbstractPacket {
     @Override
     public String toString() {
       return super.toString();
-    }
-
-    static {
-      REGISTRY.put(ARP_REQUEST.value(), ARP_REQUEST);
-      REGISTRY.put(ARP_REPLY.value(), ARP_REPLY);
     }
   }
 }

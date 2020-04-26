@@ -6,6 +6,7 @@ import pcap.codec.Packet;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.util.NamedNumber;
+import pcap.common.util.Strings;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -45,6 +46,14 @@ public class RouterAdvertisement extends AbstractPacket {
   @Override
   public Memory buffer() {
     return header().buffer();
+  }
+
+  @Override
+  public String toString() {
+    return Strings.toStringBuilder(this)
+        .add("header", header)
+        .add("payload", payload == null ? payload.getClass().getSimpleName() : "(None)")
+        .toString();
   }
 
   public static class Header extends AbstractPacket.Header {
@@ -134,42 +143,16 @@ public class RouterAdvertisement extends AbstractPacket {
 
     @Override
     public String toString() {
-      return new StringBuilder()
-          .append("\tcurrentHopLimit: ")
-          .append(currentHopLimit)
-          .append('\n')
-          .append("\tmanageFlag: ")
-          .append(manageFlag)
-          .append('\n')
-          .append("\totherFlag: ")
-          .append(otherFlag)
-          .append('\n')
-          .append("\trouterLifetime: ")
-          .append(routerLifetime)
-          .append('\n')
-          .append("\treachableTime: ")
-          .append(reachableTime)
-          .append('\n')
-          .append("\tretransmitTimer: ")
-          .append(retransmitTimer)
-          .append('\n')
-          .append("\toptions: ")
-          .append(options)
-          .append('\n')
+      return Strings.toStringBuilder(this)
+          .add("currentHopLimit", currentHopLimit)
+          .add("manageFlag", manageFlag)
+          .add("otherFlag", otherFlag)
+          .add("routerLifetime", routerLifetime)
+          .add("reachableTime", reachableTime)
+          .add("retransmitTimer", retransmitTimer)
+          .add("options", options)
           .toString();
     }
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder("[ RouterAdvertisement Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
-        .toString();
   }
 
   public static class Builder extends AbstractPacket.Builder {

@@ -7,6 +7,7 @@ import pcap.codec.Packet;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.net.MacAddress;
+import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
@@ -51,6 +52,14 @@ public class Ethernet extends AbstractPacket {
   @Override
   public Memory buffer() {
     return header().buffer();
+  }
+
+  @Override
+  public String toString() {
+    return Strings.toStringBuilder(this)
+        .add("header", header)
+        .add("payload", payload != null ? payload.getClass().getSimpleName() : "(None)")
+        .toString();
   }
 
   public static class Header extends AbstractPacket.Header {
@@ -111,30 +120,12 @@ public class Ethernet extends AbstractPacket {
 
     @Override
     public String toString() {
-      return new StringBuilder()
-          .append("\tdestinationMacAddress: ")
-          .append(destinationMacAddress)
-          .append('\n')
-          .append("\tsourceMacAddress: ")
-          .append(sourceMacAddress)
-          .append('\n')
-          .append("\tethernetType: ")
-          .append(ethernetType)
-          .append('\n')
+      return Strings.toStringBuilder(this)
+          .add("destinationMacAddress", destinationMacAddress)
+          .add("sourceMacAddress", sourceMacAddress)
+          .add("ethernetType", ethernetType)
           .toString();
     }
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder("[ Ethernet Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
-        .toString();
   }
 
   public static class Builder extends AbstractPacket.Builder {
@@ -188,14 +179,12 @@ public class Ethernet extends AbstractPacket {
     }
 
     @Override
-    public void reset() {
-      if (buffer != null) {
-        reset(readerIndex, Header.ETHERNET_HEADER_LENGTH);
-      }
+    public Builder reset() {
+      return reset(readerIndex, Header.ETHERNET_HEADER_LENGTH);
     }
 
     @Override
-    public void reset(int offset, int length) {
+    public Builder reset(int offset, int length) {
       if (buffer != null) {
         resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
@@ -209,6 +198,7 @@ public class Ethernet extends AbstractPacket {
         index += MacAddress.MAC_ADDRESS_LENGTH;
         buffer.setShort(index, ethernetType.value());
       }
+      return this;
     }
   }
 }

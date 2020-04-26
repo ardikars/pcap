@@ -7,6 +7,7 @@ import pcap.codec.UnknownPacket;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.util.NamedNumber;
+import pcap.common.util.Strings;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -46,6 +47,14 @@ public class RouterSolicitation extends AbstractPacket {
   @Override
   public Memory buffer() {
     return header().buffer();
+  }
+
+  @Override
+  public String toString() {
+    return Strings.toStringBuilder(this)
+        .add("header", header)
+        .add("payload", payload == null ? payload.getClass().getSimpleName() : "(None)")
+        .toString();
   }
 
   public static class Header extends AbstractPacket.Header {
@@ -102,20 +111,8 @@ public class RouterSolicitation extends AbstractPacket {
 
     @Override
     public String toString() {
-      return new StringBuilder().append("\toptions: ").append(options).append('\n').toString();
+      return Strings.toStringBuilder(this).add("options", options).toString();
     }
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder("[ RouterSolicitation Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
-        .toString();
   }
 
   public static class Builder extends AbstractPacket.Builder {

@@ -8,6 +8,7 @@ import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.net.Inet6Address;
 import pcap.common.util.NamedNumber;
+import pcap.common.util.Strings;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -47,6 +48,14 @@ public class Redirect extends AbstractPacket {
   @Override
   public Memory buffer() {
     return header().buffer();
+  }
+
+  @Override
+  public String toString() {
+    return Strings.toStringBuilder(this)
+        .add("header", header)
+        .add("payload", payload == null ? payload.getClass().getSimpleName() : "(None)")
+        .toString();
   }
 
   public static class Header extends AbstractPacket.Header {
@@ -110,30 +119,12 @@ public class Redirect extends AbstractPacket {
 
     @Override
     public String toString() {
-      return new StringBuilder()
-          .append("\ttargetAddress: ")
-          .append(targetAddress)
-          .append('\n')
-          .append("\tdestinationAddress: ")
-          .append(destinationAddress)
-          .append('\n')
-          .append("\toptions: ")
-          .append(options)
-          .append('\n')
+      return Strings.toStringBuilder(this)
+          .add("targetAddress", targetAddress)
+          .add("destinationAddress", destinationAddress)
+          .add("options", options)
           .toString();
     }
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder("[ Redirect Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
-        .toString();
   }
 
   public static class Builder extends AbstractPacket.Builder {

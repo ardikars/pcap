@@ -48,10 +48,10 @@ public class PcapApplication implements CommandLineRunner {
         10,
         (EventLoopPcapPacketHandler<AtomicInteger>)
             (count, header, packet) -> {
-              log.info("Packet number {}", count.incrementAndGet());
-              log.info("Packet header {}", header);
-              log.info("Packet buffer: ");
-              packet.forEach(p -> log.info(p.toString()));
+              log.info("Packet number \t{}", count.incrementAndGet());
+              log.info("Packet header \t{}", header);
+              log.info("Packet buffer ");
+              packet.forEach(p -> log.info("\t\t\t\t\t - {}", p.toString()));
             },
         counter);
     pcap.close();

@@ -1,12 +1,12 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.ip.ip6;
 
-import pcap.codec.AbstractPacket;
 import pcap.codec.Packet;
 import pcap.codec.TransportLayer;
 import pcap.codec.ip.Ip6;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
+import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
@@ -49,6 +49,14 @@ public class HopByHopOptions extends Options {
     return header().buffer();
   }
 
+  @Override
+  public String toString() {
+    return Strings.toStringBuilder(this)
+        .add("header", header)
+        .add("payload", payload == null ? payload.getClass().getSimpleName() : "(None)")
+        .toString();
+  }
+
   public static final class Header extends Options.Header {
 
     private final Builder builder;
@@ -68,18 +76,6 @@ public class HopByHopOptions extends Options {
     public Builder builder() {
       return builder;
     }
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder("\t[ HopByHopOptions Header (")
-        .append(header().length())
-        .append(" bytes) ]")
-        .append('\n')
-        .append(header)
-        .append("\t\tpayload: ")
-        .append(payload != null ? payload.getClass().getSimpleName() : "")
-        .toString();
   }
 
   public static final class Builder extends Options.Builder {
@@ -108,14 +104,12 @@ public class HopByHopOptions extends Options {
     }
 
     @Override
-    public void reset() {
-      if (buffer != null) {
-        reset(readerIndex, Header.FIXED_OPTIONS_LENGTH);
-      }
+    public Builder reset() {
+      return reset(readerIndex, Header.FIXED_OPTIONS_LENGTH);
     }
 
     @Override
-    public void reset(int offset, int length) {
+    public Builder reset(int offset, int length) {
       if (buffer != null) {
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(nextHeader != null, ILLEGAL_HEADER_EXCEPTION);
@@ -128,6 +122,7 @@ public class HopByHopOptions extends Options {
         index += 1;
         buffer.setBytes(index, options);
       }
+      return this;
     }
   }
 }
