@@ -1,6 +1,7 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.handler;
 
+import pcap.common.annotation.Inclubating;
 import pcap.spi.PacketHandler;
 
 /**
@@ -8,4 +9,5 @@ import pcap.spi.PacketHandler;
  *
  * @param <T> args type.
  */
+@Inclubating
 public interface EventLoopHandler<T> extends PacketHandler<T> {}

@@ -18,7 +18,6 @@
         <module>tests</module>
         <module>spring-boot-starter-example</module>
         <module>docs</module>
-        <module>tools</module>
     </modules>
 
     <name>Pcap</name>

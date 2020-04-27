@@ -1,9 +1,11 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api;
 
+import pcap.common.annotation.Inclubating;
 import pcap.common.util.Strings;
 import pcap.spi.Timestamp;
 
+@Inclubating
 public class PcapLiveOptions {
 
   private int snapshotLength; // not zero and not minus
