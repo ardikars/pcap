@@ -54,7 +54,7 @@ public class Redirect extends AbstractPacket {
   public String toString() {
     return Strings.toStringBuilder(this)
         .add("header", header)
-        .add("payload", payload == null ? payload.getClass().getSimpleName() : "(None)")
+        .add("payload", payload != null ? payload.getClass().getSimpleName() : "(None)")
         .toString();
   }
 
