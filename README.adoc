@@ -84,7 +84,7 @@ Add below configuration to your pom.xml
 
 |`spring.pcap.live.bufferSize`
 |32 bit integer
-|`1500`
+|Depends on your platform
 |Set the packet buffer will be used on a capture handle when the handle is activated.
 
 |`spring.pcap.liva.timestampType`

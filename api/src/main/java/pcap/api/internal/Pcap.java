@@ -1,6 +1,14 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal;
 
+import java.foreign.NativeTypes;
+import java.foreign.memory.Callback;
+import java.foreign.memory.LayoutType;
+import java.foreign.memory.Pointer;
+import java.nio.ByteBuffer;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeoutException;
 import pcap.api.PcapLive;
 import pcap.api.PcapOffline;
 import pcap.api.handler.EventLoopHandler;
@@ -12,15 +20,6 @@ import pcap.common.logging.LoggerFactory;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
-
-import java.foreign.NativeTypes;
-import java.foreign.memory.Callback;
-import java.foreign.memory.LayoutType;
-import java.foreign.memory.Pointer;
-import java.nio.ByteBuffer;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeoutException;
 
 /**
  * {@code Pcap} handle.
@@ -362,6 +361,15 @@ public class Pcap implements pcap.spi.Pcap {
     }
     if (result != 0 && result < 0) {
       throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
+    }
+  }
+
+  @Override
+  public void setNonBlock(boolean blocking) throws ErrorException {
+    Pointer<Byte> errbuf = PcapConstant.SCOPE.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
+    int result = PcapConstant.MAPPING.pcap_setnonblock(pcap, blocking ? 1 : 0, errbuf);
+    if (result < 0) {
+      throw new ErrorException(Pointer.toString(errbuf));
     }
   }
 

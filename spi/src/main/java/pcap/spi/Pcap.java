@@ -157,6 +157,19 @@ public interface Pcap extends AutoCloseable {
   void setDirection(Direction direction) throws ErrorException;
 
   /**
+   * Puts a this capture handle into `non-blocking` mode, or takes it out of `non-blocking` mode,
+   * depending on whether the nonblock argument is `true` or `false`. It has no effect on
+   * `savefiles`. In `non-blocking` mode, an attempt to read from the capture descriptor with {@link
+   * Pcap#dispatch(int, PacketHandler, Object)} will, if no packets are currently available to be
+   * read, return void; immediately rather than blocking waiting for packets to arrive. {@link
+   * Pcap#loop(int, PacketHandler, Object)} will not work in `non-blocking` mode.
+   *
+   * @param blocking `true` for enable non blocking mode, `false` otherwise.
+   * @throws ErrorException throwing some error when calling this method.
+   */
+  void setNonBlock(boolean blocking) throws ErrorException;
+
+  /**
    * Close {@code PcapLive} or {@code PcapOffline}. <br>
    * Note: BPF handle will closed automaticly.
    *

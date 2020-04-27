@@ -40,7 +40,7 @@
       "name": "spring.pcap.live.bufferSize",
       "type": "java.lang.Integer",
       "description": "Set the packet buffer will be used on a capture handle when the handle is activated.",
-      "defaultValue": "1500"
+      "defaultValue": "0"
     },
     {
       "name": "spring.pcap.liva.timestampType",

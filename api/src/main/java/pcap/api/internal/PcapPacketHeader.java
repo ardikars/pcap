@@ -1,13 +1,12 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal;
 
-import pcap.common.annotation.Inclubating;
-import pcap.spi.PacketHeader;
-
 import java.foreign.annotations.NativeGetter;
 import java.foreign.annotations.NativeStruct;
 import java.foreign.memory.Pointer;
 import java.foreign.memory.Struct;
+import pcap.common.annotation.Inclubating;
+import pcap.spi.PacketHeader;
 
 /**
  * Wrapper for {@code pcap_pkthdr}
