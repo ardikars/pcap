@@ -64,8 +64,9 @@ public abstract class AbstractPacket implements Packet {
     Iterator<Packet> iterator = this.iterator();
     Packet packet = null;
     while (iterator.hasNext()) {
+      packet = iterator.next();
       if (packet.getClass().isAssignableFrom(clazz)) {
-        packet = iterator.next();
+        return (T) packet;
       }
     }
     return (T) packet;
