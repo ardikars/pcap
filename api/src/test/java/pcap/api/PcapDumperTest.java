@@ -23,6 +23,16 @@ public class PcapDumperTest {
   private static final int MAX_PACKET = 10;
   private static final String FILE;
 
+  static {
+    String file;
+    try {
+      file = Files.createTempFile("temporary", ".pcapng").toAbsolutePath().toString();
+    } catch (IOException e) {
+      file = null;
+    }
+    FILE = file;
+  }
+
   @Test
   @Order(1)
   public void liveDumpTest()
@@ -99,13 +109,19 @@ public class PcapDumperTest {
     pcap.close();
   }
 
-  static {
-    String file;
-    try {
-      file = Files.createTempFile("temporary", ".pcapng").toAbsolutePath().toString();
-    } catch (IOException e) {
-      file = null;
-    }
-    FILE = file;
+  @Test
+  public void closeTest()
+      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException {
+    Interface source = Pcaps.lookupInterface();
+    Assertions.assertNotNull(source);
+    Pcap pcap = Pcaps.live(new PcapLive(source));
+    Assertions.assertNotNull(pcap);
+    Dumper dumper = pcap.dumpOpenAppend(FILE);
+    Assertions.assertNotNull(dumper);
+    dumper.close();
+    pcap.close();
   }
 }

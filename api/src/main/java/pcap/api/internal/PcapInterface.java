@@ -3,6 +3,7 @@ package pcap.api.internal;
 
 import java.foreign.memory.Pointer;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import pcap.api.internal.foreign.pcap_mapping;
@@ -10,6 +11,7 @@ import pcap.api.internal.util.PcapInterfaceIterator;
 import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
+import pcap.common.util.Strings;
 import pcap.spi.Address;
 import pcap.spi.Interface;
 
@@ -114,52 +116,25 @@ public class PcapInterface implements Interface {
 
   @Override
   public String toString() {
-    StringBuilder sb =
-        new StringBuilder()
-            .append("{\n")
-            .append("\t\"name\": \"")
-            .append(name)
-            .append("\",\n")
-            .append("\t\"description\": \"")
-            .append(description)
-            .append("\",\n")
-            .append("\t\"flags\": \"")
-            .append(flags)
-            .append("\",\n")
-            .append("\t\"isLoopback\": \"")
-            .append(isLoopback())
-            .append("\",\n")
-            .append("\t\"isUp\": \"")
-            .append(isUp())
-            .append("\",\n")
-            .append("\t\"isRunning\": \"")
-            .append(isRunning())
-            .append("\",\n")
-            .append("\t\"addresses\": \n")
-            .append("\t\t[\n")
-            .append(
-                StreamSupport.stream(addresses.spliterator(), false)
-                    .map(
-                        addr ->
-                            new StringBuilder()
-                                .append("\t\t\t{\n")
-                                .append("\t\t\t\t\"address\": \"")
-                                .append(addr.address())
-                                .append("\",\n")
-                                .append("\t\t\t\t\"netmask\": \"")
-                                .append(addr.netmask())
-                                .append("\",\n")
-                                .append("\t\t\t\t\"broadcast\": \"")
-                                .append(addr.broadcast())
-                                .append("\",\n")
-                                .append("\t\t\t\t\"destination\": \"")
-                                .append(addr.destination())
-                                .append("\"\n")
-                                .append("\t\t\t}")
-                                .toString())
-                    .collect(Collectors.joining(",\n")))
-            .append("\n\t\t]\n")
-            .append("}");
-    return sb.toString();
+    final Set<String> addresses =
+        StreamSupport.stream(this.addresses.spliterator(), false)
+            .map(
+                addr ->
+                    Strings.toStringBuilder(addr)
+                        .add("address", addr.address())
+                        .add("netmask", addr.netmask())
+                        .add("broadcast", addr.broadcast())
+                        .add("destination", addr.destination())
+                        .toString())
+            .collect(Collectors.toSet());
+    return Strings.toStringBuilder(this)
+        .add("name", name)
+        .add("description", description)
+        .add("flags", flags)
+        .add("loopback", isLoopback())
+        .add("up", isUp())
+        .add("running", isRunning())
+        .add("addresses", addresses)
+        .toString();
   }
 }

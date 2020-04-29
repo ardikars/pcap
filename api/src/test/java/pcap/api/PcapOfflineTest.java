@@ -1,6 +1,7 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api;
 
+import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.junit.runner.RunWith;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.spi.Pcap;
+import pcap.spi.Timestamp;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
 
@@ -55,6 +57,13 @@ public class PcapOfflineTest {
   }
 
   @Test
+  public void pcapOfflineTest() {
+    Assertions.assertNotNull(new PcapOfflineOptions().timestampPrecision(Timestamp.Precision.NANO));
+    Assertions.assertNotNull(
+        new PcapOfflineOptions().timestampPrecision(Timestamp.Precision.NANO).toString());
+  }
+
+  @Test
   public void offlineFilterTest() throws ErrorException {
     Pcap pcap = Pcaps.offline(new PcapOffline(FILE));
     Assertions.assertNotNull(pcap);
@@ -92,6 +101,60 @@ public class PcapOfflineTest {
             if (counter.incrementAndGet() == args / 2) {
               pcap.breakLoop();
             }
+            Assertions.assertEquals(args, MAX_PACKET);
+            Assertions.assertNotNull(buffer);
+            Assertions.assertNotNull(buffer.buffer());
+            Assertions.assertNotNull(header);
+            Assertions.assertNotEquals(header.captureLength(), 0);
+            Assertions.assertNotEquals(header.length(), 0);
+            Assertions.assertNotNull(header.timestamp());
+            Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
+            Assertions.assertNotEquals(header.timestamp().second(), 0L);
+          },
+          MAX_PACKET);
+    } catch (BreakException e) {
+      LOGGER.warn(e);
+    }
+    pcap.close();
+  }
+
+  @Test
+  public void offlineParameterizeTest() throws ErrorException {
+    Pcap pcap = Pcaps.offline(new PcapOffline(new File(FILE)));
+    Assertions.assertNotNull(pcap);
+    try {
+      pcap.loop(
+          MAX_PACKET,
+          (args, header, buffer) -> {
+            Assertions.assertEquals(args, MAX_PACKET);
+            Assertions.assertNotNull(buffer);
+            Assertions.assertNotNull(buffer.buffer());
+            Assertions.assertNotNull(header);
+            Assertions.assertNotEquals(header.captureLength(), 0);
+            Assertions.assertNotEquals(header.length(), 0);
+            Assertions.assertNotNull(header.timestamp());
+            Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
+            Assertions.assertNotEquals(header.timestamp().second(), 0L);
+          },
+          MAX_PACKET);
+    } catch (BreakException e) {
+      LOGGER.warn(e);
+    }
+    pcap.close();
+  }
+
+  @Test
+  public void offlineParameterize2Test() throws ErrorException {
+    Pcap pcap =
+        Pcaps.offline(
+            new PcapOffline(
+                new File(FILE),
+                new PcapOfflineOptions().timestampPrecision(Timestamp.Precision.MICRO)));
+    Assertions.assertNotNull(pcap);
+    try {
+      pcap.loop(
+          MAX_PACKET,
+          (args, header, buffer) -> {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
             Assertions.assertNotNull(buffer.buffer());

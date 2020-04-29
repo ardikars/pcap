@@ -289,6 +289,71 @@ public class PcapLiveTest {
     pcap.close();
   }
 
+  @Test
+  public void pcapLiveOptions() {
+    Assertions.assertNotNull(
+        new PcapLiveOptions()
+            .bufferSize(65535 * 24)
+            .immediate(true)
+            .promiscuous(true)
+            .rfmon(false)
+            .snapshotLength(1500)
+            .timeout(2000)
+            .timestampPrecision(Timestamp.Precision.MICRO)
+            .timestampType(Timestamp.Type.ADAPTER));
+    Assertions.assertNotNull(
+        new PcapLiveOptions()
+            .bufferSize(65535 * 24)
+            .immediate(true)
+            .promiscuous(true)
+            .rfmon(false)
+            .snapshotLength(1500)
+            .timeout(2000)
+            .timestampPrecision(Timestamp.Precision.MICRO)
+            .timestampType(Timestamp.Type.ADAPTER_UNSYNCED));
+    Assertions.assertNotNull(
+        new PcapLiveOptions()
+            .bufferSize(65535 * 24)
+            .immediate(true)
+            .promiscuous(true)
+            .rfmon(false)
+            .snapshotLength(1500)
+            .timeout(2000)
+            .timestampPrecision(Timestamp.Precision.MICRO)
+            .timestampType(Timestamp.Type.HOST));
+    Assertions.assertNotNull(
+        new PcapLiveOptions()
+            .bufferSize(65535 * 24)
+            .immediate(true)
+            .promiscuous(true)
+            .rfmon(false)
+            .snapshotLength(1500)
+            .timeout(2000)
+            .timestampPrecision(Timestamp.Precision.MICRO)
+            .timestampType(Timestamp.Type.HOST_HIPREC));
+    Assertions.assertNotNull(
+        new PcapLiveOptions()
+            .bufferSize(65535 * 24)
+            .immediate(true)
+            .promiscuous(true)
+            .rfmon(false)
+            .snapshotLength(1500)
+            .timeout(2000)
+            .timestampPrecision(Timestamp.Precision.MICRO)
+            .timestampType(Timestamp.Type.HOST_LOWPREC));
+    Assertions.assertNotNull(
+        new PcapLiveOptions()
+            .bufferSize(65535 * 24)
+            .immediate(true)
+            .promiscuous(true)
+            .rfmon(false)
+            .snapshotLength(1500)
+            .timeout(2000)
+            .timestampPrecision(Timestamp.Precision.MICRO)
+            .timestampType(Timestamp.Type.HOST_LOWPREC)
+            .toString());
+  }
+
   /**
    * Decode raw packet into hex string.
    *
