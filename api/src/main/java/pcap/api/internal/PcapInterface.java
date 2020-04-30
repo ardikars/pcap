@@ -1,11 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal;
 
-import java.foreign.memory.Pointer;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.api.internal.util.PcapInterfaceIterator;
 import pcap.common.annotation.Inclubating;
@@ -14,6 +9,9 @@ import pcap.common.logging.LoggerFactory;
 import pcap.common.util.Strings;
 import pcap.spi.Address;
 import pcap.spi.Interface;
+
+import java.foreign.memory.Pointer;
+import java.util.Iterator;
 
 /**
  * {@code Pcap} {@link Interface} implementation
@@ -116,17 +114,6 @@ public class PcapInterface implements Interface {
 
   @Override
   public String toString() {
-    final Set<String> addresses =
-        StreamSupport.stream(this.addresses.spliterator(), false)
-            .map(
-                addr ->
-                    Strings.toStringBuilder(addr)
-                        .add("address", addr.address())
-                        .add("netmask", addr.netmask())
-                        .add("broadcast", addr.broadcast())
-                        .add("destination", addr.destination())
-                        .toString())
-            .collect(Collectors.toSet());
     return Strings.toStringBuilder(this)
         .add("name", name)
         .add("description", description)
