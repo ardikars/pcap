@@ -101,6 +101,53 @@ public final class Validate {
   }
 
   /**
+   * Ensures the truth of an expression involving one or more parameters to the calling method.
+   * Returns given ${@code newVal} if {@code expression} is false, {@code reference} otherwise.
+   *
+   * @param expression a boolean expression.
+   * @param reference reference.
+   * @param newVal new value.
+   * @param <T> type of reference and new value.
+   * @return returns given ${@code newVal} if {@code expression} is false, {@code reference}
+   *     otherwise.
+   * @since 1.0.0
+   */
+  @SuppressWarnings("TypeParameterUnusedInFormals")
+  public static <T> T notIllegaStateThenReturns(boolean expression, T reference, T newVal) {
+    if (!expression) {
+      return newVal;
+    } else {
+      return reference;
+    }
+  }
+
+  /**
+   * Ensures the truth of an expression involving one or more parameters to the calling method.
+   *
+   * @param expression a boolean expression.
+   * @param message exceptions message to be given
+   * @throws IllegalStateException if {@code expression} is false
+   * @since 1.0.0
+   */
+  public static void notIllegalState(boolean expression, String message)
+      throws IllegalArgumentException {
+    if (!expression) {
+      throw new IllegalStateException(message);
+    }
+  }
+
+  /**
+   * Ensures the truth of an expression involving one or more parameters to the calling method.
+   *
+   * @param expression a boolean expression.
+   * @throws IllegalStateException if {@code expression} is false
+   * @since 1.0.0
+   */
+  public static void notIllegalState(boolean expression) throws IllegalStateException {
+    notIllegalState(expression, null);
+  }
+
+  /**
    * Ensures that given parameter is valid bound in an array.
    *
    * @param array array.
