@@ -1,18 +1,20 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal;
 
+import pcap.api.internal.foreign.pcap_mapping;
+import pcap.api.internal.util.PcapAddressIterator;
+import pcap.common.annotation.Inclubating;
+import pcap.common.logging.Logger;
+import pcap.common.logging.LoggerFactory;
+import pcap.common.util.Strings;
+import pcap.spi.Address;
+
 import java.foreign.memory.Pointer;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Iterator;
-import pcap.api.internal.foreign.pcap_mapping;
-import pcap.api.internal.util.PcapAddressIterator;
-import pcap.common.annotation.Inclubating;
-import pcap.common.logging.Logger;
-import pcap.common.logging.LoggerFactory;
-import pcap.spi.Address;
 
 /**
  * {@code Pcap} {@link Address} implementation
@@ -67,21 +69,11 @@ public class PcapAddress implements Address {
 
   @Override
   public String toString() {
-    return new StringBuilder()
-        .append("{\n")
-        .append("\t\"address\": \"")
-        .append(address)
-        .append("\",\n")
-        .append("\t\"netmask\": \"")
-        .append(netmask)
-        .append("\",\n")
-        .append("\t\"broadcast\": \"")
-        .append(broadcast)
-        .append("\",\n")
-        .append("\t\"destination\": \"")
-        .append(destination)
-        .append("\"\n")
-        .append("}")
+    return Strings.toStringBuilder(this)
+        .add("address", address())
+        .add("netmask", netmask())
+        .add("broadcast", broadcast())
+        .add("destination", destination())
         .toString();
   }
 
