@@ -7,6 +7,10 @@ import pcap.common.annotation.Inclubating;
 @Inclubating
 public final class Validate {
 
+  private Validate() {
+    //
+  }
+
   /**
    * Ensures that given object ${@code reference} is not null.
    *
@@ -362,24 +366,6 @@ public final class Validate {
     notIllegalArgument(length > 0, "length is zero.");
     if (offset < 0 || length < 0 || length > size || offset > size - 1 || offset + length > size) {
       throw new ArrayIndexOutOfBoundsException();
-    }
-  }
-
-  /**
-   * Ensures that given parameter is not contains non numeric character.
-   *
-   * @param text test.
-   * @throws IllegalArgumentException illegal argument exception.
-   */
-  @Deprecated
-  public static void notNumeric(String text) throws IllegalArgumentException {
-    notIllegalArgument(text != null, "Text should be not null.");
-    notIllegalArgument(text.length() > 0, "Text should be not empty.");
-    int length = text.length();
-    for (int i = 0; i < length; i++) {
-      if (!Character.isDigit(text.charAt(i))) {
-        throw new IllegalArgumentException("Text should not contains non numeric character.");
-      }
     }
   }
 }

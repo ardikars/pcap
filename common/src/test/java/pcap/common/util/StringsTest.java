@@ -1,6 +1,7 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.util;
 
+import java.nio.charset.Charset;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -23,6 +24,24 @@ public class StringsTest extends BaseTest {
   private static final double[] doubleData =
       new double[] {204543647.1D, 2047478347.2D, 2043424146.3D, 223543647.4D, 263453645.5D};
   private static final String stringData = "Rock The Party!";
+
+  @Test
+  public void emptyTest() {
+    Assertions.assertTrue(Strings.empty(null));
+    Assertions.assertTrue(Strings.empty(""));
+  }
+
+  @Test
+  public void blankTest() {
+    Assertions.assertTrue(Strings.blank(null));
+    Assertions.assertTrue(Strings.blank("\t\r\n\0 "));
+  }
+
+  @Test
+  public void lengthTest() {
+    Assertions.assertEquals(6, Strings.length(4, 1, 5));
+    Assertions.assertEquals(5, Strings.length(5, 0, 5));
+  }
 
   @Test
   public void byteToHexString() {
@@ -126,23 +145,34 @@ public class StringsTest extends BaseTest {
 
   @Test
   public void stringToHexString() {
+    String NULL = null;
     Assertions.assertEquals("526f636b2054686520506172747921", Strings.hex(stringData));
+    Assertions.assertThrows(IllegalArgumentException.class, () -> Strings.hex(""));
+    Assertions.assertThrows(IllegalArgumentException.class, () -> Strings.hex(NULL));
+    Assertions.assertEquals(
+        "526f636b2054686520506172747921", Strings.hex(stringData, Charset.defaultCharset()));
+    Assertions.assertThrows(
+        IllegalArgumentException.class, () -> Strings.hex("", Charset.defaultCharset()));
+    Assertions.assertThrows(
+        IllegalArgumentException.class, () -> Strings.hex(NULL, Charset.defaultCharset()));
+    Assertions.assertThrows(IllegalArgumentException.class, () -> Strings.hex(stringData, null));
   }
 
   @Test
   public void toStringBuilderTest() {
     Assertions.assertEquals(
-        "{\"as\":\"7b\",\"as\":\"7ffb\",\"as\":\"7ffffffb\",\"as\":\"0x1.0p31\",\"as\":\"7ffffffffffffffb\",\"as\":\"0x1.0p63\"}",
-        Strings.toStringJsonBuilder(this)
+        "{\"as\":\"7b\",\"as\":\"7ffb\",\"as\":\"7ffffffb\",\"as\":\"0x1.0p31\",\"as\":\"7ffffffffffffffb\",\"as\":\"0x1.0p63\",\"as\":\"[d]\"}",
+        Strings.toStringJsonBuilder()
             .add("as", new byte[] {123})
             .add("as", new short[] {32763})
             .add("as", new int[] {2147483643})
             .add("as", new float[] {2147483643.2F})
             .add("as", new long[] {9223372036854775803L})
             .add("as", new double[] {9223372036854775803.6D})
+            .add("as", new String[] {"d"})
             .toString());
     Assertions.assertEquals(
-        "StringsTest{as=7b,as=7ffb,as=7ffffffb,as=0x1.0p31,as=7ffffffffffffffb,as=0x1.0p63}",
+        "StringsTest{as=7b,as=7ffb,as=7ffffffb,as=0x1.0p31,as=7ffffffffffffffb,as=0x1.0p63,as=[d]}",
         Strings.toStringBuilder(this)
             .add("as", new byte[] {123})
             .add("as", new short[] {32763})
@@ -150,6 +180,11 @@ public class StringsTest extends BaseTest {
             .add("as", new float[] {2147483643.2F})
             .add("as", new long[] {9223372036854775803L})
             .add("as", new double[] {9223372036854775803.6D})
+            .add("as", new String[] {"d"})
             .toString());
+    Assertions.assertEquals(
+        "StringsTest{a=1}", Strings.toStringBuilder(this).add("a", 1).toString());
+    Assertions.assertEquals(
+        "{\"a\":\"d\"}", Strings.toStringJsonBuilder().add("a", "d").toString());
   }
 }

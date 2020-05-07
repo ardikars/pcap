@@ -3,19 +3,11 @@ package pcap.common.memory;
 
 import java.nio.charset.Charset;
 import pcap.common.annotation.Inclubating;
-import pcap.common.internal.Unsafe;
-import pcap.common.memory.accessor.MemoryAccessor;
-import pcap.common.memory.accessor.MemoryAccessors;
 import pcap.common.util.Strings;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 abstract class AbstractMemory<B> implements Memory {
-
-  static final MemoryAccessor ACCESSOR =
-      Unsafe.HAS_UNSAFE ? MemoryAccessors.memoryAccessor() : null;
-
-  static final Charset DEFAULT_CHARSET = Charset.defaultCharset();
 
   B buffer;
 

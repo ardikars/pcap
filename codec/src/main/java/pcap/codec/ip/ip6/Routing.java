@@ -275,7 +275,7 @@ public class Routing extends AbstractPacket {
             (byte) 254,
             "May be used for testing, not for actual implementations. RFC3692-style Experiment 2.[13]");
 
-    private static Map<Byte, Type> REGISTRY = new HashMap<Byte, Type>();
+    private static Map<Byte, Type> REGISTRY = new HashMap<>();
 
     static {
       REGISTRY.put(DEPRECATED_01.value(), DEPRECATED_01);

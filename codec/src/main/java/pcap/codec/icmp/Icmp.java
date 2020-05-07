@@ -76,11 +76,9 @@ public abstract class Icmp extends AbstractPacket {
 
   public static class IcmpTypeAndCode extends NamedNumber<Byte, IcmpTypeAndCode> {
 
-    protected static final Collection<Icmp.IcmpTypeAndCode> ICMP4_REGISTRY =
-        new HashSet<IcmpTypeAndCode>();
+    protected static final Collection<Icmp.IcmpTypeAndCode> ICMP4_REGISTRY = new HashSet<>();
 
-    protected static final Collection<Icmp.IcmpTypeAndCode> ICMP6_REGISTRY =
-        new HashSet<Icmp.IcmpTypeAndCode>();
+    protected static final Collection<Icmp.IcmpTypeAndCode> ICMP6_REGISTRY = new HashSet<>();
 
     public static final IcmpTypeAndCode NEIGHBOR_SOLICITATION =
         new IcmpTypeAndCode((byte) 0x87, (byte) 0x0, "Neighbor Solicitation");
@@ -100,9 +98,9 @@ public abstract class Icmp extends AbstractPacket {
     public static final IcmpTypeAndCode UNKNOWN =
         new IcmpTypeAndCode((byte) -1, (byte) -1, "Unknown");
 
-    private static Map<Byte, IcmpTypeAndCode> REGISTRY = new HashMap<Byte, IcmpTypeAndCode>();
+    private static Map<Byte, IcmpTypeAndCode> REGISTRY = new HashMap<>();
 
-    private static Map<Byte, Builder> BUILDER = new HashMap<Byte, Builder>();
+    private static Map<Byte, Builder> BUILDER = new HashMap<>();
 
     private final byte type;
     private final byte code;

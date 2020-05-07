@@ -36,17 +36,9 @@ final class DirectMemoryAllocator implements MemoryAllocator {
   @Override
   public Memory allocate(
       int capacity, int maxCapacity, int readerIndex, int writerIndex, boolean checking) {
-    if (MemoryAllocator.UNSAFE_BUFFER) {
-      long address = AbstractMemory.ACCESSOR.allocate(capacity);
-      if (!checking && UNCHECKED) {
-        return new UncheckedMemory(address, capacity, maxCapacity, readerIndex, writerIndex);
-      }
-      return new CheckedMemory(address, capacity, maxCapacity, readerIndex, writerIndex);
-    } else {
-      ByteBuffer buffer = ByteBuffer.allocateDirect(capacity);
-      Memory memory = new ByteBuf(0, buffer, capacity, maxCapacity, readerIndex, writerIndex);
-      return memory;
-    }
+    ByteBuffer buffer = ByteBuffer.allocateDirect(capacity);
+    Memory memory = new ByteBuf(0, buffer, capacity, maxCapacity, readerIndex, writerIndex);
+    return memory;
   }
 
   @Override

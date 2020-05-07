@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import pcap.common.annotation.Inclubating;
-import pcap.common.internal.ByteBufferHelper;
-import pcap.common.internal.Unsafe;
 import pcap.common.util.Hexs;
 import pcap.common.util.Validate;
 
@@ -75,7 +73,7 @@ public final class Memories {
       if (POOLS == null) {
         POOLS = new ConcurrentHashMap<Integer, Queue<PooledMemory>>();
       }
-      return new PooledDirectMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
+      return new PooledMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
     }
   }
 
@@ -91,9 +89,9 @@ public final class Memories {
       int poolSize, int maxPoolSize, int maxMemoryCapacity) {
     synchronized (Memories.class) {
       if (POOLS == null) {
-        POOLS = new ConcurrentHashMap<Integer, Queue<PooledMemory>>();
+        POOLS = new ConcurrentHashMap<>();
       }
-      return new PooledHeapMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
+      return new PooledMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
     }
   }
 
@@ -124,18 +122,7 @@ public final class Memories {
   public static Memory wrap(long memoryAddress, int size, boolean checking)
       throws UnsupportedOperationException {
     Validate.notIllegalArgument(size > 0, String.format("size: %d (expected: > 0)", size));
-    if (MemoryAllocator.UNSAFE_BUFFER) {
-      Memory memory;
-      if (checking) {
-        memory = new CheckedMemory(memoryAddress, size, size);
-      } else {
-        memory = new UncheckedMemory(memoryAddress, size, size);
-      }
-      memory.writerIndex(memory.capacity());
-      return memory;
-    } else {
-      throw new UnsupportedOperationException();
-    }
+    throw new UnsupportedOperationException();
   }
 
   /**
@@ -158,17 +145,7 @@ public final class Memories {
    */
   public static Memory wrap(ByteBuffer buffer, boolean checking) {
     Validate.notIllegalArgument(buffer != null, "buffer: null (expected: non null)");
-    Memory memory;
-    if (MemoryAllocator.UNSAFE_BUFFER) {
-      int capacity = buffer.capacity();
-      long address = ByteBufferHelper.directByteBufferAddress(buffer);
-      if (checking) {
-        memory = new CheckedMemory(buffer, address, capacity, capacity, 0, 0);
-      }
-      memory = new UncheckedMemory(buffer, address, capacity, capacity, 0, 0);
-    } else {
-      memory = new ByteBuf(0, buffer, buffer.capacity(), buffer.capacity(), 0, 0);
-    }
+    Memory memory = new ByteBuf(0, buffer, buffer.capacity(), buffer.capacity(), 0, 0);
     return memory;
   }
 
@@ -196,14 +173,7 @@ public final class Memories {
   public static Memory wrap(
       CharSequence hexStream, boolean checking, MemoryAllocator memoryAllocator) {
     byte[] bytes = Hexs.parseHex(hexStream.toString());
-    if (memoryAllocator instanceof DirectMemoryAllocator
-        || memoryAllocator instanceof PooledDirectMemoryAllocator) {
-      Memory memory = memoryAllocator.allocate(bytes.length, checking);
-      memory.setBytes(0, bytes);
-      return memory;
-    } else {
-      return wrap(bytes, checking);
-    }
+    return wrap(bytes, checking);
   }
 
   /**
@@ -217,16 +187,7 @@ public final class Memories {
   public static Memory wrap(byte[] bytes, boolean checking) {
     Validate.notIllegalArgument(
         bytes != null, String.format("hexStream: null (expected: non null)"));
-    Memory memory;
-    if (Unsafe.HAS_UNSAFE) {
-      if (checking) {
-        memory = new CheckedByteArray(0, bytes, bytes.length, bytes.length, 0, 0);
-      } else {
-        memory = new UncheckedByteArray(0, bytes, bytes.length, bytes.length, 0, 0);
-      }
-    } else {
-      memory = new ByteBuf(0, ByteBuffer.wrap(bytes), bytes.length, bytes.length, 0, 0);
-    }
+    Memory memory = new ByteBuf(0, ByteBuffer.wrap(bytes), bytes.length, bytes.length, 0, 0);
     return memory;
   }
 

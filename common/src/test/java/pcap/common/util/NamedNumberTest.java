@@ -21,13 +21,31 @@ public class NamedNumberTest extends BaseTest {
   @Test
   public void found() {
     HttpStatusCode httpStatusCode = HttpStatusCode.valueOf(NOT_FOUND_CODE);
+    Assertions.assertTrue(httpStatusCode.equals(HttpStatusCode.NOT_FOUND));
+    Assertions.assertEquals(httpStatusCode.hashCode(), HttpStatusCode.NOT_FOUND.hashCode());
+    Assertions.assertEquals(httpStatusCode.name(), HttpStatusCode.NOT_FOUND.name());
     Assertions.assertEquals(HttpStatusCode.NOT_FOUND.value(), httpStatusCode.value());
   }
 
   @Test
   public void notFound() {
     HttpStatusCode httpStatusCode = HttpStatusCode.valueOf(UNKNOWN_CODE);
+    Assertions.assertTrue(httpStatusCode.equals(HttpStatusCode.UNKNOWN));
+    Assertions.assertEquals(httpStatusCode.hashCode(), HttpStatusCode.UNKNOWN.hashCode());
+    Assertions.assertEquals(httpStatusCode.name(), HttpStatusCode.UNKNOWN.name());
     Assertions.assertEquals(HttpStatusCode.UNKNOWN.value(), httpStatusCode.value());
+  }
+
+  @Test
+  public void notEqualTest() {
+    Assertions.assertFalse(HttpStatusCode.UNKNOWN.equals(HttpStatusCode.OK));
+    Assertions.assertFalse(HttpStatusCode.UNKNOWN.equals(null));
+    Assertions.assertFalse(HttpStatusCode.UNKNOWN.equals(""));
+  }
+
+  @Test
+  public void toStringTest() {
+    Assertions.assertNotNull(HttpStatusCode.OK.toString());
   }
 
   @Test

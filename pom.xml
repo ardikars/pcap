@@ -14,9 +14,7 @@
         <module>common</module>
         <module>codec</module>
         <module>api</module>
-        <module>spring-boot-starter</module>
         <module>tests</module>
-<!--        <module>spring-boot-starter-example</module>-->
     </modules>
 
     <name>Pcap</name>
@@ -118,16 +116,6 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>pcap-codec</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>pcap-spring-boot-starter</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>pcap-tools</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

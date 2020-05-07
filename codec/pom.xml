@@ -17,7 +17,7 @@
     <description>Crafting network packet</description>
 
     <properties>
-        <jdk.version>${java.legacy.version}</jdk.version>
+        <jdk.version>${java.version}</jdk.version>
         <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
@@ -58,44 +58,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>legacy-support</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <source>${jdk.version}</source>
-                            <target>${jdk.version}</target>
-                            <excludes>
-                                <exclude>module-info.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>default-jar</id>
-                                <configuration>
-                                    <archive>
-                                        <manifest>
-                                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                        </manifest>
-                                        <manifestEntries>
-                                            <Automatic-Module-Name>pcap.codec</Automatic-Module-Name>
-                                        </manifestEntries>
-                                        <index>true</index>
-                                    </archive>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
         <profile>
             <id>coverage</id>
             <activation>

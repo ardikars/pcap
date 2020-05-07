@@ -1,7 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.util;
 
-import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import pcap.common.annotation.Inclubating;
 
@@ -90,8 +89,8 @@ public final class Bytes {
       for (int i = offset; i < length; i++) {
         short x = value[i];
         int j = i << 1;
-        array[j++] = (byte) ((x >> 0) & 0xff);
-        array[j++] = (byte) ((x >> 8) & 0xff);
+        array[j++] = (byte) (x & 0xff);
+        array[j] = (byte) ((x >> 8) & 0xff);
       }
       return array;
     } else {
@@ -99,7 +98,7 @@ public final class Bytes {
         short x = value[i];
         int j = i << 1;
         array[j++] = (byte) ((x >> 8) & 0xff);
-        array[j++] = (byte) ((x >> 0) & 0xff);
+        array[j] = (byte) (x & 0xff);
       }
       return array;
     }
@@ -127,17 +126,17 @@ public final class Bytes {
   public static byte[] toByteArray(final int value, final ByteOrder bo) {
     if (bo.equals(ByteOrder.LITTLE_ENDIAN)) {
       return new byte[] {
-        (byte) ((value >> 0) & 0xff),
+        (byte) (value & 0xff),
         (byte) ((value >> 8) & 0xff),
-        (byte) ((value >> 16 & 0xff)),
-        (byte) ((value >> 24 & 0xff))
+        (byte) (value >> 16 & 0xff),
+        (byte) (value >> 24 & 0xff)
       };
     } else {
       return new byte[] {
         (byte) ((value >> 24) & 0xff),
         (byte) ((value >> 16) & 0xff),
         (byte) ((value >> 8) & 0xff),
-        (byte) ((value >> 0) & 0xff)
+        (byte) (value & 0xff)
       };
     }
   }
@@ -183,10 +182,10 @@ public final class Bytes {
       for (int i = offset; i < length; i++) {
         int x = value[i];
         int j = i << 2;
-        array[j++] = (byte) ((x >> 0) & 0xff);
+        array[j++] = (byte) (x & 0xff);
         array[j++] = (byte) ((x >> 8) & 0xff);
         array[j++] = (byte) ((x >> 16) & 0xff);
-        array[j++] = (byte) ((x >> 24) & 0xff);
+        array[j] = (byte) ((x >> 24) & 0xff);
       }
       return array;
     } else {
@@ -196,7 +195,7 @@ public final class Bytes {
         array[j++] = (byte) ((x >> 24) & 0xff);
         array[j++] = (byte) ((x >> 16) & 0xff);
         array[j++] = (byte) ((x >> 8) & 0xff);
-        array[j++] = (byte) ((x >> 0) & 0xff);
+        array[j] = (byte) (x & 0xff);
       }
       return array;
     }
@@ -224,7 +223,7 @@ public final class Bytes {
   public static byte[] toByteArray(final long value, final ByteOrder bo) {
     if (bo.equals(ByteOrder.LITTLE_ENDIAN)) {
       return new byte[] {
-        (byte) ((value >> 0) & 0xff),
+        (byte) (value & 0xff),
         (byte) ((value >> 8) & 0xff),
         (byte) ((value >> 16) & 0xff),
         (byte) ((value >> 24) & 0xff),
@@ -242,7 +241,7 @@ public final class Bytes {
         (byte) ((value >> 24) & 0xff),
         (byte) ((value >> 16) & 0xff),
         (byte) ((value >> 8) & 0xff),
-        (byte) ((value >> 0) & 0xff)
+        (byte) (value & 0xff)
       };
     }
   }
@@ -287,14 +286,14 @@ public final class Bytes {
       for (int i = offset; i < length; i++) {
         long x = value[i];
         int j = i << 3;
-        array[j++] = (byte) ((x >> 0) & 0xff);
+        array[j++] = (byte) (x & 0xff);
         array[j++] = (byte) ((x >> 8) & 0xff);
         array[j++] = (byte) ((x >> 16) & 0xff);
         array[j++] = (byte) ((x >> 24) & 0xff);
         array[j++] = (byte) ((x >> 32) & 0xff);
         array[j++] = (byte) ((x >> 40) & 0xff);
         array[j++] = (byte) ((x >> 48) & 0xff);
-        array[j++] = (byte) ((x >> 56) & 0xff);
+        array[j] = (byte) ((x >> 56) & 0xff);
       }
       return array;
     } else {
@@ -308,26 +307,9 @@ public final class Bytes {
         array[j++] = (byte) ((x >> 24) & 0xff);
         array[j++] = (byte) ((x >> 16) & 0xff);
         array[j++] = (byte) ((x >> 8) & 0xff);
-        array[j++] = (byte) ((x >> 0) & 0xff);
+        array[j] = (byte) (x & 0xff);
       }
       return array;
     }
-  }
-
-  /**
-   * ByteBuffer to byte array.
-   *
-   * @param byteBuffer ByteBuffer.
-   * @return byte array.
-   * @since 1.0.0
-   */
-  public static byte[] toByteArray(final ByteBuffer byteBuffer) {
-    Validate.nullPointer(byteBuffer);
-    if (!byteBuffer.hasRemaining()) {
-      byteBuffer.flip();
-    }
-    byte[] buffer = new byte[byteBuffer.remaining()];
-    byteBuffer.get(buffer);
-    return buffer;
   }
 }

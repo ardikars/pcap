@@ -36,7 +36,7 @@ public abstract class AbstractPacket implements Packet {
 
   @Override
   public <T extends Packet> List<T> get(Class<T> clazz) {
-    List<Packet> packets = new ArrayList<Packet>();
+    List<Packet> packets = new ArrayList<>();
     Iterator<Packet> iterator = this.iterator();
     while (iterator.hasNext()) {
       Packet packet = iterator.next();

@@ -151,10 +151,7 @@ abstract class AbstractMemoryTest extends BaseTest {
     }
     memory.readShort();
     Memory sliced = memory.slice();
-    assert !hasUnsafe
-        || !MemoryAllocator.UNSAFE_BUFFER
-        || memory instanceof UncheckedByteArray
-        || sliced.memoryAddress() - 2 == memory.memoryAddress();
+    assert sliced.memoryAddress() - 2 == memory.memoryAddress();
     assert sliced.capacity() == DUMMY.length - 2;
     assert sliced.maxCapacity() == memory.maxCapacity();
     for (int i = 0; i < sliced.capacity(); i++) {
@@ -196,9 +193,7 @@ abstract class AbstractMemoryTest extends BaseTest {
       memory.writeByte(val);
     }
     Memory duplicated = memory.duplicate();
-    assert !(duplicated instanceof CheckedMemory)
-        || !duplicated.isDirect()
-        || duplicated.memoryAddress() == memory.memoryAddress();
+    assert !duplicated.isDirect() || duplicated.memoryAddress() == memory.memoryAddress();
     assert duplicated.capacity() == memory.capacity();
     assert duplicated.maxCapacity() == memory.maxCapacity();
     for (int i = 0; i < DUMMY.length; i++) {

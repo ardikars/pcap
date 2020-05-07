@@ -12,6 +12,10 @@ public final class Sets {
 
   private static final float HASHSET_DEFAULT_LOAD_FACTOR = 0.75f;
 
+  private Sets() {
+    //
+  }
+
   /**
    * Create an {@link HashSet} with its initialCapacity calculated to minimize rehash operations
    *

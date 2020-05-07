@@ -18,8 +18,7 @@ public class IcmpTypeAndCode extends NamedMultipleObject<MultipleObject<Byte>, I
   public static final IcmpTypeAndCode UNKNOWN =
       new IcmpTypeAndCode(MultipleObject.of((byte) -1, (byte) -1), "UNKNOWN");
 
-  private static final Map<MultipleObject<Byte>, IcmpTypeAndCode> registry =
-      new HashMap<MultipleObject<Byte>, IcmpTypeAndCode>();
+  private static final Map<MultipleObject<Byte>, IcmpTypeAndCode> registry = new HashMap<>();
 
   public IcmpTypeAndCode(MultipleObject<Byte> multiKey, String name) {
     super(multiKey, name);

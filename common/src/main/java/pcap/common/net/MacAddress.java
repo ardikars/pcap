@@ -228,7 +228,7 @@ public final class MacAddress implements Address {
     /** Default unknown OUI. */
     public static final Oui UNKNOWN = new Oui(Integer.MAX_VALUE, "UNKNOWN");
 
-    private static final Map<Integer, Oui> REGISTRY = new HashMap<Integer, Oui>();
+    private static final Map<Integer, Oui> REGISTRY = new HashMap<>();
 
     /**
      * @param value value

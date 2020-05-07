@@ -166,6 +166,30 @@ public class BytesTest {
   }
 
   @Test
+  public void toByteArrayIntegerArrayValueLE() {
+    int byteSize = 4;
+
+    int[] value = new int[] {3, 2147483643};
+    ByteBuffer byteBuffer =
+        ByteBuffer.allocate(byteSize * value.length).order(ByteOrder.LITTLE_ENDIAN);
+    for (int i = 0; i < value.length; i++) {
+      byteBuffer.putInt(value[i]);
+    }
+
+    byte[] bytes = Bytes.toByteArray(value, ByteOrder.LITTLE_ENDIAN);
+    byte[] buffer = byteBuffer.array();
+
+    Assertions.assertEquals(bytes.length, buffer.length);
+    for (int i = 0; i < byteSize; i++) {
+      Assertions.assertEquals(bytes[i], buffer[i]);
+    }
+    byteBuffer.rewind();
+    for (int i = 0; i < value.length; i++) {
+      Assertions.assertEquals(value[i], byteBuffer.getInt());
+    }
+  }
+
+  @Test
   public void toByteArrayLongValueBE() {
     int byteSize = 8;
 

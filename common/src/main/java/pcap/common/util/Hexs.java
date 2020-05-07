@@ -1,7 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.util;
 
-import java.nio.ByteBuffer;
 import java.util.regex.Pattern;
 import pcap.common.annotation.Inclubating;
 
@@ -23,41 +22,21 @@ public final class Hexs {
 
   private static final char[] HEXDUMP_TABLE;
 
-  /**
-   * {@link ByteBuffer} to hex string.
-   *
-   * @param buffer buffer.
-   * @return returns hex string.
-   */
-  public static String toHexString(final ByteBuffer buffer) {
-    return toHexString(buffer, 0, buffer.capacity());
+  static {
+    HEXDUMP_TABLE = new char[256 * 4];
+    final char[] digits = "0123456789abcdef".toCharArray();
+    for (int i = 0; i < 256; i++) {
+      HEXDUMP_TABLE[i << 1] = digits[i >>> 4 & 0x0F];
+      HEXDUMP_TABLE[(i << 1) + 1] = digits[i & 0x0F];
+    }
+  }
+
+  private Hexs() {
+    //
   }
 
   /**
-   * {@link ByteBuffer} to hex string.
-   *
-   * @param buffer buffer.
-   * @param offset offset.
-   * @param length length.
-   * @return returns hex string.
-   */
-  public static String toHexString(final ByteBuffer buffer, final int offset, final int length) {
-    if (length == 0) {
-      return "";
-    }
-    int endIndex = offset + length;
-    char[] buf = new char[length << 1];
-
-    int srcIdx = offset;
-    int dstIdx = 0;
-    for (; srcIdx < endIndex; srcIdx++, dstIdx += 2) {
-      System.arraycopy(HEXDUMP_TABLE, (buffer.get(srcIdx) & 0xFF) << 1, buf, dstIdx, 2);
-    }
-    return new String(buf);
-  }
-
-  /**
-   * {@link ByteBuffer} to hex string.
+   * {@code byte[]} to hex string.
    *
    * @param buffer buffer.
    * @return returns hex string.
@@ -67,7 +46,7 @@ public final class Hexs {
   }
 
   /**
-   * {@link ByteBuffer} to hex string.
+   * {@code byte[]} to hex string.
    *
    * @param buffer buffer.
    * @param offset offset.
@@ -125,57 +104,9 @@ public final class Hexs {
         builder.append(new String(new char[] {HEXDUMP_TABLE[index], HEXDUMP_TABLE[++index]}));
         builder.append(" ");
       }
-      while (builder.length() < 48) {
-        builder.append(" ");
-      }
       builder.append("| ");
       for (int i = 0; i < lineMax; i++) {
         char c = (char) data[pos + i];
-        if (c < 32 || c > 127) {
-          c = '.';
-        }
-        builder.append(c);
-      }
-      builder.append("\n");
-      result.append(builder);
-      builder.setLength(0);
-      pos += 16;
-    }
-    result.append(HEXDUMP_PRETTY_FOOTER);
-    return result.toString();
-  }
-
-  /**
-   * Byte buffer to hex dump format.
-   *
-   * @param buffer byte buffer.
-   * @param offset offset.
-   * @param length length.
-   * @return hex dump format.
-   * @since 1.1.0
-   */
-  public static String toPrettyHexDump(ByteBuffer buffer, int offset, int length) {
-    Validate.notInBounds(buffer.capacity(), offset, length);
-    StringBuilder result = new StringBuilder();
-    StringBuilder builder = new StringBuilder();
-    int pos = offset;
-    int max = length;
-    int lineNumber = 0;
-    builder.append(HEXDUMP_PRETTY_HEADER);
-    while (pos < max) {
-      builder.append(String.format("%08d", lineNumber++) + " | ");
-      int lineMax = Math.min(max - pos, 16);
-      for (int i = 0; i < lineMax; i++) {
-        int index = (buffer.get(pos + i) & 0xFF) << 1;
-        builder.append(new String(new char[] {HEXDUMP_TABLE[index], HEXDUMP_TABLE[++index]}));
-        builder.append(" ");
-      }
-      while (builder.length() < 48) {
-        builder.append(" ");
-      }
-      builder.append("| ");
-      for (int i = 0; i < lineMax; i++) {
-        char c = buffer.getChar(pos + i);
         if (c < 32 || c > 127) {
           c = '.';
         }
@@ -215,14 +146,5 @@ public final class Hexs {
                   + Character.digit(hexStream.charAt(i + 1), 16));
     }
     return data;
-  }
-
-  static {
-    HEXDUMP_TABLE = new char[256 * 4];
-    final char[] digits = "0123456789abcdef".toCharArray();
-    for (int i = 0; i < 256; i++) {
-      HEXDUMP_TABLE[i << 1] = digits[i >>> 4 & 0x0F];
-      HEXDUMP_TABLE[(i << 1) + 1] = digits[i & 0x0F];
-    }
   }
 }

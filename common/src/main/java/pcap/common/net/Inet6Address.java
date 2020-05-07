@@ -74,7 +74,7 @@ public final class Inet6Address extends InetAddress {
             || (stringAddress.endsWith(":") && !stringAddress.endsWith("::"))));
     String[] parts = stringAddress.split(":");
     if (containsCompressedZeroes) {
-      List<String> partsAsList = new ArrayList<String>(Arrays.asList(parts));
+      List<String> partsAsList = new ArrayList<>(Arrays.asList(parts));
       if (stringAddress.endsWith("::")) {
         partsAsList.add("");
       } else if (stringAddress.startsWith("::") && !partsAsList.isEmpty()) {

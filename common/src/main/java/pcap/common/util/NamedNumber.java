@@ -45,9 +45,6 @@ public abstract class NamedNumber<T extends Number, U extends NamedNumber<T, ?>>
     if (obj == this) {
       return true;
     }
-    if (obj.getClass() != this.getClass()) {
-      return false;
-    }
     if (!(obj instanceof NamedNumber)) {
       return false;
     }

@@ -1,25 +1,12 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import pcap.common.annotation.Inclubating;
-import pcap.common.internal.ByteBufferHelper;
-import pcap.common.internal.Unsafe;
-import pcap.common.internal.UnsafeHelper;
-import pcap.common.logging.Logger;
-import pcap.common.logging.LoggerFactory;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 class ByteBuf extends AbstractMemory<ByteBuffer> {
-
-  private static final Logger LOGGER;
-
-  static final Method CLEANER;
 
   final int baseIndex;
 
@@ -216,64 +203,11 @@ class ByteBuf extends AbstractMemory<ByteBuffer> {
 
   @Override
   public long memoryAddress() {
-    if (Unsafe.HAS_UNSAFE && isDirect()) {
-      return ByteBufferHelper.directByteBufferAddress(buffer);
-    }
     return 0;
   }
 
   @Override
   public void release() {
-    if (CLEANER != null && !isDirect()) {
-      if (System.getSecurityManager() == null) {
-        try {
-          CLEANER.invoke(UnsafeHelper.getUnsafe(), buffer);
-        } catch (Throwable cause) {
-          return;
-        }
-      } else {
-        AccessController.doPrivileged(
-            new PrivilegedAction<Void>() {
-              @Override
-              public Void run() {
-                try {
-                  CLEANER.invoke(UnsafeHelper.getUnsafe(), buffer);
-                } catch (InvocationTargetException e) {
-                  LOGGER.warn(e);
-                } catch (IllegalAccessException e) {
-                  LOGGER.warn(e);
-                }
-                return null;
-              }
-            });
-      }
-    } else {
-      LOGGER.info("Released automaticly");
-      // released automaticly by GC
-      // Is not permitted to create direct ByteBuffer without cleaner
-    }
-  }
-
-  static {
-    LOGGER = LoggerFactory.getLogger(ByteBuf.class);
-    Method method;
-    if (Unsafe.HAS_UNSAFE) {
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Unsafe is available.");
-      }
-      Unsafe unsafe = Unsafe.UNSAFE;
-      method = unsafe.bufferCleaner();
-      if (method != null) {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("ByteBuffer cleaner is available.");
-        }
-      } else {
-        LOGGER.error("ByteBuffer cleaner is not available.");
-      }
-    } else {
-      LOGGER.warn("Unsafe is not available.");
-      method = null;
-    }
-    CLEANER = method;
+    //
   }
 }

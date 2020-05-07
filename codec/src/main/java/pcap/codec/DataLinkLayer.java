@@ -11,10 +11,9 @@ import pcap.common.util.NamedNumber;
 @Inclubating
 public final class DataLinkLayer extends NamedNumber<Short, DataLinkLayer> {
 
-  private static final Map<DataLinkLayer, Short> REGISTRY = new HashMap<DataLinkLayer, Short>();
+  private static final Map<DataLinkLayer, Short> REGISTRY = new HashMap<>();
 
-  private static final Map<Short, AbstractPacket.Builder> BUILDER =
-      new HashMap<Short, AbstractPacket.Builder>();
+  private static final Map<Short, AbstractPacket.Builder> BUILDER = new HashMap<>();
 
   /** Ethernet (10Mb, 100Mb, 1000Mb, and up): 1 */
   public static final DataLinkLayer EN10MB = new DataLinkLayer((short) 1, "Ethernet");

@@ -239,8 +239,7 @@ public class Vlan extends AbstractPacket {
     public static final PriorityCodePoint NC =
         new PriorityCodePoint((byte) 7, "Network control (priority=7)");
 
-    private static final Map<Byte, PriorityCodePoint> REGISTRY =
-        new HashMap<Byte, PriorityCodePoint>();
+    private static final Map<Byte, PriorityCodePoint> REGISTRY = new HashMap<>();
 
     static {
       REGISTRY.put(BK.value(), BK);

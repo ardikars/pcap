@@ -137,7 +137,7 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
 
     public static final OptionType MTU = new OptionType((byte) 5, "MTU");
 
-    private static Map<Byte, OptionType> REGISTRY = new HashMap<Byte, OptionType>();
+    private static Map<Byte, OptionType> REGISTRY = new HashMap<>();
 
     static {
       REGISTRY.put(SOURCE_LINK_LAYER_ADDRESS.value(), SOURCE_LINK_LAYER_ADDRESS);
@@ -209,7 +209,7 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
 
   public static class Builder extends AbstractPacket.Builder {
 
-    private List<Option> options = new ArrayList<Option>();
+    private List<Option> options = new ArrayList<>();
 
     private Memory buffer;
     private Memory payloadBuffer;

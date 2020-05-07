@@ -11,11 +11,9 @@ import pcap.common.util.NamedNumber;
 @Inclubating
 public final class ApplicationLayer extends NamedNumber<Short, ApplicationLayer> {
 
-  private static final Map<ApplicationLayer, Short> REGISTRY =
-      new HashMap<ApplicationLayer, Short>();
+  private static final Map<ApplicationLayer, Short> REGISTRY = new HashMap<>();
 
-  private static final Map<Short, AbstractPacket.Builder> BUILDER =
-      new HashMap<Short, AbstractPacket.Builder>();
+  private static final Map<Short, AbstractPacket.Builder> BUILDER = new HashMap<>();
 
   public ApplicationLayer(Short value, String name) {
     super(value, name);

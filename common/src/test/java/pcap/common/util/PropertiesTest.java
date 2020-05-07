@@ -1,6 +1,8 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.util;
 
+import java.util.UUID;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -25,7 +27,9 @@ public class PropertiesTest {
 
   @Test
   public void getPropertyTest() {
-    assert Properties.getProperty("jxnet").equals("jmalloc");
+    Assertions.assertTrue(Properties.getProperty("jxnet").equals("jmalloc"));
+    Assertions.assertThrows(IllegalArgumentException.class, () -> Properties.getProperty(null, ""));
+    Assertions.assertThrows(IllegalArgumentException.class, () -> Properties.getProperty("", ""));
   }
 
   @Test
@@ -35,24 +39,37 @@ public class PropertiesTest {
 
   @Test
   public void getBooleanTest() {
-    assert Properties.getBoolean("jxnet_bool_yes", false) == true;
-    assert Properties.getBoolean("jxnet_bool_1", false) == true;
-    assert Properties.getBoolean("jxnet_bool_true", false) == true;
-    assert Properties.getBoolean("jxnet_bool_no", true) == false;
-    assert Properties.getBoolean("jxnet_bool_0", true) == false;
-    assert Properties.getBoolean("jxnet_bool_false", true) == false;
-    assert Properties.getBoolean("jxnet_bool_", false) == false;
+    Assertions.assertEquals(Properties.getBoolean("jxnet_bool_yes", false), true);
+    Assertions.assertEquals(Properties.getBoolean("jxnet_bool_1", false), true);
+    Assertions.assertEquals(Properties.getBoolean("jxnet_bool_true", false), true);
+    Assertions.assertEquals(Properties.getBoolean("jxnet_bool_no", true), false);
+    Assertions.assertEquals(Properties.getBoolean("jxnet_bool_0", true), false);
+    Assertions.assertEquals(Properties.getBoolean("jxnet_bool_false", true), false);
+    Assertions.assertEquals(Properties.getBoolean("jxnet_bool_", false), false);
+    String idEmpty = UUID.randomUUID().toString();
+    System.setProperty(idEmpty, "");
+    String idDefault = UUID.randomUUID().toString();
+    System.setProperty(idDefault, UUID.randomUUID().toString());
+    Assertions.assertEquals(Properties.getBoolean(idEmpty, true), true);
+    Assertions.assertEquals(Properties.getBoolean(idDefault, true), true);
   }
 
   @Test
   public void getIntTest() {
-    assert Properties.getInt("jxnet_int_1", 0) == 1;
-    assert Properties.getInt("jxnet_int", 0) == 0;
+    Assertions.assertEquals(Properties.getInt("jxnet_int_1", 0), 1);
+    Assertions.assertEquals(Properties.getInt("jxnet_int", 0), 0);
+    Assertions.assertEquals(Properties.getInt("jxnet_int", 0), 0);
+    String id = UUID.randomUUID().toString();
+    System.setProperty(id, "a");
+    Assertions.assertEquals(Properties.getInt(id, 0), 0);
   }
 
   @Test
   public void getLongTest() {
-    assert Properties.getLong("jxnet_long_1", 0) == 1;
-    assert Properties.getLong("jxnet_long", 0) == 0;
+    Assertions.assertEquals(Properties.getLong("jxnet_long_1", 0), 1);
+    Assertions.assertEquals(Properties.getLong("jxnet_long", 0), 0);
+    String id = UUID.randomUUID().toString();
+    System.setProperty(id, "a");
+    Assertions.assertEquals(Properties.getLong(id, 0), 0);
   }
 }

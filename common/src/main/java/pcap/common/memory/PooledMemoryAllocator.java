@@ -103,19 +103,7 @@ final class PooledMemoryAllocator implements MemoryAllocator {
   }
 
   @Override
-  public void close() {
-    Queue<PooledMemory> queue = Memories.POOLS.get(maxMemoryCapacity);
-    PooledMemory pooledMemory;
-    if (MemoryAllocator.UNSAFE_BUFFER) {
-      while ((pooledMemory = queue.poll()) != null) {
-        AbstractMemory.ACCESSOR.deallocate(pooledMemory.get().memoryAddress());
-      }
-    } else {
-      while ((pooledMemory = queue.poll()) != null) {
-        // do nothing
-      }
-    }
-  }
+  public void close() {}
 
   private Memory doAllocateForPooledMemory(
       int capacity, int maxCapacity, int readerIndex, int writerIndex, boolean checking) {

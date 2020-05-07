@@ -21,8 +21,6 @@ public class ByteBufWriterAndReaderTest extends AbstractMemoryWriterAndReaderTes
   @Override
   public void allocate() {
     memory = memoryAllocator().allocate(DEFAULT_CAPACITY, DEFAULT_CAPACITY + INT_SIZE, true);
-    Memory mem = new CheckedMemory(memory.memoryAddress(), memory.capacity(), memory.maxCapacity());
-    assert mem.memoryAddress() == memory.memoryAddress();
   }
 
   @AfterEach

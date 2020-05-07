@@ -11,8 +11,7 @@ import pcap.common.util.NamedNumber;
  */
 public final class HttpStatusCode extends NamedNumber<Integer, HttpStatusCode> {
 
-  private static final Map<Integer, HttpStatusCode> registry =
-      new HashMap<Integer, HttpStatusCode>();
+  private static final Map<Integer, HttpStatusCode> registry = new HashMap<>();
 
   public static final HttpStatusCode NOT_FOUND = new HttpStatusCode(404, "Not found.");
 

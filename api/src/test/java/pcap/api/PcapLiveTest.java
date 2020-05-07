@@ -525,8 +525,10 @@ public class PcapLiveTest {
 
     @Override
     default void gotPacket(T args, PacketHeader header, PacketBuffer buffer) {
-      ByteBuffer buteBuf = buffer.buffer();
-      String hex = Hexs.toHexString(buteBuf, 0, buteBuf.capacity());
+      ByteBuffer byteBuf = buffer.buffer();
+      byte[] bytes = new byte[byteBuf.capacity()];
+      byteBuf.get(0, bytes);
+      String hex = Hexs.toHexString(bytes, 0, byteBuf.capacity());
       gotPacket(args, header, hex);
     }
 

@@ -20,8 +20,6 @@ public class ByteBufTest extends AbstractMemoryTest {
   @Override
   public void allocate() {
     memory = memoryAllocator().allocate(DEFAULT_CAPACITY, DEFAULT_CAPACITY + INT_SIZE, true);
-    Memory mem = new CheckedMemory(memory.memoryAddress(), memory.capacity(), memory.maxCapacity());
-    assert mem.memoryAddress() == memory.memoryAddress();
   }
 
   @AfterEach
@@ -74,7 +72,7 @@ public class ByteBufTest extends AbstractMemoryTest {
   @Test
   @Override
   public void copyTest() {
-    doSliceTest();
+    doCopyTest();
   }
 
   @Test

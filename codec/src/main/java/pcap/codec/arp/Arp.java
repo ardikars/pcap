@@ -331,7 +331,7 @@ public class Arp extends AbstractPacket {
 
     public static final OperationCode UNKNOWN = new OperationCode((short) -1, "Unknown");
 
-    private static final Map<Short, OperationCode> REGISTRY = new HashMap<Short, OperationCode>();
+    private static final Map<Short, OperationCode> REGISTRY = new HashMap<>();
 
     static {
       REGISTRY.put(ARP_REQUEST.value(), ARP_REQUEST);

@@ -4,7 +4,6 @@ package pcap.common.memory;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import pcap.common.internal.Unsafe;
 
 @RunWith(JUnitPlatform.class)
 public class MemoriesTest {
@@ -35,7 +34,7 @@ public class MemoriesTest {
     for (int i = 0; i < 10; i++) {
       Memory memory = allocator.allocate(i + 1);
       if (i > 6) {
-        assert Unsafe.HAS_UNSAFE || memory instanceof ByteBuf;
+        assert memory instanceof ByteBuf;
       }
     }
     allocator.close();

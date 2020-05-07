@@ -1,17 +1,15 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.util;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import pcap.common.annotation.Inclubating;
-import pcap.common.logging.Logger;
-import pcap.common.logging.LoggerFactory;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 public final class Properties {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(Properties.class);
+  private Properties() {
+    //
+  }
 
   /**
    * Returns the value of the Java system property with the specified {@code key}, while falling
@@ -40,26 +38,7 @@ public final class Properties {
     if (key == null || key.isEmpty()) {
       throw new IllegalArgumentException("Property key should be not null");
     }
-    String value = null;
-    try {
-      if (System.getSecurityManager() == null) {
-        value = System.getProperty(key);
-      } else {
-        value =
-            AccessController.doPrivileged(
-                new PrivilegedAction<String>() {
-                  @Override
-                  public String run() {
-                    return System.getProperty(key);
-                  }
-                });
-      }
-    } catch (SecurityException e) {
-      LOGGER.warn(
-          "Unable to retrieve a system property '{}'; default values will be used: {}",
-          key,
-          e.getMessage());
-    }
+    String value = System.getProperty(key);
     if (value != null) {
       return value;
     }
@@ -116,9 +95,8 @@ public final class Properties {
     try {
       return Integer.parseInt(value);
     } catch (Exception e) {
-      // Ignore
+      return defaultValue;
     }
-    return defaultValue;
   }
 
   /**
@@ -141,8 +119,7 @@ public final class Properties {
     try {
       return Long.parseLong(value);
     } catch (Exception e) {
-      // Ignore
+      return defaultValue;
     }
-    return defaultValue;
   }
 }

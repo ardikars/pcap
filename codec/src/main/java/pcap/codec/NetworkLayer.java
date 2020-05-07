@@ -15,10 +15,9 @@ public final class NetworkLayer extends NamedNumber<Short, NetworkLayer> {
 
   public static final NetworkLayer UNKNOWN = new NetworkLayer((short) -1, "Unknown");
 
-  private static final Map<Short, NetworkLayer> REGISTRY = new HashMap<Short, NetworkLayer>();
+  private static final Map<Short, NetworkLayer> REGISTRY = new HashMap<>();
 
-  private static final Map<Short, AbstractPacket.Builder> BUILDER =
-      new HashMap<Short, AbstractPacket.Builder>();
+  private static final Map<Short, AbstractPacket.Builder> BUILDER = new HashMap<>();
 
   /** IPv4: 0x0800 */
   public static final NetworkLayer IPV4 = new NetworkLayer((short) 0x0800, "IPv4");

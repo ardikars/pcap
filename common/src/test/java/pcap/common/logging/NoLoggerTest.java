@@ -8,12 +8,12 @@ import org.junit.runner.RunWith;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @RunWith(JUnitPlatform.class)
-public class Slf4jTest extends AbstractLoggerTest {
+public class NoLoggerTest extends AbstractLoggerTest {
 
   @BeforeEach
   @Override
   public void initLogger() {
-    doInitLogger(Slf4jLoggerFactory.getInstance());
+    doInitLogger(NoLoggerFactory.getInstance());
   }
 
   @Test

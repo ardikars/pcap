@@ -3,6 +3,7 @@ package pcap.common.util;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
@@ -22,19 +23,9 @@ public final class Strings {
     if (empty(charSequence)) {
       return true;
     }
-    int isBlankCount = 9;
-    for (int i = 0; i < charSequence.length(); i++) {
-      char ch = charSequence.charAt(i);
-      if (ch == ' '
-          || ch == '\t'
-          || ch == '\r'
-          || ch == '\n'
-          || ch == '\0'
-          || Character.isWhitespace(ch)) {
-        isBlankCount++;
-      }
-    }
-    return isBlankCount == charSequence.length();
+    return charSequence
+        .chars()
+        .allMatch(ch -> ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' || ch == '\0');
   }
 
   /**
@@ -45,7 +36,7 @@ public final class Strings {
    * @param length length.
    * @return length.
    */
-  private static int length(final int dataLength, final int offset, final int length) {
+  static int length(final int dataLength, final int offset, final int length) {
     int l;
     if (dataLength != length && offset != 0) {
       l = offset + length;
@@ -281,11 +272,7 @@ public final class Strings {
    * @return hex stream.
    */
   public static String hex(final double value) {
-    String str = Double.toHexString(value);
-    if ((str.length() & 1) == 1) {
-      return "0" + str;
-    }
-    return str;
+    return Double.toHexString(value);
   }
 
   /**
@@ -323,7 +310,7 @@ public final class Strings {
    * @return hex string.
    */
   public static String hex(final String value) {
-    if (value == null) {
+    if (value == null || value.isEmpty()) {
       throw new IllegalArgumentException("Value should be not null and empty.");
     }
     return hex(value.getBytes(DEFAULT_CHARSET));
@@ -337,7 +324,7 @@ public final class Strings {
    * @return hex string.
    */
   public static String hex(final String value, Charset charset) {
-    if (value == null) {
+    if (value == null || value.isEmpty()) {
       throw new IllegalArgumentException("Value should be not null and empty.");
     }
     if (charset == null) {
@@ -350,7 +337,7 @@ public final class Strings {
     return toStringBuilder(obj, "{", "}", "=", ",", false);
   }
 
-  public static ToStringBuilder toStringJsonBuilder(Object obj) {
+  public static ToStringBuilder toStringJsonBuilder() {
     return toStringBuilder("", "{", "}", ":", ",", true);
   }
 
@@ -443,7 +430,7 @@ public final class Strings {
             } else if (value instanceof double[]) {
               arrayString = Strings.hex((double[]) value);
             } else {
-              arrayString = Arrays.toString(value);
+              arrayString = Arrays.toString((Object[]) value);
             }
             if (quoteString) {
               builder.append('\"').append(arrayString).append('\"');
@@ -462,17 +449,17 @@ public final class Strings {
       return builder.append(end).toString();
     }
 
+    private ValueHolder addHolder() {
+      ValueHolder valueHolder = new ValueHolder();
+      holderTail = holderTail.next = valueHolder;
+      return valueHolder;
+    }
+
     private static final class ValueHolder {
 
       private String name;
       private Object value;
       private ValueHolder next;
-    }
-
-    private ValueHolder addHolder() {
-      ValueHolder valueHolder = new ValueHolder();
-      holderTail = holderTail.next = valueHolder;
-      return valueHolder;
     }
   }
 }
