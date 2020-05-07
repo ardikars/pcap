@@ -18,7 +18,6 @@
  */
 package pcap.common.logging;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 final class FormattingTuple {
 
   private String message;
