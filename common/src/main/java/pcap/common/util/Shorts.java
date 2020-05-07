@@ -6,6 +6,10 @@ import java.nio.ByteOrder;
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 public class Shorts {
 
+  private Shorts() {
+    //
+  }
+
   public static short toShort(byte[] values) {
     return toShort(values, 0, ByteOrder.BIG_ENDIAN);
   }
@@ -15,7 +19,7 @@ public class Shorts {
     if (byteOrder.equals(ByteOrder.BIG_ENDIAN)) {
       return (short) ((values[offset] & 0xFF) << 8 | values[offset + 1] & 0xFF);
     } else {
-      return (short) (values[offset] & 0xFF | (values[offset + 1] & 0xFF << 8));
+      return (short) (values[offset] & 0xFF | (values[offset + 1] & 0xFF) << 8);
     }
   }
 }

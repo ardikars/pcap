@@ -6,6 +6,10 @@ import java.nio.ByteOrder;
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 public class Integers {
 
+  private Integers() {
+    //
+  }
+
   public static int toInteger(byte[] values) {
     return toInteger(values, 0, ByteOrder.BIG_ENDIAN);
   }

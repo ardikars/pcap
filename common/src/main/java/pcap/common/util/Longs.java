@@ -6,6 +6,10 @@ import java.nio.ByteOrder;
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 public class Longs {
 
+  private Longs() {
+    //
+  }
+
   public static long toLong(byte[] values) {
     return toLong(values, 0, ByteOrder.BIG_ENDIAN);
   }
