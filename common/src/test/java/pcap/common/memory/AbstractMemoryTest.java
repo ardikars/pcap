@@ -3,6 +3,7 @@ package pcap.common.memory;
 
 import java.nio.ByteBuffer;
 
+/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 abstract class AbstractMemoryTest extends BaseTest {
 
   protected Memory memory;

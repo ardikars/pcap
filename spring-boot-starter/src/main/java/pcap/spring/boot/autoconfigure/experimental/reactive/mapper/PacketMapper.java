@@ -8,6 +8,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import pcap.spring.boot.autoconfigure.experimental.reactive.Flow;
 
+/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 public class PacketMapper<IN, OUT> extends Flow<OUT> {
 
   private final Publisher<IN> parent;

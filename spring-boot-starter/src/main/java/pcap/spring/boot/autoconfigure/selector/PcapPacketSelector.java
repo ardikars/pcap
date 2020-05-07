@@ -6,6 +6,7 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 import pcap.spring.boot.autoconfigure.annotation.EnablePcapPacket;
 
+/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 public class PcapPacketSelector implements ImportSelector {
 
   @Override

@@ -1190,16 +1190,20 @@ public interface Memory {
    *
    * @return returns direct {@link ByteBuffer} with no cleaner.
    */
+  @Inclubating
   ByteBuffer nioBuffer();
 
   /** Returns {@code true} only if this buffer is an direct buffer, false otherwise. */
+  @Inclubating
   boolean isDirect();
 
   /**
    * @return returns the low-level memory address that point to the first byte of ths backing data.
    */
+  @Inclubating
   long memoryAddress();
 
   /** Deallocate/freeing this {@link Memory} buffer. */
+  @Inclubating
   void release();
 }

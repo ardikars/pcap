@@ -1,6 +1,13 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api;
 
+import java.foreign.NativeTypes;
+import java.foreign.memory.Pointer;
+import java.nio.ByteBuffer;
+import java.util.Iterator;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -15,14 +22,6 @@ import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 import pcap.spi.exception.warn.PromiscuousModeNotSupported;
-
-import java.foreign.NativeTypes;
-import java.foreign.memory.Pointer;
-import java.nio.ByteBuffer;
-import java.util.Iterator;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
 
 // @EnabledOnJre(JRE.JAVA_14)
 @RunWith(JUnitPlatform.class)

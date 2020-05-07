@@ -9,7 +9,7 @@ import pcap.common.annotation.Inclubating;
 @Inclubating
 public final class Bytes {
 
-  public Bytes() {}
+  private Bytes() {}
 
   /**
    * Byte to byte array.
@@ -42,7 +42,7 @@ public final class Bytes {
    * @since 1.0.0
    */
   public static byte[] toByteArray(final short value, final ByteOrder bo) {
-    if (bo.equals(ByteOrder.BIG_ENDIAN)) {
+    if (bo.equals(ByteOrder.LITTLE_ENDIAN)) {
       return new byte[] {(byte) (value & 0xff), (byte) (value >> 8 & 0xff)};
     } else {
       return new byte[] {(byte) (value >> 8 & 0xff), (byte) (value & 0xff)};
@@ -86,7 +86,7 @@ public final class Bytes {
       final short[] value, final int offset, final int length, final ByteOrder bo) {
     Validate.notInBounds(value, offset, length);
     byte[] array = new byte[length << 1];
-    if (bo.equals(ByteOrder.BIG_ENDIAN)) {
+    if (bo.equals(ByteOrder.LITTLE_ENDIAN)) {
       for (int i = offset; i < length; i++) {
         short x = value[i];
         int j = i << 1;
@@ -125,7 +125,7 @@ public final class Bytes {
    * @since 1.0.0
    */
   public static byte[] toByteArray(final int value, final ByteOrder bo) {
-    if (bo.equals(ByteOrder.BIG_ENDIAN)) {
+    if (bo.equals(ByteOrder.LITTLE_ENDIAN)) {
       return new byte[] {
         (byte) ((value >> 0) & 0xff),
         (byte) ((value >> 8) & 0xff),
@@ -179,7 +179,7 @@ public final class Bytes {
       final int[] value, final int offset, final int length, final ByteOrder bo) {
     Validate.notInBounds(value, offset, length);
     byte[] array = new byte[length << 2];
-    if (bo.equals(ByteOrder.BIG_ENDIAN)) {
+    if (bo.equals(ByteOrder.LITTLE_ENDIAN)) {
       for (int i = offset; i < length; i++) {
         int x = value[i];
         int j = i << 2;
@@ -222,7 +222,7 @@ public final class Bytes {
    * @since 1.0.0
    */
   public static byte[] toByteArray(final long value, final ByteOrder bo) {
-    if (bo.equals(ByteOrder.BIG_ENDIAN)) {
+    if (bo.equals(ByteOrder.LITTLE_ENDIAN)) {
       return new byte[] {
         (byte) ((value >> 0) & 0xff),
         (byte) ((value >> 8) & 0xff),
@@ -283,7 +283,7 @@ public final class Bytes {
       final long[] value, final int offset, final int length, final ByteOrder bo) {
     Validate.notInBounds(value, offset, length);
     byte[] array = new byte[length << 3];
-    if (bo.equals(ByteOrder.BIG_ENDIAN)) {
+    if (bo.equals(ByteOrder.LITTLE_ENDIAN)) {
       for (int i = offset; i < length; i++) {
         long x = value[i];
         int j = i << 3;

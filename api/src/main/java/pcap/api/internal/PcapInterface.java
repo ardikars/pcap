@@ -1,6 +1,8 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal;
 
+import java.foreign.memory.Pointer;
+import java.util.Iterator;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.api.internal.util.PcapInterfaceIterator;
 import pcap.common.annotation.Inclubating;
@@ -9,9 +11,6 @@ import pcap.common.logging.LoggerFactory;
 import pcap.common.util.Strings;
 import pcap.spi.Address;
 import pcap.spi.Interface;
-
-import java.foreign.memory.Pointer;
-import java.util.Iterator;
 
 /**
  * {@code Pcap} {@link Interface} implementation

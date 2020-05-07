@@ -6,6 +6,7 @@ import pcap.spi.Pcap;
 import pcap.spring.boot.autoconfigure.experimental.reactive.Flow;
 import pcap.spring.boot.autoconfigure.experimental.reactive.subscription.PacketSubscription;
 
+/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 public class PacketPublisher<T> extends Flow<T> {
 
   private final Pcap pcap;

@@ -22,6 +22,7 @@ import pcap.codec.udp.Udp;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 
+/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Configuration("pcapPacketAutoConfiguration")
 public class PcapPacketAutoConfiguration implements InitializingBean, ApplicationContextAware {
 

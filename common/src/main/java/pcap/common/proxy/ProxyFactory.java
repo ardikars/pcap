@@ -5,6 +5,7 @@ import pcap.common.annotation.Inclubating;
 import pcap.common.proxy.factory.ByteBuddyProxyFactory;
 import pcap.common.proxy.factory.JdkProxyFactory;
 
+/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 public abstract class ProxyFactory {
 

@@ -1,6 +1,12 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal;
 
+import java.foreign.memory.Pointer;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Iterator;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.api.internal.util.PcapAddressIterator;
 import pcap.common.annotation.Inclubating;
@@ -8,13 +14,6 @@ import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.common.util.Strings;
 import pcap.spi.Address;
-
-import java.foreign.memory.Pointer;
-import java.net.Inet4Address;
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Iterator;
 
 /**
  * {@code Pcap} {@link Address} implementation

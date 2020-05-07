@@ -19,6 +19,7 @@ import pcap.spi.Pcap;
 import pcap.spring.boot.autoconfigure.annotation.EnablePcapPacket;
 import pcap.spring.boot.autoconfigure.handler.PcapPacketHandler;
 
+/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @RequiredArgsConstructor
 @SpringBootApplication
 @EnablePcapPacket

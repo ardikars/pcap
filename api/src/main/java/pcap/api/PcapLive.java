@@ -1,6 +1,9 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api;
 
+import java.foreign.NativeTypes;
+import java.foreign.memory.Pointer;
+import java.net.Inet4Address;
 import pcap.api.internal.Pcap;
 import pcap.api.internal.PcapConstant;
 import pcap.api.internal.foreign.pcap_mapping;
@@ -13,10 +16,6 @@ import pcap.spi.Interface;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 import pcap.spi.exception.warn.PromiscuousModeNotSupported;
-
-import java.foreign.NativeTypes;
-import java.foreign.memory.Pointer;
-import java.net.Inet4Address;
 
 @Inclubating
 public class PcapLive extends Pcaps {

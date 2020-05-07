@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import pcap.common.annotation.Inclubating;
 import pcap.common.util.Objects;
 
+/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 public abstract class AbstractInvoker implements ObjectInvoker {
 
