@@ -72,6 +72,10 @@ jobs:
           echo "JAVA_HOME_8 = $JAVA_HOME_8"
           echo "JAVA_HOME_14 = $JAVA_HOME_14"
           echo "JAVA_HOME = $JAVA_HOME"
+          rm api/src/main/java/module-info.java
+          rm codec/src/main/java/module-info.java
+          rm common/src/main/java/module-info.java
+          rm spi/src/main/java/module-info.java
           ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Plegacy-support -Pformat -Psonar -Djava.library.path=/usr/lib -Dsonar.login="${{ secrets.sonar_token }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

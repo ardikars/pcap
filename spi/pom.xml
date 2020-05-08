@@ -6,7 +6,7 @@
     <parent>
         <artifactId>pcap</artifactId>
         <groupId>com.ardikars.pcap</groupId>
-        <version>0.0.10</version>
+        <version>0.0.11</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -48,6 +48,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>9</source>
+                    <target>9</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

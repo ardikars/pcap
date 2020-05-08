@@ -18,4 +18,4 @@ image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap
 
 Provides high level JVM network packet processing library for rapid development.
 
-https://pcap.ardikars.com/asciidoctor[*Documentation*]
+https://pcap.ardikars.com[*Documentation*]

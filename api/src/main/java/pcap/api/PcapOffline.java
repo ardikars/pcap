@@ -10,6 +10,7 @@ import pcap.api.internal.foreign.pcap_mapping;
 import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
+import pcap.common.util.Validate;
 import pcap.spi.exception.ErrorException;
 
 @Inclubating
@@ -66,9 +67,7 @@ public class PcapOffline extends Pcaps {
                 options.timestampPrecision().value(),
                 errbuf);
       }
-      if (pointer == null || pointer.isNull()) {
-        throw new ErrorException(Pointer.toString(errbuf));
-      }
+      Validate.notIllegalState(!pointer.isNull(), Pointer.toString(errbuf));
       return new Pcap(pointer);
     }
   }
