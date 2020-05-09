@@ -18,4 +18,12 @@ public interface PacketBuffer {
    * @since 1.0.0
    */
   ByteBuffer buffer();
+
+  /**
+   * Returns buffer capacity.
+   *
+   * @return Returns buffer capacity.
+   * @since 1.0.0
+   */
+  long capacity();
 }

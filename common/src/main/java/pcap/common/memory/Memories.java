@@ -53,9 +53,9 @@ public final class Memories {
   public static MemoryAllocator allocator(int poolSize, int maxPoolSize, int maxMemoryCapacity) {
     synchronized (Memories.class) {
       if (POOLS == null) {
-        POOLS = new ConcurrentHashMap<Integer, Queue<PooledMemory>>();
+        POOLS = new ConcurrentHashMap<>();
       }
-      return new PooledMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
+      return new DefaultPooledMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
     }
   }
 
@@ -73,7 +73,7 @@ public final class Memories {
       if (POOLS == null) {
         POOLS = new ConcurrentHashMap<Integer, Queue<PooledMemory>>();
       }
-      return new PooledMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
+      return new DirectPooledMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
     }
   }
 
@@ -91,7 +91,7 @@ public final class Memories {
       if (POOLS == null) {
         POOLS = new ConcurrentHashMap<>();
       }
-      return new PooledMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
+      return new HeapPooledMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
     }
   }
 
@@ -105,6 +105,7 @@ public final class Memories {
    * @return returns {@link Memory}.
    * @throws UnsupportedOperationException maybe unsafe is unavailable.
    */
+  @Deprecated
   public static Memory wrap(long memoryAddress, int size) throws UnsupportedOperationException {
     return wrap(memoryAddress, size, true);
   }
@@ -119,6 +120,7 @@ public final class Memories {
    * @return returns {@link Memory}.
    * @throws UnsupportedOperationException maybe unsafe is unavailable.
    */
+  @Deprecated
   public static Memory wrap(long memoryAddress, int size, boolean checking)
       throws UnsupportedOperationException {
     Validate.notIllegalArgument(size > 0, String.format("size: %d (expected: > 0)", size));
@@ -132,7 +134,9 @@ public final class Memories {
    * @return returns {@link Memory}.
    */
   public static Memory wrap(ByteBuffer buffer) {
-    return wrap(buffer, true);
+    Validate.notIllegalArgument(buffer != null, "buffer: null (expected: non null)");
+    Memory memory = new ByteBuf(0, buffer, buffer.capacity(), buffer.capacity(), 0, 0);
+    return memory;
   }
 
   /**
@@ -143,6 +147,7 @@ public final class Memories {
    *     bounds checking.
    * @return returns {@link Memory}.
    */
+  @Deprecated
   public static Memory wrap(ByteBuffer buffer, boolean checking) {
     Validate.notIllegalArgument(buffer != null, "buffer: null (expected: non null)");
     Memory memory = new ByteBuf(0, buffer, buffer.capacity(), buffer.capacity(), 0, 0);
@@ -191,6 +196,8 @@ public final class Memories {
     return memory;
   }
 
+  /** Assember */
+
   /**
    * Assemble (combining) memory buffers (copying memories into single buffer).
    *
@@ -213,19 +220,79 @@ public final class Memories {
     return memory;
   }
 
+  /**
+   * Assemble (combining) memory buffers (copying memories into single buffer).
+   *
+   * @return returns new direct {@link Memory} instance.
+   */
+  public static Memory assemble(Memory m1, Memory m2) {
+    return assemble(new Memory[] {m1, m2});
+  }
+
+  /**
+   * Assemble (combining) memory buffers (copying memories into single buffer).
+   *
+   * @return returns new direct {@link Memory} instance.
+   */
+  public static Memory assemble(Memory m1, Memory m2, Memory m3) {
+    return assemble(new Memory[] {m1, m2, m3});
+  }
+
+  /**
+   * Assemble (combining) memory buffers (copying memories into single buffer).
+   *
+   * @return returns new direct {@link Memory} instance.
+   */
+  public static Memory assemble(Memory m1, Memory m2, Memory m3, Memory m4) {
+    return assemble(new Memory[] {m1, m2, m3, m4});
+  }
+
+  /**
+   * Assemble (combining) memory buffers (copying memories into single buffer).
+   *
+   * @return returns new direct {@link Memory} instance.
+   */
+  public static Memory assemble(Memory m1, Memory m2, Memory m3, Memory m4, Memory m5) {
+    return assemble(new Memory[] {m1, m2, m3, m4, m5});
+  }
+
+  /**
+   * Assemble (combining) memory buffers (copying memories into single buffer).
+   *
+   * @return returns new direct {@link Memory} instance.
+   */
+  public static Memory assemble(Memory m1, Memory m2, Memory m3, Memory m4, Memory m5, Memory m6) {
+    return assemble(new Memory[] {m1, m2, m3, m4, m5, m6});
+  }
+
+  /**
+   * Assemble (combining) memory buffers (copying memories into single buffer).
+   *
+   * @return returns new direct {@link Memory} instance.
+   */
+  public static Memory assemble(
+      Memory m1, Memory m2, Memory m3, Memory m4, Memory m5, Memory m6, Memory m7) {
+    return assemble(new Memory[] {m1, m2, m3, m4, m5, m6, m7});
+  }
+
+  /**
+   * Pooling buffer
+   *
+   * @param memory
+   */
   static void offer(Memory memory) {
-    //    if (memory instanceof Pooled) {
-    POOLS.get(memory.maxCapacity()).offer(new PooledMemory(memory));
-    //    }
+    if (memory instanceof Pooled) {
+      POOLS.get(memory.maxCapacity()).offer(new PooledMemory(memory));
+    }
   }
 
   static Memory poll(int maxCapacity) {
     PooledMemory pooledMemory = POOLS.get(maxCapacity).poll();
     if (pooledMemory != null) {
       Memory memory = pooledMemory.get();
-      //      if (memory instanceof Pooled) {
-      return memory;
-      //      }
+      if (memory instanceof Pooled) {
+        return memory;
+      }
     }
     return null;
   }

@@ -6,7 +6,7 @@ import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-class ByteBuf extends AbstractMemory<ByteBuffer> {
+public class ByteBuf extends AbstractMemory<ByteBuffer> {
 
   final int baseIndex;
 
@@ -32,15 +32,16 @@ class ByteBuf extends AbstractMemory<ByteBuffer> {
   @Override
   public Memory capacity(int newCapacity) {
     checkNewCapacity(newCapacity);
-    ByteBuffer newBuffer = ByteBuffer.allocateDirect(newCapacity);
+    ByteBuffer newBuffer;
     int oldCapacity = buffer.capacity();
     buffer.position(0);
     if (oldCapacity <= newCapacity) {
       buffer.limit(buffer.capacity());
-      newBuffer.put(buffer);
+      newBuffer = buffer;
     } else {
       buffer.limit(oldCapacity);
       buffer.limit(newCapacity - 1);
+      newBuffer = ByteBuffer.allocateDirect(newCapacity);
       newBuffer.put(buffer.slice());
     }
     buffer = newBuffer;

@@ -1,6 +1,7 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
+import java.nio.ByteBuffer;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -8,29 +9,27 @@ import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-final class PooledMemoryAllocator implements MemoryAllocator {
+final class HeapPooledMemoryAllocator implements MemoryAllocator {
 
   private final int poolSize;
   private final int maxMemoryCapacity;
 
   private final AtomicInteger moreMemoryCounter;
 
-  private final MemoryAllocator defaultMemoryAllocator = new DefaultMemoryAllocator();
-
-  PooledMemoryAllocator(int maxMemoryCapacity) {
+  HeapPooledMemoryAllocator(MemoryAllocator memoryAllocator, int maxMemoryCapacity) {
     this(
         Math.max(Runtime.getRuntime().availableProcessors(), 15),
         Math.max(Runtime.getRuntime().availableProcessors() * 2, 15),
         maxMemoryCapacity);
   }
 
-  PooledMemoryAllocator(int poolSize, int maxPoolSize, int maxMemoryCapacity) {
+  HeapPooledMemoryAllocator(int poolSize, int maxPoolSize, int maxMemoryCapacity) {
     this.poolSize = poolSize;
     this.maxMemoryCapacity = maxMemoryCapacity;
     this.moreMemoryCounter = new AtomicInteger(maxPoolSize - poolSize);
     Queue<PooledMemory> queue = new ConcurrentLinkedQueue<PooledMemory>();
     for (int i = 0; i < poolSize; i++) {
-      Memory memory = doAllocateForPooledMemory(maxMemoryCapacity, maxMemoryCapacity, 0, 0, false);
+      Memory memory = doAllocateForPooledMemory(maxMemoryCapacity, maxMemoryCapacity, 0, 0);
       queue.offer(new PooledMemory(memory));
     }
     Memories.POOLS.put(maxMemoryCapacity, queue);
@@ -42,28 +41,12 @@ final class PooledMemoryAllocator implements MemoryAllocator {
   }
 
   @Override
-  public Memory allocate(int capacity, boolean checking) {
-    return allocate(capacity, capacity, false);
-  }
-
-  @Override
   public Memory allocate(int capacity, int maxCapacity) {
-    return allocate(capacity, maxCapacity, false);
-  }
-
-  @Override
-  public Memory allocate(int capacity, int maxCapacity, boolean checking) {
-    return allocate(capacity, maxCapacity, 0, 0, false);
+    return allocate(capacity, maxCapacity, 0, 0);
   }
 
   @Override
   public Memory allocate(int capacity, int maxCapacity, int readerIndex, int writerIndex) {
-    return allocate(capacity, maxCapacity, readerIndex, writerIndex, false);
-  }
-
-  @Override
-  public Memory allocate(
-      int capacity, int maxCapacity, int readerIndex, int writerIndex, boolean checking) {
     if (capacity > maxMemoryCapacity) {
       throw new IllegalArgumentException(
           String.format("capacity: %d <= %d", capacity, maxMemoryCapacity));
@@ -79,21 +62,18 @@ final class PooledMemoryAllocator implements MemoryAllocator {
     } else {
       if (moreMemoryCounter.get() > poolSize) {
         for (int i = 0; i < poolSize; i++) {
-          Memory newMemory =
-              doAllocateForPooledMemory(maxMemoryCapacity, maxMemoryCapacity, 0, 0, checking);
+          Memory newMemory = doAllocateForPooledMemory(maxMemoryCapacity, maxMemoryCapacity, 0, 0);
           Memories.offer(newMemory);
           moreMemoryCounter.decrementAndGet();
         }
       } else {
         if (moreMemoryCounter.get() == 0) {
           // allocate non pooled buffer
-          Memory newMemory =
-              doAllocateForPooledMemory(maxMemoryCapacity, maxMemoryCapacity, 0, 0, checking);
+          Memory newMemory = doAllocateForPooledMemory(maxMemoryCapacity, maxMemoryCapacity, 0, 0);
           return newMemory;
         }
         while (moreMemoryCounter.get() > 0) {
-          Memory newMemory =
-              doAllocateForPooledMemory(maxMemoryCapacity, maxMemoryCapacity, 0, 0, checking);
+          Memory newMemory = doAllocateForPooledMemory(maxMemoryCapacity, maxMemoryCapacity, 0, 0);
           Memories.offer(newMemory);
           moreMemoryCounter.decrementAndGet();
         }
@@ -106,8 +86,8 @@ final class PooledMemoryAllocator implements MemoryAllocator {
   public void close() {}
 
   private Memory doAllocateForPooledMemory(
-      int capacity, int maxCapacity, int readerIndex, int writerIndex, boolean checking) {
-    return defaultMemoryAllocator.allocate(
-        capacity, maxCapacity, readerIndex, writerIndex, checking);
+      int capacity, int maxCapacity, int readerIndex, int writerIndex) {
+    ByteBuffer buffer = ByteBuffer.allocate(capacity);
+    return new PooledByteBuf(0, buffer, capacity, maxCapacity, readerIndex, writerIndex);
   }
 }

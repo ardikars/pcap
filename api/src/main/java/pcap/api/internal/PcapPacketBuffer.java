@@ -17,25 +17,33 @@ public class PcapPacketBuffer implements PacketBuffer {
   Pointer<Pointer<Byte>> ptr;
   Pointer<Byte> ref;
   ByteBuffer buffer;
+  long capacity;
 
-  private PcapPacketBuffer(Pointer<Pointer<Byte>> ptr, Pointer<Byte> ref, ByteBuffer buffer) {
+  private PcapPacketBuffer(
+      Pointer<Pointer<Byte>> ptr, Pointer<Byte> ref, ByteBuffer buffer, long capacity) {
     this.ptr = ptr;
     this.ref = ref;
     this.buffer = buffer;
+    this.capacity = capacity;
   }
 
   public static PcapPacketBuffer fromPointer(Pointer<Pointer<Byte>> pointer, int size) {
     ByteBuffer buffer = pointer.get().asDirectByteBuffer(size);
-    return new PcapPacketBuffer(pointer, pointer.get(), buffer);
+    return new PcapPacketBuffer(pointer, pointer.get(), buffer, size);
   }
 
   public static PcapPacketBuffer fromReference(Pointer<Byte> reference, int size) {
     ByteBuffer buffer = reference.asDirectByteBuffer(size);
-    return new PcapPacketBuffer(null, reference, buffer);
+    return new PcapPacketBuffer(null, reference, buffer, size);
   }
 
   @Override
   public ByteBuffer buffer() {
     return buffer;
+  }
+
+  @Override
+  public long capacity() {
+    return capacity;
   }
 }

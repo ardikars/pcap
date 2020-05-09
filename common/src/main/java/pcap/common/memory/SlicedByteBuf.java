@@ -6,7 +6,7 @@ import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-class SlicedByteBuf extends ByteBuf implements Sliced {
+public class SlicedByteBuf extends ByteBuf implements Sliced {
 
   SlicedByteBuf(int capacity, int maxCapacity) {
     this(capacity, maxCapacity, 0, 0);

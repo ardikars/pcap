@@ -6,7 +6,7 @@ import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-class PooledSlicedByteBuf extends PooledByteBuf implements Pooled {
+public class PooledSlicedByteBuf extends PooledByteBuf implements Pooled {
 
   PooledSlicedByteBuf(int capacity, int maxCapacity) {
     super(capacity, maxCapacity);

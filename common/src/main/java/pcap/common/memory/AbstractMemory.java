@@ -7,7 +7,7 @@ import pcap.common.util.Strings;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-abstract class AbstractMemory<B> implements Memory {
+public abstract class AbstractMemory<B> implements Memory {
 
   B buffer;
 

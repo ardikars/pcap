@@ -7,7 +7,7 @@ import pcap.common.util.Validate;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-class PooledByteBuf extends ByteBuf implements Pooled {
+public class PooledByteBuf extends ByteBuf implements Pooled {
 
   PooledByteBuf(int capacity, int maxCapacity) {
     super(capacity, maxCapacity);

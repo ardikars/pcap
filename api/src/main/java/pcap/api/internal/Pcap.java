@@ -17,6 +17,7 @@ import pcap.api.internal.foreign.pcap_mapping;
 import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
+import pcap.common.util.Validate;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
@@ -328,10 +329,15 @@ public class Pcap implements pcap.spi.Pcap {
    * Sends a raw packet through the network interface.
    *
    * @param buffer the data of the packet, including the link-layer header.
+   * @param size the number of bytes in the packet.
    * @throws ErrorException generic error.
    */
-  public void send(ByteBuffer buffer) throws ErrorException {
-    send(buffer, buffer.capacity());
+  @Override
+  public void send(ByteBuffer buffer, int size) throws ErrorException {
+    int result = PcapConstant.MAPPING.pcap_sendpacket(pcap, Pointer.fromByteBuffer(buffer), size);
+    if (result < 0) {
+      throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
+    }
   }
 
   /**
@@ -342,8 +348,15 @@ public class Pcap implements pcap.spi.Pcap {
    * @throws ErrorException generic error.
    */
   @Override
-  public void send(ByteBuffer buffer, int size) throws ErrorException {
-    int result = PcapConstant.MAPPING.pcap_sendpacket(pcap, Pointer.fromByteBuffer(buffer), size);
+  public void send(PacketBuffer buffer, int size) throws ErrorException {
+    Validate.notIllegalArgument(
+        buffer.capacity() >= size,
+        String.format(
+            "buffer.capacity(%d) (expected: buffer.capacity(%d) >= size(%d)",
+            buffer.capacity(), buffer.capacity(), size));
+    ByteBuffer byteBuffer = buffer.buffer();
+    int result =
+        PcapConstant.MAPPING.pcap_sendpacket(pcap, Pointer.fromByteBuffer(byteBuffer), size);
     if (result < 0) {
       throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
     }

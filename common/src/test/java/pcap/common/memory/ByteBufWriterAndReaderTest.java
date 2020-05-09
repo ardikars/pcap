@@ -20,7 +20,7 @@ public class ByteBufWriterAndReaderTest extends AbstractMemoryWriterAndReaderTes
   @BeforeEach
   @Override
   public void allocate() {
-    memory = memoryAllocator().allocate(DEFAULT_CAPACITY, DEFAULT_CAPACITY + INT_SIZE, true);
+    memory = memoryAllocator().allocate(DEFAULT_CAPACITY, DEFAULT_CAPACITY + INT_SIZE);
   }
 
   @AfterEach

@@ -2,6 +2,7 @@
 package pcap.common.memory;
 
 import pcap.common.annotation.Inclubating;
+import pcap.common.util.Validate;
 
 /**
  * Polled memory wrapper.
@@ -9,11 +10,12 @@ import pcap.common.annotation.Inclubating;
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
 @Inclubating
-class PooledMemory {
+public class PooledMemory {
 
   private Memory memory;
 
   public PooledMemory(Memory referent) {
+    Validate.notIllegalArgument(referent instanceof Pooled, "Referent must be pooled memory.");
     this.memory = referent;
   }
 

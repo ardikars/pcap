@@ -10,32 +10,16 @@ final class DirectMemoryAllocator implements MemoryAllocator {
 
   @Override
   public Memory allocate(int capacity) {
-    return allocate(capacity, 0, 0, 0, false);
-  }
-
-  @Override
-  public Memory allocate(int capacity, boolean checking) {
-    return allocate(capacity, capacity, 0, 0, checking);
+    return allocate(capacity, capacity);
   }
 
   @Override
   public Memory allocate(int capacity, int maxCapacity) {
-    return allocate(capacity, maxCapacity, 0, 0, false);
-  }
-
-  @Override
-  public Memory allocate(int capacity, int maxCapacity, boolean checking) {
-    return allocate(capacity, maxCapacity, 0, 0, checking);
+    return allocate(capacity, maxCapacity, 0, 0);
   }
 
   @Override
   public Memory allocate(int capacity, int maxCapacity, int readerIndex, int writerIndex) {
-    return allocate(capacity, maxCapacity, readerIndex, writerIndex, false);
-  }
-
-  @Override
-  public Memory allocate(
-      int capacity, int maxCapacity, int readerIndex, int writerIndex, boolean checking) {
     ByteBuffer buffer = ByteBuffer.allocateDirect(capacity);
     Memory memory = new ByteBuf(0, buffer, capacity, maxCapacity, readerIndex, writerIndex);
     return memory;
