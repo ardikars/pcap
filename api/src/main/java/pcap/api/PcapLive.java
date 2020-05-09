@@ -11,7 +11,6 @@ import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.common.util.Objects;
-import pcap.common.util.Validate;
 import pcap.spi.Interface;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
@@ -49,7 +48,7 @@ public class PcapLive extends Pcaps {
       Pointer<pcap_mapping.pcap> pointer =
           PcapConstant.MAPPING.pcap_create(
               PcapConstant.SCOPE.allocateCString(source.name()), errbuf);
-      Validate.notIllegalState(!pointer.isNull(), Pointer.toString(errbuf));
+      nullCheck(pointer, errbuf);
       checkSetSnaplen(PcapConstant.MAPPING.pcap_set_snaplen(pointer, options.snapshotLength()));
       checkSetPromisc(
           PcapConstant.MAPPING.pcap_set_promisc(pointer, options.isPromiscuous() ? 1 : 0));
@@ -197,5 +196,11 @@ public class PcapLive extends Pcaps {
       }
     }
     return netmask;
+  }
+
+  void nullCheck(Pointer<pcap_mapping.pcap> pointer, Pointer<Byte> errbuf) {
+    if (pointer == null || pointer.isNull()) {
+      throw new IllegalStateException(Pointer.toString(errbuf));
+    }
   }
 }

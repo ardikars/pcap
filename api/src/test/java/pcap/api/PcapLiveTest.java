@@ -451,6 +451,18 @@ public class PcapLiveTest {
   }
 
   @Test
+  public void nullCheckTest() throws ErrorException {
+    Interface source = Pcaps.lookupInterfaces();
+    PcapLive live = new PcapLive(source);
+    Pointer<Byte> errbuf = PcapConstant.SCOPE.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
+    Pointer<pcap_mapping.pcap> pointer =
+        PcapConstant.MAPPING.pcap_create(PcapConstant.SCOPE.allocateCString(source.name()), errbuf);
+    live.nullCheck(pointer, errbuf);
+    Pointer<pcap_mapping.pcap> errPtr = PcapConstant.MAPPING.pcap_create(Pointer.ofNull(), errbuf);
+    Assertions.assertThrows(IllegalStateException.class, () -> live.nullCheck(errPtr, errbuf));
+  }
+
+  @Test
   public void pcapLiveOptions() {
     Assertions.assertNotNull(
         new PcapLiveOptions()

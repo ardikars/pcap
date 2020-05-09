@@ -1,12 +1,16 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api;
 
+import java.foreign.NativeTypes;
+import java.foreign.memory.Pointer;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import pcap.api.internal.PcapConstant;
+import pcap.api.internal.foreign.pcap_mapping;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.spi.Pcap;
@@ -26,14 +30,14 @@ public class PcapOfflineTest {
 
   @Test
   public void offlineTest() throws ErrorException {
-    Pcap pcap = Pcaps.offline(new PcapOffline(FILE));
+    Pcap pcap = Pcaps.offline(new PcapOffline(new File(FILE)));
     Assertions.assertNotNull(pcap);
     pcap.close();
   }
 
   @Test
   public void offlineLoopTest() throws ErrorException {
-    Pcap pcap = Pcaps.offline(new PcapOffline(FILE));
+    Pcap pcap = Pcaps.offline(new PcapOffline(new File(FILE)));
     Assertions.assertNotNull(pcap);
     try {
       pcap.loop(
@@ -65,7 +69,7 @@ public class PcapOfflineTest {
 
   @Test
   public void offlineFilterTest() throws ErrorException {
-    Pcap pcap = Pcaps.offline(new PcapOffline(FILE));
+    Pcap pcap = Pcaps.offline(new PcapOffline(new File(FILE)));
     Assertions.assertNotNull(pcap);
     pcap.setFilter(FILTER, true);
     try {
@@ -91,7 +95,7 @@ public class PcapOfflineTest {
 
   @Test
   public void liveLoopBreakTest() throws ErrorException {
-    Pcap pcap = Pcaps.offline(new PcapOffline(FILE));
+    Pcap pcap = Pcaps.offline(new PcapOffline(new File(FILE)));
     Assertions.assertNotNull(pcap);
     try {
       AtomicInteger counter = new AtomicInteger();
@@ -170,5 +174,19 @@ public class PcapOfflineTest {
       LOGGER.warn(e);
     }
     pcap.close();
+  }
+
+  @Test
+  public void nullCheckTest() throws ErrorException {
+    PcapOffline offline = new PcapOffline(new File(FILE));
+    Pointer<Byte> errbuf = PcapConstant.SCOPE.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
+    Pointer<Byte> source = PcapConstant.SCOPE.allocateCString(new File(FILE).getAbsolutePath());
+
+    Pointer<pcap_mapping.pcap> pointer = PcapConstant.MAPPING.pcap_open_offline(source, errbuf);
+    offline.nullCheck(pointer, errbuf);
+
+    Pointer<pcap_mapping.pcap> errPtr =
+        PcapConstant.MAPPING.pcap_open_offline(Pointer.ofNull(), errbuf);
+    Assertions.assertThrows(IllegalStateException.class, () -> offline.nullCheck(errPtr, errbuf));
   }
 }
