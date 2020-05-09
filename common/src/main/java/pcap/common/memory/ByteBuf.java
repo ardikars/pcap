@@ -1,8 +1,9 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
-import java.nio.ByteBuffer;
 import pcap.common.annotation.Inclubating;
+
+import java.nio.ByteBuffer;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -32,21 +33,16 @@ public class ByteBuf extends AbstractMemory<ByteBuffer> {
   @Override
   public Memory capacity(int newCapacity) {
     checkNewCapacity(newCapacity);
-    ByteBuffer newBuffer;
-    int oldCapacity = buffer.capacity();
-    buffer.position(0);
-    if (oldCapacity <= newCapacity) {
-      buffer.limit(buffer.capacity());
-      newBuffer = buffer;
+    if (newCapacity > capacity) {
+      if (buffer.isDirect()) {
+        buffer = ByteBuffer.allocateDirect(newCapacity);
+      } else {
+        buffer = ByteBuffer.allocate(newCapacity);
+      }
     } else {
-      buffer.limit(oldCapacity);
-      buffer.limit(newCapacity - 1);
-      newBuffer = ByteBuffer.allocateDirect(newCapacity);
-      newBuffer.put(buffer.slice());
+      buffer.limit(newCapacity);
     }
-    buffer = newBuffer;
     this.capacity = newCapacity;
-    this.maxCapacity = maxCapacity > newCapacity ? maxCapacity : newCapacity;
     return this;
   }
 
@@ -186,10 +182,8 @@ public class ByteBuf extends AbstractMemory<ByteBuffer> {
 
   @Override
   public Memory duplicate() {
-    ByteBuf duplicated =
-        new ByteBuf(
-            baseIndex, buffer.duplicate(), capacity(), maxCapacity(), readerIndex(), writerIndex());
-    return duplicated;
+    return new ByteBuf(
+        baseIndex, buffer.duplicate(), capacity(), maxCapacity(), readerIndex(), writerIndex());
   }
 
   @Override

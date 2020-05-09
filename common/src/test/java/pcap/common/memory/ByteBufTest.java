@@ -1,10 +1,13 @@
 package pcap.common.memory;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+
+import java.nio.ByteBuffer;
 
 @RunWith(JUnitPlatform.class)
 public class ByteBufTest extends AbstractMemoryTest {
@@ -78,7 +81,7 @@ public class ByteBufTest extends AbstractMemoryTest {
   @Test
   @Override
   public void sliceTest() {
-    doCopyTest();
+    doSliceTest();
   }
 
   @Test
@@ -90,18 +93,18 @@ public class ByteBufTest extends AbstractMemoryTest {
   @Test
   @Override
   public void newCapacityTest() {
-    // doNewCapacityTest();
+     doNewCapacityTest();
   }
 
   @Test
   @Override
   public void duplicateTest() {
-    // doDuplicateTest();
+     doDuplicateTest();
   }
 
   @Test
   @Override
   public void nioBufferTest() {
-    // doNioBufferTest();
+     doNioBufferTest();
   }
 }
