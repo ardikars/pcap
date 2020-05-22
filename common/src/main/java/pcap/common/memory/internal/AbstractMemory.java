@@ -1,38 +1,29 @@
 /** This code is licenced under the GPL version 2. */
-package pcap.common.memory;
+package pcap.common.memory.internal;
 
 import java.nio.charset.Charset;
 import pcap.common.annotation.Inclubating;
+import pcap.common.memory.Memory;
 import pcap.common.util.Strings;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 public abstract class AbstractMemory<B> implements Memory {
 
-  B buffer;
+  protected B buffer;
 
-  int capacity;
-  int maxCapacity;
+  protected int capacity;
+  protected int maxCapacity;
 
-  int writtenBytes = 0;
-
+  protected int writtenBytes = 0;
+  protected boolean freed;
   private int readerIndex;
   private int writerIndex;
-
   private int markedReaderIndex;
   private int markedWriterIndex;
 
-  protected boolean freed;
-
-  AbstractMemory(int capacity, int maxCapacity) {
-    this(capacity, maxCapacity, 0, 0);
-  }
-
-  AbstractMemory(int capacity, int maxCapacity, int readerIndex, int writerIndex) {
-    this(null, capacity, maxCapacity, readerIndex, writerIndex);
-  }
-
-  AbstractMemory(B buffer, int capacity, int maxCapacity, int readerIndex, int writerIndex) {
+  protected AbstractMemory(
+      B buffer, int capacity, int maxCapacity, int readerIndex, int writerIndex) {
     this.capacity = capacity;
     this.maxCapacity = maxCapacity;
     this.readerIndex = readerIndex;
@@ -732,7 +723,7 @@ public abstract class AbstractMemory<B> implements Memory {
     return (index | length | (index + length) | (capacity - (index + length))) < 0;
   }
 
-  void checkNewCapacity(int newCapacity) {
+  protected void checkNewCapacity(int newCapacity) {
     if (newCapacity < 0 || newCapacity > maxCapacity()) {
       throw new IllegalArgumentException(
           "newCapacity: " + newCapacity + " (expected: 0-" + maxCapacity() + ')');

@@ -2,10 +2,12 @@
 package pcap.common.memory;
 
 import java.nio.ByteBuffer;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
 import pcap.common.annotation.Inclubating;
+import pcap.common.memory.internal.allocator.DirectMemoryAllocator;
+import pcap.common.memory.internal.allocator.HeapMemoryAllocator;
+import pcap.common.memory.internal.allocator.PooledDirectMemoryAllocator;
+import pcap.common.memory.internal.allocator.PooledHeapMemoryAllocator;
+import pcap.common.memory.internal.nio.DirectByteBuffer;
 import pcap.common.util.Hexs;
 import pcap.common.util.Validate;
 
@@ -13,15 +15,13 @@ import pcap.common.util.Validate;
 @Inclubating
 public final class Memories {
 
-  static Map<Integer, Queue<PooledMemory>> POOLS;
-
   /**
    * Get default memory allocator.
    *
    * @return returns default memory allocator.
    */
   public static MemoryAllocator allocator() {
-    return new DefaultMemoryAllocator();
+    return new HeapMemoryAllocator();
   }
 
   /**
@@ -34,15 +34,6 @@ public final class Memories {
   }
 
   /**
-   * Get heap memory allocator.
-   *
-   * @return returns heap memory allocator.
-   */
-  public static MemoryAllocator heapAllocator() {
-    return new HeapMemoryAllocator();
-  }
-
-  /**
    * Get pooled memory allocator.
    *
    * @param poolSize pool size.
@@ -52,10 +43,7 @@ public final class Memories {
    */
   public static MemoryAllocator allocator(int poolSize, int maxPoolSize, int maxMemoryCapacity) {
     synchronized (Memories.class) {
-      if (POOLS == null) {
-        POOLS = new ConcurrentHashMap<>();
-      }
-      return new DefaultPooledMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
+      return new PooledHeapMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
     }
   }
 
@@ -70,28 +58,7 @@ public final class Memories {
   public static MemoryAllocator directAllocator(
       int poolSize, int maxPoolSize, int maxMemoryCapacity) {
     synchronized (Memories.class) {
-      if (POOLS == null) {
-        POOLS = new ConcurrentHashMap<Integer, Queue<PooledMemory>>();
-      }
-      return new DirectPooledMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
-    }
-  }
-
-  /**
-   * Get pooled heap memory allocator.
-   *
-   * @param poolSize pool size.
-   * @param maxPoolSize maximum pool size.
-   * @param maxMemoryCapacity memory capacity per buffer.
-   * @return returns pooled {@link MemoryAllocator}.
-   */
-  public static MemoryAllocator heapAllocator(
-      int poolSize, int maxPoolSize, int maxMemoryCapacity) {
-    synchronized (Memories.class) {
-      if (POOLS == null) {
-        POOLS = new ConcurrentHashMap<>();
-      }
-      return new HeapPooledMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
+      return new PooledDirectMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
     }
   }
 
@@ -135,7 +102,7 @@ public final class Memories {
    */
   public static Memory wrap(ByteBuffer buffer) {
     Validate.notIllegalArgument(buffer != null, "buffer: null (expected: non null)");
-    Memory memory = new ByteBuf(0, buffer, buffer.capacity(), buffer.capacity(), 0, 0);
+    Memory memory = new DirectByteBuffer(0, buffer, buffer.capacity(), buffer.capacity(), 0, 0);
     return memory;
   }
 
@@ -150,7 +117,7 @@ public final class Memories {
   @Deprecated
   public static Memory wrap(ByteBuffer buffer, boolean checking) {
     Validate.notIllegalArgument(buffer != null, "buffer: null (expected: non null)");
-    Memory memory = new ByteBuf(0, buffer, buffer.capacity(), buffer.capacity(), 0, 0);
+    Memory memory = new DirectByteBuffer(0, buffer, buffer.capacity(), buffer.capacity(), 0, 0);
     return memory;
   }
 
@@ -161,7 +128,7 @@ public final class Memories {
    * @return returns {@link Memory}.
    */
   public static Memory wrap(CharSequence hexStream) {
-    Memory memory = wrap(hexStream, true, new DefaultMemoryAllocator());
+    Memory memory = wrap(hexStream, true, allocator());
     return memory;
   }
 
@@ -192,7 +159,8 @@ public final class Memories {
   public static Memory wrap(byte[] bytes, boolean checking) {
     Validate.notIllegalArgument(
         bytes != null, String.format("hexStream: null (expected: non null)"));
-    Memory memory = new ByteBuf(0, ByteBuffer.wrap(bytes), bytes.length, bytes.length, 0, 0);
+    Memory memory =
+        new DirectByteBuffer(0, ByteBuffer.wrap(bytes), bytes.length, bytes.length, 0, 0);
     return memory;
   }
 
@@ -273,27 +241,5 @@ public final class Memories {
   public static Memory assemble(
       Memory m1, Memory m2, Memory m3, Memory m4, Memory m5, Memory m6, Memory m7) {
     return assemble(new Memory[] {m1, m2, m3, m4, m5, m6, m7});
-  }
-
-  /**
-   * Pooling buffer
-   *
-   * @param memory
-   */
-  static void offer(Memory memory) {
-    if (memory instanceof Pooled) {
-      POOLS.get(memory.maxCapacity()).offer(new PooledMemory(memory));
-    }
-  }
-
-  static Memory poll(int maxCapacity) {
-    PooledMemory pooledMemory = POOLS.get(maxCapacity).poll();
-    if (pooledMemory != null) {
-      Memory memory = pooledMemory.get();
-      if (memory instanceof Pooled) {
-        return memory;
-      }
-    }
-    return null;
   }
 }

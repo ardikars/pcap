@@ -1,22 +1,15 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
+import org.junit.jupiter.api.Assertions;
+
 import java.nio.ByteBuffer;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 abstract class AbstractMemoryTest extends BaseTest {
 
-  protected Memory memory;
-
-  protected abstract MemoryAllocator memoryAllocator();
-
-  public abstract void allocate();
-
-  public abstract void deallocate();
-
-  public abstract void capacityAndMaxCapacityTest();
-
   private final boolean pooled;
+  protected Memory memory;
 
   AbstractMemoryTest() {
     pooled = false;
@@ -25,6 +18,14 @@ abstract class AbstractMemoryTest extends BaseTest {
   AbstractMemoryTest(boolean pooled) {
     this.pooled = pooled;
   }
+
+  protected abstract MemoryAllocator memoryAllocator();
+
+  public abstract void allocate();
+
+  public abstract void deallocate();
+
+  public abstract void capacityAndMaxCapacityTest();
 
   protected void doCapacityAndMaxCapacityTest() {
     assert memory.capacity() == DEFAULT_CAPACITY;
@@ -151,15 +152,24 @@ abstract class AbstractMemoryTest extends BaseTest {
     }
     memory.readShort();
     Memory sliced = memory.slice();
-    if (!(sliced instanceof ByteBuf)) {
-      assert sliced.memoryAddress() - 2 == memory.memoryAddress();
-    }
+    //    if (!(sliced instanceof DirectByteBuffer)) {
+    //      assert sliced.memoryAddress() - 2 == memory.memoryAddress();
+    //    }
     assert sliced.capacity() == DUMMY.length - 2;
-    assert sliced.maxCapacity() == memory.maxCapacity();
+    assert sliced.maxCapacity() == memory.maxCapacity() - memory.readerIndex();
     for (int i = 0; i < sliced.capacity(); i++) {
       assert sliced.getByte(i) == DUMMY[i + 2];
       assert sliced.readByte() == DUMMY[i + 2];
     }
+
+    Memory mem = memory;
+    Memory sliced1 = mem.slice(1, mem.capacity() - 1);
+    Memory sliced2 = sliced1.slice(1, sliced1.capacity() - 1);
+    Memory sliced3 = sliced2.slice(1, sliced2.capacity() - 1);
+    Memory unsliced2 = ((Memory.Sliced) sliced3).unSlice();
+    Memory unsliced1 = ((Memory.Sliced) unsliced2).unSlice();
+    Memory unsliced = ((Memory.Sliced) unsliced1).unSlice();
+    Assertions.assertTrue(unsliced.getClass().equals(mem.getClass()));
   }
 
   public abstract void clearTest();
@@ -195,7 +205,10 @@ abstract class AbstractMemoryTest extends BaseTest {
       memory.writeByte(val);
     }
     Memory duplicated = memory.duplicate();
-    assert !duplicated.isDirect() || duplicated.memoryAddress() == memory.memoryAddress();
+    if (memory instanceof Memory.Direct && duplicated instanceof Memory.Direct) {
+      assert (((Memory.Direct) memory).memoryAddress())
+          .equals(((Memory.Direct) duplicated).memoryAddress());
+    }
     assert duplicated.capacity() == memory.capacity();
     assert duplicated.maxCapacity() == memory.maxCapacity();
     for (int i = 0; i < DUMMY.length; i++) {

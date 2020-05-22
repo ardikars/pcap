@@ -1,25 +1,14 @@
-/** This code is licenced under the GPL version 2. */
-package pcap.common.memory;
-
-import pcap.common.annotation.Inclubating;
+package pcap.common.memory.internal.nio;
 
 import java.nio.ByteBuffer;
+import pcap.common.memory.Memory;
+import pcap.common.memory.internal.AbstractMemory;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
-@Inclubating
-public class ByteBuf extends AbstractMemory<ByteBuffer> {
+abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
 
   final int baseIndex;
 
-  ByteBuf(int capacity, int maxCapacity) {
-    this(capacity, maxCapacity, 0, 0);
-  }
-
-  ByteBuf(int capacity, int maxCapacity, int readerIndex, int writerIndex) {
-    this(0, null, capacity, maxCapacity, readerIndex, writerIndex);
-  }
-
-  ByteBuf(
+  AbstractByteBuffer(
       int baseIndex,
       ByteBuffer buffer,
       int capacity,
@@ -157,34 +146,7 @@ public class ByteBuf extends AbstractMemory<ByteBuffer> {
     return this;
   }
 
-  @Override
-  public Memory copy(int index, int length) {
-    byte[] b = new byte[length];
-    int currentIndex = baseIndex + index;
-    getBytes(currentIndex, b, 0, length);
-    ByteBuffer copy = ByteBuffer.allocateDirect(length);
-    copy.put(b);
-    return new ByteBuf(baseIndex, copy, capacity(), maxCapacity(), readerIndex(), writerIndex());
-  }
-
-  @Override
-  public Memory slice(int index, int length) {
-    ByteBuf duplicated =
-        new SlicedByteBuf(
-            baseIndex + index,
-            buffer.duplicate(),
-            length,
-            maxCapacity(),
-            readerIndex() - index,
-            writerIndex() - index);
-    return duplicated;
-  }
-
-  @Override
-  public Memory duplicate() {
-    return new ByteBuf(
-        baseIndex, buffer.duplicate(), capacity(), maxCapacity(), readerIndex(), writerIndex());
-  }
+  //
 
   @Override
   public ByteBuffer nioBuffer() {
@@ -192,17 +154,7 @@ public class ByteBuf extends AbstractMemory<ByteBuffer> {
   }
 
   @Override
-  public boolean isDirect() {
-    return buffer.isDirect();
-  }
-
-  @Override
-  public long memoryAddress() {
-    return 0;
-  }
-
-  @Override
-  public void release() {
-    //
+  public <T> T buffer(Class<T> clazz) {
+    return (T) buffer;
   }
 }

@@ -17,7 +17,7 @@
     <description>Integration test module</description>
 
     <properties>
-        <jdk.version>${java.legacy.version}</jdk.version>
+        <jdk.version>${java.version}</jdk.version>
         <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
@@ -33,6 +33,16 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>pcap-codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>1.23</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>1.23</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

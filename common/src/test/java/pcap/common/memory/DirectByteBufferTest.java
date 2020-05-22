@@ -1,18 +1,16 @@
 package pcap.common.memory;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-
-import java.nio.ByteBuffer;
+import pcap.common.memory.internal.allocator.DirectMemoryAllocator;
 
 @RunWith(JUnitPlatform.class)
-public class ByteBufTest extends AbstractMemoryTest {
+public class DirectByteBufferTest extends AbstractMemoryTest {
 
-  private final MemoryAllocator MEMORY_ALLOCATOR = new HeapMemoryAllocator();
+  private final MemoryAllocator MEMORY_ALLOCATOR = new DirectMemoryAllocator();
 
   @Override
   protected MemoryAllocator memoryAllocator() {
@@ -93,18 +91,18 @@ public class ByteBufTest extends AbstractMemoryTest {
   @Test
   @Override
   public void newCapacityTest() {
-     doNewCapacityTest();
+    doNewCapacityTest();
   }
 
   @Test
   @Override
   public void duplicateTest() {
-     doDuplicateTest();
+    doDuplicateTest();
   }
 
   @Test
   @Override
   public void nioBufferTest() {
-     doNioBufferTest();
+    doNioBufferTest();
   }
 }

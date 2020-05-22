@@ -2,6 +2,7 @@
 package pcap.common.logging;
 
 import pcap.common.annotation.Inclubating;
+import pcap.common.util.Properties;
 
 /**
  * Abstract logger.
@@ -14,6 +15,11 @@ abstract class AbstractLogger implements Logger {
 
   static final String DEFAULT_FORMAT = "{}";
   static final String UNEXPECTED_EXCEPTION_MESSAGE;
+
+  static {
+    UNEXPECTED_EXCEPTION_MESSAGE =
+        Properties.getProperty("pcap.common.logging.default", "Unexpected exception:");
+  }
 
   private final String name;
 
@@ -203,10 +209,5 @@ abstract class AbstractLogger implements Logger {
   @Override
   public void error(Throwable throwable) {
     error(UNEXPECTED_EXCEPTION_MESSAGE, throwable);
-  }
-
-  static {
-    UNEXPECTED_EXCEPTION_MESSAGE =
-        System.getProperty("common.logging.default", "Unexpected exception:");
   }
 }

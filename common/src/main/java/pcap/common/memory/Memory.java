@@ -1180,6 +1180,10 @@ public interface Memory {
    */
   Memory duplicate();
 
+  /** Release this {@link Memory} buffer */
+  @Inclubating
+  boolean release();
+
   /**
    * Exposes this {@link Memory} buffer's as an NIO {@link ByteBuffer}'s. The returned buffer either
    * share or contains the copied content of this buffer, while changing the position and limit of
@@ -1193,17 +1197,58 @@ public interface Memory {
   @Inclubating
   ByteBuffer nioBuffer();
 
-  /** Returns {@code true} only if this buffer is an direct buffer, false otherwise. */
-  @Inclubating
-  boolean isDirect();
+  <T> T buffer(Class<T> clazz);
 
-  /**
-   * @return returns the low-level memory address that point to the first byte of ths backing data.
-   */
+  /** Indicate the buffer is sliced. */
   @Inclubating
-  long memoryAddress();
+  interface Sliced {
 
-  /** Deallocate/freeing this {@link Memory} buffer. */
+    /**
+     * Unslice buffer.
+     *
+     * @return returns unsliced {@link Memory} buffer.
+     */
+    Memory unSlice();
+  }
+
+  /** Indicate the buffer is direct buffer (off-heap buffer). */
   @Inclubating
-  void release();
+  interface Direct<A> {
+
+    /**
+     * @return returns the low-level memory address that point to the first byte of ths backing
+     *     data.
+     */
+    @Inclubating
+    A memoryAddress();
+  }
+
+  /** Indicate the buffer is heap buffer. */
+  @Inclubating
+  interface Heap {}
+
+  /** Indicate the buffer is pooled buffer. */
+  @Inclubating
+  interface Pooled {
+
+    /** Memory id. */
+    @Inclubating
+    int id();
+
+    /** Reference counter. */
+    @Inclubating
+    int refCnt();
+
+    /** Decrement reference counter by spesific delta. */
+    @Inclubating
+    int refCnt(int cnt);
+
+    /** Increment reference counter. */
+    @Inclubating
+    int retain();
+
+    /** Increment reference counter by spesific delte. */
+    @Inclubating
+    int retain(int retain);
+  }
 }

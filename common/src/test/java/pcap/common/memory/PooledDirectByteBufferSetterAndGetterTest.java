@@ -7,9 +7,9 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitPlatform.class)
-public class ByteBufSetterAndGetterTest extends AbstractMemorySetterAndGetterTest {
+public class PooledDirectByteBufferSetterAndGetterTest extends AbstractMemorySetterAndGetterTest {
 
-  private final MemoryAllocator MEMORY_ALLOCATOR = new HeapMemoryAllocator();
+  private final MemoryAllocator MEMORY_ALLOCATOR = Memories.directAllocator(1, 3, 50);
 
   @Override
   protected MemoryAllocator memoryAllocator() {

@@ -2,6 +2,7 @@
 package pcap.api;
 
 import pcap.common.annotation.Inclubating;
+import pcap.common.util.Properties;
 import pcap.common.util.Strings;
 import pcap.spi.Timestamp;
 
@@ -19,16 +20,16 @@ public class PcapLiveOptions {
 
   public PcapLiveOptions() {
     this(
-        Integer.valueOf(System.getProperty("pcap.snapshotLength", "65535")),
-        Boolean.valueOf(System.getProperty("pcap.promiscuous", "true")),
-        Boolean.valueOf(System.getProperty("pcap.rfmon", "false")),
-        Integer.valueOf(System.getProperty("pcap.timeout", "2000")),
-        System.getProperty("pcap.timestampType", null) == null
+        Properties.getInt("pcap.snapshotLength", 65535),
+        Properties.getBoolean("pcap.promiscuous", true),
+        Properties.getBoolean("pcap.rfmon", false),
+        Properties.getInt("pcap.timeout", 2000),
+        Properties.getProperty("pcap.timestampType", null) == null
             ? null
-            : Timestamp.Type.valueOf(System.getProperty("pcap.timestampType")),
-        Boolean.valueOf(System.getProperty("pcap.immediate", "true")),
-        Integer.valueOf(System.getProperty("pcap.bufferSize", "0")),
-        System.getProperty("pcap.timestampPrecision", "MICRO").equalsIgnoreCase("MICRO")
+            : Timestamp.Type.valueOf(Properties.getProperty("pcap.timestampType")),
+        Properties.getBoolean("pcap.immediate", true),
+        Properties.getInt("pcap.bufferSize", 0),
+        Properties.getProperty("pcap.timestampPrecision", "MICRO").equalsIgnoreCase("MICRO")
             ? Timestamp.Precision.MICRO
             : Timestamp.Precision.NANO);
   }
