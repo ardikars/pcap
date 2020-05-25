@@ -1,8 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.arp;
 
-import java.util.HashMap;
-import java.util.Map;
 import pcap.codec.AbstractPacket;
 import pcap.codec.DataLinkLayer;
 import pcap.codec.NetworkLayer;
@@ -15,7 +13,15 @@ import pcap.common.util.NamedNumber;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * @see <a href="https://en.wikipedia.org/wiki/Address_Resolution_Protocol>Wikipedia</a>
+ * @see <a href="https://tools.ietf.org/html/rfc826>RFC</a>
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 public class Arp extends AbstractPacket {
 
@@ -26,7 +32,8 @@ public class Arp extends AbstractPacket {
   private Arp(final Builder builder) {
     this.header = new Header(builder);
     this.payloadBuffer = builder.payloadBuffer;
-    if (this.payloadBuffer != null) {
+    if (this.payloadBuffer != null
+        && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
       this.payload =
           NetworkLayer.valueOf(this.header.payloadType().value()).newInstance(this.payloadBuffer);
     } else {
@@ -62,8 +69,8 @@ public class Arp extends AbstractPacket {
   @Override
   public String toString() {
     return Strings.toStringBuilder(this)
-        .add("header", header)
-        .add("payload", payload != null ? payload.getClass().getSimpleName() : "(None)")
+        .add("header", header())
+        .add("payload", payload() != null ? payload().getClass().getSimpleName() : "(None)")
         .toString();
   }
 
@@ -93,7 +100,7 @@ public class Arp extends AbstractPacket {
       this.senderProtocolAddress = builder.senderProtocolAddress;
       this.targetHardwareAddress = builder.targetHardwareAddress;
       this.targetProtocolAddress = builder.targetProtocolAddress;
-      this.buffer = slice(builder.buffer, length());
+      this.buffer = resetIndex(builder.buffer, length());
       this.builder = builder;
     }
 
@@ -106,11 +113,11 @@ public class Arp extends AbstractPacket {
     }
 
     public int hardwareAddressLength() {
-      return hardwareAddressLength & 0xff;
+      return hardwareAddressLength & 0xFF;
     }
 
     public int protocolAddressLength() {
-      return protocolAddressLength & 0xff;
+      return protocolAddressLength & 0xFF;
     }
 
     public OperationCode operationCode() {
@@ -166,17 +173,47 @@ public class Arp extends AbstractPacket {
     }
 
     @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Header header = (Header) o;
+      return hardwareAddressLength == header.hardwareAddressLength
+          && protocolAddressLength == header.protocolAddressLength
+          && hardwareType.equals(header.hardwareType)
+          && protocolType.equals(header.protocolType)
+          && operationCode.equals(header.operationCode)
+          && senderHardwareAddress.equals(header.senderHardwareAddress)
+          && senderProtocolAddress.equals(header.senderProtocolAddress)
+          && targetHardwareAddress.equals(header.targetHardwareAddress)
+          && targetProtocolAddress.equals(header.targetProtocolAddress);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(
+          hardwareType,
+          protocolType,
+          hardwareAddressLength,
+          protocolAddressLength,
+          operationCode,
+          senderHardwareAddress,
+          senderProtocolAddress,
+          targetHardwareAddress,
+          targetProtocolAddress);
+    }
+
+    @Override
     public String toString() {
       return Strings.toStringBuilder(this)
-          .add("hardwareType", hardwareType)
-          .add("protocolType", protocolType)
-          .add("hardwareAddressLength", hardwareAddressLength)
-          .add("protocolAddressLength", protocolAddressLength)
-          .add("operationCode", operationCode)
-          .add("senderHardwareAddress", senderHardwareAddress)
-          .add("senderProtocolAddress", senderProtocolAddress)
-          .add("targetHardwareAddress", targetHardwareAddress)
-          .add("targetProtocolAddress", targetProtocolAddress)
+          .add("hardwareType", hardwareType())
+          .add("protocolType", protocolType())
+          .add("hardwareAddressLength", hardwareAddressLength() & 0xFF)
+          .add("protocolAddressLength", protocolAddressLength() & 0xFF)
+          .add("operationCode", operationCode())
+          .add("senderHardwareAddress", senderHardwareAddress())
+          .add("senderProtocolAddress", senderProtocolAddress())
+          .add("targetHardwareAddress", targetHardwareAddress())
+          .add("targetProtocolAddress", targetProtocolAddress())
           .toString();
     }
   }
@@ -196,53 +233,102 @@ public class Arp extends AbstractPacket {
     private Memory buffer;
     private Memory payloadBuffer;
 
+    /**
+     * Hardware type (HTYPE).
+     *
+     * <p>This field specifies the network link protocol type. Example: {@link
+     * DataLinkLayer#EN10MB}.
+     */
     public Builder hardwareType(final DataLinkLayer hardwareType) {
       this.hardwareType = hardwareType;
       return this;
     }
 
+    /**
+     * Protocol type (PTYPE).
+     *
+     * <p>This field specifies the internetwork protocol for which the ARP request is intended. For
+     * IPv4, this has the value {@link NetworkLayer#IPV4} ({@code 0x0800}). The permitted PTYPE
+     * values share a numbering space with those for {@link NetworkLayer} (EtherType).
+     */
     public Builder protocolType(final NetworkLayer protocolType) {
       this.protocolType = protocolType;
       return this;
     }
 
+    /**
+     * Hardware length (HLEN).
+     *
+     * <p>Length (in octets) of a hardware address. Ethernet address length is 6 ({@link
+     * MacAddress#MAC_ADDRESS_LENGTH}).
+     */
     public Builder hardwareAddressLength(final int hardwareAddressLength) {
-      this.hardwareAddressLength = (byte) (hardwareAddressLength & 0xff);
+      this.hardwareAddressLength = (byte) (hardwareAddressLength & 0xFF);
       return this;
     }
 
+    /**
+     * Protocol length (PLEN).
+     *
+     * <p>Length (in octets) of internetwork addresses. The internetwork protocol is specified in
+     * PTYPE. Example: IPv4 address length is 4 ({@link Inet4Address#IPV4_ADDRESS_LENGTH}).
+     */
     public Builder protocolAddressLength(final int protocolAddressLength) {
-      this.protocolAddressLength = (byte) (protocolAddressLength & 0xff);
+      this.protocolAddressLength = (byte) (protocolAddressLength & 0xFF);
       return this;
     }
 
+    /**
+     * Operation.
+     *
+     * <p>Specifies the operation that the sender is performing: {@link OperationCode#ARP_REQUEST}
+     * for request, {@link OperationCode#ARP_REPLY} for reply.
+     */
     public Builder operationCode(final OperationCode operationCode) {
       this.operationCode = operationCode;
       return this;
     }
 
+    /**
+     * Sender hardware address (SHA).
+     *
+     * <p>Media address of the sender. In an ARP request this field is used to indicate the address
+     * of the host sending the request. In an ARP reply this field is used to indicate the address
+     * of the host that the request was looking for.
+     */
     public Builder senderHardwareAddress(final MacAddress senderHardwareAddress) {
       this.senderHardwareAddress = senderHardwareAddress;
       return this;
     }
 
+    /**
+     * Sender protocol address (SHA).
+     *
+     * <p>Internetwork address of the sender.
+     */
     public Builder senderProtocolAddress(final Inet4Address senderProtocolAddress) {
       this.senderProtocolAddress = senderProtocolAddress;
       return this;
     }
 
+    /**
+     * Target hardware address (THA).
+     *
+     * <p>Media address of the intended receiver. In an ARP request this field is ignored. In an ARP
+     * reply this field is used to indicate the address of the host that originated the ARP request.
+     */
     public Builder targetHardwareAddress(final MacAddress targetHardwareAddress) {
       this.targetHardwareAddress = targetHardwareAddress;
       return this;
     }
 
+    /**
+     * Target protocol address (TPA).
+     *
+     * <p>Internetwork address of the intended receiver.
+     */
     public Builder targetProtocolAddress(final Inet4Address targetProtocolAddress) {
       this.targetProtocolAddress = targetProtocolAddress;
-      return this;
-    }
-
-    public Builder payloadBuffer(final Memory buffer) {
-      this.payloadBuffer = buffer;
       return this;
     }
 
@@ -263,8 +349,8 @@ public class Arp extends AbstractPacket {
       this.protocolAddressLength = buffer.readByte();
       this.operationCode = OperationCode.valueOf(buffer.readShort());
       byte[] byteBuffer;
-      int hardwareAddressLength = this.hardwareAddressLength & 0xff;
-      int protocolAddressLength = this.protocolAddressLength & 0xff;
+      int hardwareAddressLength = this.hardwareAddressLength & 0xFF;
+      int protocolAddressLength = this.protocolAddressLength & 0xFF;
       byteBuffer = new byte[hardwareAddressLength];
       buffer.readBytes(byteBuffer);
       this.senderHardwareAddress = MacAddress.valueOf(byteBuffer);
@@ -294,8 +380,8 @@ public class Arp extends AbstractPacket {
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(hardwareType != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(protocolType != null, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(hardwareAddressLength != 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(protocolAddressLength != 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((hardwareAddressLength & 0xFF) != 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((protocolAddressLength & 0xFF) != 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(senderHardwareAddress != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(senderProtocolAddress != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(targetHardwareAddress != null, ILLEGAL_HEADER_EXCEPTION);

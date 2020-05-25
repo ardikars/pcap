@@ -20,7 +20,7 @@ public class Udp extends AbstractPacket {
   private Udp(final Builder builder) {
     this.header = new Header(builder);
     this.payloadBuffer = builder.payloadBuffer;
-    if (this.payloadBuffer != null) {
+    if (this.payloadBuffer != null && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
       this.payload =
           ApplicationLayer.valueOf(this.header.payloadType().value())
               .newInstance(this.payloadBuffer);
@@ -74,7 +74,7 @@ public class Udp extends AbstractPacket {
       this.destinationPort = builder.destinationPort;
       this.length = builder.length;
       this.checksum = builder.checksum;
-      this.buffer = slice(builder.buffer, length());
+      this.buffer = resetIndex(builder.buffer, length());
       this.builder = builder;
     }
 
@@ -155,11 +155,6 @@ public class Udp extends AbstractPacket {
 
     public Builder checksum(int checksum) {
       this.checksum = (short) (checksum & 0xffff);
-      return this;
-    }
-
-    public Builder payloadBuffer(Memory payloadBuffer) {
-      this.payloadBuffer = payloadBuffer;
       return this;
     }
 

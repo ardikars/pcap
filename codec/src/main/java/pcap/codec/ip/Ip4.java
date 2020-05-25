@@ -9,7 +9,14 @@ import pcap.common.net.Inet4Address;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+import java.util.Arrays;
+import java.util.Objects;
+
+/**
+ * @see <a href="https://en.wikipedia.org/wiki/IPv4">Wikipedia</a>
+ * @see <a href="https://tools.ietf.org/html/rfc791>RFC</a>
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 public class Ip4 extends Ip {
 
@@ -20,13 +27,18 @@ public class Ip4 extends Ip {
   private Ip4(final Builder builder) {
     this.header = new Header(builder);
     this.payloadBuffer = builder.payloadBuffer;
-    if (this.payloadBuffer != null) {
+    if (this.payloadBuffer != null
+        && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
       this.payload =
           TransportLayer.valueOf(this.header.payloadType().value()).newInstance(this.payloadBuffer);
     } else {
       payload = null;
     }
     this.builder = builder;
+  }
+
+  public static final Ip4 newPacket(Memory buffer) {
+    return new Builder().build(buffer);
   }
 
   @Override
@@ -52,8 +64,8 @@ public class Ip4 extends Ip {
   @Override
   public String toString() {
     return Strings.toStringBuilder(this)
-        .add("header", header)
-        .add("payload", payload != null ? payload.getClass().getSimpleName() : "(None)")
+        .add("header", header())
+        .add("payload", payload() != null ? payload().getClass().getSimpleName() : "(None)")
         .toString();
   }
 
@@ -92,16 +104,16 @@ public class Ip4 extends Ip {
       this.sourceAddress = builder.sourceAddress;
       this.destinationAddress = builder.destinationAddress;
       this.options = builder.options;
-      this.buffer = slice(builder.buffer, length());
+      this.buffer = resetIndex(builder.buffer, length());
       this.builder = builder;
     }
 
     public int headerLength() {
-      return headerLength & 0xf;
+      return headerLength & 0xF;
     }
 
     public int diffServ() {
-      return diffServ & 0x3f;
+      return diffServ & 0x3F;
     }
 
     public int expCon() {
@@ -109,11 +121,11 @@ public class Ip4 extends Ip {
     }
 
     public int totalLength() {
-      return totalLength & 0xffff;
+      return totalLength & 0xFFFF;
     }
 
     public int identification() {
-      return identification & 0xffff;
+      return identification & 0xFFFF;
     }
 
     public int flags() {
@@ -121,11 +133,11 @@ public class Ip4 extends Ip {
     }
 
     public int fragmentOffset() {
-      return fragmentOffset & 0x1fff;
+      return fragmentOffset & 0x1FFF;
     }
 
     public int ttl() {
-      return ttl & 0xff;
+      return ttl & 0xFF;
     }
 
     public TransportLayer protocol() {
@@ -133,7 +145,7 @@ public class Ip4 extends Ip {
     }
 
     public int checksum() {
-      return checksum & 0xffff;
+      return checksum & 0xFFFF;
     }
 
     public Inet4Address sourceAddress() {
@@ -161,6 +173,7 @@ public class Ip4 extends Ip {
      * @return returns true if checksum is valid, false otherwise.
      */
     public boolean isValidChecksum() {
+      Memory buffer = buffer();
       int accumulation = 0;
       for (int i = 0; i < headerLength * 2; ++i) {
         accumulation += 0xffff & buffer.getShort(i + 2);
@@ -183,17 +196,17 @@ public class Ip4 extends Ip {
     public Memory buffer() {
       if (buffer == null) {
         buffer = ALLOCATOR.allocate(length());
-        buffer.writeByte((byte) ((super.version & 0xf) << 4 | headerLength & 0xf));
-        buffer.writeByte((byte) (((diffServ << 2) & 0x3f) | expCon & 0x3));
+        buffer.writeByte((byte) ((super.version & 0xF) << 4 | headerLength & 0xF));
+        buffer.writeByte((byte) (((diffServ << 2) & 0x3F) | expCon & 0x3));
         buffer.writeShort(totalLength);
         buffer.writeShort(identification);
-        buffer.writeShort((flags & 0x7) << 13 | fragmentOffset & 0x1fff);
+        buffer.writeShort((flags & 0x7) << 13 | fragmentOffset & 0x1FFF);
         buffer.writeByte(ttl);
         buffer.writeByte(protocol.value());
-        buffer.writeShort(checksum & 0xffff);
+        buffer.writeShort(checksum & 0xFFFF);
         buffer.writeBytes(sourceAddress.address());
         buffer.writeBytes(destinationAddress.address());
-        if (options != null && headerLength > 5) {
+        if (options != null && options.length > 0 && headerLength > 5) {
           buffer.writeBytes(options);
         }
       }
@@ -206,18 +219,63 @@ public class Ip4 extends Ip {
     }
 
     @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Header header = (Header) o;
+      return headerLength == header.headerLength
+          && diffServ == header.diffServ
+          && expCon == header.expCon
+          && totalLength == header.totalLength
+          && identification == header.identification
+          && flags == header.flags
+          && fragmentOffset == header.fragmentOffset
+          && ttl == header.ttl
+          && checksum == header.checksum
+          && protocol.equals(header.protocol)
+          && sourceAddress.equals(header.sourceAddress)
+          && destinationAddress.equals(header.destinationAddress)
+          && Arrays.equals(options, header.options);
+    }
+
+    @Override
+    public int hashCode() {
+      int result =
+          Objects.hash(
+              headerLength,
+              diffServ,
+              expCon,
+              totalLength,
+              identification,
+              flags,
+              fragmentOffset,
+              ttl,
+              protocol,
+              checksum,
+              sourceAddress,
+              destinationAddress);
+      result = 31 * result + Arrays.hashCode(options);
+      return result;
+    }
+
+    @Override
     public String toString() {
       return Strings.toStringBuilder(this)
-          .add("version", version)
-          .add("headerLength", headerLength & 0xf)
-          .add("diffServ", diffServ & 0x3f)
-          .add("expCon", expCon & 0x3)
-          .add("totalLength", totalLength)
-          .add("flags", flags & 0x7)
-          .add("fragmentOffset", fragmentOffset & 0x1fff)
-          .add("ttl", ttl)
-          .add("protocol", protocol)
-          .add("checksum", checksum & 0xFFFF)
+          .add("version", version())
+          .add("headerLength", headerLength() & 0xF)
+          .add("diffServ", diffServ() & 0x3F)
+          .add("expCon", expCon() & 0x3)
+          .add("totalLength", totalLength() & 0xFFFF)
+          .add("identification", identification() & 0xFFFF)
+          .add("flags", flags() & 0x7)
+          .add("fragmentOffset", fragmentOffset() & 0x1FFF)
+          .add("ttl", ttl() & 0xFFFF)
+          .add("protocol", protocol())
+          .add("checksum", checksum() & 0xFFFF)
+          .add("sourceAddress", sourceAddress())
+          .add("destinationAddress", destinationAddress())
+          .add("options", Arrays.toString(options()))
+          .add("validChecksum", isValidChecksum())
           .toString();
     }
   }
@@ -236,7 +294,7 @@ public class Ip4 extends Ip {
     private short checksum;
     private Inet4Address sourceAddress = Inet4Address.ZERO;
     private Inet4Address destinationAddress = Inet4Address.ZERO;
-    private byte[] options;
+    private byte[] options = new byte[0];
 
     private Memory buffer;
     private Memory payloadBuffer;
@@ -322,12 +380,12 @@ public class Ip4 extends Ip {
     }
 
     @Override
-    public Packet build() {
+    public Ip4 build() {
       return new Ip4(this);
     }
 
     @Override
-    public Packet build(final Memory buffer) {
+    public Ip4 build(final Memory buffer) {
       resetIndex(buffer);
       this.headerLength = (byte) (buffer.readByte() & 0xF);
       byte tmp = buffer.readByte();
@@ -381,14 +439,14 @@ public class Ip4 extends Ip {
     public Builder reset(int offset, int length) {
       if (buffer != null) {
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
-        Validate.notIllegalArgument(headerLength >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(diffServ >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(expCon >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(totalLength >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(identification >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(flags >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(fragmentOffset >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(ttl >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((headerLength & 0xF) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((diffServ & 0x3F) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((expCon & 0x3) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((totalLength & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((identification & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((flags & 0x7) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((fragmentOffset & 0x1FFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((ttl & 0xFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(protocol != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(checksum >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(sourceAddress != null, ILLEGAL_HEADER_EXCEPTION);

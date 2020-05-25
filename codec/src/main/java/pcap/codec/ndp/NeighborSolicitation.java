@@ -70,7 +70,7 @@ public class NeighborSolicitation extends AbstractPacket {
     private Header(Builder builder) {
       this.targetAddress = builder.targetAddress;
       this.options = builder.options;
-      this.buffer = slice(builder.buffer, length());
+      this.buffer = resetIndex(builder.buffer, length());
       this.builder = builder;
     }
 

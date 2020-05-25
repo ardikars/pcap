@@ -21,7 +21,7 @@ public class Ethernet extends AbstractPacket {
   private Ethernet(final Builder builder) {
     this.header = new Header(builder);
     this.payloadBuffer = builder.payloadBuffer;
-    if (this.payloadBuffer != null) {
+    if (this.payloadBuffer != null && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
       this.payload =
           NetworkLayer.valueOf(this.header.payloadType().value()).newInstance(this.payloadBuffer);
     } else {
@@ -76,7 +76,7 @@ public class Ethernet extends AbstractPacket {
       this.destinationMacAddress = builder.destinationMacAddress;
       this.sourceMacAddress = builder.sourceMacAddress;
       this.ethernetType = builder.ethernetType;
-      this.buffer = slice(builder.buffer, length());
+      this.buffer = resetIndex(builder.buffer, length());
       this.builder = builder;
     }
 
@@ -149,11 +149,6 @@ public class Ethernet extends AbstractPacket {
 
     public Builder ethernetType(final NetworkLayer ethernetType) {
       this.ethernetType = ethernetType;
-      return this;
-    }
-
-    public Builder payloadBuffer(final Memory buffer) {
-      this.payloadBuffer = buffer;
       return this;
     }
 

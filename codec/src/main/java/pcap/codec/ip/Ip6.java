@@ -41,7 +41,7 @@ public class Ip6 extends Ip {
   private Ip6(final Builder builder) {
     this.header = new Header(builder);
     this.payloadBuffer = builder.payloadBuffer;
-    if (this.payloadBuffer != null) {
+    if (this.payloadBuffer != null && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
       this.payload =
           TransportLayer.valueOf(this.header.payloadType().value()).newInstance(this.payloadBuffer);
     } else {
@@ -101,7 +101,7 @@ public class Ip6 extends Ip {
       this.hopLimit = builder.hopLimit;
       this.sourceAddress = builder.sourceAddress;
       this.destinationAddress = builder.destinationAddress;
-      this.buffer = slice(builder.buffer, length());
+      this.buffer = resetIndex(builder.buffer, length());
       this.builder = builder;
     }
 
@@ -223,11 +223,6 @@ public class Ip6 extends Ip {
 
     public Builder destinationAddress(final Inet6Address destinationAddress) {
       this.destinationAddress = destinationAddress;
-      return this;
-    }
-
-    public Builder payloadBuffer(final Memory buffer) {
-      this.payloadBuffer = buffer;
       return this;
     }
 

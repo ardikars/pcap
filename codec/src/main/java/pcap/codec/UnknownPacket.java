@@ -102,11 +102,6 @@ public class UnknownPacket extends AbstractPacket {
 
     private Memory payloadBuffer;
 
-    public Builder payloadBuffer(final Memory buffer) {
-      this.payloadBuffer = buffer;
-      return this;
-    }
-
     @Override
     public UnknownPacket build() {
       return new UnknownPacket(this);
@@ -114,7 +109,8 @@ public class UnknownPacket extends AbstractPacket {
 
     @Override
     public UnknownPacket build(Memory buffer) {
-      Builder builder = new Builder().payloadBuffer(buffer);
+      Builder builder = new Builder();
+      builder.payloadBuffer = buffer;
       return new UnknownPacket(builder);
     }
 

@@ -20,7 +20,7 @@ public class Tcp extends AbstractPacket {
   private Tcp(final Builder builder) {
     this.header = new Header(builder);
     this.payloadBuffer = builder.payloadBuffer;
-    if (this.payloadBuffer != null) {
+    if (this.payloadBuffer != null && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
       this.payload =
           ApplicationLayer.valueOf(this.header.payloadType().value())
               .newInstance(this.payloadBuffer);
@@ -83,7 +83,7 @@ public class Tcp extends AbstractPacket {
       this.checksum = builder.checksum;
       this.urgentPointer = builder.urgentPointer;
       this.options = builder.options;
-      this.buffer = slice(builder.buffer, length());
+      this.buffer = resetIndex(builder.buffer, length());
       this.builder = builder;
     }
 
@@ -255,11 +255,6 @@ public class Tcp extends AbstractPacket {
 
     public Builder options(byte[] options) {
       this.options = Validate.nullPointerThenReturns(options, new byte[0]);
-      return this;
-    }
-
-    public Builder payloadBuffer(Memory buffer) {
-      this.payloadBuffer = buffer;
       return this;
     }
 

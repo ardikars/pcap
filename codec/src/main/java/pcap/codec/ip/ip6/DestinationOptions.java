@@ -20,7 +20,7 @@ public class DestinationOptions extends Options {
   private DestinationOptions(final Builder builder) {
     this.header = new Header(builder);
     this.payloadBuffer = builder.payloadBuffer;
-    if (this.payloadBuffer != null) {
+    if (this.payloadBuffer != null && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
       this.payload =
           TransportLayer.valueOf(header.payloadType().value()).newInstance(this.payloadBuffer);
     } else {
@@ -63,7 +63,7 @@ public class DestinationOptions extends Options {
 
     protected Header(Builder builder) {
       super(builder, builder.nextHeader);
-      this.buffer = slice(builder.buffer, length());
+      this.buffer = resetIndex(builder.buffer, length());
       this.builder = builder;
     }
 

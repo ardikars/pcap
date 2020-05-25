@@ -73,7 +73,7 @@ public class Redirect extends AbstractPacket {
       this.targetAddress = builder.targetAddress;
       this.destinationAddress = builder.destinationAddress;
       this.options = builder.options;
-      this.buffer = slice(builder.buffer, length());
+      this.buffer = resetIndex(builder.buffer, length());
       this.builder = builder;
     }
 

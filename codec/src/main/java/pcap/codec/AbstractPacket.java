@@ -1,13 +1,14 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec;
 
+import pcap.common.annotation.Inclubating;
+import pcap.common.memory.Memory;
+import pcap.common.memory.MemoryAllocator;
+
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import pcap.common.annotation.Inclubating;
-import pcap.common.memory.Memory;
-import pcap.common.memory.MemoryAllocator;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -93,45 +94,6 @@ public abstract class AbstractPacket implements Packet {
 
   public abstract Memory buffer();
 
-  public abstract static class Header implements Packet.Header {
-
-    protected static final MemoryAllocator ALLOCATOR = Properties.BYTE_BUF_ALLOCATOR;
-
-    protected Memory buffer;
-
-    /**
-     * Get reminder of buffer.
-     *
-     * @param buffer buffer.
-     * @param length lenght.
-     * @return returns {@link Memory}.
-     */
-    protected Memory slice(Memory buffer, int length) {
-      if (buffer == null) {
-        return null;
-      }
-      if (buffer.readableBytes() <= length && buffer.readerIndex() - length > 0) {
-        return buffer.slice(buffer.readerIndex() - length, length);
-      } else {
-        return buffer.slice();
-      }
-    }
-
-    /**
-     * Returns header as byte buffer.
-     *
-     * @return return byte buffer.
-     */
-    public Memory buffer() {
-      if (buffer == null) {
-        buffer = ALLOCATOR.allocate(0);
-      }
-      return buffer;
-    }
-
-    public abstract Builder builder();
-  }
-
   public <T extends Packet, R extends Packet> R map(Function<T, R> function) {
     return function.apply((T) this);
   }
@@ -154,6 +116,35 @@ public abstract class AbstractPacket implements Packet {
     return set;
   }
 
+  public abstract static class Header implements Packet.Header {
+
+    protected static final MemoryAllocator ALLOCATOR = Properties.BYTE_BUF_ALLOCATOR;
+
+    protected Memory buffer;
+
+    /** Reset reader index to 0, and writer index to header length. */
+    protected Memory resetIndex(Memory buffer, int length) {
+      if (buffer != null) {
+        buffer.setIndex(0, length);
+      }
+      return buffer;
+    }
+
+    /**
+     * Returns header as byte buffer.
+     *
+     * @return return byte buffer.
+     */
+    public Memory buffer() {
+      if (buffer == null) {
+        buffer = ALLOCATOR.allocate(0);
+      }
+      return buffer;
+    }
+
+    public abstract Builder builder();
+  }
+
   /** Packet builder. */
   public abstract static class Builder
       implements pcap.common.util.Builder<Packet, Memory>, Serializable {
@@ -165,8 +156,6 @@ public abstract class AbstractPacket implements Packet {
       if (readerIndex < 0 || writerIndex < 0) {
         this.readerIndex = buffer.readerIndex();
         this.writerIndex = buffer.writerIndex();
-      } else {
-        buffer.setIndex(readerIndex, buffer.capacity());
       }
     }
 

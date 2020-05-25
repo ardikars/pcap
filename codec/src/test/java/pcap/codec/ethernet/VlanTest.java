@@ -1,5 +1,5 @@
 /** This code is licenced under the GPL version 2. */
-package pcap.codec.arp;
+package pcap.codec.ethernet;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -7,19 +7,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.codec.BaseTest;
-import pcap.codec.DataLinkLayer;
 import pcap.codec.NetworkLayer;
-import pcap.codec.ethernet.Ethernet;
 import pcap.common.memory.Memory;
 import pcap.common.memory.internal.nio.PooledDirectByteBuffer;
-import pcap.common.net.Inet4Address;
-import pcap.common.net.MacAddress;
 import pcap.common.util.Hexs;
 
+/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @RunWith(JUnitPlatform.class)
-public class ArpTest extends BaseTest {
+public class VlanTest extends BaseTest {
 
-  private byte[] data = Hexs.parseHex(ETHERNET_II_ARP);
+  private byte[] data = Hexs.parseHex(ETHERNET_II_Q_IN_Q_ARP);
 
   private Memory buf = allocator.allocate(data.length);
 
@@ -27,40 +24,36 @@ public class ArpTest extends BaseTest {
   public void before() {
     buf.writeBytes(data);
     ethernet = Ethernet.newPacket(buf);
-    final Arp first = ethernet.getFirst(Arp.class);
+    final Vlan first = ethernet.getFirst(Vlan.class);
     Memory memory = first.buffer();
     Assertions.assertEquals(0, memory.readerIndex());
-    Assertions.assertEquals(Arp.Header.ARP_HEADER_LENGTH, memory.writerIndex());
+    Assertions.assertEquals(Vlan.Header.VLAN_HEADER_LENGTH, memory.writerIndex());
   }
 
-  private Arp build() {
-    final Arp.Builder builder = new Arp.Builder();
-    final Arp pkt =
+  private Vlan build() {
+    final Vlan.Builder builder = new Vlan.Builder();
+    final Vlan pkt =
         builder
-            .hardwareAddressLength(MacAddress.MAC_ADDRESS_LENGTH)
-            .hardwareType(DataLinkLayer.EN10MB)
-            .protocolAddressLength(Inet4Address.IPV4_ADDRESS_LENGTH)
-            .protocolType(NetworkLayer.IPV4)
-            .operationCode(Arp.OperationCode.ARP_REQUEST)
-            .senderHardwareAddress(MacAddress.DUMMY)
-            .senderProtocolAddress(Inet4Address.valueOf("192.168.1.2"))
-            .targetHardwareAddress(MacAddress.ZERO)
-            .targetProtocolAddress(Inet4Address.valueOf("192.168.1.1"))
+            .priorityCodePoint(Vlan.PriorityCodePoint.BE)
+            .canonicalFormatIndicator(0)
+            .vlanIdentifier(100)
+            .type(NetworkLayer.ARP)
             .build();
     return pkt;
   }
 
   @Test
   public void buildTest() {
-    final Arp pkt = build();
+    final Vlan pkt = build();
     final Memory buffer = pkt.buffer();
+
     Assertions.assertEquals(0, buffer.readerIndex());
-    Assertions.assertEquals(Arp.Header.ARP_HEADER_LENGTH, buffer.writerIndex());
+    Assertions.assertEquals(Vlan.Header.VLAN_HEADER_LENGTH, buffer.writerIndex());
     Assertions.assertTrue(buffer instanceof PooledDirectByteBuffer);
 
-    final Arp fromBuffer = Arp.newPacket(buffer);
-    Arp.Header header = pkt.header();
-    Arp.Header headerFromBuffer = fromBuffer.header();
+    final Vlan fromBuffer = Vlan.newPacket(buffer);
+    Vlan.Header header = pkt.header();
+    Vlan.Header headerFromBuffer = fromBuffer.header();
     Assertions.assertEquals(header, headerFromBuffer);
 
     Memory noCopyBuffer = headerFromBuffer.buffer();
@@ -70,22 +63,20 @@ public class ArpTest extends BaseTest {
 
   @Test
   public void mutateBuffer() {
-    final Arp pkt = build();
+    final Vlan pkt = build();
     final Memory buffer = pkt.buffer();
 
-    Arp mutate =
-            Arp.newPacket(buffer)
+    Vlan mutate =
+        Vlan.newPacket(buffer)
             .builder()
-            .operationCode(Arp.OperationCode.ARP_REPLY)
-            .senderHardwareAddress(MacAddress.valueOf("de:ad:be:ef:ce:ce"))
-            .senderProtocolAddress(Inet4Address.valueOf("192.168.1.1"))
-            .targetHardwareAddress(MacAddress.DUMMY)
-            .targetProtocolAddress(Inet4Address.valueOf("192.168.1.2"))
+            .canonicalFormatIndicator(1)
+            .vlanIdentifier(2)
+            .priorityCodePoint(Vlan.PriorityCodePoint.BK)
             .reset()
             .build();
 
     buffer.readerIndex(0);
-    Arp mutated = Arp.newPacket(buffer);
+    Vlan mutated = Vlan.newPacket(buffer);
 
     Assertions.assertEquals(mutate.header(), mutated.header());
     Assertions.assertEquals(mutate.header().hashCode(), mutated.header().hashCode());
@@ -98,16 +89,16 @@ public class ArpTest extends BaseTest {
 
   @Test
   public void toStringTest() {
-    final Arp pkt = build();
+    final Vlan pkt = build();
     Assertions.assertNotNull(pkt.toString());
   }
 
   @Test
-  public void registerOperationCodeTest() {
-    Arp.OperationCode arpNak = new Arp.OperationCode((short) 10, "ARP-NAK");
-    Arp.OperationCode.register(arpNak);
-    Assertions.assertEquals(arpNak, Arp.OperationCode.valueOf((short) 10));
-    Assertions.assertEquals(Arp.OperationCode.UNKNOWN, Arp.OperationCode.valueOf((short) 100));
+  public void registerPriorityCodePointTest() {
+    Assertions.assertEquals(new Vlan.PriorityCodePoint((byte) -1, "Unknown"), Vlan.PriorityCodePoint.valueOf((byte) 8));
+    Vlan.PriorityCodePoint newUnknownPCP = new Vlan.PriorityCodePoint((byte) 8, "New Unknown");
+    Vlan.PriorityCodePoint.register(newUnknownPCP);
+    Assertions.assertEquals(newUnknownPCP, Vlan.PriorityCodePoint.valueOf((byte) 8));
   }
 
   @AfterEach

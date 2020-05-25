@@ -1,8 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.ethernet;
 
-import java.util.HashMap;
-import java.util.Map;
 import pcap.codec.AbstractPacket;
 import pcap.codec.NetworkLayer;
 import pcap.codec.Packet;
@@ -12,7 +10,14 @@ import pcap.common.util.NamedNumber;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * @see <a href="https://en.wikipedia.org/wiki/IEEE_802.1Q>Wikipedia</a>
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 public class Vlan extends AbstractPacket {
 
@@ -23,7 +28,8 @@ public class Vlan extends AbstractPacket {
   private Vlan(final Builder builder) {
     this.header = new Header(builder);
     this.payloadBuffer = builder.payloadBuffer;
-    if (this.payloadBuffer != null) {
+    if (this.payloadBuffer != null
+        && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
       this.payload =
           NetworkLayer.valueOf(this.header.type().value()).newInstance(this.payloadBuffer);
     } else {
@@ -59,8 +65,8 @@ public class Vlan extends AbstractPacket {
   @Override
   public String toString() {
     return Strings.toStringBuilder(this)
-        .add("header", header)
-        .add("payload", payload != null ? payload.getClass().getSimpleName() : "(None)")
+        .add("header", header())
+        .add("payload", payload() != null ? payload().getClass().getSimpleName() : "(None)")
         .toString();
   }
 
@@ -80,7 +86,7 @@ public class Vlan extends AbstractPacket {
       this.canonicalFormatIndicator = builder.canonicalFormatIndicator;
       this.vlanIdentifier = builder.vlanIdentifier;
       this.type = builder.type;
-      this.buffer = slice(builder.buffer, length());
+      this.buffer = resetIndex(builder.buffer, length());
       this.builder = builder;
     }
 
@@ -93,7 +99,7 @@ public class Vlan extends AbstractPacket {
     }
 
     public int vlanIdentifier() {
-      return vlanIdentifier & 0x0fff;
+      return vlanIdentifier & 0x0FFF;
     }
 
     public NetworkLayer type() {
@@ -114,11 +120,11 @@ public class Vlan extends AbstractPacket {
     public Memory buffer() {
       if (buffer == null) {
         buffer = ALLOCATOR.allocate(length());
-        buffer.writeShort(0x8100); // IEEE 802.1Q VLAN-tagged frames
         buffer.writeShort(
             ((priorityCodePoint.value() << 13) & 0x07)
                 | ((canonicalFormatIndicator << 14) & 0x01)
-                | (vlanIdentifier & 0x0fff));
+                | (vlanIdentifier & 0x0FFF));
+        buffer.writeShort(type.value());
       }
       return buffer;
     }
@@ -129,12 +135,28 @@ public class Vlan extends AbstractPacket {
     }
 
     @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Header header = (Header) o;
+      return canonicalFormatIndicator == header.canonicalFormatIndicator
+          && vlanIdentifier == header.vlanIdentifier
+          && priorityCodePoint.equals(header.priorityCodePoint)
+          && type.equals(header.type);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(priorityCodePoint, canonicalFormatIndicator, vlanIdentifier, type);
+    }
+
+    @Override
     public String toString() {
       return Strings.toStringBuilder(this)
-          .add("priorityCodePoint", priorityCodePoint)
-          .add("canonicalFormatIndicator", canonicalFormatIndicator)
-          .add("vlanIdentifier", vlanIdentifier)
-          .add("type", type)
+          .add("priorityCodePoint", priorityCodePoint())
+          .add("canonicalFormatIndicator", canonicalFormatIndicator() & 0x01)
+          .add("vlanIdentifier", vlanIdentifier() & 0x0FFF)
+          .add("type", type())
           .toString();
     }
   }
@@ -149,33 +171,53 @@ public class Vlan extends AbstractPacket {
     private Memory buffer;
     private Memory payloadBuffer;
 
+    /**
+     * Priority code point (PCP).
+     *
+     * <p>A 3-bit field which refers to the IEEE 802.1p class of service and maps to the frame
+     * priority level. Different PCP values can be used to prioritize different classes of traffic.
+     */
     public Builder priorityCodePoint(final PriorityCodePoint priorityCodePoint) {
       this.priorityCodePoint = priorityCodePoint;
       return this;
     }
 
+    /**
+     * Drop eligible indicator (DEI).
+     *
+     * <p>A 1-bit field. (formerly CFI) May be used separately or in conjunction with PCP to
+     * indicate frames eligible to be dropped in the presence of congestion.
+     */
     public Builder canonicalFormatIndicator(final int canonicalFormatIndicator) {
       this.canonicalFormatIndicator = (byte) (canonicalFormatIndicator & 0x01);
       return this;
     }
 
+    /**
+     * VLAN identifier (VID).
+     *
+     * <p>A 12-bit field specifying the VLAN to which the frame belongs.
+     */
     public Builder vlanIdentifier(final int vlanIdentifier) {
-      this.vlanIdentifier = (short) (vlanIdentifier & 0x0fff);
+      this.vlanIdentifier = (short) (vlanIdentifier & 0x0FFF);
       return this;
     }
 
+    /**
+     * Next protocol type.
+     *
+     * <p>Example: {@link NetworkLayer#ARP}.
+     */
     public Builder type(final NetworkLayer type) {
       this.type = type;
       return this;
     }
 
-    public Builder payloadBuffer(final Memory buffer) {
-      this.payloadBuffer = buffer;
-      return this;
-    }
-
     @Override
     public Vlan build() {
+      if (buffer != null) {
+        return build(buffer);
+      }
       return new Vlan(this);
     }
 
@@ -186,7 +228,7 @@ public class Vlan extends AbstractPacket {
       short type = buffer.readShort();
       this.priorityCodePoint = PriorityCodePoint.valueOf((byte) (tci >> 13 & 0x07));
       this.canonicalFormatIndicator = (byte) (tci >> 14 & 0x01);
-      this.vlanIdentifier = (short) (tci & 0x0fff);
+      this.vlanIdentifier = (short) (tci & 0x0FFF);
       this.type = NetworkLayer.valueOf(type);
       this.buffer = buffer;
       this.payloadBuffer = buffer.slice();
@@ -210,7 +252,7 @@ public class Vlan extends AbstractPacket {
         int tci =
             ((priorityCodePoint.value() << 13) & 0x07)
                 | ((canonicalFormatIndicator << 14) & 0x01)
-                | (vlanIdentifier & 0x0fff);
+                | (vlanIdentifier & 0x0FFF);
         buffer.setShort(index, tci);
         index += 2;
         buffer.setShort(index, type.value());

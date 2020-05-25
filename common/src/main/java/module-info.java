@@ -9,4 +9,10 @@ module pcap.common {
   exports pcap.common.net;
   exports pcap.common.tuple;
   exports pcap.common.util;
+  exports pcap.common.memory.internal to
+      pcap.codec;
+  exports pcap.common.memory.internal.nio to
+      pcap.codec;
+  exports pcap.common.memory.internal.allocator to
+      pcap.codec;
 }

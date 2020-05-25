@@ -23,7 +23,7 @@ public class Fragment extends AbstractPacket {
   private Fragment(final Builder builder) {
     this.header = new Header(builder);
     this.payloadBuffer = builder.payloadBuffer;
-    if (this.payloadBuffer != null) {
+    if (this.payloadBuffer != null && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
       this.payload =
           TransportLayer.valueOf(header.payloadType().value()).newInstance(this.payloadBuffer);
     } else {
@@ -76,7 +76,7 @@ public class Fragment extends AbstractPacket {
       this.fragmentOffset = builder.fragmentOffset;
       this.flagType = builder.flagType;
       this.identification = builder.identification;
-      this.buffer = slice(builder.buffer, length());
+      this.buffer = resetIndex(builder.buffer, length());
       this.builder = builder;
     }
 

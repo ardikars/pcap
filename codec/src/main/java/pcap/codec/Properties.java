@@ -9,11 +9,22 @@ import pcap.common.memory.MemoryAllocator;
 @Inclubating
 final class Properties {
 
+  static final int DEFAULT_POOL_SIZE =
+      pcap.common.util.Properties.getInt("pcap.codec.memory.pool.size", 10);
+
+  static final int DEFAULT_MAX_POOL_SIZE =
+      pcap.common.util.Properties.getInt("pcap.codec.memory.pool.max-size", 100);
+
+  static final int DEFAULT_MEMORY_POOL_CAPACITY =
+      pcap.common.util.Properties.getInt("pcap.codec.memory.pool.memory-capacity", 1500);
+
   static final MemoryAllocator BYTE_BUF_ALLOCATOR;
 
-  private Properties() {}
-
   static {
-    BYTE_BUF_ALLOCATOR = Memories.allocator();
+    BYTE_BUF_ALLOCATOR =
+        Memories.directAllocator(
+            DEFAULT_POOL_SIZE, DEFAULT_MAX_POOL_SIZE, DEFAULT_MEMORY_POOL_CAPACITY);
   }
+
+  private Properties() {}
 }
