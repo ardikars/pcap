@@ -1,9 +1,5 @@
 package pcap.common.memory.internal.allocator;
 
-import java.nio.ByteBuffer;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.common.memory.Memory;
@@ -11,6 +7,12 @@ import pcap.common.memory.MemoryAllocator;
 import pcap.common.memory.internal.nio.PooledHeapByteBuffer;
 import pcap.common.util.Properties;
 import pcap.common.util.Validate;
+
+import java.lang.ref.WeakReference;
+import java.nio.ByteBuffer;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 public class PooledHeapMemoryAllocator implements MemoryAllocator {
 
@@ -25,7 +27,7 @@ public class PooledHeapMemoryAllocator implements MemoryAllocator {
   private final int poolSize;
   private final int maxPoolSize;
   private final int maxMemoryCapacity;
-  private final Queue<Memory.Pooled> pool;
+  private final Queue<WeakReference<Memory.Pooled>> pool;
 
   private volatile int id = 0;
 
@@ -69,22 +71,26 @@ public class PooledHeapMemoryAllocator implements MemoryAllocator {
         String.format(
             "readerIndex: %d, writerIndex: %d (required non negative value)",
             readerIndex, writerIndex));
-    final Memory.Pooled poll = pool.poll();
-    if (poll != null) {
-      PooledHeapByteBuffer memory = (PooledHeapByteBuffer) poll;
-      memory.setIndex(readerIndex, writerIndex);
-      memory.retain();
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Allocate buffer with id %d (refCnt: %d).", memory.id(), memory.refCnt());
+    final WeakReference<Memory.Pooled> reference = pool.poll();
+    if (reference != null) {
+      Memory.Pooled poll = reference.get();
+      if (poll != null) {
+        PooledHeapByteBuffer memory = (PooledHeapByteBuffer) poll;
+        memory.setIndex(readerIndex, writerIndex);
+        memory.retain();
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("Allocate buffer with id %d (refCnt: %d).", memory.id(), memory.refCnt());
+        }
+        return memory;
       }
-      return memory;
     }
     if (id == maxPoolSize) {
       throw new IllegalStateException(String.format("Maximum pool reached %d", maxPoolSize));
     }
-    final PooledHeapByteBuffer pooled = allocatePooledMemory(capacity, readerIndex, writerIndex);
-    pooled.setIndex(readerIndex, writerIndex);
-    pool.offer(pooled);
+    final WeakReference<Memory.Pooled> weakReference =
+        allocatePooledMemory(capacity, readerIndex, writerIndex);
+    pool.offer(weakReference);
+    final PooledHeapByteBuffer pooled = (PooledHeapByteBuffer) weakReference.get();
     pooled.retain();
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Allocate buffer with id %d (refCnt: %d).", pooled.id(), pooled.refCnt());
@@ -100,24 +106,25 @@ public class PooledHeapMemoryAllocator implements MemoryAllocator {
                 "size: %d (expected: %d < poolSize(%d))", pool.size(), pool.size(), poolSize));
       }
       if (ZEROING) {}
-      pool.offer(buffer);
+      pool.offer(new WeakReference<>(buffer));
       return true;
     } catch (IllegalStateException e) {
       return false;
     }
   }
 
-  private PooledHeapByteBuffer allocatePooledMemory(
+  private WeakReference<Memory.Pooled> allocatePooledMemory(
       int capacity, int readerIndex, int writerIndex) {
     ByteBuffer buffer = ByteBuffer.allocateDirect(maxMemoryCapacity);
-    return new PooledHeapByteBuffer(
-        ID_GERERATOR_UPDATER.incrementAndGet(this),
-        this,
-        0,
-        buffer,
-        capacity,
-        maxMemoryCapacity,
-        readerIndex,
-        writerIndex);
+    return new WeakReference<>(
+        new PooledHeapByteBuffer(
+            ID_GERERATOR_UPDATER.incrementAndGet(this),
+            this,
+            0,
+            buffer,
+            capacity,
+            maxMemoryCapacity,
+            readerIndex,
+            writerIndex));
   }
 }

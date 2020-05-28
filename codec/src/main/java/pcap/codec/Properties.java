@@ -18,10 +18,10 @@ final class Properties {
   static final int DEFAULT_MEMORY_POOL_CAPACITY =
       pcap.common.util.Properties.getInt("pcap.codec.memory.pool.memory-capacity", 1500);
 
-  static final MemoryAllocator BYTE_BUF_ALLOCATOR;
+  static final MemoryAllocator DIRECT_ALLOCATOR;
 
   static {
-    BYTE_BUF_ALLOCATOR =
+    DIRECT_ALLOCATOR =
         Memories.directAllocator(
             DEFAULT_POOL_SIZE, DEFAULT_MAX_POOL_SIZE, DEFAULT_MEMORY_POOL_CAPACITY);
   }

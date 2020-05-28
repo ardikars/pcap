@@ -56,9 +56,13 @@ public class VlanTest extends BaseTest {
     Vlan.Header headerFromBuffer = fromBuffer.header();
     Assertions.assertEquals(header, headerFromBuffer);
 
-    Memory noCopyBuffer = headerFromBuffer.buffer();
+    buffer.release(); // don't forget to release the buffer to the pool
+    Memory noCopyBuffer =
+        headerFromBuffer
+            .buffer(); // this buffer is unuseabale because it's already released to the pool.
     Assertions.assertEquals(buffer.capacity(), noCopyBuffer.capacity());
     Assertions.assertEquals(buffer.maxCapacity(), noCopyBuffer.maxCapacity());
+    Assertions.assertThrows(IllegalStateException.class, () -> noCopyBuffer.release());
   }
 
   @Test
@@ -85,6 +89,7 @@ public class VlanTest extends BaseTest {
     Assertions.assertTrue(buffer.release()); // release buffer to the pool
     Assertions.assertEquals(mutate.buffer().capacity(), mutated.buffer().capacity());
     Assertions.assertEquals(mutate.buffer().maxCapacity(), mutated.buffer().maxCapacity());
+    Assertions.assertThrows(IllegalStateException.class, () -> mutate.buffer().release());
   }
 
   @Test
@@ -95,7 +100,8 @@ public class VlanTest extends BaseTest {
 
   @Test
   public void registerPriorityCodePointTest() {
-    Assertions.assertEquals(new Vlan.PriorityCodePoint((byte) -1, "Unknown"), Vlan.PriorityCodePoint.valueOf((byte) 8));
+    Assertions.assertEquals(
+        new Vlan.PriorityCodePoint((byte) -1, "Unknown"), Vlan.PriorityCodePoint.valueOf((byte) 8));
     Vlan.PriorityCodePoint newUnknownPCP = new Vlan.PriorityCodePoint((byte) 8, "New Unknown");
     Vlan.PriorityCodePoint.register(newUnknownPCP);
     Assertions.assertEquals(newUnknownPCP, Vlan.PriorityCodePoint.valueOf((byte) 8));

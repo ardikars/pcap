@@ -25,7 +25,7 @@ public abstract class AbstractPacket implements Packet {
    */
   public Memory payloadBuffer() {
     if (payloadBuffer == null) {
-      payloadBuffer = Properties.BYTE_BUF_ALLOCATOR.allocate(0);
+      payloadBuffer = Properties.DIRECT_ALLOCATOR.allocate(0);
     }
     return payloadBuffer;
   }
@@ -118,7 +118,7 @@ public abstract class AbstractPacket implements Packet {
 
   public abstract static class Header implements Packet.Header {
 
-    protected static final MemoryAllocator ALLOCATOR = Properties.BYTE_BUF_ALLOCATOR;
+    protected static final MemoryAllocator ALLOCATOR = Properties.DIRECT_ALLOCATOR;
 
     protected Memory buffer;
 

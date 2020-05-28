@@ -63,9 +63,13 @@ public class ArpTest extends BaseTest {
     Arp.Header headerFromBuffer = fromBuffer.header();
     Assertions.assertEquals(header, headerFromBuffer);
 
-    Memory noCopyBuffer = headerFromBuffer.buffer();
+    buffer.release(); // don't forget to release the buffer to the pool
+    Memory noCopyBuffer =
+        headerFromBuffer
+            .buffer(); // this buffer is unuseabale because it's already released to the pool.
     Assertions.assertEquals(buffer.capacity(), noCopyBuffer.capacity());
     Assertions.assertEquals(buffer.maxCapacity(), noCopyBuffer.maxCapacity());
+    Assertions.assertThrows(IllegalStateException.class, () -> noCopyBuffer.release());
   }
 
   @Test
@@ -74,7 +78,7 @@ public class ArpTest extends BaseTest {
     final Memory buffer = pkt.buffer();
 
     Arp mutate =
-            Arp.newPacket(buffer)
+        Arp.newPacket(buffer)
             .builder()
             .operationCode(Arp.OperationCode.ARP_REPLY)
             .senderHardwareAddress(MacAddress.valueOf("de:ad:be:ef:ce:ce"))
@@ -94,6 +98,7 @@ public class ArpTest extends BaseTest {
     Assertions.assertTrue(buffer.release()); // release buffer to the pool
     Assertions.assertEquals(mutate.buffer().capacity(), mutated.buffer().capacity());
     Assertions.assertEquals(mutate.buffer().maxCapacity(), mutated.buffer().maxCapacity());
+    Assertions.assertThrows(IllegalStateException.class, () -> mutate.buffer().release());
   }
 
   @Test

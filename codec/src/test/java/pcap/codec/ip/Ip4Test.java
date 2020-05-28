@@ -15,7 +15,7 @@ import pcap.common.net.Inet4Address;
 import pcap.common.util.Hexs;
 
 @RunWith(JUnitPlatform.class)
-public class Ip4TcpTest extends BaseTest {
+public class Ip4Test extends BaseTest {
 
   private final byte[] data = Hexs.parseHex(ETHERNET_IPV4_TCP_SYN);
 
@@ -43,7 +43,7 @@ public class Ip4TcpTest extends BaseTest {
             .calculateChecksum(true)
             .sourceAddress(Inet4Address.valueOf("192.168.1.1"))
             .destinationAddress(Inet4Address.valueOf("192.168.1.2"))
-            .options(new byte[] { })
+            .options(new byte[] {})
             .build();
     return pkt;
   }
@@ -62,12 +62,13 @@ public class Ip4TcpTest extends BaseTest {
     Ip4.Header headerFromBuffer = fromBuffer.header();
     Assertions.assertEquals(header, headerFromBuffer);
 
-    Memory noCopyBuffer = headerFromBuffer.buffer();
+    buffer.release(); // don't forget to release the buffer to the pool
+    Memory noCopyBuffer =
+            headerFromBuffer
+                    .buffer(); // this buffer is unuseabale because it's already released to the pool.
     Assertions.assertEquals(buffer.capacity(), noCopyBuffer.capacity());
     Assertions.assertEquals(buffer.maxCapacity(), noCopyBuffer.maxCapacity());
-
-    Assertions.assertEquals(((PooledDirectByteBuffer) buffer).refCnt(), 1);
-    Assertions.assertTrue(buffer.release()); // release buffer to the pool
+    Assertions.assertThrows(IllegalStateException.class, () -> noCopyBuffer.release());
   }
 
   @Test
@@ -96,6 +97,7 @@ public class Ip4TcpTest extends BaseTest {
     Assertions.assertTrue(buffer.release()); // release buffer to the pool
     Assertions.assertEquals(mutate.buffer().capacity(), mutated.buffer().capacity());
     Assertions.assertEquals(mutate.buffer().maxCapacity(), mutated.buffer().maxCapacity());
+    Assertions.assertThrows(IllegalStateException.class, () -> mutate.buffer().release());
   }
 
   @Test
