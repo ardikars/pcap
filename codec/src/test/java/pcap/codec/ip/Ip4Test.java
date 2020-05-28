@@ -25,6 +25,10 @@ public class Ip4Test extends BaseTest {
   public void before() {
     buf.writeBytes(data);
     ethernet = Ethernet.newPacket(buf);
+    final Ip4 first = ethernet.getFirst(Ip4.class);
+    Memory memory = first.buffer();
+    Assertions.assertEquals(0, memory.readerIndex());
+    Assertions.assertEquals(Ip4.Header.IPV4_HEADER_LENGTH, memory.writerIndex());
   }
 
   private Ip4 build() {
@@ -49,6 +53,38 @@ public class Ip4Test extends BaseTest {
   }
 
   @Test
+  public void checksumTest() {
+    byte[] array = Hexs.parseHex(SSL_CLIENT_HELLO);
+    Memory buffer = allocator.allocate(array.length);
+    buffer.writeBytes(array);
+    final Ip4 ip4 = Ethernet.newPacket(buffer).getFirst(Ip4.class);
+    final Ip4.Header ip4Header = ip4.header();
+    final Ip4.Builder ip4Builder = ip4Header.builder().calculateChecksum(true).reset();
+    final Ip4.Builder newIp4Builder =
+        new Ip4.Builder()
+            .calculateChecksum(true)
+            .destinationAddress(ip4Header.destinationAddress())
+            .diffServ(ip4Header.diffServ())
+            .expCon(ip4Header.expCon())
+            .flags(ip4Header.flags())
+            .fragmentOffset(ip4Header.fragmentOffset())
+            .headerLength(ip4Header.headerLength())
+            .identification(ip4Header.identification())
+            .options(ip4Header.options())
+            .protocol(ip4Header.protocol())
+            .sourceAddress(ip4Header.sourceAddress())
+            .totalLength(ip4Header.totalLength())
+            .ttl(ip4Header.ttl());
+    final Ip4.Header ip4NoCopy = ip4Builder.build().header();
+    final Ip4 newIp4 = newIp4Builder.build();
+    Assertions.assertEquals(ip4Header, newIp4.header());
+    Assertions.assertEquals(ip4Header, ip4NoCopy);
+    Assertions.assertTrue(ip4Header.isValidChecksum());
+    Assertions.assertTrue(ip4NoCopy.isValidChecksum());
+    Assertions.assertTrue(newIp4.header().isValidChecksum());
+  }
+
+  @Test
   public void buildTest() {
     final Ip4 ip4 = build();
     final Memory buffer = ip4.buffer();
@@ -64,8 +100,8 @@ public class Ip4Test extends BaseTest {
 
     buffer.release(); // don't forget to release the buffer to the pool
     Memory noCopyBuffer =
-            headerFromBuffer
-                    .buffer(); // this buffer is unuseabale because it's already released to the pool.
+        headerFromBuffer
+            .buffer(); // this buffer is unuseabale because it's already released to the pool.
     Assertions.assertEquals(buffer.capacity(), noCopyBuffer.capacity());
     Assertions.assertEquals(buffer.maxCapacity(), noCopyBuffer.maxCapacity());
     Assertions.assertThrows(IllegalStateException.class, () -> noCopyBuffer.release());

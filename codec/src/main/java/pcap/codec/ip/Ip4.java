@@ -41,6 +41,21 @@ public class Ip4 extends Ip {
     return new Builder().build(buffer);
   }
 
+  private static short calculateChecksum(Memory buffer, int headerLength, int offset) {
+    int index = offset;
+    int accumulation = 0;
+    for (int i = 0; i < headerLength * 2; ++i) {
+      if (i == 5) {
+        accumulation += 0;
+      } else {
+        accumulation += 0xFFFF & buffer.getShort(index);
+      }
+      index += 2;
+    }
+    accumulation = (accumulation >> 16 & 0xFFFF) + (accumulation & 0xFFFF);
+    return (short) (~accumulation & 0xFFFF);
+  }
+
   @Override
   public Header header() {
     return header;
@@ -173,13 +188,7 @@ public class Ip4 extends Ip {
      * @return returns true if checksum is valid, false otherwise.
      */
     public boolean isValidChecksum() {
-      Memory buffer = buffer();
-      int accumulation = 0;
-      for (int i = 0; i < headerLength * 2; ++i) {
-        accumulation += 0xffff & buffer.getShort(i + 2);
-      }
-      accumulation = (accumulation >> 16 & 0xffff) + (accumulation & 0xffff);
-      return checksum == (short) (~accumulation & 0xffff);
+      return checksum == calculateChecksum(buffer, headerLength, 0);
     }
 
     @Override
@@ -196,8 +205,8 @@ public class Ip4 extends Ip {
     public Memory buffer() {
       if (buffer == null) {
         buffer = ALLOCATOR.allocate(length());
-        buffer.writeByte((byte) ((super.version & 0xF) << 4 | headerLength & 0xF));
-        buffer.writeByte((byte) (((diffServ << 2) & 0x3F) | expCon & 0x3));
+        buffer.writeByte(((super.version & 0xF) << 4 | headerLength & 0xF));
+        buffer.writeByte((((diffServ << 2) & 0x3F) | expCon & 0x3));
         buffer.writeShort(totalLength);
         buffer.writeShort(identification);
         buffer.writeShort((flags & 0x7) << 13 | fragmentOffset & 0x1FFF);
@@ -308,7 +317,7 @@ public class Ip4 extends Ip {
     }
 
     public Builder diffServ(final int diffServ) {
-      this.diffServ = (byte) (this.diffServ & 0x3F);
+      this.diffServ = (byte) (diffServ & 0x3F);
       return this;
     }
 
@@ -348,7 +357,7 @@ public class Ip4 extends Ip {
     }
 
     public Builder checksum(final int checksum) {
-      this.checksum = (short) (this.checksum & 0xFFFF);
+      this.checksum = (short) (checksum & 0xFFFF);
       return this;
     }
 
@@ -381,6 +390,15 @@ public class Ip4 extends Ip {
 
     @Override
     public Ip4 build() {
+      if (calculateChecksum) {
+        if (buffer == null) {
+          buffer = new Ip4(this).buffer();
+        }
+        checksum(Ip4.calculateChecksum(buffer, headerLength, 0));
+        if (calculateChecksum) {
+          buffer.setShort(10, this.checksum);
+        }
+      }
       return new Ip4(this);
     }
 
@@ -414,16 +432,7 @@ public class Ip4 extends Ip {
         options = new byte[0];
       }
       if (calculateChecksum) {
-        int index = 0;
-        int accumulation = 0;
-        for (int i = 0; i < headerLength * 2; ++i) {
-          accumulation += 0xFFFF & buffer.getShort(index);
-          index += 2;
-        }
-        accumulation = (accumulation >> 16 & 0xFFFF) + (accumulation & 0xFFFF);
-        if (checksum != (short) (~accumulation & 0xFFFF)) {
-          this.checksum = 0;
-        }
+        checksum(Ip4.calculateChecksum(buffer, headerLength, 0));
       }
       this.buffer = buffer;
       this.payloadBuffer = buffer.slice();
@@ -451,8 +460,11 @@ public class Ip4 extends Ip {
         Validate.notIllegalArgument(checksum >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(sourceAddress != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(destinationAddress != null, ILLEGAL_HEADER_EXCEPTION);
+        if (calculateChecksum) {
+          this.checksum = 0;
+        }
         int index = offset;
-        buffer.setByte(index, ((4 & 0xF) << 4) | this.headerLength & 0xF);
+        buffer.setByte(index, (((0x4 & 0xF) << 4) | this.headerLength & 0xF));
         index += 1;
         int tmp = ((diffServ << 2) & 0x3F) | (expCon & 0x3);
         buffer.setByte(index, tmp);
@@ -461,8 +473,7 @@ public class Ip4 extends Ip {
         index += 2;
         buffer.setShort(index, identification);
         index += 2;
-        int sscratch = ((flags << 13) & 0x7) | (fragmentOffset & 0x1FFF);
-        buffer.setShort(index, sscratch);
+        buffer.setShort(index, (flags & 0x7) << 13 | fragmentOffset & 0x1FFF);
         index += 2;
         buffer.setByte(index, ttl);
         index += 1;

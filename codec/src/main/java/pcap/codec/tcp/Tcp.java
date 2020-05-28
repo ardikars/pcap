@@ -20,7 +20,8 @@ public class Tcp extends AbstractPacket {
   private Tcp(final Builder builder) {
     this.header = new Header(builder);
     this.payloadBuffer = builder.payloadBuffer;
-    if (this.payloadBuffer != null && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
+    if (this.payloadBuffer != null
+        && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
       this.payload =
           ApplicationLayer.valueOf(this.header.payloadType().value())
               .newInstance(this.payloadBuffer);
@@ -187,7 +188,7 @@ public class Tcp extends AbstractPacket {
           .add("windowSize", windowSize & 0xFFFF)
           .add("checksum", checksum & 0xFFFF)
           .add("urgentPointer", urgentPointer & 0xFF)
-          .add("options", Strings.hex(options))
+          .add("options", options == null || options.length == 0 ? "(None)" : Strings.hex(options))
           .toString();
     }
   }

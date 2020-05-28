@@ -10,6 +10,8 @@ import pcap.common.net.MacAddress;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
+import java.util.Objects;
+
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 public class Ethernet extends AbstractPacket {
@@ -21,7 +23,8 @@ public class Ethernet extends AbstractPacket {
   private Ethernet(final Builder builder) {
     this.header = new Header(builder);
     this.payloadBuffer = builder.payloadBuffer;
-    if (this.payloadBuffer != null && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
+    if (this.payloadBuffer != null
+        && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
       this.payload =
           NetworkLayer.valueOf(this.header.payloadType().value()).newInstance(this.payloadBuffer);
     } else {
@@ -116,6 +119,21 @@ public class Ethernet extends AbstractPacket {
     @Override
     public Builder builder() {
       return builder;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Header header = (Header) o;
+      return destinationMacAddress.equals(header.destinationMacAddress)
+          && sourceMacAddress.equals(header.sourceMacAddress)
+          && ethernetType.equals(header.ethernetType);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(destinationMacAddress, sourceMacAddress, ethernetType);
     }
 
     @Override
