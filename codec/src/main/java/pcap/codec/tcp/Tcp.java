@@ -4,10 +4,17 @@ package pcap.codec.tcp;
 import pcap.codec.AbstractPacket;
 import pcap.codec.ApplicationLayer;
 import pcap.codec.Packet;
+import pcap.codec.TransportLayer;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
+import pcap.common.net.Inet4Address;
+import pcap.common.net.Inet6Address;
+import pcap.common.net.InetAddress;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -29,6 +36,10 @@ public class Tcp extends AbstractPacket {
       this.payload = null;
     }
     this.builder = builder;
+  }
+
+  public static Tcp newPacket(Memory buffer) {
+    return new Tcp.Builder().build(buffer);
   }
 
   @Override
@@ -88,6 +99,43 @@ public class Tcp extends AbstractPacket {
       this.builder = builder;
     }
 
+    static short calculateChecksum(Memory buffer, InetAddress srcAddr, InetAddress dstAddr) {
+      int length = buffer.capacity();
+      Memory buf;
+      int pseudoSize;
+      if (srcAddr instanceof Inet4Address && dstAddr instanceof Inet4Address) {
+        pseudoSize = 12;
+      } else if (srcAddr instanceof Inet6Address && dstAddr instanceof Inet6Address) {
+        pseudoSize = 40;
+      } else {
+        return 0;
+      }
+
+      buf = ALLOCATOR.allocate(length + pseudoSize + (length % 2 == 0 ? 0 : 1));
+      buf.writeBytes(buffer, 0, buffer.capacity());
+      buf.writeByte(0);
+
+      buf.writeBytes(srcAddr.address());
+      buf.writeBytes(dstAddr.address());
+      buf.writeByte(0);
+      buf.writeByte(TransportLayer.TCP.value());
+      if (srcAddr instanceof Inet4Address && dstAddr instanceof Inet4Address) {
+        buf.writeShort(length);
+      } else if (srcAddr instanceof Inet6Address && dstAddr instanceof Inet6Address) {
+        buf.writeInt(length);
+      }
+
+      int accumulation = 0;
+      while (buf.readableBytes() > 1) {
+        accumulation += buf.readShort() & 0xFFFF;
+      }
+
+      buf.release();
+
+      accumulation = (accumulation >> 16 & 0xFFFF) + (accumulation & 0xFFFF);
+      return (short) (~accumulation & 0xFFFF);
+    }
+
     public int sourcePort() {
       return sourcePort & 0xffff;
     }
@@ -138,6 +186,22 @@ public class Tcp extends AbstractPacket {
       return buffer;
     }
 
+    /**
+     * Check whether checksum is valid.
+     *
+     * @return returns true if checksum is valid, false otherwise.
+     */
+    public boolean isValidChecksum(InetAddress srcAddr, InetAddress dstAddr) {
+      Memory buf =
+          ALLOCATOR.allocate(
+              length() + (builder.payloadBuffer == null ? 0 : builder.payloadBuffer.capacity()));
+      buf.writeBytes(buffer, 0, length());
+      buf.writeBytes(builder.payloadBuffer, 0, builder.payloadBuffer.capacity());
+      boolean valid = 0 == calculateChecksum(buf, srcAddr, dstAddr);
+      buf.release();
+      return valid;
+    }
+
     @Override
     public ApplicationLayer payloadType() {
       return ApplicationLayer.valueOf(destinationPort);
@@ -177,6 +241,40 @@ public class Tcp extends AbstractPacket {
     }
 
     @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Header header = (Header) o;
+      return sourcePort == header.sourcePort
+          && destinationPort == header.destinationPort
+          && sequence == header.sequence
+          && acknowledge == header.acknowledge
+          && dataOffset == header.dataOffset
+          && windowSize == header.windowSize
+          && checksum == header.checksum
+          && urgentPointer == header.urgentPointer
+          && flags.equals(header.flags)
+          && Arrays.equals(options, header.options);
+    }
+
+    @Override
+    public int hashCode() {
+      int result =
+          Objects.hash(
+              sourcePort,
+              destinationPort,
+              sequence,
+              acknowledge,
+              dataOffset,
+              flags,
+              windowSize,
+              checksum,
+              urgentPointer);
+      result = 31 * result + Arrays.hashCode(options);
+      return result;
+    }
+
+    @Override
     public String toString() {
       return Strings.toStringBuilder(this)
           .add("sourcePort", sourcePort & 0xFFFF)
@@ -208,6 +306,12 @@ public class Tcp extends AbstractPacket {
 
     private Memory buffer;
     private Memory payloadBuffer;
+
+    /** A helper field. */
+    private boolean calculateChecksum;
+
+    private InetAddress srcAddr;
+    private InetAddress dstAddr;
 
     public Builder sourcePort(int sourcePort) {
       this.sourcePort = (short) (sourcePort & 0xffff);
@@ -256,16 +360,45 @@ public class Tcp extends AbstractPacket {
 
     public Builder options(byte[] options) {
       this.options = Validate.nullPointerThenReturns(options, new byte[0]);
+      this.dataOffset = (byte) (20 + options.length + 3 >> 2);
+      return this;
+    }
+
+    public Builder payload(Memory payload) {
+      this.payloadBuffer = payload;
+      return this;
+    }
+
+    public Builder calculateChecksum(
+        InetAddress srcAddr, InetAddress dstAddr, boolean calculateChecksum) {
+      this.srcAddr = srcAddr;
+      this.dstAddr = dstAddr;
+      this.calculateChecksum = calculateChecksum;
       return this;
     }
 
     @Override
-    public Packet build() {
+    public Tcp build() {
+      if (calculateChecksum && srcAddr != null && dstAddr != null) {
+        if (buffer == null) {
+          final Tcp tcp = new Tcp(this);
+          int length =
+              tcp.header.length()
+                  + (this.payloadBuffer == null ? 0 : this.payloadBuffer.capacity());
+          this.buffer = ALLOCATOR.allocate(length);
+          this.buffer.writeBytes(tcp.header().buffer(), 0, tcp.header().length());
+          if (this.payloadBuffer != null) {
+            this.buffer.writeBytes(payloadBuffer, 0, this.payloadBuffer.capacity());
+          }
+        }
+        checksum(Tcp.Header.calculateChecksum(buffer, srcAddr, dstAddr));
+        buffer.setShort(16, this.checksum);
+      }
       return new Tcp(this);
     }
 
     @Override
-    public Packet build(Memory buffer) {
+    public Tcp build(Memory buffer) {
       resetIndex(buffer);
       this.sourcePort = buffer.readShort();
       this.destinationPort = buffer.readShort();
@@ -277,7 +410,7 @@ public class Tcp extends AbstractPacket {
       this.windowSize = buffer.readShort();
       this.checksum = buffer.readShort();
       this.urgentPointer = buffer.readShort();
-      if (this.dataOffset > 5) {
+      if (this.dataOffset > 5 && buffer.readableBytes() > 0) {
         int optionLength = (this.dataOffset << 2) - Header.TCP_HEADER_LENGTH;
         if (buffer.capacity() < Header.TCP_HEADER_LENGTH + optionLength) {
           optionLength = buffer.capacity() - Header.TCP_HEADER_LENGTH;
@@ -286,6 +419,8 @@ public class Tcp extends AbstractPacket {
         buffer.readBytes(options);
         int length = 20 + optionLength;
         this.payloadBuffer = buffer.slice(length, buffer.capacity() - length);
+      } else {
+        this.options = new byte[0];
       }
       this.buffer = buffer;
       this.payloadBuffer = buffer.slice();
@@ -301,15 +436,15 @@ public class Tcp extends AbstractPacket {
     public Builder reset(int offset, int length) {
       if (buffer != null) {
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
-        Validate.notIllegalArgument(sourcePort >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(destinationPort >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(sequence >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(acknowledge >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((sourcePort & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((destinationPort & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((sequence & 0xFFFFFFFFL) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((acknowledge & 0xFFFFFFFFL) >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(flags != null, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(windowSize >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(checksum >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(urgentPointer >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(dataOffset >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((windowSize & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((checksum & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((urgentPointer & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((dataOffset & 0xF) >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(options != null, ILLEGAL_HEADER_EXCEPTION);
         int index = offset;
         buffer.setShort(index, sourcePort);
@@ -320,7 +455,7 @@ public class Tcp extends AbstractPacket {
         index += 4;
         buffer.setInt(index, acknowledge);
         index += 4;
-        int tmp = ((dataOffset << 12) & 0xf) | (flags.value() & 0x1ff);
+        int tmp = flags.value() & 0x1FF | (dataOffset << 12);
         buffer.setShort(index, tmp);
         index += 2;
         buffer.setShort(index, windowSize);

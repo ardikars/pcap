@@ -129,6 +129,7 @@ public final class Memories {
    */
   public static Memory wrap(CharSequence hexStream) {
     Memory memory = wrap(hexStream, true, allocator());
+    memory.setIndex(0, memory.capacity());
     return memory;
   }
 

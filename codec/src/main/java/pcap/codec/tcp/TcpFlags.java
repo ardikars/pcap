@@ -1,8 +1,10 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.tcp;
 
-import java.io.Serializable;
 import pcap.common.annotation.Inclubating;
+
+import java.io.Serializable;
+import java.util.Objects;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -101,6 +103,27 @@ public final class TcpFlags implements Serializable {
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    TcpFlags tcpFlags = (TcpFlags) o;
+    return ns == tcpFlags.ns
+        && cwr == tcpFlags.cwr
+        && ece == tcpFlags.ece
+        && urg == tcpFlags.urg
+        && ack == tcpFlags.ack
+        && psh == tcpFlags.psh
+        && rst == tcpFlags.rst
+        && syn == tcpFlags.syn
+        && fin == tcpFlags.fin;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(ns, cwr, ece, urg, ack, psh, rst, syn, fin);
+  }
+
+  @Override
   public String toString() {
     return new StringBuilder("TcpFlags{")
         .append("ns=")
@@ -178,7 +201,7 @@ public final class TcpFlags implements Serializable {
     }
 
     public Builder fin(boolean fin) {
-      this.fin = false;
+      this.fin = fin;
       return this;
     }
 

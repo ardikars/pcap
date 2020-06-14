@@ -4,10 +4,16 @@ package pcap.codec.udp;
 import pcap.codec.AbstractPacket;
 import pcap.codec.ApplicationLayer;
 import pcap.codec.Packet;
+import pcap.codec.TransportLayer;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
+import pcap.common.net.Inet4Address;
+import pcap.common.net.Inet6Address;
+import pcap.common.net.InetAddress;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
+
+import java.util.Objects;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -20,7 +26,8 @@ public class Udp extends AbstractPacket {
   private Udp(final Builder builder) {
     this.header = new Header(builder);
     this.payloadBuffer = builder.payloadBuffer;
-    if (this.payloadBuffer != null && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
+    if (this.payloadBuffer != null
+        && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
       this.payload =
           ApplicationLayer.valueOf(this.header.payloadType().value())
               .newInstance(this.payloadBuffer);
@@ -28,6 +35,10 @@ public class Udp extends AbstractPacket {
       this.payload = null;
     }
     this.builder = builder;
+  }
+
+  public static Udp newPacket(Memory buffer) {
+    return new Udp.Builder().build(buffer);
   }
 
   @Override
@@ -78,6 +89,43 @@ public class Udp extends AbstractPacket {
       this.builder = builder;
     }
 
+    static short calculateChecksum(Memory buffer, InetAddress srcAddr, InetAddress dstAddr) {
+      int length = buffer.capacity();
+      Memory buf;
+      int pseudoSize;
+      if (srcAddr instanceof Inet4Address && dstAddr instanceof Inet4Address) {
+        pseudoSize = 12;
+      } else if (srcAddr instanceof Inet6Address && dstAddr instanceof Inet6Address) {
+        pseudoSize = 40;
+      } else {
+        return 0;
+      }
+
+      buf = ALLOCATOR.allocate(length + pseudoSize + (length % 2 == 0 ? 0 : 1));
+      buf.writeBytes(buffer, 0, buffer.capacity());
+      buf.writeByte(0);
+
+      buf.writeBytes(srcAddr.address());
+      buf.writeBytes(dstAddr.address());
+      buf.writeByte(0);
+      buf.writeByte(TransportLayer.UDP.value());
+      if (srcAddr instanceof Inet4Address && dstAddr instanceof Inet4Address) {
+        buf.writeShort(length);
+      } else if (srcAddr instanceof Inet6Address && dstAddr instanceof Inet6Address) {
+        buf.writeInt(length);
+      }
+
+      int accumulation = 0;
+      while (buf.readableBytes() > 1) {
+        accumulation += buf.readShort() & 0xFFFF;
+      }
+
+      buf.release();
+
+      accumulation = (accumulation >> 16 & 0xFFFF) + (accumulation & 0xFFFF);
+      return (short) (~accumulation & 0xFFFF);
+    }
+
     public int sourcePort() {
       return sourcePort & 0xffff;
     }
@@ -86,8 +134,28 @@ public class Udp extends AbstractPacket {
       return destinationPort & 0xffff;
     }
 
+    public int lengthUdp() {
+      return length & 0xFFFF;
+    }
+
     public int checksum() {
       return checksum & 0xffff;
+    }
+
+    /**
+     * Check whether checksum is valid.
+     *
+     * @return returns true if checksum is valid, false otherwise.
+     */
+    public boolean isValidChecksum(InetAddress srcAddr, InetAddress dstAddr) {
+      Memory buf =
+          ALLOCATOR.allocate(
+              length() + (builder.payloadBuffer == null ? 0 : builder.payloadBuffer.capacity()));
+      buf.writeBytes(buffer, 0, length());
+      buf.writeBytes(builder.payloadBuffer, 0, builder.payloadBuffer.capacity());
+      boolean valid = 0 == calculateChecksum(buf, srcAddr, dstAddr);
+      buf.release();
+      return valid;
     }
 
     @Override
@@ -104,10 +172,10 @@ public class Udp extends AbstractPacket {
     public Memory buffer() {
       if (buffer == null) {
         buffer = ALLOCATOR.allocate(length());
-        buffer.writeShort(this.sourcePort);
-        buffer.writeShort(this.destinationPort);
-        buffer.writeShort(this.length);
-        buffer.writeShort(this.checksum);
+        buffer.writeShort(this.sourcePort & 0xFFFF);
+        buffer.writeShort(this.destinationPort & 0xFFFF);
+        buffer.writeShort(this.length & 0xFFFF);
+        buffer.writeShort(this.checksum & 0xFFFF);
       }
       return buffer;
     }
@@ -118,11 +186,27 @@ public class Udp extends AbstractPacket {
     }
 
     @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Header header = (Header) o;
+      return sourcePort == header.sourcePort
+          && destinationPort == header.destinationPort
+          && length == header.length
+          && checksum == header.checksum;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(sourcePort, destinationPort, length, checksum);
+    }
+
+    @Override
     public String toString() {
       return Strings.toStringBuilder(this)
           .add("sourcePort", sourcePort & 0xFFFF)
           .add("destinationPort", destinationPort & 0xFFFF)
-          .add("length", length)
+          .add("length", length & 0xFFFF)
           .add("checksum", checksum & 0xFFFF)
           .toString();
     }
@@ -137,6 +221,12 @@ public class Udp extends AbstractPacket {
 
     private Memory buffer;
     private Memory payloadBuffer;
+
+    /** A helper field. */
+    private boolean calculateChecksum;
+
+    private InetAddress srcAddr;
+    private InetAddress dstAddr;
 
     public Builder sourcePort(int sourcePort) {
       this.sourcePort = (short) (sourcePort & 0xffff);
@@ -158,13 +248,41 @@ public class Udp extends AbstractPacket {
       return this;
     }
 
+    public Builder payload(Memory payload) {
+      this.payloadBuffer = payload;
+      return this;
+    }
+
+    public Builder calculateChecksum(
+        InetAddress srcAddr, InetAddress dstAddr, boolean calculateChecksum) {
+      this.srcAddr = srcAddr;
+      this.dstAddr = dstAddr;
+      this.calculateChecksum = calculateChecksum;
+      return this;
+    }
+
     @Override
-    public Packet build() {
+    public Udp build() {
+      if (calculateChecksum && srcAddr != null && dstAddr != null) {
+        if (buffer == null) {
+          final Udp udp = new Udp(this);
+          int length =
+              udp.header.length()
+                  + (this.payloadBuffer == null ? 0 : this.payloadBuffer.capacity());
+          this.buffer = ALLOCATOR.allocate(length);
+          this.buffer.writeBytes(udp.header().buffer(), 0, udp.header().length());
+          if (this.payloadBuffer != null) {
+            this.buffer.writeBytes(payloadBuffer, 0, this.payloadBuffer.capacity());
+          }
+        }
+        checksum(Udp.Header.calculateChecksum(buffer, srcAddr, dstAddr));
+        buffer.setShort(6, this.checksum);
+      }
       return new Udp(this);
     }
 
     @Override
-    public Packet build(Memory buffer) {
+    public Udp build(Memory buffer) {
       resetIndex(buffer);
       this.sourcePort = buffer.readShort();
       this.destinationPort = buffer.readShort();
@@ -184,10 +302,10 @@ public class Udp extends AbstractPacket {
     public Builder reset(int offset, int length) {
       if (buffer != null) {
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
-        Validate.notIllegalArgument(sourcePort >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(destinationPort >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(this.length >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(checksum >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((this.sourcePort & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((this.destinationPort & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((this.length & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((this.checksum & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
         int index = offset;
         buffer.setShort(index, sourcePort);
         index += 2;

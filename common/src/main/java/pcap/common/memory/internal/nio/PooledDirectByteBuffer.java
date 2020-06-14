@@ -54,9 +54,10 @@ public class PooledDirectByteBuffer extends DirectByteBuffer implements Memory.P
   }
 
   @Override
-  public Memory capacity(int newCapacity) {
+  public PooledDirectByteBuffer capacity(int newCapacity) {
     ensureNotInPool();
-    return super.capacity(newCapacity);
+    capacity = newCapacity;
+    return this;
   }
 
   @Override

@@ -41,21 +41,6 @@ public class Ip4 extends Ip {
     return new Builder().build(buffer);
   }
 
-  private static short calculateChecksum(Memory buffer, int headerLength, int offset) {
-    int index = offset;
-    int accumulation = 0;
-    for (int i = 0; i < headerLength * 2; ++i) {
-      if (i == 5) {
-        accumulation += 0;
-      } else {
-        accumulation += 0xFFFF & buffer.getShort(index);
-      }
-      index += 2;
-    }
-    accumulation = (accumulation >> 16 & 0xFFFF) + (accumulation & 0xFFFF);
-    return (short) (~accumulation & 0xFFFF);
-  }
-
   @Override
   public Header header() {
     return header;
@@ -121,6 +106,21 @@ public class Ip4 extends Ip {
       this.options = builder.options;
       this.buffer = resetIndex(builder.buffer, length());
       this.builder = builder;
+    }
+
+    private static short calculateChecksum(Memory buffer, int headerLength, int offset) {
+      int index = offset;
+      int accumulation = 0;
+      for (int i = 0; i < headerLength * 2; ++i) {
+        if (i == 5) {
+          accumulation += 0;
+        } else {
+          accumulation += 0xFFFF & buffer.getShort(index);
+        }
+        index += 2;
+      }
+      accumulation = (accumulation >> 16 & 0xFFFF) + (accumulation & 0xFFFF);
+      return (short) (~accumulation & 0xFFFF);
     }
 
     public int headerLength() {
@@ -394,10 +394,8 @@ public class Ip4 extends Ip {
         if (buffer == null) {
           buffer = new Ip4(this).buffer();
         }
-        checksum(Ip4.calculateChecksum(buffer, headerLength, 0));
-        if (calculateChecksum) {
-          buffer.setShort(10, this.checksum);
-        }
+        checksum(Ip4.Header.calculateChecksum(buffer, headerLength, 0));
+        buffer.setShort(10, this.checksum);
       }
       return new Ip4(this);
     }
@@ -431,9 +429,6 @@ public class Ip4 extends Ip {
       } else {
         options = new byte[0];
       }
-      if (calculateChecksum) {
-        checksum(Ip4.calculateChecksum(buffer, headerLength, 0));
-      }
       this.buffer = buffer;
       this.payloadBuffer = buffer.slice();
       return new Ip4(this);
@@ -460,9 +455,6 @@ public class Ip4 extends Ip {
         Validate.notIllegalArgument(checksum >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(sourceAddress != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(destinationAddress != null, ILLEGAL_HEADER_EXCEPTION);
-        if (calculateChecksum) {
-          this.checksum = 0;
-        }
         int index = offset;
         buffer.setByte(index, (((0x4 & 0xF) << 4) | this.headerLength & 0xF));
         index += 1;

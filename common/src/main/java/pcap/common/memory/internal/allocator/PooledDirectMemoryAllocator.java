@@ -78,6 +78,7 @@ public class PooledDirectMemoryAllocator implements MemoryAllocator {
         PooledDirectByteBuffer memory = (PooledDirectByteBuffer) poll;
         memory.setIndex(readerIndex, writerIndex);
         memory.retain();
+        memory.capacity(capacity);
         if (LOGGER.isDebugEnabled()) {
           LOGGER.debug("Allocate buffer with id %d (refCnt: %d).", memory.id(), memory.refCnt());
         }

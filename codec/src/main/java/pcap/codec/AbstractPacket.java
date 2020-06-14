@@ -149,6 +149,8 @@ public abstract class AbstractPacket implements Packet {
   public abstract static class Builder
       implements pcap.common.util.Builder<Packet, Memory>, Serializable {
 
+    protected static final MemoryAllocator ALLOCATOR = Properties.DIRECT_ALLOCATOR;
+
     protected int readerIndex = -1;
     protected int writerIndex = -1;
 

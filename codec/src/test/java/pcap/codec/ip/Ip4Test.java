@@ -117,9 +117,9 @@ public class Ip4Test extends BaseTest {
             .builder()
             .ttl(128)
             .protocol(TransportLayer.UDP)
-            .calculateChecksum(true)
             .sourceAddress(Inet4Address.valueOf("192.168.1.2"))
             .destinationAddress(Inet4Address.valueOf("192.168.1.1"))
+            .calculateChecksum(true)
             .reset()
             .build();
 
@@ -128,6 +128,7 @@ public class Ip4Test extends BaseTest {
 
     Assertions.assertEquals(mutate.header(), mutated.header());
     Assertions.assertEquals(mutate.header().hashCode(), mutated.header().hashCode());
+    Assertions.assertNotEquals(mutated.header().checksum(), pkt.header().checksum());
 
     Assertions.assertEquals(((PooledDirectByteBuffer) buffer).refCnt(), 1);
     Assertions.assertTrue(buffer.release()); // release buffer to the pool
