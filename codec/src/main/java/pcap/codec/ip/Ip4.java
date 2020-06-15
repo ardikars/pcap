@@ -1,6 +1,8 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.ip;
 
+import java.util.Arrays;
+import java.util.Objects;
 import pcap.codec.Packet;
 import pcap.codec.TransportLayer;
 import pcap.common.annotation.Inclubating;
@@ -8,9 +10,6 @@ import pcap.common.memory.Memory;
 import pcap.common.net.Inet4Address;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
-
-import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * @see <a href="https://en.wikipedia.org/wiki/IPv4">Wikipedia</a>

@@ -67,10 +67,8 @@ jobs:
       - name: Build (Mac OS)
         run: |
           export JAVA_HOME_8=${JAVA_HOME}
-          export JAVA_HOME_14=/usr/local/jvm/panama
-          export JAVA_HOME=${JAVA_HOME_14}
+          export JAVA_HOME=/usr/local/jvm/panama
           echo "JAVA_HOME_8 = $JAVA_HOME_8"
-          echo "JAVA_HOME_14 = $JAVA_HOME_14"
           echo "JAVA_HOME = $JAVA_HOME"
           rm api/src/main/java/module-info.java
           rm codec/src/main/java/module-info.java
@@ -84,10 +82,8 @@ jobs:
       - name: Build (Ubuntu)
         run: |
           export JAVA_HOME_8=${JAVA_HOME}
-          export JAVA_HOME_14=/usr/local/jvm/panama
-          export JAVA_HOME=${JAVA_HOME_8}
+          export JAVA_HOME=/usr/local/jvm/panama
           echo "JAVA_HOME_8 = $JAVA_HOME_8"
-          echo "JAVA_HOME_14 = $JAVA_HOME_14"
           echo "JAVA_HOME = $JAVA_HOME"
           ./mvnw -pl '!api,!tests' -t .mvn/toolchains.xml clean package -Dpcap.unsafe=true jacoco:report-aggregate -Pcoverage -Plegacy-support -Pformat
         if: matrix.os == 'ubuntu-latest'

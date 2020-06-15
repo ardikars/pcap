@@ -1,10 +1,9 @@
 package pcap.common.memory.internal.nio;
 
-import pcap.common.memory.Memory;
-import pcap.common.memory.internal.allocator.PooledDirectMemoryAllocator;
-
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import pcap.common.memory.Memory;
+import pcap.common.memory.internal.allocator.PooledDirectMemoryAllocator;
 
 public class PooledDirectByteBuffer extends DirectByteBuffer implements Memory.Pooled {
 

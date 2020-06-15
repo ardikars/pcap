@@ -52,9 +52,7 @@ jobs:
       - name: Deploy modules
         run: |
           export JAVA_HOME_8=${JAVA_HOME}
-          export JAVA_HOME_14=/usr/local/jvm/panama
-          export JAVA_HOME=${JAVA_HOME_14}
+          export JAVA_HOME=/usr/local/jvm/panama
           echo "JAVA_HOME_8 = $JAVA_HOME_8"
-          echo "JAVA_HOME_14 = $JAVA_HOME_14"
           echo "JAVA_HOME = $JAVA_HOME"
           ./mvnw -B -t .mvn/toolchains.xml -s .mvn/release-settings.xml deploy -Prelease -Plegacy-support -DskipTests

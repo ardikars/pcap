@@ -1,10 +1,9 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.tcp;
 
-import pcap.common.annotation.Inclubating;
-
 import java.io.Serializable;
 import java.util.Objects;
+import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating

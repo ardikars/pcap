@@ -1,6 +1,7 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.ethernet;
 
+import java.util.Objects;
 import pcap.codec.AbstractPacket;
 import pcap.codec.NetworkLayer;
 import pcap.codec.Packet;
@@ -9,8 +10,6 @@ import pcap.common.memory.Memory;
 import pcap.common.net.MacAddress;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
-
-import java.util.Objects;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating

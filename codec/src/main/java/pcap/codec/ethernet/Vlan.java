@@ -1,6 +1,9 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.ethernet;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import pcap.codec.AbstractPacket;
 import pcap.codec.NetworkLayer;
 import pcap.codec.Packet;
@@ -9,10 +12,6 @@ import pcap.common.memory.Memory;
 import pcap.common.util.NamedNumber;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * @see <a href="https://en.wikipedia.org/wiki/IEEE_802.1Q>Wikipedia</a>

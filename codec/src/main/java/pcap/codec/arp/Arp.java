@@ -1,6 +1,9 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.arp;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import pcap.codec.AbstractPacket;
 import pcap.codec.DataLinkLayer;
 import pcap.codec.NetworkLayer;
@@ -12,10 +15,6 @@ import pcap.common.net.MacAddress;
 import pcap.common.util.NamedNumber;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * @see <a href="https://en.wikipedia.org/wiki/Address_Resolution_Protocol>Wikipedia</a>

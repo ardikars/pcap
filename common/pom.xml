@@ -22,14 +22,6 @@
     </properties>
 
     <dependencies>
-        <!-- Runtime byte code generator - completely optional -->
-        <dependency>
-            <groupId>net.bytebuddy</groupId>
-            <artifactId>byte-buddy</artifactId>
-            <version>${bytebuddy.version}</version>
-            <optional>true</optional>
-        </dependency>
-
         <!-- Logging frameworks - completely optional -->
         <dependency>
             <groupId>org.slf4j</groupId>

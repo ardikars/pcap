@@ -41,7 +41,8 @@ public class Ip6 extends Ip {
   private Ip6(final Builder builder) {
     this.header = new Header(builder);
     this.payloadBuffer = builder.payloadBuffer;
-    if (this.payloadBuffer != null && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
+    if (this.payloadBuffer != null
+        && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
       this.payload =
           TransportLayer.valueOf(this.header.payloadType().value()).newInstance(this.payloadBuffer);
     } else {

@@ -1,9 +1,8 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
-import org.junit.jupiter.api.Assertions;
-
 import java.nio.ByteBuffer;
+import org.junit.jupiter.api.Assertions;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 abstract class AbstractMemoryTest extends BaseTest {

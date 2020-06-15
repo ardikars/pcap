@@ -1,6 +1,8 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.tcp;
 
+import java.util.Arrays;
+import java.util.Objects;
 import pcap.codec.AbstractPacket;
 import pcap.codec.ApplicationLayer;
 import pcap.codec.Packet;
@@ -12,9 +14,6 @@ import pcap.common.net.Inet6Address;
 import pcap.common.net.InetAddress;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
-
-import java.util.Arrays;
-import java.util.Objects;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating

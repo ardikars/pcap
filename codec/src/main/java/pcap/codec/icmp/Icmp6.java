@@ -57,7 +57,8 @@ public class Icmp6 extends AbstractPacket {
   public Icmp6(Builder builder) {
     this.header = new Header(builder);
     this.payloadBuffer = builder.payloadBuffer;
-    if (this.payloadBuffer != null && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
+    if (this.payloadBuffer != null
+        && this.payloadBuffer.readerIndex() < this.payloadBuffer.writerIndex()) {
       this.payload =
           Icmp.IcmpTypeAndCode.valueOf(this.header.payloadType().value().byteValue())
               .newInstance(this.payloadBuffer);

@@ -1,5 +1,10 @@
 package pcap.common.memory.internal.allocator;
 
+import java.lang.ref.WeakReference;
+import java.nio.ByteBuffer;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.common.memory.Memory;
@@ -7,12 +12,6 @@ import pcap.common.memory.MemoryAllocator;
 import pcap.common.memory.internal.nio.PooledHeapByteBuffer;
 import pcap.common.util.Properties;
 import pcap.common.util.Validate;
-
-import java.lang.ref.WeakReference;
-import java.nio.ByteBuffer;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 public class PooledHeapMemoryAllocator implements MemoryAllocator {
 
