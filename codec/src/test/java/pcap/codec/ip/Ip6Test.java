@@ -17,7 +17,7 @@ import pcap.common.util.Hexs;
 
 /** @author <a href="mailto:contact@ardikars.com">Langkuy</a> */
 @RunWith(JUnitPlatform.class)
-class Ip6TestTest extends BaseTest {
+class Ip6Test extends BaseTest {
 
   private final byte[] data = Hexs.parseHex(IPV6_AUTHENTICATION);
 

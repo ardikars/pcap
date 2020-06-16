@@ -7,6 +7,8 @@ import pcap.common.annotation.Inclubating;
 @Inclubating
 public final class Validate {
 
+  private static final String ARRAY_IS_EMPTY = "Array is empty.";
+
   private Validate() {
     //
   }
@@ -20,7 +22,7 @@ public final class Validate {
    * @throws NullPointerException if {@code reference} is null.
    * @since 1.0.0
    */
-  public static <T> void nullPointer(T reference, String message) throws NullPointerException {
+  public static <T> void nullPointer(T reference, String message) {
     if (reference == null) {
       throw new NullPointerException(message);
     }
@@ -34,7 +36,7 @@ public final class Validate {
    * @throws NullPointerException if {@code reference} is null.
    * @since 1.0.0
    */
-  public static <T> void nullPointer(T reference) throws NullPointerException {
+  public static <T> void nullPointer(T reference) {
     nullPointer(reference, null);
   }
 
@@ -86,8 +88,7 @@ public final class Validate {
    * @throws IllegalArgumentException if {@code expression} is false
    * @since 1.0.0
    */
-  public static void notIllegalArgument(boolean expression, String message)
-      throws IllegalArgumentException {
+  public static void notIllegalArgument(boolean expression, String message) {
     if (!expression) {
       throw new IllegalArgumentException(message);
     }
@@ -100,7 +101,7 @@ public final class Validate {
    * @throws IllegalArgumentException if {@code expression} is false
    * @since 1.0.0
    */
-  public static void notIllegalArgument(boolean expression) throws IllegalArgumentException {
+  public static void notIllegalArgument(boolean expression) {
     notIllegalArgument(expression, null);
   }
 
@@ -133,8 +134,7 @@ public final class Validate {
    * @throws IllegalStateException if {@code expression} is false
    * @since 1.0.0
    */
-  public static void notIllegalState(boolean expression, String message)
-      throws IllegalArgumentException {
+  public static void notIllegalState(boolean expression, String message) {
     if (!expression) {
       throw new IllegalStateException(message);
     }
@@ -147,7 +147,7 @@ public final class Validate {
    * @throws IllegalStateException if {@code expression} is false
    * @since 1.0.0
    */
-  public static void notIllegalState(boolean expression) throws IllegalStateException {
+  public static void notIllegalState(boolean expression) {
     notIllegalState(expression, null);
   }
 
@@ -162,17 +162,14 @@ public final class Validate {
    * @throws ArrayIndexOutOfBoundsException invalid parameters.
    * @since 1.0.0
    */
-  public static void notInBounds(byte[] array, int offset, int length)
-      throws NullPointerException, IllegalArgumentException, ArrayIndexOutOfBoundsException {
-    nullPointer(array, "array is null.");
-    notIllegalArgument(array.length > 0, "array is empty.");
-    notIllegalArgument(length > 0, "length is zero.");
-    if (offset < 0
-        || length < 0
-        || length > array.length
-        || offset > array.length - 1
+  public static void notInBounds(byte[] array, int offset, int length) {
+    notIllegalArgument(array.length > 0, ARRAY_IS_EMPTY);
+    if ((offset < 0 || offset > array.length - 1)
+        || (length <= 0 || length > array.length)
         || offset + length > array.length) {
-      throw new ArrayIndexOutOfBoundsException();
+      throw new ArrayIndexOutOfBoundsException(
+          String.format(
+              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
     }
   }
 
@@ -187,17 +184,14 @@ public final class Validate {
    * @throws ArrayIndexOutOfBoundsException invalid parameters.
    * @since 1.0.0
    */
-  public static void notInBounds(char[] array, int offset, int length)
-      throws NullPointerException, IllegalArgumentException, ArrayIndexOutOfBoundsException {
-    nullPointer(array, "array is null.");
-    notIllegalArgument(array.length > 0, "array is empty.");
-    notIllegalArgument(length > 0, "length is zero.");
-    if (offset < 0
-        || length < 0
-        || length > array.length
-        || offset > array.length - 1
+  public static void notInBounds(char[] array, int offset, int length) {
+    notIllegalArgument(array.length > 0, ARRAY_IS_EMPTY);
+    if ((offset < 0 || offset > array.length - 1)
+        || (length <= 0 || length > array.length)
         || offset + length > array.length) {
-      throw new ArrayIndexOutOfBoundsException();
+      throw new ArrayIndexOutOfBoundsException(
+          String.format(
+              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
     }
   }
 
@@ -212,17 +206,14 @@ public final class Validate {
    * @throws ArrayIndexOutOfBoundsException invalid parameters.
    * @since 1.0.0
    */
-  public static void notInBounds(short[] array, int offset, int length)
-      throws NullPointerException, IllegalArgumentException, ArrayIndexOutOfBoundsException {
-    nullPointer(array, "array is null.");
-    notIllegalArgument(array.length > 0, "array is empty.");
-    notIllegalArgument(length > 0, "length is zero.");
-    if (offset < 0
-        || length < 0
-        || length > array.length
-        || offset > array.length - 1
+  public static void notInBounds(short[] array, int offset, int length) {
+    notIllegalArgument(array.length > 0, ARRAY_IS_EMPTY);
+    if ((offset < 0 || offset > array.length - 1)
+        || (length <= 0 || length > array.length)
         || offset + length > array.length) {
-      throw new ArrayIndexOutOfBoundsException();
+      throw new ArrayIndexOutOfBoundsException(
+          String.format(
+              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
     }
   }
 
@@ -237,17 +228,14 @@ public final class Validate {
    * @throws ArrayIndexOutOfBoundsException invalid parameters.
    * @since 1.0.0
    */
-  public static void notInBounds(int[] array, int offset, int length)
-      throws NullPointerException, IllegalArgumentException, ArrayIndexOutOfBoundsException {
-    nullPointer(array, "array is null.");
-    notIllegalArgument(array.length > 0, "array is empty.");
-    notIllegalArgument(length > 0, "length is zero.");
-    if (offset < 0
-        || length < 0
-        || length > array.length
-        || offset > array.length - 1
+  public static void notInBounds(int[] array, int offset, int length) {
+    notIllegalArgument(array.length > 0, ARRAY_IS_EMPTY);
+    if ((offset < 0 || offset > array.length - 1)
+        || (length <= 0 || length > array.length)
         || offset + length > array.length) {
-      throw new ArrayIndexOutOfBoundsException();
+      throw new ArrayIndexOutOfBoundsException(
+          String.format(
+              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
     }
   }
 
@@ -262,17 +250,14 @@ public final class Validate {
    * @throws ArrayIndexOutOfBoundsException invalid parameters.
    * @since 1.0.0
    */
-  public static void notInBounds(float[] array, int offset, int length)
-      throws NullPointerException, IllegalArgumentException, ArrayIndexOutOfBoundsException {
-    nullPointer(array, "array is null.");
-    notIllegalArgument(array.length > 0, "array is empty.");
-    notIllegalArgument(length > 0, "length is zero.");
-    if (offset < 0
-        || length < 0
-        || length > array.length
-        || offset > array.length - 1
+  public static void notInBounds(float[] array, int offset, int length) {
+    notIllegalArgument(array.length > 0, ARRAY_IS_EMPTY);
+    if ((offset < 0 || offset > array.length - 1)
+        || (length <= 0 || length > array.length)
         || offset + length > array.length) {
-      throw new ArrayIndexOutOfBoundsException();
+      throw new ArrayIndexOutOfBoundsException(
+          String.format(
+              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
     }
   }
 
@@ -287,17 +272,14 @@ public final class Validate {
    * @throws ArrayIndexOutOfBoundsException invalid parameters.
    * @since 1.0.0
    */
-  public static void notInBounds(long[] array, int offset, int length)
-      throws NullPointerException, IllegalArgumentException, ArrayIndexOutOfBoundsException {
-    nullPointer(array, "array is null.");
-    notIllegalArgument(array.length > 0, "array is empty.");
-    notIllegalArgument(length > 0, "length is zero.");
-    if (offset < 0
-        || length < 0
-        || length > array.length
-        || offset > array.length - 1
+  public static void notInBounds(long[] array, int offset, int length) {
+    notIllegalArgument(array.length > 0, ARRAY_IS_EMPTY);
+    if ((offset < 0 || offset > array.length - 1)
+        || (length <= 0 || length > array.length)
         || offset + length > array.length) {
-      throw new ArrayIndexOutOfBoundsException();
+      throw new ArrayIndexOutOfBoundsException(
+          String.format(
+              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
     }
   }
 
@@ -312,17 +294,14 @@ public final class Validate {
    * @throws ArrayIndexOutOfBoundsException invalid parameters.
    * @since 1.0.0
    */
-  public static void notInBounds(double[] array, int offset, int length)
-      throws NullPointerException, IllegalArgumentException, ArrayIndexOutOfBoundsException {
-    nullPointer(array, "array is null.");
-    notIllegalArgument(array.length > 0, "array is empty.");
-    notIllegalArgument(length > 0, "length is zero.");
-    if (offset < 0
-        || length < 0
-        || length > array.length
-        || offset > array.length - 1
+  public static void notInBounds(double[] array, int offset, int length) {
+    notIllegalArgument(array.length > 0, ARRAY_IS_EMPTY);
+    if ((offset < 0 || offset > array.length - 1)
+        || (length <= 0 || length > array.length)
         || offset + length > array.length) {
-      throw new ArrayIndexOutOfBoundsException();
+      throw new ArrayIndexOutOfBoundsException(
+          String.format(
+              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
     }
   }
 
@@ -338,17 +317,14 @@ public final class Validate {
    * @throws ArrayIndexOutOfBoundsException invalid parameters.
    * @since 1.0.0
    */
-  public static <T> void notInBounds(T[] array, int offset, int length)
-      throws NullPointerException, IllegalArgumentException, ArrayIndexOutOfBoundsException {
-    nullPointer(array, "array is null.");
-    notIllegalArgument(array.length > 0, "array is empty.");
-    notIllegalArgument(length > 0, "length is zero.");
-    if (offset < 0
-        || length < 0
-        || length > array.length
-        || offset > array.length - 1
+  public static <T> void notInBounds(T[] array, int offset, int length) {
+    notIllegalArgument(array.length > 0, ARRAY_IS_EMPTY);
+    if ((offset < 0 || offset > array.length - 1)
+        || (length <= 0 || length > array.length)
         || offset + length > array.length) {
-      throw new ArrayIndexOutOfBoundsException();
+      throw new ArrayIndexOutOfBoundsException(
+          String.format(
+              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
     }
   }
 
@@ -361,11 +337,13 @@ public final class Validate {
    * @throws IllegalArgumentException illegal argement exception.
    * @since 1.1.0
    */
-  public static void notInBounds(int size, int offset, int length) throws IllegalArgumentException {
+  public static void notInBounds(int size, int offset, int length) {
     notIllegalArgument(size > 0, "size should be greater then zero.");
-    notIllegalArgument(length > 0, "length is zero.");
-    if (offset < 0 || length < 0 || length > size || offset > size - 1 || offset + length > size) {
-      throw new ArrayIndexOutOfBoundsException();
+    if ((offset < 0 || offset > size - 1)
+        || (length <= 0 || length > size)
+        || offset + length > size) {
+      throw new ArrayIndexOutOfBoundsException(
+          String.format("Arguments: size(%d), offset(%d), length(%d).", size, offset, length));
     }
   }
 }

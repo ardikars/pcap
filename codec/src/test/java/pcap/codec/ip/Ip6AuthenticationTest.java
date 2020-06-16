@@ -31,9 +31,7 @@ public class Ip6AuthenticationTest extends BaseTest {
   }
 
   @Test
-  public void buildTest() {
-
-  }
+  public void buildTest() {}
 
   @AfterEach
   public void after() {

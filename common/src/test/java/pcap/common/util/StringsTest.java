@@ -29,12 +29,18 @@ public class StringsTest extends BaseTest {
   public void emptyTest() {
     Assertions.assertTrue(Strings.empty(null));
     Assertions.assertTrue(Strings.empty(""));
+    Assertions.assertEquals("OK", Strings.empty(null, "OK"));
+    Assertions.assertEquals("OK", Strings.empty("", "OK"));
+    Assertions.assertEquals("YES", Strings.empty("YES", "OK"));
   }
 
   @Test
   public void blankTest() {
     Assertions.assertTrue(Strings.blank(null));
     Assertions.assertTrue(Strings.blank("\t\r\n\0 "));
+    Assertions.assertEquals("OK", Strings.blank(null, "OK"));
+    Assertions.assertEquals("OK", Strings.blank("\t\r\n\0 ", "OK"));
+    Assertions.assertEquals("YES", Strings.blank("YES", "OK"));
   }
 
   @Test

@@ -86,7 +86,6 @@ public class PcapAddress implements Address {
             data[i] = sockaddr.sa_data$get().get(i + 2L);
           }
           return Inet4Address.getByAddress(data);
-
         } else if (sockaddr.sa_family$get() == 10) {
           byte[] data = new byte[16];
           for (int i = 0; i < data.length; i++) {

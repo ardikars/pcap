@@ -34,14 +34,14 @@ public class MultipleObject<K> implements Serializable {
 
   @Override
   public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     if (this == o) {
       return true;
     }
-    if (!(o instanceof MultipleObject)) {
-      return false;
-    }
-    MultipleObject<?> multiKey = (MultipleObject<?>) o;
-    return Objects.equals(keys, multiKey.keys);
+    MultipleObject<?> that = (MultipleObject<?>) o;
+    return keys.equals(that.keys);
   }
 
   @Override

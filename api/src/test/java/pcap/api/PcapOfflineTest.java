@@ -185,8 +185,6 @@ public class PcapOfflineTest {
     Pointer<pcap_mapping.pcap> pointer = PcapConstant.MAPPING.pcap_open_offline(source, errbuf);
     offline.nullCheck(pointer, errbuf);
 
-    Pointer<pcap_mapping.pcap> errPtr =
-        PcapConstant.MAPPING.pcap_open_offline(Pointer.ofNull(), errbuf);
-    Assertions.assertThrows(IllegalStateException.class, () -> offline.nullCheck(errPtr, errbuf));
+    Assertions.assertThrows(IllegalStateException.class, () -> offline.nullCheck(null, errbuf));
   }
 }

@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04]
+        os: [ubuntu-16.04]
         java: [8]
     runs-on: ${{ matrix.os }}
     steps:
@@ -55,4 +55,4 @@ jobs:
           export JAVA_HOME=/usr/local/jvm/panama
           echo "JAVA_HOME_8 = $JAVA_HOME_8"
           echo "JAVA_HOME = $JAVA_HOME"
-          ./mvnw -B -t .mvn/toolchains.xml -s .mvn/release-settings.xml deploy -Prelease -Plegacy-support -DskipTests
+          ./mvnw -B -t .mvn/toolchains.xml -s .mvn/release-settings.xml deploy -Prelease -DskipTests

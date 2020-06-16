@@ -172,7 +172,7 @@ public abstract class Pcaps {
         }
       }
     }
-    throw new ErrorException("IPv4 address not found for " + source.name());
+    return Inet4Address.ZERO;
   }
 
   /**

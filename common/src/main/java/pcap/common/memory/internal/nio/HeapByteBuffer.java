@@ -24,7 +24,7 @@ public class HeapByteBuffer extends AbstractByteBuffer implements Memory.Heap {
     byte[] b = new byte[length];
     int currentIndex = baseIndex + index;
     getBytes(currentIndex, b, 0, length);
-    ByteBuffer copy = ByteBuffer.allocateDirect(length);
+    ByteBuffer copy = ByteBuffer.allocate(length);
     copy.put(b);
     return new HeapByteBuffer(
         baseIndex, copy, capacity(), maxCapacity(), readerIndex(), writerIndex());

@@ -5,7 +5,6 @@ import java.nio.ByteBuffer;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.memory.MemoryAllocator;
-import pcap.common.memory.internal.nio.DirectByteBuffer;
 import pcap.common.memory.internal.nio.HeapByteBuffer;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */

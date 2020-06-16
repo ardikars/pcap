@@ -1,6 +1,7 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
+import java.security.SecureRandom;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -11,8 +12,6 @@ import pcap.common.memory.internal.nio.DirectByteBuffer;
 import pcap.common.memory.internal.nio.HeapByteBuffer;
 import pcap.common.memory.internal.nio.PooledDirectByteBuffer;
 import pcap.common.memory.internal.nio.PooledHeapByteBuffer;
-
-import java.security.SecureRandom;
 
 @RunWith(JUnitPlatform.class)
 public class MemoriesTest {
@@ -97,7 +96,8 @@ public class MemoriesTest {
     Assertions.assertTrue(pooledHeap instanceof PooledHeapByteBuffer);
     pooledHeap.release();
 
-    Memory defaultHeapSecureRandom = Memories.allocateRandom(10, Memories.allocator(), new SecureRandom());
+    Memory defaultHeapSecureRandom =
+        Memories.allocateRandom(10, Memories.allocator(), new SecureRandom());
     Assertions.assertTrue(defaultHeapSecureRandom instanceof HeapByteBuffer);
   }
 }

@@ -36,4 +36,28 @@ public class MacAddressTest extends BaseTest {
     Assertions.assertEquals(STRING_MAC_ADDRESS, macAddress.toString());
     Assertions.assertEquals(LONG_MAC_ADDRESS, macAddress.toLong());
   }
+
+  @Test
+  public void invalidMacAddressTest() {
+    Assertions.assertThrows(IllegalArgumentException.class, () -> MacAddress.valueOf(new byte[0]));
+    Assertions.assertThrows(IllegalArgumentException.class, () -> MacAddress.valueOf(-1));
+    Assertions.assertThrows(IllegalArgumentException.class, () -> MacAddress.valueOf(""));
+    Assertions.assertThrows(IllegalArgumentException.class, () -> MacAddress.valueOf("23423d.."));
+    Assertions.assertFalse(MacAddress.isValidAddress("##%DF234"));
+  }
+
+  @Test
+  public void buildTest() {
+    MacAddress macAddress = MacAddress.DUMMY;
+    Assertions.assertNotNull(macAddress);
+    Assertions.assertEquals(macAddress.length(), MacAddress.MAC_ADDRESS_LENGTH);
+    Assertions.assertEquals(0L, MacAddress.ZERO.toLong());
+    Assertions.assertEquals(true, MacAddress.BROADCAST.isBroadcast());
+    Assertions.assertEquals(true, MacAddress.IPV4_MULTICAST.isMulticast());
+    Assertions.assertEquals(true, MacAddress.IPV4_MULTICAST_MASK.isMulticast());
+    Assertions.assertEquals(true, MacAddress.IPV4_MULTICAST_MASK.isMulticast());
+    Assertions.assertEquals(true, MacAddress.ZERO.isGloballyUnique());
+    Assertions.assertEquals(true, MacAddress.valueOf("00:01:01:01:01:01").isUnicast());
+    Assertions.assertEquals(true, MacAddress.valueOf("00:01:01:01:01:01").isUnicast());
+  }
 }

@@ -14,16 +14,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['macos-latest']
+        os: ['macos-10.15', 'ubuntu-16.04']
         java: [8]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
-          path: ${HOME}/.m2/repository
-          key: pcap-maven-${{ hashFiles('**/pom.xml') }}
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            pcap-maven-
+            ${{ runner.os }}-maven-
 
 
       - uses: actions/checkout@v2
@@ -41,7 +41,16 @@ jobs:
           sudo mkdir -p /usr/local/jvm
           sudo chown -R $(whoami) /usr/local/jvm
           ./.github/scripts/install-jdk.sh -f panama -w /tmp -t /usr/local/jvm/panama -v
-        if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'macos-10.15'
+
+      - name: actions/setup-panama
+        run: |
+          sudo mkdir -p /usr/local/jvm
+          sudo chown -R $(whoami) /usr/local/jvm
+          ./.github/scripts/install-jdk.sh -f panama -w /tmp -t /usr/local/jvm/panama -v
+          sudo find /usr/local/jvm/panama/lib/ -iname "libjli*"
+          sudo cp /usr/local/jvm/panama/lib/libjli*.so /usr/lib
+        if: matrix.os == 'ubuntu-16.04'
 
 
       - name: actions/setup-pcap
@@ -50,13 +59,15 @@ jobs:
           mkdir -p ~/Library/Java/Extensions
           cp -rf /usr/lib/libpcap.* ~/Library/Java/Extensions
           sudo chown $(whoami):admin /dev/bpf*
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-10.15'
 
       - name: actions/setup-pcap
         run: |
-          sudo apt-get update && sudo apt-get -y install libpcap0.8
+          sudo apt-get update && sudo apt-get -y install libpcap0.8 libcap2-bin
           sudo setcap cap_net_raw,cap_net_admin=eip /usr/local/jvm/panama/bin/java
-        if: matrix.os == 'ubuntu-latest'
+          sudo find /usr/lib/ -iname "libpcap*"
+          sudo cp /usr/lib/x86_64-linux-gnu/libpcap.so.0.8 /usr/lib/libpcap.so
+        if: matrix.os == 'ubuntu-16.04'
 
       - name: actions/setup-pcap
         run: |
@@ -70,14 +81,10 @@ jobs:
           export JAVA_HOME=/usr/local/jvm/panama
           echo "JAVA_HOME_8 = $JAVA_HOME_8"
           echo "JAVA_HOME = $JAVA_HOME"
-          rm api/src/main/java/module-info.java
-          rm codec/src/main/java/module-info.java
-          rm common/src/main/java/module-info.java
-          rm spi/src/main/java/module-info.java
-          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Plegacy-support -Pformat -Psonar -Djava.library.path=/usr/lib -Dsonar.login="${{ secrets.sonar_token }}"
+          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Pformat -Psonar -Djava.library.path=/usr/lib -Dsonar.login="${{ secrets.sonar_token }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-10.15'
 
       - name: Build (Ubuntu)
         run: |
@@ -85,5 +92,5 @@ jobs:
           export JAVA_HOME=/usr/local/jvm/panama
           echo "JAVA_HOME_8 = $JAVA_HOME_8"
           echo "JAVA_HOME = $JAVA_HOME"
-          ./mvnw -pl '!api,!tests' -t .mvn/toolchains.xml clean package -Dpcap.unsafe=true jacoco:report-aggregate -Pcoverage -Plegacy-support -Pformat
-        if: matrix.os == 'ubuntu-latest'
+          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat -Djava.library.path=/usr/lib
+        if: matrix.os == 'ubuntu-16.04'

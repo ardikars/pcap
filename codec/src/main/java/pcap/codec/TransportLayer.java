@@ -1,12 +1,11 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec;
 
+import java.util.HashMap;
+import java.util.Map;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.util.NamedNumber;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating

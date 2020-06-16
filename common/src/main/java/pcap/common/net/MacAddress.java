@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import pcap.common.annotation.Inclubating;
 import pcap.common.util.NamedNumber;
+import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
 /**
@@ -39,8 +40,9 @@ public final class MacAddress implements Address {
   private final byte[] address;
 
   private MacAddress(byte[] address) {
-    Validate.nullPointer(address);
-    Validate.notIllegalArgument(address.length == MAC_ADDRESS_LENGTH);
+    Validate.notIllegalArgument(
+        address.length == MAC_ADDRESS_LENGTH,
+        String.format("Address length: (%d) expected(%d)", address.length, MAC_ADDRESS_LENGTH));
     this.address = Arrays.copyOf(address, MacAddress.MAC_ADDRESS_LENGTH);
   }
   /**
@@ -50,15 +52,20 @@ public final class MacAddress implements Address {
    * @return an Mac address object.
    */
   public static MacAddress valueOf(String stringAddress) {
-    stringAddress = Validate.nullPointerThenReturns(stringAddress, "00:00:00:00:00:00");
+    Validate.notIllegalArgument(
+        !Strings.blank(stringAddress), "Address must be not empty or blank.");
+    Validate.notIllegalArgument(
+        isValidAddress(stringAddress), String.format("Invalid address: %s.", stringAddress));
     final String[] elements = stringAddress.split(":|-");
-    Validate.notIllegalArgument(elements.length == MAC_ADDRESS_LENGTH);
+    Validate.notIllegalArgument(
+        elements.length == MAC_ADDRESS_LENGTH,
+        String.format("Address length: (%d) expected(%d)", elements.length, MAC_ADDRESS_LENGTH));
     final byte[] b = new byte[MAC_ADDRESS_LENGTH];
     for (int i = 0; i < MAC_ADDRESS_LENGTH; i++) {
       final String element = elements[i];
       b[i] = (byte) Integer.parseInt(element, 16);
     }
-    return new MacAddress(b);
+    return valueOf(b);
   }
 
   /**
@@ -78,6 +85,8 @@ public final class MacAddress implements Address {
    * @return an Mac address object.
    */
   public static MacAddress valueOf(final long longAddress) {
+    Validate.notIllegalArgument(
+        longAddress >= 0, String.format("Address: %d expected(address > 0)", longAddress));
     final byte[] bytes =
         new byte[] {
           (byte) (longAddress >> 40 & 0xff),
@@ -87,7 +96,7 @@ public final class MacAddress implements Address {
           (byte) (longAddress >> 8 & 0xff),
           (byte) (longAddress >> 0 & 0xff)
         };
-    return new MacAddress(bytes);
+    return valueOf(bytes);
   }
 
   /**
@@ -98,7 +107,8 @@ public final class MacAddress implements Address {
    *     otherwise.
    */
   public static boolean isValidAddress(final String stringAddress) {
-    Validate.nullPointer(stringAddress);
+    Validate.notIllegalArgument(
+        !Strings.blank(stringAddress), "Address must be not empty or blank.");
     return Pattern.matches("^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$", stringAddress);
   }
 
@@ -230,6 +240,12 @@ public final class MacAddress implements Address {
 
     private static final Map<Integer, Oui> REGISTRY = new HashMap<>();
 
+    static {
+      REGISTRY.put(CISCO_00000C.value(), CISCO_00000C);
+      REGISTRY.put(IBM_08005A.value(), IBM_08005A);
+      REGISTRY.put(MICROSOFT_CORPORATION.value(), MICROSOFT_CORPORATION);
+    }
+
     /**
      * @param value value
      * @param name name
@@ -271,12 +287,6 @@ public final class MacAddress implements Address {
       synchronized (Oui.class) {
         return REGISTRY.put(version.value(), version);
       }
-    }
-
-    static {
-      REGISTRY.put(CISCO_00000C.value(), CISCO_00000C);
-      REGISTRY.put(IBM_08005A.value(), IBM_08005A);
-      REGISTRY.put(MICROSOFT_CORPORATION.value(), MICROSOFT_CORPORATION);
     }
   }
 }

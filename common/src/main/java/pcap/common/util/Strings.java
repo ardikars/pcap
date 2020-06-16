@@ -15,10 +15,31 @@ public final class Strings {
 
   private Strings() {}
 
+  /**
+   * Ensure given string is not empty.
+   *
+   * @param charSequence string.
+   * @return returns {@code true} if empty, @{@code false} otherwise.
+   */
   public static boolean empty(CharSequence charSequence) {
     return charSequence == null || charSequence.length() == 0;
   }
 
+  /**
+   * @param charSequence string.
+   * @param fallback fallback.
+   * @return returns string.
+   */
+  public static CharSequence empty(CharSequence charSequence, CharSequence fallback) {
+    return empty(charSequence) ? fallback : charSequence;
+  }
+
+  /**
+   * Ensure given string isn't blank.
+   *
+   * @param charSequence string.
+   * @return returns {@code true} if blank, {@code false} otherwise.
+   */
   public static boolean blank(CharSequence charSequence) {
     if (empty(charSequence)) {
       return true;
@@ -26,6 +47,15 @@ public final class Strings {
     return charSequence
         .chars()
         .allMatch(ch -> ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' || ch == '\0');
+  }
+
+  /**
+   * @param charSequence string.
+   * @param fallback fallback.
+   * @return returns string.
+   */
+  public static CharSequence blank(CharSequence charSequence, CharSequence fallback) {
+    return blank(charSequence) ? fallback : charSequence;
   }
 
   /**

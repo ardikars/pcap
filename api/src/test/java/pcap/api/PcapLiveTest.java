@@ -196,19 +196,20 @@ public class PcapLiveTest {
       Interface nextInterface = interfaceIterator.next();
       Assertions.assertNotNull(nextInterface);
       Assertions.assertNotNull(nextInterface.name());
-      Assertions.assertNotNull(nextInterface.addresses());
       Assertions.assertNotNull(nextInterface.flags());
       nextInterface.description();
       Assertions.assertNotNull(nextInterface.toString());
       Address address = nextInterface.addresses();
-      Iterator<Address> addressIterator = address.iterator();
-      while (addressIterator.hasNext()) {
-        Address nextAddress = addressIterator.next();
-        nextAddress.address();
-        nextAddress.netmask();
-        nextAddress.broadcast();
-        nextAddress.destination();
-        Assertions.assertNotNull(address.toString());
+      if (address != null) {
+        Iterator<Address> addressIterator = address.iterator();
+        while (addressIterator.hasNext()) {
+          Address nextAddress = addressIterator.next();
+          nextAddress.address();
+          nextAddress.netmask();
+          nextAddress.broadcast();
+          nextAddress.destination();
+          Assertions.assertNotNull(address.toString());
+        }
       }
     }
   }
@@ -397,7 +398,7 @@ public class PcapLiveTest {
           },
           MAX_PACKET);
     } catch (BreakException e) {
-      LOGGER.warn(e);
+      //
     }
     pcap.close();
   }
@@ -458,8 +459,7 @@ public class PcapLiveTest {
     Pointer<pcap_mapping.pcap> pointer =
         PcapConstant.MAPPING.pcap_create(PcapConstant.SCOPE.allocateCString(source.name()), errbuf);
     live.nullCheck(pointer, errbuf);
-    Pointer<pcap_mapping.pcap> errPtr = PcapConstant.MAPPING.pcap_create(Pointer.ofNull(), errbuf);
-    Assertions.assertThrows(IllegalStateException.class, () -> live.nullCheck(errPtr, errbuf));
+    Assertions.assertThrows(IllegalStateException.class, () -> live.nullCheck(null, errbuf));
   }
 
   @Test
