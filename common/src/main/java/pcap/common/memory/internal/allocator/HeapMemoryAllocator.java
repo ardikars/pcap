@@ -6,6 +6,7 @@ import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.memory.MemoryAllocator;
 import pcap.common.memory.internal.nio.DirectByteBuffer;
+import pcap.common.memory.internal.nio.HeapByteBuffer;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -24,6 +25,6 @@ public final class HeapMemoryAllocator implements MemoryAllocator {
   @Override
   public Memory allocate(int capacity, int maxCapacity, int readerIndex, int writerIndex) {
     ByteBuffer buffer = ByteBuffer.allocate(capacity);
-    return new DirectByteBuffer(0, buffer, capacity, maxCapacity, readerIndex, writerIndex);
+    return new HeapByteBuffer(0, buffer, capacity, maxCapacity, readerIndex, writerIndex);
   }
 }

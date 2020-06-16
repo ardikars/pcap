@@ -1,7 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
-import java.nio.ByteBuffer;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.internal.allocator.DirectMemoryAllocator;
 import pcap.common.memory.internal.allocator.HeapMemoryAllocator;
@@ -11,6 +10,10 @@ import pcap.common.memory.internal.nio.DirectByteBuffer;
 import pcap.common.memory.internal.nio.HeapByteBuffer;
 import pcap.common.util.Hexs;
 import pcap.common.util.Validate;
+
+import java.nio.ByteBuffer;
+import java.security.SecureRandom;
+import java.util.Random;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -111,6 +114,16 @@ public final class Memories {
    * Wrap bytes array into {@link Memory}.
    *
    * @param bytes raw bytes.
+   * @return returns {@link Memory}.
+   */
+  public static Memory wrap(byte[] bytes) {
+    return wrap(bytes, allocator());
+  }
+
+  /**
+   * Wrap bytes array into {@link Memory}.
+   *
+   * @param bytes raw bytes.
    * @param memoryAllocator memory allocator.
    * @return returns {@link Memory}.
    */
@@ -118,6 +131,46 @@ public final class Memories {
     Validate.notIllegalArgument(bytes != null, "hexStream: null (expected: non null)");
     Memory memory = memoryAllocator.allocate(bytes.length);
     memory.writeBytes(bytes);
+    return memory;
+  }
+
+  /**
+   * Allocate buffer and initialize with random values.
+   *
+   * @param capacity size of buffer.
+   * @return returns {@link Memory} with random values.
+   */
+  public static Memory allocateRandom(int capacity) {
+    return allocateRandom(capacity, allocator());
+  }
+
+  /**
+   * Allocate buffer and initialize with random values.
+   *
+   * @param capacity size of buffer.
+   * @param allocator memory allocator.
+   * @return returns {@link Memory} with random values.
+   */
+  public static Memory allocateRandom(int capacity, MemoryAllocator allocator) {
+    return allocateRandom(capacity, allocator, new SecureRandom());
+  }
+
+  /**
+   * Allocate buffer and initialize with random values.
+   *
+   * @param capacity size of buffer.
+   * @param allocator memory allocator.
+   * @param random random.
+   * @return returns {@link Memory} with random values.
+   */
+  public static Memory allocateRandom(int capacity, MemoryAllocator allocator, Random random) {
+    Memory memory = allocator.allocate(capacity);
+    while (memory.writableBytes() >= 4) {
+      memory.writeInt(random.nextInt());
+    }
+    while (memory.writableBytes() > 0) {
+      memory.writeByte(random.nextInt());
+    }
     return memory;
   }
 

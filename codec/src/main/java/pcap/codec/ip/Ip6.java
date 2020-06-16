@@ -11,6 +11,8 @@ import pcap.common.net.Inet6Address;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
+import java.util.Objects;
+
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 public class Ip6 extends Ip {
@@ -25,14 +27,6 @@ public class Ip6 extends Ip {
       new TransportLayer((byte) 60, "IPv6 Destination NeighborDiscoveryOptions.");
   public static final TransportLayer IPV6_AH =
       new TransportLayer((byte) 51, "IPv6 Authentication Header.");
-
-  static {
-    TransportLayer.register(IPV6_AH, new Authentication.Builder());
-    TransportLayer.register(IPV6_DSTOPT, new DestinationOptions.Builder());
-    TransportLayer.register(IPV6_ROUTING, new Routing.Builder());
-    TransportLayer.register(IPV6_FRAGMENT, new Fragment.Builder());
-    TransportLayer.register(IPV6_HOPOPT, new HopByHopOptions.Builder());
-  }
 
   private final Header header;
   private final Packet payload;
@@ -49,6 +43,10 @@ public class Ip6 extends Ip {
       this.payload = null;
     }
     this.builder = builder;
+  }
+
+  public static Ip6 newPacket(Memory buffer) {
+    return new Builder().build(buffer);
   }
 
   @Override
@@ -165,6 +163,32 @@ public class Ip6 extends Ip {
     }
 
     @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Header header = (Header) o;
+      return trafficClass == header.trafficClass
+          && flowLabel == header.flowLabel
+          && payloadLength == header.payloadLength
+          && hopLimit == header.hopLimit
+          && nextHeader.equals(header.nextHeader)
+          && sourceAddress.equals(header.sourceAddress)
+          && destinationAddress.equals(header.destinationAddress);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(
+          trafficClass,
+          flowLabel,
+          payloadLength,
+          nextHeader,
+          hopLimit,
+          sourceAddress,
+          destinationAddress);
+    }
+
+    @Override
     public String toString() {
       return Strings.toStringBuilder(this)
           .add("version", version)
@@ -181,16 +205,29 @@ public class Ip6 extends Ip {
 
   public static final class Builder extends AbstractPaketBuilder {
 
+    static {
+      TransportLayer.register(IPV6_AH, new Authentication.Builder());
+      TransportLayer.register(IPV6_DSTOPT, new DestinationOptions.Builder());
+      TransportLayer.register(IPV6_FRAGMENT, new Fragment.Builder());
+      TransportLayer.register(IPV6_HOPOPT, new HopByHopOptions.Builder());
+      TransportLayer.register(IPV6_ROUTING, new Routing.Builder());
+    }
+
     private byte trafficClass;
     private int flowLabel;
     private short payloadLength;
-    private TransportLayer nextHeader = TransportLayer.TCP;
+    private TransportLayer nextHeader;
     private byte hopLimit;
-    private Inet6Address sourceAddress = Inet6Address.ZERO;
-    private Inet6Address destinationAddress = Inet6Address.ZERO;
-
+    private Inet6Address sourceAddress;
+    private Inet6Address destinationAddress;
     private Memory buffer;
     private Memory payloadBuffer;
+
+    public Builder() {
+      this.nextHeader = TransportLayer.TCP;
+      this.sourceAddress = Inet6Address.ZERO;
+      this.destinationAddress = Inet6Address.ZERO;
+    }
 
     public Builder trafficClass(final int trafficClass) {
       this.trafficClass = (byte) (trafficClass & 0xff);
@@ -227,13 +264,18 @@ public class Ip6 extends Ip {
       return this;
     }
 
+    public Builder payload(Memory buffer) {
+      this.payloadBuffer = buffer;
+      return this;
+    }
+
     @Override
-    public Packet build() {
+    public Ip6 build() {
       return new Ip6(this);
     }
 
     @Override
-    public Packet build(final Memory buffer) {
+    public Ip6 build(final Memory buffer) {
       resetIndex(buffer);
       int iscratch = buffer.readInt();
       this.trafficClass = (byte) (iscratch >> 20 & 0xFF);
@@ -261,18 +303,17 @@ public class Ip6 extends Ip {
     public Builder reset(int offset, int length) {
       if (buffer != null) {
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
-        Validate.notIllegalArgument(trafficClass >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(flowLabel >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(payloadLength >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((trafficClass & 0xFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((flowLabel & 0xFFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((payloadLength & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(nextHeader != null, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(hopLimit >= 0, ILLEGAL_HEADER_EXCEPTION);
+        Validate.notIllegalArgument((hopLimit & 0xFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(sourceAddress != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(destinationAddress != null, ILLEGAL_HEADER_EXCEPTION);
         int index = offset;
-        int scratch = ((trafficClass << 20) & 0xFF) | (flowLabel & 0xFFFFF);
-        buffer.setInt(offset, scratch);
+        buffer.setInt(index, (6 & 0xF) << 28 | (trafficClass & 0xFF) << 20 | flowLabel & 0xFFFFF);
         index += 4;
-        buffer.setShort(offset, payloadLength);
+        buffer.setShort(index, payloadLength);
         index += 2;
         buffer.setByte(index, nextHeader.value());
         index += 1;

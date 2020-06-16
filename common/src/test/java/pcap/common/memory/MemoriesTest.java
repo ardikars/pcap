@@ -7,8 +7,12 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.common.memory.internal.allocator.DirectMemoryAllocator;
 import pcap.common.memory.internal.allocator.HeapMemoryAllocator;
+import pcap.common.memory.internal.nio.DirectByteBuffer;
+import pcap.common.memory.internal.nio.HeapByteBuffer;
 import pcap.common.memory.internal.nio.PooledDirectByteBuffer;
 import pcap.common.memory.internal.nio.PooledHeapByteBuffer;
+
+import java.security.SecureRandom;
 
 @RunWith(JUnitPlatform.class)
 public class MemoriesTest {
@@ -78,5 +82,22 @@ public class MemoriesTest {
     Assertions.assertThrows(IllegalArgumentException.class, () -> allocator.allocate(-1, -1, 0, 0));
     Assertions.assertThrows(
         IllegalArgumentException.class, () -> allocatorDirect.allocate(-1, -1, 0, 0));
+  }
+
+  @Test
+  public void allocateRandom() {
+    Memory defaultHeap = Memories.allocateRandom(10);
+    Assertions.assertTrue(defaultHeap instanceof HeapByteBuffer);
+    Memory direct = Memories.allocateRandom(10, Memories.directAllocator());
+    Assertions.assertTrue(direct instanceof DirectByteBuffer);
+    Memory pooledDirect = Memories.allocateRandom(10, Memories.directAllocator(1, 2, 10));
+    Assertions.assertTrue(pooledDirect instanceof PooledDirectByteBuffer);
+    pooledDirect.release();
+    Memory pooledHeap = Memories.allocateRandom(10, Memories.allocator(1, 2, 10));
+    Assertions.assertTrue(pooledHeap instanceof PooledHeapByteBuffer);
+    pooledHeap.release();
+
+    Memory defaultHeapSecureRandom = Memories.allocateRandom(10, Memories.allocator(), new SecureRandom());
+    Assertions.assertTrue(defaultHeapSecureRandom instanceof HeapByteBuffer);
   }
 }
