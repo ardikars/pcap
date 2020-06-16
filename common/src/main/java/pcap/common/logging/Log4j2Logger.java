@@ -30,7 +30,7 @@ class Log4j2Logger extends ExtendedLoggerWrapper implements Logger {
       case ERROR:
         return isErrorEnabled();
       default:
-        throw new Error("Unknown log level");
+        throw new Error(AbstractLogger.UNKNOWN_LOG_LEVEL);
     }
   }
 
@@ -50,7 +50,7 @@ class Log4j2Logger extends ExtendedLoggerWrapper implements Logger {
         super.error(message);
         break;
       default:
-        throw new Error("Unknown log level");
+        throw new Error(AbstractLogger.UNKNOWN_LOG_LEVEL);
     }
   }
 
@@ -70,7 +70,7 @@ class Log4j2Logger extends ExtendedLoggerWrapper implements Logger {
         super.error(format, arg1);
         break;
       default:
-        throw new Error("Unknown log level");
+        throw new Error(AbstractLogger.UNKNOWN_LOG_LEVEL);
     }
   }
 
@@ -90,7 +90,7 @@ class Log4j2Logger extends ExtendedLoggerWrapper implements Logger {
         super.error(format, arg1, arg2);
         break;
       default:
-        throw new Error("Unknown log level");
+        throw new Error(AbstractLogger.UNKNOWN_LOG_LEVEL);
     }
   }
 
@@ -110,7 +110,7 @@ class Log4j2Logger extends ExtendedLoggerWrapper implements Logger {
         super.error(format, args);
         break;
       default:
-        throw new Error("Unknown log level");
+        throw new Error(AbstractLogger.UNKNOWN_LOG_LEVEL);
     }
   }
 
@@ -130,7 +130,7 @@ class Log4j2Logger extends ExtendedLoggerWrapper implements Logger {
         super.error(throwable);
         break;
       default:
-        throw new Error("Unknown log level");
+        throw new Error(AbstractLogger.UNKNOWN_LOG_LEVEL);
     }
   }
 
@@ -150,7 +150,7 @@ class Log4j2Logger extends ExtendedLoggerWrapper implements Logger {
         super.error(format, throwable);
         break;
       default:
-        throw new Error("Unknown log level");
+        throw new Error(AbstractLogger.UNKNOWN_LOG_LEVEL);
     }
   }
 

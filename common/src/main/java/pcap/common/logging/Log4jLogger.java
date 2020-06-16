@@ -9,7 +9,7 @@ import pcap.common.annotation.Inclubating;
 @Inclubating
 class Log4jLogger extends AbstractLogger {
 
-  private final transient Logger logger;
+  private final Logger logger;
 
   Log4jLogger(Logger logger) {
     super(logger.getName());

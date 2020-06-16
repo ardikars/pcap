@@ -1,9 +1,11 @@
 package pcap.common.memory.internal.nio;
 
-import java.nio.ByteBuffer;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import pcap.common.memory.Memory;
 import pcap.common.memory.internal.allocator.PooledDirectMemoryAllocator;
+import pcap.common.util.Validate;
+
+import java.nio.ByteBuffer;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 public class PooledDirectByteBuffer extends DirectByteBuffer implements Memory.Pooled {
 
@@ -55,6 +57,11 @@ public class PooledDirectByteBuffer extends DirectByteBuffer implements Memory.P
   @Override
   public PooledDirectByteBuffer capacity(int newCapacity) {
     ensureNotInPool();
+    Validate.notIllegalArgument(
+        newCapacity <= maxCapacity(),
+        String.format(
+            "newCapacity: %d (expected: newCapacity(%d) <= maxCapacity(%d))",
+            newCapacity, newCapacity, maxCapacity()));
     capacity = newCapacity;
     return this;
   }
@@ -183,14 +190,17 @@ public class PooledDirectByteBuffer extends DirectByteBuffer implements Memory.P
   public boolean release() {
     if (refCnt() - 1 > 0) {
       throw new IllegalStateException(
-          String.format("There is an object using this object as reference."));
+          String.format(
+              "There is an object using this object as reference. RefCnt: %d, ID: %d.",
+              refCnt(), id()));
     } else if (refCnt() - 1 < 0) {
       throw new IllegalStateException(
-          String.format("This buffer is already released to the pool."));
+          String.format(
+              "This buffer is already released to the pool. RefCnt: %d, ID: %d.", refCnt(), id()));
     }
+    boolean offer = allocator.offer(this);
     REF_CNT_UPDATER.decrementAndGet(this);
-    setIndex(0, 0);
-    return allocator.offer(this);
+    return offer;
   }
 
   @Override
@@ -221,7 +231,8 @@ public class PooledDirectByteBuffer extends DirectByteBuffer implements Memory.P
 
   private void ensureNotInPool() {
     if (refCnt <= 0) {
-      throw new IllegalStateException(String.format("This buffer has been released to the pool"));
+      throw new IllegalStateException(
+          String.format("This buffer has been released to the pool. ID: %d.", id()));
     }
   }
 }

@@ -75,9 +75,7 @@ public class PooledDirectMemoryAllocator implements MemoryAllocator {
       final Memory.Pooled poll = reference.get();
       if (poll != null) {
         PooledDirectByteBuffer memory = (PooledDirectByteBuffer) poll;
-        memory.setIndex(readerIndex, writerIndex);
-        memory.retain();
-        memory.capacity(capacity);
+        retainBuffer(memory, capacity, writerIndex, readerIndex);
         if (LOGGER.isDebugEnabled()) {
           LOGGER.debug("Allocate buffer with id %d (refCnt: %d).", memory.id(), memory.refCnt());
         }
@@ -89,13 +87,25 @@ public class PooledDirectMemoryAllocator implements MemoryAllocator {
     }
     final WeakReference<Memory.Pooled> weakReference =
         allocatePooledMemory(capacity, readerIndex, writerIndex);
-    pool.offer(weakReference);
     final PooledDirectByteBuffer pooled = (PooledDirectByteBuffer) weakReference.get();
-    pooled.retain();
+    retainBuffer(pooled, capacity, writerIndex, readerIndex);
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Allocate buffer with id %d (refCnt: %d).", pooled.id(), pooled.refCnt());
     }
     return pooled;
+  }
+
+  private void retainBuffer(
+      PooledDirectByteBuffer buffer, int capacity, int writerIndex, int readerIndex) {
+    if (buffer.refCnt() == 0) {
+      buffer.retain();
+      buffer.capacity(capacity);
+      buffer.setIndex(writerIndex, readerIndex);
+    } else {
+      throw new IllegalStateException(
+          String.format(
+              "Failed to retain buffer. RefCnt: %d, ID: %d.", buffer.refCnt(), buffer.id()));
+    }
   }
 
   public boolean offer(PooledDirectByteBuffer buffer) {
@@ -105,7 +115,20 @@ public class PooledDirectMemoryAllocator implements MemoryAllocator {
             String.format(
                 "size: %d (expected: %d < poolSize(%d))", pool.size(), pool.size(), poolSize));
       }
-      if (ZEROING) {}
+      if (ZEROING) {
+        buffer.capacity(maxMemoryCapacity);
+        buffer.setIndex(0, 0);
+        int writableBytes = buffer.writableBytes();
+        while (writableBytes >= 4) {
+          buffer.writeInt(0);
+          writableBytes = buffer.writableBytes();
+        }
+        while (writableBytes > 1) {
+          buffer.writeByte(0);
+          writableBytes = buffer.writableBytes();
+        }
+      }
+      buffer.setIndex(0, 0);
       pool.offer(new WeakReference<>(buffer));
       return true;
     } catch (IllegalStateException e) {

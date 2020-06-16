@@ -28,11 +28,7 @@ public final class Inet6Address extends InetAddress {
   /** IPv6 Address Length. */
   public static final short IPV6_ADDRESS_LENGTH = 16;
 
-  private byte[] address;
-
-  {
-    address = new byte[Inet6Address.IPV6_ADDRESS_LENGTH];
-  }
+  private byte[] address = new byte[Inet6Address.IPV6_ADDRESS_LENGTH];
 
   private Inet6Address() {}
 
@@ -82,14 +78,14 @@ public final class Inet6Address extends InetAddress {
       }
       parts = partsAsList.toArray(new String[partsAsList.size()]);
     }
-    Validate.notIllegalArgument(!(parts.length > ipv6MaxHexGroups));
+    Validate.notIllegalArgument(parts.length <= ipv6MaxHexGroups);
     int validOctets = 0;
     int emptyOctets = 0;
     for (int index = 0; index < parts.length; index++) {
       String octet = parts[index];
       if (octet.length() == 0) {
         emptyOctets++;
-        Validate.notIllegalArgument(!(emptyOctets > 1));
+        Validate.notIllegalArgument(emptyOctets <= 1);
       } else {
         emptyOctets = 0;
         if (index == parts.length - 1 && octet.contains(".")) {
@@ -102,7 +98,7 @@ public final class Inet6Address extends InetAddress {
           validOctets += 2;
           continue;
         }
-        Validate.notIllegalArgument(!(octet.length() > ipv6MaxHexDigitsPerGroup));
+        Validate.notIllegalArgument(octet.length() <= ipv6MaxHexDigitsPerGroup);
       }
       validOctets++;
     }
@@ -114,7 +110,7 @@ public final class Inet6Address extends InetAddress {
     int skipIndex = -1;
     for (int i = 1; i < parts.length - 1; i++) {
       if (parts[i].length() == 0) {
-        Validate.notIllegalArgument(!(skipIndex >= 0));
+        Validate.notIllegalArgument(skipIndex < 0);
         skipIndex = i;
       }
     }

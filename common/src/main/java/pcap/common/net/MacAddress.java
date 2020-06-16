@@ -253,7 +253,7 @@ public final class MacAddress implements Address {
           ((array[offset]) << (24))
               | ((0xFF & array[offset + 1]) << (16))
               | ((0xFF & array[offset + 2]) << (8))
-              | ((0xFF & array[offset + 3]));
+              | (0xFF & array[offset + 3]);
       Oui oui = REGISTRY.get(value);
       if (oui == null) {
         return new Oui(1, "UNKNOWN");

@@ -304,8 +304,6 @@ abstract class AbstractMemoryWriterAndReaderTest extends BaseTest {
   }
 
   private void doRelease(Memory memory) {
-    if (!pooled) {
-      memory.release();
-    }
+    memory.release();
   }
 }

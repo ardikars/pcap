@@ -403,9 +403,9 @@ public class Tcp extends AbstractPacket {
       this.destinationPort = buffer.readShort();
       this.sequence = buffer.readInt();
       this.acknowledge = buffer.readInt();
-      short flags = buffer.readShort();
-      this.dataOffset = (byte) (flags >> 12 & 0xf);
-      this.flags = new TcpFlags.Builder().build((short) (flags & 0x1ff));
+      short tmp = buffer.readShort();
+      this.dataOffset = (byte) (tmp >> 12 & 0xf);
+      this.flags = new TcpFlags.Builder().build((short) (tmp & 0x1ff));
       this.windowSize = buffer.readShort();
       this.checksum = buffer.readShort();
       this.urgentPointer = buffer.readShort();

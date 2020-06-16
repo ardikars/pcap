@@ -13,10 +13,12 @@ import pcap.common.util.Properties;
 @Inclubating
 abstract class AbstractLogger implements Logger {
 
+  static final String UNKNOWN_LOG_LEVEL;
   static final String DEFAULT_FORMAT = "{}";
   static final String UNEXPECTED_EXCEPTION_MESSAGE;
 
   static {
+    UNKNOWN_LOG_LEVEL = "Unknown log level";
     UNEXPECTED_EXCEPTION_MESSAGE =
         Properties.getProperty("pcap.common.logging.default", "Unexpected exception:");
   }
@@ -47,7 +49,7 @@ abstract class AbstractLogger implements Logger {
       case ERROR:
         return isErrorEnabled();
       default:
-        throw new Error("Unknown log level");
+        throw new Error(UNKNOWN_LOG_LEVEL);
     }
   }
 
@@ -67,7 +69,7 @@ abstract class AbstractLogger implements Logger {
         error(format);
         break;
       default:
-        throw new Error("Unknown log level");
+        throw new Error(UNKNOWN_LOG_LEVEL);
     }
   }
 
@@ -87,7 +89,7 @@ abstract class AbstractLogger implements Logger {
         error(throwable);
         break;
       default:
-        throw new Error("Unknown log level");
+        throw new Error(UNKNOWN_LOG_LEVEL);
     }
   }
 
@@ -107,7 +109,7 @@ abstract class AbstractLogger implements Logger {
         error(format, arg1);
         break;
       default:
-        throw new Error("Unknown log level");
+        throw new Error(UNKNOWN_LOG_LEVEL);
     }
   }
 
@@ -127,7 +129,7 @@ abstract class AbstractLogger implements Logger {
         error(format, arg1, arg2);
         break;
       default:
-        throw new Error("Unknown log level");
+        throw new Error(UNKNOWN_LOG_LEVEL);
     }
   }
 
@@ -147,7 +149,7 @@ abstract class AbstractLogger implements Logger {
         error(format, args);
         break;
       default:
-        throw new Error("Unknown log level");
+        throw new Error(UNKNOWN_LOG_LEVEL);
     }
   }
 
@@ -167,7 +169,7 @@ abstract class AbstractLogger implements Logger {
         error(format, throwable);
         break;
       default:
-        throw new Error("Unknown log level");
+        throw new Error(UNKNOWN_LOG_LEVEL);
     }
   }
 

@@ -24,8 +24,6 @@ public final class HeapMemoryAllocator implements MemoryAllocator {
   @Override
   public Memory allocate(int capacity, int maxCapacity, int readerIndex, int writerIndex) {
     ByteBuffer buffer = ByteBuffer.allocate(capacity);
-    Memory memory =
-        new DirectByteBuffer(0, buffer, capacity, maxCapacity, readerIndex, writerIndex);
-    return memory;
+    return new DirectByteBuffer(0, buffer, capacity, maxCapacity, readerIndex, writerIndex);
   }
 }

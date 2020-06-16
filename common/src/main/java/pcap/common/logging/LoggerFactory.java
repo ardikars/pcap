@@ -40,8 +40,8 @@ public abstract class LoggerFactory {
       } else {
         loggerFactory = NoLoggerFactory.getInstance();
       }
-    } catch (Throwable e) {
-      throw new RuntimeException(e);
+    } catch (Exception e) {
+      throw new IllegalStateException(e);
     }
     return loggerFactory;
   }

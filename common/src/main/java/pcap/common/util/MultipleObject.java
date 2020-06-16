@@ -29,7 +29,7 @@ public class MultipleObject<K> implements Serializable {
    */
   @SuppressWarnings("unchecked")
   public static <K> MultipleObject<K> of(K... keys) {
-    return new MultipleObject<K>(new HashSet<K>(Arrays.asList(keys)));
+    return new MultipleObject<>(new HashSet<>(Arrays.asList(keys)));
   }
 
   @Override

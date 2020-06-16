@@ -2,6 +2,7 @@
 package pcap.common.memory.internal;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.util.Strings;
@@ -302,7 +303,7 @@ public abstract class AbstractMemory<B> implements Memory {
     // see netty-buffer code
     final byte WRITE_UTF_UNKNOWN = (byte) '?';
     final char MAX_CHAR_VALUE = 255;
-    if (charset.equals(Charset.forName("UTF-8"))) {
+    if (charset.equals(StandardCharsets.UTF_8)) {
       int len = seq.length();
 
       int oldIndex = index;
@@ -343,7 +344,7 @@ public abstract class AbstractMemory<B> implements Memory {
         }
       }
       writtenBytes = index - oldIndex;
-    } else if (charset.equals(Charset.forName("ASCII"))) {
+    } else if (charset.equals(StandardCharsets.US_ASCII)) {
       for (int i = 0; i < seq.length(); i++) {
         this.setByte(index++, (byte) (seq.charAt(i) > MAX_CHAR_VALUE ? '?' : seq.charAt(i)));
       }

@@ -265,10 +265,10 @@ public class Udp extends AbstractPacket {
       if (calculateChecksum && srcAddr != null && dstAddr != null) {
         if (buffer == null) {
           final Udp udp = new Udp(this);
-          int length =
+          int bufLen =
               udp.header.length()
                   + (this.payloadBuffer == null ? 0 : this.payloadBuffer.capacity());
-          this.buffer = ALLOCATOR.allocate(length);
+          this.buffer = ALLOCATOR.allocate(bufLen);
           this.buffer.writeBytes(udp.header().buffer(), 0, udp.header().length());
           if (this.payloadBuffer != null) {
             this.buffer.writeBytes(payloadBuffer, 0, this.payloadBuffer.capacity());

@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnitPlatform.class)
 public class PooledHeapByteBufferSetterAndGetterTest extends AbstractMemorySetterAndGetterTest {
 
-  private final MemoryAllocator MEMORY_ALLOCATOR = Memories.allocator(1, 3, 50);
+  private final MemoryAllocator MEMORY_ALLOCATOR = Memories.allocator(1, 10, 50);
 
   @Override
   protected MemoryAllocator memoryAllocator() {

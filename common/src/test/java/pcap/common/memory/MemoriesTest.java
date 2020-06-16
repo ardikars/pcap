@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import pcap.common.memory.internal.allocator.DirectMemoryAllocator;
 import pcap.common.memory.internal.allocator.HeapMemoryAllocator;
 import pcap.common.memory.internal.nio.PooledDirectByteBuffer;
+import pcap.common.memory.internal.nio.PooledHeapByteBuffer;
 
 @RunWith(JUnitPlatform.class)
 public class MemoriesTest {
@@ -32,7 +33,7 @@ public class MemoriesTest {
     MemoryAllocator allocator = Memories.allocator(5, 10, 10);
     MemoryAllocator allocatorDirect = Memories.directAllocator(5, 10, 10);
     for (int i = 0; i < 10; i++) {
-      PooledDirectByteBuffer heap = (PooledDirectByteBuffer) allocatorDirect.allocate(i + 1);
+      PooledHeapByteBuffer heap = (PooledHeapByteBuffer) allocator.allocate(i + 1);
       PooledDirectByteBuffer direct = (PooledDirectByteBuffer) allocatorDirect.allocate(i + 1);
       direct.retain();
       direct.retain();
