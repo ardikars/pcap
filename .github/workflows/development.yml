@@ -81,7 +81,7 @@ jobs:
           export JAVA_HOME=/usr/local/jvm/panama
           echo "JAVA_HOME_8 = $JAVA_HOME_8"
           echo "JAVA_HOME = $JAVA_HOME"
-          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Pformat -Psonar -Djava.library.path=/usr/lib -Dsonar.login="${{ secrets.sonar_token }}"
+          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Pformat -Psonar, -Pjavadoc -Djava.library.path=/usr/lib -Dsonar.login="${{ secrets.sonar_token }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: matrix.os == 'macos-10.15'
@@ -92,5 +92,5 @@ jobs:
           export JAVA_HOME=/usr/local/jvm/panama
           echo "JAVA_HOME_8 = $JAVA_HOME_8"
           echo "JAVA_HOME = $JAVA_HOME"
-          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat -Djava.library.path=/usr/lib
+          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat, -Pjavadoc -Djava.library.path=/usr/lib
         if: matrix.os == 'ubuntu-16.04'

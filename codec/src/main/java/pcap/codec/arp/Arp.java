@@ -17,8 +17,8 @@ import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
 /**
- * @see <a href="https://en.wikipedia.org/wiki/Address_Resolution_Protocol>Wikipedia</a>
- * @see <a href="https://tools.ietf.org/html/rfc826>RFC</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Address_Resolution_Protocol">Wikipedia</a>
+ * @see <a href="https://tools.ietf.org/html/rfc826">RFC</a>
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
 @Inclubating
@@ -237,6 +237,9 @@ public class Arp extends AbstractPacket {
      *
      * <p>This field specifies the network link protocol type. Example: {@link
      * DataLinkLayer#EN10MB}.
+     *
+     * @param hardwareType datalink type.
+     * @return returns this {@link Builder}.
      */
     public Builder hardwareType(final DataLinkLayer hardwareType) {
       this.hardwareType = hardwareType;
@@ -249,6 +252,9 @@ public class Arp extends AbstractPacket {
      * <p>This field specifies the internetwork protocol for which the ARP request is intended. For
      * IPv4, this has the value {@link NetworkLayer#IPV4} ({@code 0x0800}). The permitted PTYPE
      * values share a numbering space with those for {@link NetworkLayer} (EtherType).
+     *
+     * @param protocolType protocol type.
+     * @return returns this {@link Builder}.
      */
     public Builder protocolType(final NetworkLayer protocolType) {
       this.protocolType = protocolType;
@@ -260,6 +266,9 @@ public class Arp extends AbstractPacket {
      *
      * <p>Length (in octets) of a hardware address. Ethernet address length is 6 ({@link
      * MacAddress#MAC_ADDRESS_LENGTH}).
+     *
+     * @param hardwareAddressLength hardaware length.
+     * @return returns this {@link Builder}.
      */
     public Builder hardwareAddressLength(final int hardwareAddressLength) {
       this.hardwareAddressLength = (byte) (hardwareAddressLength & 0xFF);
@@ -271,6 +280,9 @@ public class Arp extends AbstractPacket {
      *
      * <p>Length (in octets) of internetwork addresses. The internetwork protocol is specified in
      * PTYPE. Example: IPv4 address length is 4 ({@link Inet4Address#IPV4_ADDRESS_LENGTH}).
+     *
+     * @param protocolAddressLength protocol address length.
+     * @return returns this {@link Builder}.
      */
     public Builder protocolAddressLength(final int protocolAddressLength) {
       this.protocolAddressLength = (byte) (protocolAddressLength & 0xFF);
@@ -282,6 +294,9 @@ public class Arp extends AbstractPacket {
      *
      * <p>Specifies the operation that the sender is performing: {@link OperationCode#ARP_REQUEST}
      * for request, {@link OperationCode#ARP_REPLY} for reply.
+     *
+     * @param operationCode ARP operation code.
+     * @return returns this {@link Builder}.
      */
     public Builder operationCode(final OperationCode operationCode) {
       this.operationCode = operationCode;
@@ -294,6 +309,9 @@ public class Arp extends AbstractPacket {
      * <p>Media address of the sender. In an ARP request this field is used to indicate the address
      * of the host sending the request. In an ARP reply this field is used to indicate the address
      * of the host that the request was looking for.
+     *
+     * @param senderHardwareAddress sender hardware address.
+     * @return returns this {@link Builder}.
      */
     public Builder senderHardwareAddress(final MacAddress senderHardwareAddress) {
       this.senderHardwareAddress = senderHardwareAddress;
@@ -304,6 +322,9 @@ public class Arp extends AbstractPacket {
      * Sender protocol address (SHA).
      *
      * <p>Internetwork address of the sender.
+     *
+     * @param senderProtocolAddress sender protocol address.
+     * @return returns this {@link Builder}.
      */
     public Builder senderProtocolAddress(final Inet4Address senderProtocolAddress) {
       this.senderProtocolAddress = senderProtocolAddress;
@@ -315,6 +336,9 @@ public class Arp extends AbstractPacket {
      *
      * <p>Media address of the intended receiver. In an ARP request this field is ignored. In an ARP
      * reply this field is used to indicate the address of the host that originated the ARP request.
+     *
+     * @param targetHardwareAddress target hardware address.
+     * @return returns this {@link Builder}.
      */
     public Builder targetHardwareAddress(final MacAddress targetHardwareAddress) {
       this.targetHardwareAddress = targetHardwareAddress;
@@ -325,6 +349,9 @@ public class Arp extends AbstractPacket {
      * Target protocol address (TPA).
      *
      * <p>Internetwork address of the intended receiver.
+     *
+     * @param targetProtocolAddress target protocol addresss.
+     * @return returns this {@link Builder}.
      */
     public Builder targetProtocolAddress(final Inet4Address targetProtocolAddress) {
       this.targetProtocolAddress = targetProtocolAddress;

@@ -14,7 +14,7 @@ import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
 /**
- * @see <a href="https://en.wikipedia.org/wiki/IEEE_802.1Q>Wikipedia</a>
+ * @see <a href="https://en.wikipedia.org/wiki/IEEE_802.1Q">Wikipedia</a>
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
 @Inclubating
@@ -175,6 +175,9 @@ public class Vlan extends AbstractPacket {
      *
      * <p>A 3-bit field which refers to the IEEE 802.1p class of service and maps to the frame
      * priority level. Different PCP values can be used to prioritize different classes of traffic.
+     *
+     * @param priorityCodePoint PCP.
+     * @return returns this {@link Builder}.
      */
     public Builder priorityCodePoint(final PriorityCodePoint priorityCodePoint) {
       this.priorityCodePoint = priorityCodePoint;
@@ -186,6 +189,9 @@ public class Vlan extends AbstractPacket {
      *
      * <p>A 1-bit field. (formerly CFI) May be used separately or in conjunction with PCP to
      * indicate frames eligible to be dropped in the presence of congestion.
+     *
+     * @param canonicalFormatIndicator CFI.
+     * @return returns this {@link Builder}.
      */
     public Builder canonicalFormatIndicator(final int canonicalFormatIndicator) {
       this.canonicalFormatIndicator = (byte) (canonicalFormatIndicator & 0x01);
@@ -196,6 +202,9 @@ public class Vlan extends AbstractPacket {
      * VLAN identifier (VID).
      *
      * <p>A 12-bit field specifying the VLAN to which the frame belongs.
+     *
+     * @param vlanIdentifier vlan identifier.
+     * @return returns this {@link Builder}.
      */
     public Builder vlanIdentifier(final int vlanIdentifier) {
       this.vlanIdentifier = (short) (vlanIdentifier & 0x0FFF);
@@ -206,6 +215,9 @@ public class Vlan extends AbstractPacket {
      * Next protocol type.
      *
      * <p>Example: {@link NetworkLayer#ARP}.
+     *
+     * @param type payload type.
+     * @return returns this {@link Builder}.
      */
     public Builder type(final NetworkLayer type) {
       this.type = type;

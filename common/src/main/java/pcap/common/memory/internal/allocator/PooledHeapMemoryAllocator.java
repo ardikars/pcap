@@ -14,7 +14,7 @@ public class PooledHeapMemoryAllocator extends AbstractPooledMemoryAllocator {
   @Override
   WeakReference<AbstractPooledByteBuffer> allocatePooledMemory(
       int capacity, int readerIndex, int writerIndex) {
-    ByteBuffer buffer = ByteBuffer.allocateDirect(maxMemoryCapacity);
+    ByteBuffer buffer = ByteBuffer.allocate(maxMemoryCapacity);
     return new WeakReference<>(
         new PooledHeapByteBuffer(
             ID_GERERATOR_UPDATER.incrementAndGet(this),

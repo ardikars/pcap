@@ -121,7 +121,13 @@ public abstract class AbstractPacket implements Packet {
 
     protected Memory buffer;
 
-    /** Reset reader index to 0, and writer index to header length. */
+    /**
+     * Reset reader index to 0, and writer index to header length.
+     *
+     * @param buffer buffer.
+     * @param length length.
+     * @return returns buffer with new writer and reader index.
+     */
     protected Memory resetIndex(Memory buffer, int length) {
       if (buffer != null) {
         buffer.setIndex(0, length);

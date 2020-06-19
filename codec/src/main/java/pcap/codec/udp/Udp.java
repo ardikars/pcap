@@ -144,6 +144,8 @@ public class Udp extends AbstractPacket {
     /**
      * Check whether checksum is valid.
      *
+     * @param srcAddr source ip pseudo header.
+     * @param dstAddr destination ip pseudo header.
      * @return returns true if checksum is valid, false otherwise.
      */
     public boolean isValidChecksum(InetAddress srcAddr, InetAddress dstAddr) {

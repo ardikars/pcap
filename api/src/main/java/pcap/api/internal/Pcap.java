@@ -9,8 +9,6 @@ import java.nio.ByteBuffer;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeoutException;
-import pcap.api.PcapLive;
-import pcap.api.PcapOffline;
 import pcap.api.handler.EventLoopHandler;
 import pcap.api.internal.foreign.bpf_mapping;
 import pcap.api.internal.foreign.pcap_mapping;
@@ -58,13 +56,7 @@ public class Pcap implements pcap.spi.Pcap {
     this.filterActivated = false;
   }
 
-  /**
-   * Open {@link Dumper} handler.
-   *
-   * @param file location of capture file will saved.
-   * @return returns {@code Pcap} {@link Dumper} handle.
-   * @throws ErrorException
-   */
+  /** {@inheritDoc} */
   @Override
   public Dumper dumpOpen(String file) throws ErrorException {
     synchronized (PcapConstant.LOCK) {
@@ -80,13 +72,7 @@ public class Pcap implements pcap.spi.Pcap {
     }
   }
 
-  /**
-   * Append packet buffer on existing {@code pcap} file.
-   *
-   * @param file location of saved file.
-   * @return returns {@code Pcap} {@link Dumper} handle.
-   * @throws ErrorException generic error.
-   */
+  /** {@inheritDoc} */
   @Override
   public Dumper dumpOpenAppend(String file) throws ErrorException {
     synchronized (PcapConstant.LOCK) {
@@ -103,13 +89,7 @@ public class Pcap implements pcap.spi.Pcap {
     }
   }
 
-  /**
-   * BPF packet filter.
-   *
-   * @param filter filter expression.
-   * @param optimize {@code true} for optimized filter, {@code false} otherwise.
-   * @throws ErrorException generic error.
-   */
+  /** {@inheritDoc} */
   @Override
   public void setFilter(String filter, boolean optimize) throws ErrorException {
     synchronized (PcapConstant.LOCK) {
@@ -135,18 +115,7 @@ public class Pcap implements pcap.spi.Pcap {
     }
   }
 
-  /**
-   * Process packets from a live {@link PcapLive} or {@link PcapOffline}.
-   *
-   * @param count maximum number of packets to process before returning. A value of -1 or 0 for cnt
-   *     is equivalent to infinity, so that packets are processed until another ending condition
-   *     occurs.
-   * @param handler {@link PacketHandler} callback function.
-   * @param args user args.
-   * @param <T> args type.
-   * @throws BreakException {@link Pcap#breakLoop()} is called.
-   * @throws ErrorException Generic error.
-   */
+  /** {@inheritDoc} */
   @Override
   public <T> void loop(int count, PacketHandler<T> handler, T args)
       throws BreakException, ErrorException {
@@ -230,6 +199,7 @@ public class Pcap implements pcap.spi.Pcap {
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public void nextEx(PacketBuffer packetBuffer, PacketHeader packetHeader)
       throws BreakException, TimeoutException, ErrorException {
@@ -258,6 +228,7 @@ public class Pcap implements pcap.spi.Pcap {
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public <T> void dispatch(int count, PacketHandler<T> handler, T args)
       throws BreakException, ErrorException {
@@ -290,16 +261,7 @@ public class Pcap implements pcap.spi.Pcap {
     }
   }
 
-  /**
-   * Represent packet statistics from the start of the run to the time of the call.
-   *
-   * <p>Supported only on live captures, not on {@link PcapOffline}; no statistics are stored in
-   * {@link PcapOffline} so no statistics are available when reading from a {@link PcapOffline}
-   *
-   * @return returns {@link Status} on success.
-   * @throws ErrorException There is an error or if this {@link Pcap} doesn't support packet
-   *     statistics.
-   */
+  /** {@inheritDoc} */
   @Override
   public Status status() throws ErrorException {
     synchronized (PcapConstant.LOCK) {
@@ -311,10 +273,7 @@ public class Pcap implements pcap.spi.Pcap {
     }
   }
 
-  /**
-   * Force a {@link Pcap#loop(int, PacketHandler, Object)} call to return And throw {@link
-   * BreakException} on {@link Pcap#loop(int, PacketHandler, Object)}.
-   */
+  /** {@inheritDoc} */
   @Override
   public void breakLoop() {
     synchronized (PcapConstant.LOCK) {
@@ -325,13 +284,7 @@ public class Pcap implements pcap.spi.Pcap {
     }
   }
 
-  /**
-   * Sends a raw packet through the network interface.
-   *
-   * @param buffer the data of the packet, including the link-layer header.
-   * @param size the number of bytes in the packet.
-   * @throws ErrorException generic error.
-   */
+  /** {@inheritDoc} */
   @Override
   public void send(ByteBuffer buffer, int size) throws ErrorException {
     int result = PcapConstant.MAPPING.pcap_sendpacket(pcap, Pointer.fromByteBuffer(buffer), size);
@@ -340,13 +293,7 @@ public class Pcap implements pcap.spi.Pcap {
     }
   }
 
-  /**
-   * Sends a raw packet through the network interface.
-   *
-   * @param buffer the data of the packet, including the link-layer header.
-   * @param size the number of bytes in the packet.
-   * @throws ErrorException generic error.
-   */
+  /** {@inheritDoc} */
   @Override
   public void send(PacketBuffer buffer, int size) throws ErrorException {
     Validate.notIllegalArgument(
@@ -362,6 +309,7 @@ public class Pcap implements pcap.spi.Pcap {
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public void setDirection(Direction direction) throws ErrorException {
     int result = 0;
@@ -377,6 +325,7 @@ public class Pcap implements pcap.spi.Pcap {
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public void setNonBlock(boolean blocking) throws ErrorException {
     Pointer<Byte> errbuf = PcapConstant.SCOPE.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
@@ -386,7 +335,7 @@ public class Pcap implements pcap.spi.Pcap {
     }
   }
 
-  /** Close {@link PcapLive} or {@link PcapOffline}. Note: BPF handle will closed automaticly. */
+  /** {@inheritDoc} */
   @Override
   public void close() {
     synchronized (PcapConstant.LOCK) {
@@ -402,6 +351,7 @@ public class Pcap implements pcap.spi.Pcap {
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public <T> T allocate(Class<T> cls) {
     final Pointer<Pointer<PcapPacketHeader>> pcap_ptr_to_packet_header =

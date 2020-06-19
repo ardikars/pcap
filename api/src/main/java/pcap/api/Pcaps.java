@@ -35,7 +35,7 @@ public abstract class Pcaps {
    *
    * @param pcapOffline pcap offline option.
    * @return returns {@link Pcap} live handle.
-   * @throws ErrorException
+   * @throws ErrorException generic exeception.
    */
   public static Pcap offline(PcapOffline pcapOffline) throws ErrorException {
     return pcapOffline.open();
