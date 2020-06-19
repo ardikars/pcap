@@ -67,6 +67,7 @@ public interface Pcap extends AutoCloseable {
    * @throws BreakException there are no more packets to read from `savefile`.
    * @throws TimeoutException if packets are being read from a `live capture` and the packet buffer
    *     timeout expired.
+   * @throws ErrorException generic exception.
    * @since 1.0.0
    */
   void nextEx(PacketBuffer packetBuffer, PacketHeader packetHeader)
@@ -104,7 +105,7 @@ public interface Pcap extends AutoCloseable {
    * @throws ErrorException Generic error.
    */
   <T> void dispatch(int count, PacketHandler<T> handler, T args)
-      throws BreakException, ErrorException;;
+      throws BreakException, ErrorException;
 
   /**
    * Represent packet statistics from the start of the run to the time of the call.
@@ -163,6 +164,7 @@ public interface Pcap extends AutoCloseable {
    * </ul>
    *
    * @param direction is one of the constants {@link Direction}.
+   * @throws ErrorException generic exception.
    */
   void setDirection(Direction direction) throws ErrorException;
 
@@ -193,7 +195,7 @@ public interface Pcap extends AutoCloseable {
    *
    * @param cls a class, ex {@link PacketHeader} and {@link PacketBuffer}.
    * @param <T> pointer type.
-   * @return
+   * @return returns {@code <T>} instance.
    */
   <T> T allocate(Class<T> cls) throws IllegalArgumentException;
 
