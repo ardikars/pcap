@@ -173,6 +173,7 @@ public abstract class AbstractPooledByteBuffer extends AbstractByteBuffer implem
           String.format(
               "This buffer is already released to the pool. RefCnt: %d, ID: %d.", refCnt(), id()));
     }
+    buffer.clear();
     boolean offer = allocator.offer(this);
     REF_CNT_UPDATER.decrementAndGet(this);
     return offer;

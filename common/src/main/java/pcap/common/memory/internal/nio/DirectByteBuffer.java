@@ -1,9 +1,10 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory.internal.nio;
 
-import java.nio.ByteBuffer;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
+
+import java.nio.ByteBuffer;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -43,11 +44,6 @@ public class DirectByteBuffer extends AbstractByteBuffer implements Memory.Direc
   public Memory duplicate() {
     return new DirectByteBuffer(
         baseIndex, buffer.duplicate(), capacity(), maxCapacity(), readerIndex(), writerIndex());
-  }
-
-  @Override
-  public boolean release() {
-    return true;
   }
 
   @Override

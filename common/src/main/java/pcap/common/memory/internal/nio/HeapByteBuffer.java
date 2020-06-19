@@ -40,9 +40,4 @@ public class HeapByteBuffer extends AbstractByteBuffer implements Memory.Heap {
     return new HeapByteBuffer(
         baseIndex, buffer.duplicate(), capacity(), maxCapacity(), readerIndex(), writerIndex());
   }
-
-  @Override
-  public boolean release() {
-    return true;
-  }
 }

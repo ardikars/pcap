@@ -1,8 +1,9 @@
 package pcap.common.memory.internal.nio;
 
-import java.nio.ByteBuffer;
 import pcap.common.memory.Memory;
 import pcap.common.memory.internal.AbstractMemory;
+
+import java.nio.ByteBuffer;
 
 abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
 
@@ -151,6 +152,12 @@ abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
   @Override
   public ByteBuffer nioBuffer() {
     return buffer;
+  }
+
+  @Override
+  public boolean release() {
+    buffer.clear();
+    return true;
   }
 
   @Override
