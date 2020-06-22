@@ -7,7 +7,7 @@
     <groupId>com.ardikars.pcap</groupId>
     <artifactId>pcap</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.17</version>
+    <version>0.0.18</version>
 
     <modules>
         <module>spi</module>
@@ -351,7 +351,7 @@
             </build>
         </profile>
 
-								<profile>
+        <profile>
             <id>coverage</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -374,7 +374,7 @@
             </build>
         </profile>
 
-								<profile>
+        <profile>
             <id>sonar</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -385,11 +385,11 @@
             </properties>
         </profile>
 
-								<profile>
+        <profile>
             <id>javadoc</id>
-												<build>
-																<plugins>
-																			<plugin>
+            <build>
+                <plugins>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <executions>
@@ -401,9 +401,9 @@
                             </execution>
                         </executions>
                     </plugin>
-																</plugins>
-												</build>
-								</profile>
+                </plugins>
+            </build>
+        </profile>
 
         <profile>
             <id>release</id>

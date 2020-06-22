@@ -107,6 +107,24 @@ public class Icmp6 extends AbstractPacket {
       this.builder = builder;
     }
 
+    /**
+     * Type and code.
+     *
+     * @return returns type and code.
+     */
+    public Icmp.IcmpTypeAndCode typeAndCode() {
+      return typeAndCode;
+    }
+
+    /**
+     * Checksum.
+     *
+     * @return returns checksum.
+     */
+    public int checksum() {
+      return checksum;
+    }
+
     @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
     public <T extends NamedNumber> T payloadType() {

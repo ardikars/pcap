@@ -88,6 +88,35 @@ public class Icmp4 extends AbstractPacket {
       this.builder = builder;
     }
 
+    /**
+     * Type and code.
+     *
+     * @return returns {@link pcap.codec.icmp.Icmp.IcmpTypeAndCode}.
+     */
+    public Icmp.IcmpTypeAndCode typeAndCode() {
+      return typeAndCode;
+    }
+
+    /**
+     * Checksum.
+     *
+     * @return returns checksum.
+     */
+    public int checksum() {
+      return checksum;
+    }
+
+    @Override
+    public Memory buffer() {
+      if (buffer == null) {
+        this.buffer = ALLOCATOR.allocate(length());
+        this.buffer.writeByte(typeAndCode.type());
+        this.buffer.writeByte(typeAndCode.code());
+        this.buffer.writeShort(checksum);
+      }
+      return buffer;
+    }
+
     @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
     public <T extends NamedNumber> T payloadType() {
