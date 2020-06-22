@@ -81,18 +81,38 @@ public class Fragment extends AbstractPacket {
       this.builder = builder;
     }
 
+    /**
+     * Next protocol type.
+     *
+     * @return returns {@link TransportLayer}.
+     */
     public TransportLayer nextHeader() {
       return nextHeader;
     }
 
+    /**
+     * Fragment offset.
+     *
+     * @return returns fragment offset.
+     */
     public int fragmentOffset() {
       return fragmentOffset & 0x1fff;
     }
 
+    /**
+     * Flag type.
+     *
+     * @return return {@link FlagType}.
+     */
     public FlagType flagType() {
       return flagType;
     }
 
+    /**
+     * Identification.
+     *
+     * @return returns identification.
+     */
     public int identification() {
       return identification;
     }
@@ -145,23 +165,53 @@ public class Fragment extends AbstractPacket {
     private Memory buffer;
     private Memory payloadBuffer;
 
+    /**
+     * Next protocol type.
+     *
+     * @param nextHeader next protocol type.
+     * @return returns this {@link Builder}.
+     */
     public Builder nextHeader(TransportLayer nextHeader) {
       this.nextHeader = nextHeader;
       return this;
     }
 
+    /**
+     * Fragment offset.
+     *
+     * @param fragmentOffset fragment offset.
+     * @return returns this {@link Builder}.
+     */
     public Builder fragmentOffset(int fragmentOffset) {
       this.fragmentOffset = (short) (fragmentOffset & 0x1fff);
       return this;
     }
 
+    /**
+     * Flag type.
+     *
+     * @param flagType flag type.
+     * @return returns this {@link Builder}.
+     */
     public Builder flagType(FlagType flagType) {
       this.flagType = flagType;
       return this;
     }
 
+    /**
+     * Identification.
+     *
+     * @param identification identification.
+     * @return returns this {@link Builder}.
+     */
     public Builder identification(int identification) {
       this.identification = identification;
+      return this;
+    }
+
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.payloadBuffer();
       return this;
     }
 

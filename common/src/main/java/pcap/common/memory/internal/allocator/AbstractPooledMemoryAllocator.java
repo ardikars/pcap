@@ -75,7 +75,8 @@ public abstract class AbstractPooledMemoryAllocator implements MemoryAllocator {
         AbstractPooledByteBuffer memory = (AbstractPooledByteBuffer) poll;
         retainBuffer(memory, capacity, writerIndex, readerIndex);
         if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("Allocate buffer with id %d (refCnt: %d).", memory.id(), memory.refCnt());
+          LOGGER.debug(
+              "Allocate buffer with id {} (refCnt: {}) from pool.", memory.id(), memory.refCnt());
         }
         return memory;
       }
@@ -88,7 +89,7 @@ public abstract class AbstractPooledMemoryAllocator implements MemoryAllocator {
     final AbstractPooledByteBuffer pooled = weakReference.get();
     retainBuffer(pooled, capacity, writerIndex, readerIndex);
     if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Allocate buffer with id %d (refCnt: %d).", pooled.id(), pooled.refCnt());
+      LOGGER.debug("Allocate buffer with id {} (refCnt: {}).", pooled.id(), pooled.refCnt());
     }
     return pooled;
   }

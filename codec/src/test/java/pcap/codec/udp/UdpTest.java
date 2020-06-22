@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.codec.BaseTest;
+import pcap.codec.UnknownPacket;
 import pcap.codec.ethernet.Ethernet;
 import pcap.codec.ip.Ip4;
 import pcap.common.memory.Memories;
@@ -50,8 +51,10 @@ public class UdpTest extends BaseTest {
             .destinationPort(udp.header().destinationPort())
             .length(udp.header().lengthUdp())
             .payload(
-                Memories.wrap(
-                    "8c710120000100000000000108617264696b61727303636f6d0000010001000029100000000000000c000a0008e1113ba1c6eb7772"))
+                new UnknownPacket.Builder()
+                    .build(
+                        Memories.wrap(
+                            "8c710120000100000000000108617264696b61727303636f6d0000010001000029100000000000000c000a0008e1113ba1c6eb7772")))
             .calculateChecksum(
                 ip4.header().sourceAddress(), ip4.header().destinationAddress(), true);
     final Udp newUdp = builder.build();
@@ -65,8 +68,10 @@ public class UdpTest extends BaseTest {
             .destinationPort(500)
             .length(50)
             .payload(
-                Memories.wrap(
-                    "17030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8"))
+                new UnknownPacket.Builder()
+                    .build(
+                        Memories.wrap(
+                            "17030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8")))
             .calculateChecksum(
                 Inet4Address.valueOf("192.168.1.2"), Inet4Address.valueOf("192.168.1.3"), true);
     return builder.build();

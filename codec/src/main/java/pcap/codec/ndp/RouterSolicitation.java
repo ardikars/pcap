@@ -79,6 +79,11 @@ public class RouterSolicitation extends AbstractPacket {
       this.builder = builder;
     }
 
+    /**
+     * Options.
+     *
+     * @return returns options.
+     */
     public NeighborDiscoveryOptions options() {
       return options;
     }
@@ -105,7 +110,7 @@ public class RouterSolicitation extends AbstractPacket {
     }
 
     @Override
-    public AbstractPacket.Builder builder() {
+    public Builder builder() {
       return builder;
     }
 
@@ -122,8 +127,20 @@ public class RouterSolicitation extends AbstractPacket {
     private Memory buffer;
     private Memory payloadBuffer;
 
+    /**
+     * Options.
+     *
+     * @param options options.
+     * @return returns this {@link Builder}.
+     */
     public Builder options(NeighborDiscoveryOptions options) {
       this.options = options;
+      return this;
+    }
+
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
       return this;
     }
 

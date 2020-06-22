@@ -3,6 +3,7 @@ package pcap.codec.ndp;
 
 import pcap.codec.AbstractPacket;
 import pcap.codec.Packet;
+import pcap.codec.UnknownPacket;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.util.NamedNumber;
@@ -83,30 +84,65 @@ public class RouterAdvertisement extends AbstractPacket {
       this.builder = builder;
     }
 
+    /**
+     * Current hop limit.
+     *
+     * @return returns current hop limit.
+     */
     public int currentHopLimit() {
       return currentHopLimit & 0xff;
     }
 
+    /**
+     * Is manage flag.
+     *
+     * @return returns manage flag.
+     */
     public boolean isManageFlag() {
       return manageFlag;
     }
 
+    /**
+     * Is other flag.
+     *
+     * @return returns other flag.
+     */
     public boolean isOtherFlag() {
       return otherFlag;
     }
 
+    /**
+     * Router lifetime.
+     *
+     * @return returns router lifetime.
+     */
     public int routerLifetime() {
       return routerLifetime & 0xffff;
     }
 
+    /**
+     * Reachable time.
+     *
+     * @return returns reachable time.
+     */
     public int reachableTime() {
       return reachableTime;
     }
 
+    /**
+     * Retransmit time.
+     *
+     * @return returns retransmit time.
+     */
     public int retransmitTimer() {
       return retransmitTimer;
     }
 
+    /**
+     * Options.
+     *
+     * @return returns options.
+     */
     public NeighborDiscoveryOptions options() {
       return options;
     }
@@ -114,7 +150,7 @@ public class RouterAdvertisement extends AbstractPacket {
     @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
     public <T extends NamedNumber> T payloadType() {
-      return null;
+      return (T) UnknownPacket.UNKNOWN_PAYLOAD_TYPE;
     }
 
     @Override
@@ -169,38 +205,86 @@ public class RouterAdvertisement extends AbstractPacket {
     private Memory buffer;
     private Memory payloadBuffer;
 
+    /**
+     * Current hop limit.
+     *
+     * @param currentHopLimit current hop limit.
+     * @return returns This {@link Builder}.
+     */
     public Builder currentHopLimit(int currentHopLimit) {
       this.currentHopLimit = (byte) (currentHopLimit & 0xff);
       return this;
     }
 
+    /**
+     * Manage flag.
+     *
+     * @param manageFlag manage flag.
+     * @return returns This {@link Builder}.
+     */
     public Builder manageFlag(boolean manageFlag) {
       this.manageFlag = manageFlag;
       return this;
     }
 
+    /**
+     * Other flag.
+     *
+     * @param otherFlag other flag.
+     * @return returns This {@link Builder}.
+     */
     public Builder otherFlag(boolean otherFlag) {
       this.otherFlag = otherFlag;
       return this;
     }
 
+    /**
+     * Router lifetime.
+     *
+     * @param routerLifetime router lifetime.
+     * @return returns this {@link Builder}.
+     */
     public Builder routerLifetime(int routerLifetime) {
       this.routerLifetime = (short) (routerLifetime & 0xffff);
       return this;
     }
 
+    /**
+     * Reachable time.
+     *
+     * @param reachableTime reachable time.
+     * @return returns this {@link Builder}.
+     */
     public Builder reachableTime(int reachableTime) {
       this.reachableTime = reachableTime;
       return this;
     }
 
+    /**
+     * Retransmit timer.
+     *
+     * @param retransmitTimer retransmit timer.
+     * @return returns {@link Builder}.
+     */
     public Builder retransmitTimer(int retransmitTimer) {
       this.retransmitTimer = retransmitTimer;
       return this;
     }
 
+    /**
+     * Options.
+     *
+     * @param options options.
+     * @return returns {@link Builder}.
+     */
     public Builder options(NeighborDiscoveryOptions options) {
       this.options = options;
+      return this;
+    }
+
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
       return this;
     }
 

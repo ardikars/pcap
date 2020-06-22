@@ -115,8 +115,20 @@ public class Icmp4 extends AbstractPacket {
 
     private boolean calculateChecksum;
 
+    /**
+     * Calulate checksum.
+     *
+     * @param caculateChecksum true for caclulating checksum, false otherwise.
+     * @return return this {@link Builder}.
+     */
     private Builder calculateChecksum(boolean caculateChecksum) {
       this.calculateChecksum = caculateChecksum;
+      return this;
+    }
+
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
       return this;
     }
 

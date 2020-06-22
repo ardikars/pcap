@@ -135,38 +135,83 @@ public class Tcp extends AbstractPacket {
       return (short) (~accumulation & 0xFFFF);
     }
 
+    /**
+     * Source port.
+     *
+     * @return returns source port.
+     */
     public int sourcePort() {
       return sourcePort & 0xffff;
     }
 
+    /**
+     * Destination port.
+     *
+     * @return returns destination port.
+     */
     public int destinationPort() {
       return destinationPort & 0xffff;
     }
 
+    /**
+     * Sequence number.
+     *
+     * @return sequence number.
+     */
     public int sequence() {
       return sequence;
     }
 
+    /**
+     * Acknowledge.
+     *
+     * @return returns acknowledge.
+     */
     public int acknowledge() {
       return acknowledge;
     }
 
+    /**
+     * Data offset.
+     *
+     * @return returns data offset.
+     */
     public int dataOffset() {
       return dataOffset & 0xf;
     }
 
+    /**
+     * Tcp flags.
+     *
+     * @return returns {@link TcpFlags}.
+     */
     public TcpFlags flags() {
       return flags;
     }
 
+    /**
+     * Windows size.
+     *
+     * @return returns windows size.
+     */
     public int windowSize() {
       return windowSize & 0xffff;
     }
 
+    /**
+     * Checksum.
+     *
+     * @return returns checksum.
+     */
     public int checksum() {
       return checksum & 0xffff;
     }
 
+    /**
+     * Urgent pointer.
+     *
+     * @return urgent pointer.
+     */
     public int urgentPointer() {
       return urgentPointer & 0xffff;
     }
@@ -314,62 +359,131 @@ public class Tcp extends AbstractPacket {
     private InetAddress srcAddr;
     private InetAddress dstAddr;
 
+    /**
+     * Source port.
+     *
+     * @param sourcePort source port.
+     * @return returns this {@link Builder}.
+     */
     public Builder sourcePort(int sourcePort) {
       this.sourcePort = (short) (sourcePort & 0xffff);
       return this;
     }
 
+    /**
+     * Destination port.
+     *
+     * @param destinationPort destination port.
+     * @return returns this {@link Builder}.
+     */
     public Builder destinationPort(int destinationPort) {
       this.destinationPort = (short) (destinationPort & 0xffff);
       return this;
     }
 
+    /**
+     * Sequence number.
+     *
+     * @param sequence sequence number,
+     * @return returns this {@link Builder}.
+     */
     public Builder sequence(int sequence) {
       this.sequence = sequence;
       return this;
     }
 
+    /**
+     * Acknowledge.
+     *
+     * @param acknowledge acknowledge.
+     * @return returns this {@link Builder}.
+     */
     public Builder acknowledge(int acknowledge) {
       this.acknowledge = acknowledge;
       return this;
     }
 
+    /**
+     * Data offset.
+     *
+     * @param dataOffset data offset.
+     * @return returns this {@link Builder}.
+     */
     public Builder dataOffset(int dataOffset) {
       this.dataOffset = (byte) (dataOffset & 0xf);
       return this;
     }
 
+    /**
+     * Flags.
+     *
+     * @param flags flags.
+     * @return returns this {@link Builder}.
+     */
     public Builder flags(TcpFlags flags) {
       this.flags = flags;
       return this;
     }
 
+    /**
+     * Windows size.
+     *
+     * @param windowSize window size.
+     * @return returns this {@link Builder}.
+     */
     public Builder windowsSize(int windowSize) {
       this.windowSize = (short) (windowSize & 0xffff);
       return this;
     }
 
+    /**
+     * Checksum.
+     *
+     * @param checksum cheksum.
+     * @return returns this {@link Builder}.
+     */
     public Builder checksum(int checksum) {
       this.checksum = (short) (checksum & 0xffff);
       return this;
     }
 
+    /**
+     * Urgent pointer.
+     *
+     * @param urgentPointer urgent pointer.
+     * @return returns this {@link Builder}.
+     */
     public Builder urgentPointer(int urgentPointer) {
       this.urgentPointer = (short) (urgentPointer & 0xffff);
       return this;
     }
 
+    /**
+     * Options.
+     *
+     * @param options options.
+     * @return returns this {@link Builder}.
+     */
     public Builder options(byte[] options) {
       this.options = Validate.nullPointerThenReturns(options, new byte[0]);
       this.dataOffset = (byte) (20 + options.length + 3 >> 2);
       return this;
     }
 
-    public Builder payload(Memory payload) {
-      this.payloadBuffer = payload;
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
       return this;
     }
 
+    /**
+     * Calculate checksum.
+     *
+     * @param srcAddr source ip address (pseudo header).
+     * @param dstAddr destination ip address (pseudo header).
+     * @param calculateChecksum true for calculating checksum, false otherwise.
+     * @return returns this {@link Builder}.
+     */
     public Builder calculateChecksum(
         InetAddress srcAddr, InetAddress dstAddr, boolean calculateChecksum) {
       this.srcAddr = srcAddr;

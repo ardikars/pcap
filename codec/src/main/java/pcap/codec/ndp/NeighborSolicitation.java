@@ -3,6 +3,7 @@ package pcap.codec.ndp;
 
 import pcap.codec.AbstractPacket;
 import pcap.codec.Packet;
+import pcap.codec.UnknownPacket;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.net.Inet6Address;
@@ -74,10 +75,20 @@ public class NeighborSolicitation extends AbstractPacket {
       this.builder = builder;
     }
 
+    /**
+     * Target address.
+     *
+     * @return target address.
+     */
     public Inet6Address targetAddress() {
       return targetAddress;
     }
 
+    /**
+     * Options.
+     *
+     * @return returns options.
+     */
     public NeighborDiscoveryOptions options() {
       return options;
     }
@@ -85,7 +96,7 @@ public class NeighborSolicitation extends AbstractPacket {
     @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
     public <T extends NamedNumber> T payloadType() {
-      return null;
+      return (T) UnknownPacket.UNKNOWN_PAYLOAD_TYPE;
     }
 
     @Override
@@ -126,13 +137,31 @@ public class NeighborSolicitation extends AbstractPacket {
     private Memory buffer;
     private Memory payloadBuffer;
 
+    /**
+     * Target address.
+     *
+     * @param targetAddress target address.
+     * @return returns this {@link Builder}.
+     */
     public Builder targetAddress(Inet6Address targetAddress) {
       this.targetAddress = targetAddress;
       return this;
     }
 
+    /**
+     * Neighbor discovery options.
+     *
+     * @param options neighbor discovery options.
+     * @return returns this {@link Builder}.
+     */
     public Builder options(NeighborDiscoveryOptions options) {
       this.options = options;
+      return this;
+    }
+
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
       return this;
     }
 

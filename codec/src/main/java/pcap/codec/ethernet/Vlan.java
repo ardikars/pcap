@@ -89,18 +89,46 @@ public class Vlan extends AbstractPacket {
       this.builder = builder;
     }
 
+    /**
+     * Priority code point (PCP).
+     *
+     * <p>A 3-bit field which refers to the IEEE 802.1p class of service and maps to the frame
+     * priority level. Different PCP values can be used to prioritize different classes of traffic.
+     *
+     * @return returns {@link PriorityCodePoint}.
+     */
     public PriorityCodePoint priorityCodePoint() {
       return priorityCodePoint;
     }
 
+    /**
+     * Drop eligible indicator (DEI).
+     *
+     * <p>A 1-bit field. (formerly CFI) May be used separately or in conjunction with PCP to
+     * indicate frames eligible to be dropped in the presence of congestion.
+     *
+     * @return returns canonical format indicator.
+     */
     public int canonicalFormatIndicator() {
       return canonicalFormatIndicator & 0x01;
     }
 
+    /**
+     * VLAN identifier (VID).
+     *
+     * <p>A 12-bit field specifying the VLAN to which the frame belongs.
+     *
+     * @return returns VLAN identifier.
+     */
     public int vlanIdentifier() {
       return vlanIdentifier & 0x0FFF;
     }
 
+    /**
+     * Type.
+     *
+     * @return returns {@link NetworkLayer}.
+     */
     public NetworkLayer type() {
       return type;
     }
@@ -221,6 +249,12 @@ public class Vlan extends AbstractPacket {
      */
     public Builder type(final NetworkLayer type) {
       this.type = type;
+      return this;
+    }
+
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
       return this;
     }
 

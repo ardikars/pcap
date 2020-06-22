@@ -103,30 +103,65 @@ public class Ip6 extends Ip {
       this.builder = builder;
     }
 
+    /**
+     * Traffic class.
+     *
+     * @return returns traffic class.
+     */
     public int trafficClass() {
       return trafficClass & 0xff;
     }
 
+    /**
+     * Flow label.
+     *
+     * @return returns flow label.
+     */
     public int flowLabel() {
       return flowLabel & 0xfffff;
     }
 
+    /**
+     * Payload length.
+     *
+     * @return returns payload length.
+     */
     public int payloadLength() {
       return payloadLength & 0xffff;
     }
 
+    /**
+     * Next protocol type.
+     *
+     * @return returns {@link TransportLayer}.
+     */
     public TransportLayer nextHeader() {
       return nextHeader;
     }
 
+    /**
+     * Hop limit.
+     *
+     * @return returns hop limit.
+     */
     public int hopLimit() {
       return hopLimit & 0xff;
     }
 
+    /**
+     * Source address.
+     *
+     * @return source address.
+     */
     public Inet6Address sourceAddress() {
       return sourceAddress;
     }
 
+    /**
+     * Destination address.
+     *
+     * @return destination address.
+     */
     public Inet6Address destinationAddress() {
       return destinationAddress;
     }
@@ -228,43 +263,86 @@ public class Ip6 extends Ip {
       this.destinationAddress = Inet6Address.ZERO;
     }
 
+    /**
+     * Traffic class.
+     *
+     * @param trafficClass traffic class.
+     * @return returns this {@link Builder}.
+     */
     public Builder trafficClass(final int trafficClass) {
       this.trafficClass = (byte) (trafficClass & 0xff);
       return this;
     }
 
+    /**
+     * Flow label.
+     *
+     * @param flowLabel flow label.
+     * @return returns this {@link Builder}.
+     */
     public Builder flowLabel(final int flowLabel) {
       this.flowLabel = flowLabel & 0xfffff;
       return this;
     }
 
+    /**
+     * Payload length.
+     *
+     * @param payloadLength payload length.
+     * @return returns this {@link Builder}.
+     */
     public Builder payloadLength(final int payloadLength) {
       this.payloadLength = (short) (payloadLength & 0xffff);
       return this;
     }
 
+    /**
+     * Next protocol type.
+     *
+     * @param nextHeader next header.
+     * @return returns this {@link Builder}.
+     */
     public Builder nextHeader(final TransportLayer nextHeader) {
       this.nextHeader = nextHeader;
       return this;
     }
 
+    /**
+     * Hop limit.
+     *
+     * @param hopLimit hop limit.
+     * @return return this {@link Builder}.
+     */
     public Builder hopLimit(final int hopLimit) {
       this.hopLimit = (byte) (hopLimit & 0xff);
       return this;
     }
 
+    /**
+     * Source address.
+     *
+     * @param sourceAddress source address.
+     * @return returns this {@link Builder}.
+     */
     public Builder sourceAddress(final Inet6Address sourceAddress) {
       this.sourceAddress = sourceAddress;
       return this;
     }
 
+    /**
+     * Destination address.
+     *
+     * @param destinationAddress destination address.
+     * @return returns this {@link Builder}.
+     */
     public Builder destinationAddress(final Inet6Address destinationAddress) {
       this.destinationAddress = destinationAddress;
       return this;
     }
 
-    public Builder payload(Memory buffer) {
-      this.payloadBuffer = buffer;
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
       return this;
     }
 

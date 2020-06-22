@@ -77,14 +77,29 @@ public class Redirect extends AbstractPacket {
       this.builder = builder;
     }
 
+    /**
+     * Target address.
+     *
+     * @return returns target address.
+     */
     public Inet6Address targetAddress() {
       return targetAddress;
     }
 
+    /**
+     * Destination address.
+     *
+     * @return returns destination address.
+     */
     public Inet6Address destinationAddress() {
       return destinationAddress;
     }
 
+    /**
+     * Neighbor discovery options.
+     *
+     * @return neighbor discovery options.
+     */
     public NeighborDiscoveryOptions options() {
       return options;
     }
@@ -137,13 +152,31 @@ public class Redirect extends AbstractPacket {
     private Memory buffer;
     private Memory payloadBuffer;
 
+    /**
+     * Target address.
+     *
+     * @param targetAddress target address.
+     * @return returns this {@link Builder}.
+     */
     public Builder targetAddrss(Inet6Address targetAddress) {
       this.targetAddress = targetAddress;
       return this;
     }
 
+    /**
+     * Destination address.
+     *
+     * @param destinationAddress destination address.
+     * @return returns this {@link Builder}.
+     */
     public Builder destinationAddress(Inet6Address destinationAddress) {
       this.destinationAddress = destinationAddress;
+      return this;
+    }
+
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
       return this;
     }
 

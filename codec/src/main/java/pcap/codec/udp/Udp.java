@@ -125,18 +125,38 @@ public class Udp extends AbstractPacket {
       return (short) (~accumulation & 0xFFFF);
     }
 
+    /**
+     * Source port.
+     *
+     * @return returns source port.
+     */
     public int sourcePort() {
       return sourcePort & 0xffff;
     }
 
+    /**
+     * Destination port.
+     *
+     * @return returns destination port.
+     */
     public int destinationPort() {
       return destinationPort & 0xffff;
     }
 
+    /**
+     * UDP length.
+     *
+     * @return returns UDP length.
+     */
     public int lengthUdp() {
       return length & 0xFFFF;
     }
 
+    /**
+     * Checksum.
+     *
+     * @return returns checksum.
+     */
     public int checksum() {
       return checksum & 0xffff;
     }
@@ -229,31 +249,64 @@ public class Udp extends AbstractPacket {
     private InetAddress srcAddr;
     private InetAddress dstAddr;
 
+    /**
+     * Source port.
+     *
+     * @param sourcePort source port.
+     * @return returns this {@link Builder}.
+     */
     public Builder sourcePort(int sourcePort) {
       this.sourcePort = (short) (sourcePort & 0xffff);
       return this;
     }
 
+    /**
+     * Destination port.
+     *
+     * @param destinationPort destination port.
+     * @return returns this {@link Builder}.
+     */
     public Builder destinationPort(int destinationPort) {
       this.destinationPort = (short) (destinationPort & 0xffff);
       return this;
     }
 
+    /**
+     * Length.
+     *
+     * @param length length.
+     * @return returns this {@link Builder}.
+     */
     public Builder length(int length) {
       this.length = (short) (length & 0xffff);
       return this;
     }
 
+    /**
+     * Checksum.
+     *
+     * @param checksum checksum.
+     * @return returns this {@link Builder}.
+     */
     public Builder checksum(int checksum) {
       this.checksum = (short) (checksum & 0xffff);
       return this;
     }
 
-    public Builder payload(Memory payload) {
-      this.payloadBuffer = payload;
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
       return this;
     }
 
+    /**
+     * Calculate checksum.
+     *
+     * @param srcAddr source ip address (pseudo header).
+     * @param dstAddr destination ip address (pseudo header).
+     * @param calculateChecksum true for calculating checksum, false otherwise.
+     * @return returns this {@link Builder}.
+     */
     public Builder calculateChecksum(
         InetAddress srcAddr, InetAddress dstAddr, boolean calculateChecksum) {
       this.srcAddr = srcAddr;

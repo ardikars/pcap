@@ -1,6 +1,7 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.ip.ip6;
 
+import pcap.codec.AbstractPacket;
 import pcap.codec.Packet;
 import pcap.codec.TransportLayer;
 import pcap.codec.ip.Ip6;
@@ -83,6 +84,12 @@ public class DestinationOptions extends Options {
 
     public Builder() {
       super(Ip6.IPV6_AH);
+    }
+
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
+      return this;
     }
 
     @Override

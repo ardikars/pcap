@@ -173,6 +173,8 @@ public abstract class AbstractPacket implements Packet {
     public Builder reset(int offset, int length) {
       return this;
     }
+
+    public abstract Builder payload(AbstractPacket packet);
   }
 
   /** Packet factory. */

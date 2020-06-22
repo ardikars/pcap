@@ -133,6 +133,12 @@ public class Icmp6 extends AbstractPacket {
     private Memory payloadBuffer;
 
     @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
+      return this;
+    }
+
+    @Override
     public Packet build() {
       return new Icmp6(this);
     }

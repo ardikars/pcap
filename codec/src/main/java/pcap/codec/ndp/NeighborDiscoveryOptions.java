@@ -74,6 +74,11 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
       this.builder = builder;
     }
 
+    /**
+     * List of options.
+     *
+     * @return returns list of options.
+     */
     public List<Option> options() {
       return options;
     }
@@ -137,7 +142,7 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
 
     public static final OptionType MTU = new OptionType((byte) 5, "MTU");
 
-    private static Map<Byte, OptionType> REGISTRY = new HashMap<>();
+    private static final Map<Byte, OptionType> REGISTRY = new HashMap<>();
 
     static {
       REGISTRY.put(SOURCE_LINK_LAYER_ADDRESS.value(), SOURCE_LINK_LAYER_ADDRESS);
@@ -179,10 +184,20 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
       return option;
     }
 
+    /**
+     * Option type.
+     *
+     * @return returns option type.
+     */
     public OptionType type() {
       return type;
     }
 
+    /**
+     * Length.
+     *
+     * @return returns length.
+     */
     public byte length() {
       return length;
     }
@@ -214,8 +229,20 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
     private Memory buffer;
     private Memory payloadBuffer;
 
+    /**
+     * List of options.
+     *
+     * @param options list of options.
+     * @return returns this {@link Builder}.
+     */
     public Builder options(List<Option> options) {
       this.options = options;
+      return this;
+    }
+
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
       return this;
     }
 

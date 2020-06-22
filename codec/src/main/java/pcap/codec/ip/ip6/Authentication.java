@@ -80,18 +80,38 @@ public class Authentication extends AbstractPacket {
       this.builder = builder;
     }
 
+    /**
+     * Next protocol type.
+     *
+     * @return returns {@link TransportLayer}.
+     */
     public TransportLayer nextHeader() {
       return nextHeader;
     }
 
+    /**
+     * Payload length.
+     *
+     * @return returns payload length.
+     */
     public int payloadLength() {
       return payloadLength & 0xff;
     }
 
+    /**
+     * Security parameter index.
+     *
+     * @return returns security parameter index.
+     */
     public int securityParameterIndex() {
       return securityParameterIndex;
     }
 
+    /**
+     * Sequence number.
+     *
+     * @return returns sequence number.
+     */
     public int sequenceNumber() {
       return sequenceNumber;
     }
@@ -162,21 +182,45 @@ public class Authentication extends AbstractPacket {
     private Memory buffer;
     private Memory payloadBuffer;
 
+    /**
+     * Next protocol type.
+     *
+     * @param nextHeader next protocol type.
+     * @return returns this {@link Builder}.
+     */
     public Builder nextHeader(final TransportLayer nextHeader) {
       this.nextHeader = nextHeader;
       return this;
     }
 
+    /**
+     * Payload length.
+     *
+     * @param payloadLength payload length.
+     * @return returns this {@link Builder}.
+     */
     public Builder payloadLength(final int payloadLength) {
       this.payloadLength = (byte) (payloadLength & 0xff);
       return this;
     }
 
+    /**
+     * Security parameter index.
+     *
+     * @param securityParameterIndex security parameter index.
+     * @return returns this {@link Builder}.
+     */
     public Builder securityParameterIndex(final int securityParameterIndex) {
       this.securityParameterIndex = securityParameterIndex;
       return this;
     }
 
+    /**
+     * Sequence number.
+     *
+     * @param sequenceNumber sequence number.
+     * @return returns this {@link Builder}.
+     */
     public Builder sequenceNumber(final int sequenceNumber) {
       this.sequenceNumber = sequenceNumber;
       return this;
@@ -192,6 +236,12 @@ public class Authentication extends AbstractPacket {
       this.integrityCheckValue = new byte[integrityCheckValue.length];
       System.arraycopy(
           integrityCheckValue, 0, this.integrityCheckValue, 0, this.integrityCheckValue.length);
+      return this;
+    }
+
+    @Override
+    public AbstractPacket.Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
       return this;
     }
 

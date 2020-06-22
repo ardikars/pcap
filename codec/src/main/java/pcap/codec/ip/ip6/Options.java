@@ -27,21 +27,36 @@ public abstract class Options extends AbstractPacket {
       this.options = builder.options;
     }
 
+    /**
+     * Next protocol type.
+     *
+     * @return returns {@link TransportLayer}.
+     */
     public TransportLayer nextHeader() {
       return nextHeader;
     }
 
+    /**
+     * Extension length.
+     *
+     * @return returns extension length.
+     */
     public int extensionLength() {
       return extensionLength;
     }
 
+    /**
+     * Options.
+     *
+     * @return returns options.
+     */
     public byte[] options() {
       if (options != null) {
         byte[] data = new byte[options.length];
         System.arraycopy(options, 0, data, 0, data.length);
         return data;
       }
-      return new byte[] {};
+      return new byte[0];
     }
 
     @Override
@@ -90,11 +105,23 @@ public abstract class Options extends AbstractPacket {
       this.nextHeader = nextHeader;
     }
 
+    /**
+     * Extension length.
+     *
+     * @param extensionLength extension length.
+     * @return returns {@link Builder}.
+     */
     public Builder extensionLength(final int extensionLength) {
       this.extensionLength = extensionLength;
       return this;
     }
 
+    /**
+     * Options.
+     *
+     * @param options options.
+     * @return returns this {@link Builder}.
+     */
     public Builder options(final byte[] options) {
       this.options = new byte[options.length];
       System.arraycopy(options, 0, this.options, 0, this.options.length);

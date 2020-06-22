@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.codec.BaseTest;
+import pcap.codec.UnknownPacket;
 import pcap.codec.ethernet.Ethernet;
 import pcap.codec.ip.Ip4;
 import pcap.common.memory.Memories;
@@ -17,9 +18,9 @@ import pcap.common.util.Hexs;
 @RunWith(JUnitPlatform.class)
 public class TcpTest extends BaseTest {
 
-  private byte[] data = Hexs.parseHex(TCP_ACK);
+  private final byte[] data = Hexs.parseHex(TCP_ACK);
 
-  private Memory buf = allocator.allocate(data.length);
+  private final Memory buf = allocator.allocate(data.length);
 
   @Override
   public void before() {
@@ -56,8 +57,10 @@ public class TcpTest extends BaseTest {
             .windowsSize(tcp.header().windowSize())
             .dataOffset(tcp.header().dataOffset())
             .payload(
-                Memories.wrap(
-                    "17030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8"))
+                new UnknownPacket.Builder()
+                    .build(
+                        Memories.wrap(
+                            "17030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8")))
             .calculateChecksum(
                 ip4.header().sourceAddress(), ip4.header().destinationAddress(), true);
     final Tcp newTcp = builder.build();
@@ -77,8 +80,10 @@ public class TcpTest extends BaseTest {
             .windowsSize(0xf4)
             .dataOffset(0x8)
             .payload(
-                Memories.wrap(
-                    "17030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8"))
+                new UnknownPacket.Builder()
+                    .build(
+                        Memories.wrap(
+                            "17030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8")))
             .calculateChecksum(
                 Inet4Address.valueOf("192.168.1.2"), Inet4Address.valueOf("192.168.1.3"), true);
     return builder.build();

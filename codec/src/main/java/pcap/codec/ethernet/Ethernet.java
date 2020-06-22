@@ -11,7 +11,10 @@ import pcap.common.net.MacAddress;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * @see <a href="https://en.wikipedia.org/wiki/Ethernet_frame">Wikipedia</a>
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 @Inclubating
 public class Ethernet extends AbstractPacket {
 
@@ -82,14 +85,29 @@ public class Ethernet extends AbstractPacket {
       this.builder = builder;
     }
 
+    /**
+     * Destination MAC address.
+     *
+     * @return returns destination MAC address.
+     */
     public MacAddress destinationMacAddress() {
       return destinationMacAddress;
     }
 
+    /**
+     * Source MAC address.
+     *
+     * @return returns source MAC address.
+     */
     public MacAddress sourceMacAddress() {
       return sourceMacAddress;
     }
 
+    /**
+     * Ethernet type.
+     *
+     * @return returns {@link NetworkLayer}.
+     */
     public NetworkLayer ethernetType() {
       return ethernetType;
     }
@@ -154,18 +172,41 @@ public class Ethernet extends AbstractPacket {
     private Memory buffer;
     private Memory payloadBuffer;
 
+    /**
+     * Destination MAC address.
+     *
+     * @param destinationMacAddress destination MAC address.
+     * @return returns this {@link Builder}.
+     */
     public Builder destinationMacAddress(final MacAddress destinationMacAddress) {
       this.destinationMacAddress = destinationMacAddress;
       return this;
     }
 
+    /**
+     * Source MAC address.
+     *
+     * @param sourceMacAddress source MAC address.
+     * @return returns this {@link Builder}.
+     */
     public Builder sourceMacAddress(final MacAddress sourceMacAddress) {
       this.sourceMacAddress = sourceMacAddress;
       return this;
     }
 
+    /**
+     * Ethernet type.
+     *
+     * @param ethernetType ethernet type.
+     * @return returns this {@link Builder}.
+     */
     public Builder ethernetType(final NetworkLayer ethernetType) {
       this.ethernetType = ethernetType;
+      return this;
+    }
+
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
       return this;
     }
 

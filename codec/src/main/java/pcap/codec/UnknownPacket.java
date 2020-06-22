@@ -123,5 +123,10 @@ public class UnknownPacket extends AbstractPacket {
     public Builder reset(int offset, int length) {
       return this;
     }
+
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      return null;
+    }
   }
 }

@@ -3,6 +3,7 @@ package pcap.codec.ip;
 
 import java.util.Arrays;
 import java.util.Objects;
+import pcap.codec.AbstractPacket;
 import pcap.codec.Packet;
 import pcap.codec.TransportLayer;
 import pcap.common.annotation.Inclubating;
@@ -122,50 +123,110 @@ public class Ip4 extends Ip {
       return (short) (~accumulation & 0xFFFF);
     }
 
+    /**
+     * Header length.
+     *
+     * @return return header length.
+     */
     public int headerLength() {
       return headerLength & 0xF;
     }
 
+    /**
+     * Diff serv.
+     *
+     * @return returns diff serv.
+     */
     public int diffServ() {
       return diffServ & 0x3F;
     }
 
+    /**
+     * Exp con.
+     *
+     * @return returns exp con.
+     */
     public int expCon() {
       return expCon & 0x3;
     }
 
+    /**
+     * Total length.
+     *
+     * @return returns total length.
+     */
     public int totalLength() {
       return totalLength & 0xFFFF;
     }
 
+    /**
+     * Identification.
+     *
+     * @return returns identification.
+     */
     public int identification() {
       return identification & 0xFFFF;
     }
 
+    /**
+     * Flags.
+     *
+     * @return returns flags.
+     */
     public int flags() {
       return flags & 0x7;
     }
 
+    /**
+     * Fragment offset.
+     *
+     * @return returns frament offset.
+     */
     public int fragmentOffset() {
       return fragmentOffset & 0x1FFF;
     }
 
+    /**
+     * TTL.
+     *
+     * @return returns TTL.
+     */
     public int ttl() {
       return ttl & 0xFF;
     }
 
+    /**
+     * Next protocol type.
+     *
+     * @return returns {@link TransportLayer}.
+     */
     public TransportLayer protocol() {
       return protocol;
     }
 
+    /**
+     * Checksum.
+     *
+     * @return returns checksum.
+     */
     public int checksum() {
       return checksum & 0xFFFF;
     }
 
+    /**
+     * Source address.
+     *
+     * @return returns source address.
+     */
     public Inet4Address sourceAddress() {
       return sourceAddress;
     }
 
+    /**
+     * Destination address.
+     *
+     * @return returns destination address.
+     */
     public Inet4Address destinationAddress() {
       return destinationAddress;
     }
@@ -310,66 +371,144 @@ public class Ip4 extends Ip {
     /** A helper field. */
     private boolean calculateChecksum;
 
+    /**
+     * Header length.
+     *
+     * @param headerLength header length.
+     * @return returns this {@link Builder}.
+     */
     public Builder headerLength(final int headerLength) {
       this.headerLength = (byte) (headerLength & 0xF);
       return this;
     }
 
+    /**
+     * Diff serv.
+     *
+     * @param diffServ diff serv.
+     * @return returns this {@link Builder}.
+     */
     public Builder diffServ(final int diffServ) {
       this.diffServ = (byte) (diffServ & 0x3F);
       return this;
     }
 
+    /**
+     * Exp con.
+     *
+     * @param expCon exp con.
+     * @return returns this {@link Builder}.
+     */
     public Builder expCon(final int expCon) {
       this.expCon = (byte) (expCon & 0x3);
       return this;
     }
 
+    /**
+     * Total length.
+     *
+     * @param totalLength total length.
+     * @return returns this {@link Builder}.
+     */
     public Builder totalLength(final int totalLength) {
       this.totalLength = (short) (totalLength & 0xFFFF);
       return this;
     }
 
+    /**
+     * Identification.
+     *
+     * @param identification identification.
+     * @return returns {@link Builder}.
+     */
     public Builder identification(final int identification) {
       this.identification = (short) (identification & 0xFFFF);
       return this;
     }
 
+    /**
+     * Flags.
+     *
+     * @param flags flags.
+     * @return returns {@link Builder}.
+     */
     public Builder flags(final int flags) {
       this.flags = (byte) (flags & 0x7);
       return this;
     }
 
+    /**
+     * Frament offset.
+     *
+     * @param fragmentOffset fragment offset.
+     * @return returns this {@link Builder}.
+     */
     public Builder fragmentOffset(final int fragmentOffset) {
       this.fragmentOffset = (short) (fragmentOffset & 0x1FFF);
       return this;
     }
 
+    /**
+     * TTL.
+     *
+     * @param ttl ttl.
+     * @return returns this {@link Builder}.
+     */
     public Builder ttl(final int ttl) {
       this.ttl = (byte) (ttl & 0xFF);
       return this;
     }
 
+    /**
+     * Protocol.
+     *
+     * @param protocol protocol.
+     * @return returns this {@link Builder}.
+     */
     public Builder protocol(TransportLayer protocol) {
       this.protocol = protocol;
       return this;
     }
 
+    /**
+     * Checksum.
+     *
+     * @param checksum checksum.
+     * @return returns {@link Builder}.
+     */
     public Builder checksum(final int checksum) {
       this.checksum = (short) (checksum & 0xFFFF);
       return this;
     }
 
+    /**
+     * Source address.
+     *
+     * @param sourceAddress source address.
+     * @return returns this {@link Builder}.
+     */
     public Builder sourceAddress(final Inet4Address sourceAddress) {
       this.sourceAddress = sourceAddress;
       return this;
     }
 
+    /**
+     * Destination address.
+     *
+     * @param destinationAddress destination address.
+     * @return returns this {@link Builder}.
+     */
     public Builder destinationAddress(final Inet4Address destinationAddress) {
       this.destinationAddress = destinationAddress;
       return this;
     }
 
+    /**
+     * Calculate checksum.
+     *
+     * @param calculateChecksum true for calculating checksum, false otherwise.
+     * @return returns this {@link Builder}.
+     */
     public Builder calculateChecksum(boolean calculateChecksum) {
       this.calculateChecksum = calculateChecksum;
       return this;
@@ -384,6 +523,12 @@ public class Ip4 extends Ip {
     public Builder options(final byte[] options) {
       this.options = new byte[options.length];
       System.arraycopy(options, 0, this.options, 0, this.options.length);
+      return this;
+    }
+
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
       return this;
     }
 

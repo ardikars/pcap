@@ -81,22 +81,47 @@ public class NeighborAdvertisement extends AbstractPacket {
       this.builder = builder;
     }
 
+    /**
+     * Is router flag.
+     *
+     * @return returns router flag.
+     */
     public boolean isRouterFlag() {
       return routerFlag;
     }
 
+    /**
+     * Is solicited flag.
+     *
+     * @return returns solicited flag.
+     */
     public boolean isSolicitedFlag() {
       return solicitedFlag;
     }
 
+    /**
+     * Is override flag.
+     *
+     * @return returns override flag.
+     */
     public boolean isOverrideFlag() {
       return overrideFlag;
     }
 
+    /**
+     * Target address.
+     *
+     * @return returns target address.
+     */
     public Inet6Address targetAddress() {
       return targetAddress;
     }
 
+    /**
+     * Options.
+     *
+     * @return returns options.
+     */
     public NeighborDiscoveryOptions options() {
       return options;
     }
@@ -155,28 +180,64 @@ public class NeighborAdvertisement extends AbstractPacket {
     private Memory buffer;
     private Memory payloadBuffer;
 
+    /**
+     * Router flag.
+     *
+     * @param routerFlag router flag.
+     * @return returns this {@link Builder}.
+     */
     public Builder routerFlag(boolean routerFlag) {
       this.routerFlag = routerFlag;
       return this;
     }
 
+    /**
+     * Solicited flag.
+     *
+     * @param solicitedFlag solicited flag.
+     * @return returns this {@link Builder}.
+     */
     public Builder solicitedFlag(boolean solicitedFlag) {
       this.solicitedFlag = solicitedFlag;
       return this;
     }
 
+    /**
+     * Override flag.
+     *
+     * @param overrideFlag override flag.
+     * @return returns this {@link Builder}.
+     */
     public Builder overrideFlag(boolean overrideFlag) {
       this.overrideFlag = overrideFlag;
       return this;
     }
 
+    /**
+     * Target address.
+     *
+     * @param targetAddress target address.
+     * @return returns this {@link Builder}.
+     */
     public Builder targetAddress(Inet6Address targetAddress) {
       this.targetAddress = targetAddress;
       return this;
     }
 
+    /**
+     * Neighbor discovery options.
+     *
+     * @param options Neighbor discovery options.
+     * @return returns this {@link Builder}.
+     */
     public Builder options(NeighborDiscoveryOptions options) {
       this.options = options;
+      return this;
+    }
+
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
       return this;
     }
 

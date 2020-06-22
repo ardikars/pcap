@@ -86,22 +86,47 @@ public class Routing extends AbstractPacket {
       this.builder = builder;
     }
 
+    /**
+     * Next protocol type.
+     *
+     * @return returns {@link TransportLayer}.
+     */
     public TransportLayer nextHeader() {
       return nextHeader;
     }
 
+    /**
+     * Extension length.
+     *
+     * @return returns extension length.
+     */
     public int extensionLength() {
       return extensionLength & 0xff;
     }
 
+    /**
+     * Routing type.
+     *
+     * @return returns {@link Type}.
+     */
     public Type routingType() {
       return routingType;
     }
 
+    /**
+     * Segment left.
+     *
+     * @return returns segment left.
+     */
     public int segmentLeft() {
       return segmentLeft & 0xff;
     }
 
+    /**
+     * Routing data.
+     *
+     * @return returns routing data.
+     */
     public byte[] routingData() {
       byte[] routingData = new byte[this.routingData.length];
       System.arraycopy(this.routingData, 0, routingData, 0, routingData.length);
@@ -162,21 +187,45 @@ public class Routing extends AbstractPacket {
     private Memory buffer;
     private Memory payloadBuffer;
 
+    /**
+     * Next protocol type.
+     *
+     * @param nextHeader next protocol type.
+     * @return returns this {@link Builder}.
+     */
     public Builder nextHeader(final TransportLayer nextHeader) {
       this.nextHeader = nextHeader;
       return this;
     }
 
+    /**
+     * Extension length.
+     *
+     * @param extensionLength extension length.
+     * @return returns this {@link Builder}.
+     */
     public Builder extensionLength(final int extensionLength) {
       this.extensionLength = (byte) (extensionLength & 0xff);
       return this;
     }
 
+    /**
+     * Routing type.
+     *
+     * @param routingType routing type.
+     * @return returns this {@link Builder}.
+     */
     public Builder routingType(final Type routingType) {
       this.routingType = routingType;
       return this;
     }
 
+    /**
+     * Segment left.
+     *
+     * @param segmentLeft segment left.
+     * @return returns this {@link Builder}.
+     */
     public Builder segmentLeft(final int segmentLeft) {
       this.segmentLeft = (byte) (segmentLeft & 0xff);
       return this;
@@ -191,6 +240,12 @@ public class Routing extends AbstractPacket {
     public Builder routingData(final byte[] routingData) {
       this.routingData = new byte[routingData.length];
       System.arraycopy(routingData, 0, this.routingData, 0, this.routingData.length);
+      return this;
+    }
+
+    @Override
+    public Builder payload(AbstractPacket packet) {
+      this.payloadBuffer = packet.buffer();
       return this;
     }
 
@@ -276,7 +331,7 @@ public class Routing extends AbstractPacket {
             (byte) 254,
             "May be used for testing, not for actual implementations. RFC3692-style Experiment 2.[13]");
 
-    private static Map<Byte, Type> REGISTRY = new HashMap<>();
+    private static final Map<Byte, Type> REGISTRY = new HashMap<>();
 
     static {
       REGISTRY.put(DEPRECATED_01.value(), DEPRECATED_01);
