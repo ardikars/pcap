@@ -18,7 +18,7 @@ if [ "$machine" == "Linux" ]; then
   sudo setcap cap_net_raw,cap_net_admin=eip $JAVA_HOME/bin/java
 elif [ "$machine" == "Mac" ]; then
   export JAVA_HOME_8="/Volumes/Data/Application/jdk8u222-b10/Contents/Home"
-  export JAVA_HOME="/Volumes/Data/Application/jdk-14.jdk/Contents/Home"
+  export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home/"
 fi
 
 export PATH=$JAVA_HOME/bin:$PATH

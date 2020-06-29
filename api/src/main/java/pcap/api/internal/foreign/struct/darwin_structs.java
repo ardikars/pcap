@@ -7,14 +7,14 @@ import java.foreign.memory.Struct;
 
 public interface darwin_structs {
 
-  @NativeStruct("[u8(sa_len)u16(sa_family)[14u8](sa_data)](sockaddr)")
+  @NativeStruct("[u8(sa_len)u8(sa_family)[14u8](sa_data)](sockaddr)")
   interface sockaddr extends Struct<sockaddr> {
 
     @NativeGetter("sa_len")
     byte sa_len$get();
 
     @NativeGetter("sa_family")
-    short sa_family$get();
+    byte sa_family$get();
 
     @NativeGetter("sa_data")
     Array<Byte> sa_data$get();
@@ -28,15 +28,16 @@ public interface darwin_structs {
   }
 
   @NativeStruct(
-      value = "[u16(sin_family)u16(sin_port)${in_addr}(sin_addr)[8u8](sin_zero)](sockaddr_in)",
+      value =
+          "[u8(sin_len)u8(sin_family)u16(sin_port)${in_addr}(sin_addr)[8u8](sin_zero)](sockaddr_in)",
       resolutionContext = in_addr.class)
   interface sockaddr_in extends Struct<sockaddr_in> {
 
-    // @NativeGetter("sin_len")
-    // byte sin_len$get();
+    @NativeGetter("sin_len")
+    byte sin_len$get();
 
     @NativeGetter("sin_family")
-    short sin_family$get();
+    byte sin_family$get();
 
     @NativeGetter("sin_port")
     short sin_port$get();
@@ -72,15 +73,15 @@ public interface darwin_structs {
 
   @NativeStruct(
       value =
-          "[u16(sin6_family)u16(sin6_port)u32(sin6_flowinfo)${in6_addr}(sin6_addr)u32(sin6_scope_id)](sockaddr_in6)",
+          "[u8(sin6_len)u8(sin6_family)u16(sin6_port)u32(sin6_flowinfo)${in6_addr}(sin6_addr)u32(sin6_scope_id)](sockaddr_in6)",
       resolutionContext = in6_addr.class)
   interface sockaddr_in6 extends Struct<sockaddr_in6> {
 
-    //    @NativeGetter("sin6_len")
-    //    byte sin6_len$get();
+    @NativeGetter("sin6_len")
+    byte sin6_len$get();
 
     @NativeGetter("sin6_family")
-    short sin6_family$get();
+    byte sin6_family$get();
 
     @NativeGetter("sin6_port")
     short sin6_port$get();
