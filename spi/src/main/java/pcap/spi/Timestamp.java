@@ -22,7 +22,7 @@ public interface Timestamp {
    * microseconds. It is always less than one million.
    *
    * @return returns time interval, in micro second.
-   * @since 1.0
+   * @since 1.0.0
    */
   int microSecond();
 

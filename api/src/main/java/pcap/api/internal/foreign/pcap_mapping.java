@@ -5,7 +5,6 @@ import java.foreign.annotations.NativeFunction;
 import java.foreign.annotations.NativeGetter;
 import java.foreign.annotations.NativeHeader;
 import java.foreign.annotations.NativeStruct;
-import java.foreign.memory.Array;
 import java.foreign.memory.Callback;
 import java.foreign.memory.Pointer;
 import java.foreign.memory.Struct;
@@ -285,19 +284,6 @@ public interface pcap_mapping {
     int flags$get();
   }
 
-  @NativeStruct("[u8(sa_len)u8(sa_family)[18u8](sa_data)](sockaddr)")
-  interface sockaddr extends Struct<sockaddr> {
-
-    @NativeGetter("sa_len")
-    byte sa_len$get();
-
-    @NativeGetter("sa_family")
-    byte sa_family$get();
-
-    @NativeGetter("sa_data")
-    Array<Byte> sa_data$get();
-  }
-
   @NativeStruct(
       "[u64(next):${pcap_addr}u64(addr):${sockaddr}u64(netmask):${sockaddr}u64(broadaddr):${sockaddr}u64(dstaddr):${sockaddr}](pcap_addr)")
   interface pcap_addr extends Struct<pcap_addr> {
@@ -306,15 +292,15 @@ public interface pcap_mapping {
     Pointer<pcap_addr> next$get();
 
     @NativeGetter("addr")
-    Pointer<sockaddr> addr$get();
+    Pointer<struct_mapping.sockaddr> addr$get();
 
     @NativeGetter("netmask")
-    Pointer<sockaddr> netmask$get();
+    Pointer<struct_mapping.sockaddr> netmask$get();
 
     @NativeGetter("broadaddr")
-    Pointer<sockaddr> broadaddr$get();
+    Pointer<struct_mapping.sockaddr> broadaddr$get();
 
     @NativeGetter("dstaddr")
-    Pointer<sockaddr> dstaddr$get();
+    Pointer<struct_mapping.sockaddr> dstaddr$get();
   }
 }

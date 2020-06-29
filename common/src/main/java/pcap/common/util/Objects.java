@@ -4,7 +4,7 @@ package pcap.common.util;
 import pcap.common.annotation.Inclubating;
 
 @Inclubating
-public class Objects {
+public final class Objects {
 
   private Objects() {
     //

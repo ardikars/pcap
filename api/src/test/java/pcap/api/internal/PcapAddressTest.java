@@ -1,6 +1,6 @@
 package pcap.api.internal;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.api.Pcaps;
@@ -24,11 +24,13 @@ public class PcapAddressTest {
       LOGGER.info(iface.description());
       LOGGER.info(String.valueOf(iface.flags()));
       LOGGER.info(Objects.nonNull(iface.addresses()) ? iface.addresses().toString() : "");
-      for (Address address : iface.addresses()) {
-        LOGGER.info("\t{}", address.address());
-        LOGGER.info("\t{}", address.netmask());
-        LOGGER.info("\t{}", address.broadcast());
-        LOGGER.info("\t{}", address.destination());
+      if (Objects.nonNull(iface.addresses())) {
+        for (Address address : iface.addresses()) {
+          LOGGER.info("\t{}", address.address());
+          LOGGER.info("\t{}", address.netmask());
+          LOGGER.info("\t{}", address.broadcast());
+          LOGGER.info("\t{}", address.destination());
+        }
       }
     }
   }

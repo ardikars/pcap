@@ -205,7 +205,7 @@ public interface Pcap extends AutoCloseable {
     PCAP_D_IN,
     PCAP_D_OUT;
 
-    private static final Direction[] directions = values();
+    private static final Direction[] VALUES = values();
 
     /**
      * Get pcap direction from string.
@@ -214,7 +214,7 @@ public interface Pcap extends AutoCloseable {
      * @return returns {@link Direction}.
      */
     public static Direction fromString(String value) {
-      for (Direction direction : directions) {
+      for (Direction direction : VALUES) {
         if (direction.name().equals(value)) {
           return direction;
         }

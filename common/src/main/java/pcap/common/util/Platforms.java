@@ -157,7 +157,7 @@ public final class Platforms {
    * Get java major version.
    *
    * @return returns java major version.
-   * @since 1.2.3
+   * @since 1.0.0
    */
   public static int javaMojorVersion() {
     return javaMajorVersion;

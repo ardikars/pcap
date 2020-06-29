@@ -18,7 +18,7 @@ public final class Properties {
    * @param key key.
    * @return returns the property value. null if there's no such property or if an access to the
    *     specified property is not allowed.
-   * @since 1.2.3
+   * @since 1.0.0
    */
   public static String getProperty(final String key) {
     return getProperty(key, null);
@@ -32,7 +32,7 @@ public final class Properties {
    * @param defaultValue default value.
    * @return the property value. {@code defaultValue} if there's no such property or if an access to
    *     the specified property is not allowed.
-   * @since 1.2.3
+   * @since 1.0.0
    */
   public static String getProperty(final String key, String defaultValue) {
     if (key == null || key.isEmpty()) {
@@ -53,7 +53,7 @@ public final class Properties {
    * @param defaultValue default value.
    * @return the property value. {@code defaultValue} if there's no such property or if an access to
    *     the specified property is not allowed.
-   * @since 1.2.6
+   * @since 1.0.0
    */
   public static boolean getBoolean(final String key, boolean defaultValue) {
     String value = getProperty(key);
@@ -83,7 +83,7 @@ public final class Properties {
    * @param defaultValue default value.
    * @return the property value. {@code defaultValue} if there's no such property or if an access to
    *     the specified property is not allowed.
-   * @since 1.2.6
+   * @since 1.0.0
    */
   public static int getInt(String key, int defaultValue) {
     String value = getProperty(key);
@@ -107,7 +107,7 @@ public final class Properties {
    * @param defaultValue default value.
    * @return the property value. {@code defaultValue} if there's no such property or if an access to
    *     the specified property is not allowed.
-   * @since 1.2.6
+   * @since 1.0.0
    */
   public static long getLong(String key, long defaultValue) {
     String value = getProperty(key);

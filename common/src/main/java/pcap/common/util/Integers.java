@@ -4,7 +4,7 @@ package pcap.common.util;
 import java.nio.ByteOrder;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
-public class Integers {
+public final class Integers {
 
   private Integers() {
     //
