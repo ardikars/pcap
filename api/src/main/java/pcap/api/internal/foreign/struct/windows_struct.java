@@ -17,49 +17,51 @@ public interface windows_struct {
     Array<Byte> sa_data$get();
   }
 
-  @NativeStruct(value = "[${S_un}(S_un)](in_addr)", resolutionContext = in_addr.anon$S_un.class)
+  @NativeStruct("[u8(s_b1)u8(s_b2)u8(s_b3)u8(s_b4)](anon$inaddr_h$391)")
+  interface anon$S_un_b extends Struct<anon$S_un_b> {
+
+    @NativeGetter("s_b1")
+    byte s_b1$get();
+
+    @NativeGetter("s_b2")
+    byte s_b2$get();
+
+    @NativeGetter("s_b3")
+    byte s_b3$get();
+
+    @NativeGetter("s_b4")
+    byte s_b4$get();
+  }
+
+  @NativeStruct(
+      "[${anon$inaddr_h$391}(S_un_b)|${anon$inaddr_h$446}(S_un_w)|u32(S_addr)](anon$inaddr_h$379)")
+  interface anon$S_un extends Struct<anon$S_un> {
+
+    @NativeGetter("S_un_b")
+    anon$S_un_b S_un_b$get();
+
+    @NativeGetter("S_un_w")
+    anon$S_un_w S_un_w$get();
+
+    @NativeGetter("S_addr")
+    int S_addr$get();
+  }
+
+  @NativeStruct("[u16(s_w1)u16(s_w2)](anon$inaddr_h$446)")
+  interface anon$S_un_w extends Struct<anon$S_un_w> {
+
+    @NativeGetter("s_w1")
+    short s_w1$get();
+
+    @NativeGetter("s_w2")
+    short s_w2$get();
+  }
+
+  @NativeStruct("[${anon$inaddr_h$379}(S_un)](in_addr)")
   interface in_addr extends Struct<in_addr> {
 
     @NativeGetter("S_un")
     anon$S_un S_un$get();
-
-    @NativeStruct("[u8(s_b1)u8(s_b2)u8(s_b3)u8(s_b4)](S_un_b)")
-    interface S_un_b extends Struct<S_un_b> {
-
-      @NativeGetter("s_b1")
-      byte s_b1$get();
-
-      @NativeGetter("s_b2")
-      byte s_b2$get();
-
-      @NativeGetter("s_b3")
-      byte s_b3$get();
-
-      @NativeGetter("s_b4")
-      byte s_b4$get();
-    }
-
-    @NativeStruct("[u16(s_w1)u16(s_w2)](S_un_w)")
-    interface S_un_w extends Struct<S_un_w> {
-
-      @NativeGetter("s_w1")
-      byte s_w1$get();
-
-      @NativeGetter("s_w2")
-      byte s_w2$get();
-    }
-
-    @NativeStruct(
-        value = "[${S_un_b}(S_un_b)${S_un_w}(S_un_w)](anon$S_un)",
-        resolutionContext = {in_addr.S_un_b.class, in_addr.S_un_w.class})
-    interface anon$S_un extends Struct<anon$S_un> {
-
-      @NativeGetter("S_un_b$")
-      S_un_b S_un_b$get();
-
-      @NativeGetter("S_un_w")
-      S_un_w S_un_w$get();
-    }
   }
 
   @NativeStruct(

@@ -1,15 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal;
 
-import java.foreign.NativeTypes;
-import java.foreign.memory.Array;
-import java.foreign.memory.LayoutType;
-import java.foreign.memory.Pointer;
-import java.net.Inet4Address;
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Iterator;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.api.internal.foreign.struct.darwin_structs;
 import pcap.api.internal.foreign.struct.linux_structs;
@@ -23,6 +14,16 @@ import pcap.common.util.Bytes;
 import pcap.common.util.Platforms;
 import pcap.common.util.Strings;
 import pcap.spi.Address;
+
+import java.foreign.NativeTypes;
+import java.foreign.memory.Array;
+import java.foreign.memory.LayoutType;
+import java.foreign.memory.Pointer;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Iterator;
 
 /**
  * {@code Pcap} {@link Address} implementation
@@ -163,11 +164,11 @@ public class PcapAddress implements Address {
                     .cast(NativeTypes.VOID)
                     .cast(LayoutType.ofStruct(windows_struct.sockaddr_in.class))
                     .get();
-            windows_struct.in_addr.S_un_b b = sockaddr_in.sin_addr$get().S_un$get().S_un_b$get();
+            windows_struct.anon$S_un_b b = sockaddr_in.sin_addr$get().S_un$get().S_un_b$get();
             inetAddress =
                 Inet4Address.getByAddress(
                     new byte[] {b.s_b1$get(), b.s_b2$get(), b.s_b3$get(), b.s_b3$get()});
-          } else if (sa_family == 10) {
+          } else if (sa_family == 23) {
             windows_struct.sockaddr_in6 sockaddr_in6 =
                 pointer
                     .cast(NativeTypes.VOID)
