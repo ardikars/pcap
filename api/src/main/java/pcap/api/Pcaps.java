@@ -2,16 +2,20 @@
 package pcap.api;
 
 import java.foreign.NativeTypes;
+import java.foreign.memory.Array;
 import java.foreign.memory.LayoutType;
 import java.foreign.memory.Pointer;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 import pcap.api.internal.PcapConstant;
 import pcap.api.internal.PcapInterface;
+import pcap.api.internal.foreign.mapping.WindowsNativeMapping;
 import pcap.api.internal.foreign.pcap_mapping;
+import pcap.api.internal.foreign.struct.windows_struct;
 import pcap.common.annotation.Inclubating;
 import pcap.common.net.Inet4Address;
 import pcap.common.net.Inet6Address;
@@ -21,14 +25,11 @@ import pcap.spi.Address;
 import pcap.spi.Interface;
 import pcap.spi.Pcap;
 import pcap.spi.exception.ErrorException;
-import pcap.spi.exception.WarningException;
 import pcap.spi.exception.error.*;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 public abstract class Pcaps {
-
-  abstract Pcap open() throws Throwable;
 
   /**
    * Open offline handle.
@@ -137,18 +138,72 @@ public abstract class Pcaps {
    * Get mac address for given {@link Interface}.
    *
    * @param source interface.
-   * @return returns {@link MacAddress}.
-   * @throws ErrorException generic error.
+   * @return returns {@link MacAddress} for given interface.
+   * @throws ErrorException error occured.
    */
   public static MacAddress lookupMacAddress(Interface source) throws ErrorException {
     if (Platforms.isWindows()) {
-      throw new WarningException(
-          "Couldn't get mac address for " + source.name() + ": Not supported yet.");
-    }
-    try {
-      return MacAddress.valueOf(NetworkInterface.getByName(source.name()).getHardwareAddress());
-    } catch (SocketException e) {
-      throw new ErrorException(e.getMessage());
+      Pointer<windows_struct._IP_ADAPTER_INFO> adapterInfo =
+          WindowsNativeMapping.IPHLPAPI_SCOPE.allocate(
+              LayoutType.ofStruct(windows_struct._IP_ADAPTER_INFO.class));
+      Pointer<Long> length = WindowsNativeMapping.IPHLPAPI_SCOPE.allocate(NativeTypes.LONG);
+      length.set(adapterInfo.type().bytesSize());
+      if (WindowsNativeMapping.GetAdaptersInfo(adapterInfo, length) == 111) {
+        WindowsNativeMapping.free(adapterInfo.cast(NativeTypes.VOID));
+        adapterInfo =
+            WindowsNativeMapping.IPHLPAPI_SCOPE.allocate(
+                LayoutType.ofStruct(windows_struct._IP_ADAPTER_INFO.class));
+        if (adapterInfo == null || adapterInfo.isNull()) {
+          throw new ErrorException("The buffer to receive the adapter information is too small.");
+        }
+      }
+      long result = WindowsNativeMapping.GetAdaptersInfo(adapterInfo, length);
+      if (result == 0) {
+        Pointer<windows_struct._IP_ADAPTER_INFO> next = adapterInfo;
+        while (next != null && !next.isNull()) {
+          windows_struct._IP_ADAPTER_INFO info = next.get();
+          if (info.AddressLength$get() == MacAddress.MAC_ADDRESS_LENGTH) {
+            Array<Byte> byteArray = info.AdapterName$get();
+            byte[] adapter = new byte[(int) byteArray.bytesSize()];
+            for (int i = 0; i < adapter.length; i++) {
+              adapter[i] = byteArray.get(i);
+            }
+            String adapterName = new String(adapter, StandardCharsets.UTF_8).trim();
+            if (source.name().contains("{") && source.name().contains("}")) {
+              String sourceName =
+                  source
+                      .name()
+                      .substring(source.name().indexOf('{'), source.name().indexOf('}') + 1);
+              if (adapterName.equals(sourceName)) {
+                Array<Byte> byteAddress = info.Address$get();
+                byte[] address = new byte[MacAddress.MAC_ADDRESS_LENGTH];
+                for (int i = 0; i < address.length; i++) {
+                  address[i] = (byte) (byteAddress.get(i) & 0xFF);
+                }
+                WindowsNativeMapping.free(adapterInfo.cast(NativeTypes.VOID));
+                return MacAddress.valueOf(address);
+              }
+            }
+          }
+          next = info.Next$get();
+        }
+      }
+      WindowsNativeMapping.free(adapterInfo.cast(NativeTypes.VOID));
+      throw new ErrorException("Error (" + result + ")");
+    } else {
+      NetworkInterface networkInterface;
+      try {
+        networkInterface = NetworkInterface.getByName(source.name());
+        if (networkInterface != null) {
+          byte[] hardwareAddress = networkInterface.getHardwareAddress();
+          if (hardwareAddress != null && hardwareAddress.length == MacAddress.MAC_ADDRESS_LENGTH) {
+            return MacAddress.valueOf(hardwareAddress);
+          }
+        }
+        throw new ErrorException("Not found.");
+      } catch (SocketException e) {
+        throw new ErrorException(e.getMessage());
+      }
     }
   }
 
@@ -172,7 +227,7 @@ public abstract class Pcaps {
         }
       }
     }
-    return Inet4Address.ZERO;
+    throw new ErrorException("Not found.");
   }
 
   /**
@@ -208,4 +263,6 @@ public abstract class Pcaps {
       return Pointer.toString(PcapConstant.MAPPING.pcap_lib_version());
     }
   }
+
+  abstract Pcap open() throws Throwable;
 }

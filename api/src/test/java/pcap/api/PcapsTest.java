@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import pcap.api.internal.PcapInterface;
 import pcap.common.net.Inet4Address;
 import pcap.common.net.Inet6Address;
 import pcap.spi.Interface;
@@ -33,8 +34,24 @@ public class PcapsTest {
 
   @Test
   public void lookupMacAddressTest() throws ErrorException {
-    final Interface anInterface = Pcaps.lookupInterfaces();
-    Assertions.assertNotNull(Pcaps.lookupMacAddress(anInterface));
+    Interface anInterface = Pcaps.lookupInterfaces();
+    while (anInterface.next() != null) {
+      try {
+        Assertions.assertNotNull(Pcaps.lookupMacAddress(anInterface));
+      } catch (ErrorException e) {
+        //
+      }
+      if (anInterface instanceof PcapInterface) {
+        PcapInterface pcapInterface = (PcapInterface) anInterface;
+        Assertions.assertTrue(pcapInterface.isLoopback() || true);
+        Assertions.assertTrue(pcapInterface.isUp() || true);
+        Assertions.assertTrue(pcapInterface.isRunning() || true);
+        Assertions.assertTrue(pcapInterface.isWireless() || true);
+        Assertions.assertTrue(pcapInterface.isConnected() || true);
+        Assertions.assertTrue(pcapInterface.isDisconnected() || true);
+      }
+      anInterface = anInterface.next();
+    }
   }
 
   @Test

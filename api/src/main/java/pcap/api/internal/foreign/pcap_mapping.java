@@ -1,11 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal.foreign;
 
-import pcap.api.internal.PcapHandler;
-import pcap.api.internal.PcapPacketHeader;
-import pcap.api.internal.PcapStatus;
-import pcap.common.annotation.Inclubating;
-
 import java.foreign.annotations.NativeFunction;
 import java.foreign.annotations.NativeGetter;
 import java.foreign.annotations.NativeHeader;
@@ -13,6 +8,10 @@ import java.foreign.annotations.NativeStruct;
 import java.foreign.memory.Callback;
 import java.foreign.memory.Pointer;
 import java.foreign.memory.Struct;
+import pcap.api.internal.PcapHandler;
+import pcap.api.internal.PcapPacketHeader;
+import pcap.api.internal.PcapStatus;
+import pcap.common.annotation.Inclubating;
 
 /**
  * Pcap api mapping.

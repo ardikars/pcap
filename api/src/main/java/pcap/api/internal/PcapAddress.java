@@ -1,6 +1,15 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal;
 
+import java.foreign.NativeTypes;
+import java.foreign.memory.Array;
+import java.foreign.memory.LayoutType;
+import java.foreign.memory.Pointer;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Iterator;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.api.internal.foreign.struct.darwin_structs;
 import pcap.api.internal.foreign.struct.linux_structs;
@@ -14,16 +23,6 @@ import pcap.common.util.Bytes;
 import pcap.common.util.Platforms;
 import pcap.common.util.Strings;
 import pcap.spi.Address;
-
-import java.foreign.NativeTypes;
-import java.foreign.memory.Array;
-import java.foreign.memory.LayoutType;
-import java.foreign.memory.Pointer;
-import java.net.Inet4Address;
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Iterator;
 
 /**
  * {@code Pcap} {@link Address} implementation

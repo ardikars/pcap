@@ -3,6 +3,7 @@ package pcap.api.internal.foreign.struct;
 import java.foreign.annotations.NativeGetter;
 import java.foreign.annotations.NativeStruct;
 import java.foreign.memory.Array;
+import java.foreign.memory.Pointer;
 import java.foreign.memory.Struct;
 
 public interface windows_struct {
@@ -119,5 +120,87 @@ public interface windows_struct {
 
     @NativeGetter("sin6_scope_id")
     int sin6_scope_id$get();
+  }
+
+  @NativeStruct("[[16u8](String)](IP_ADDRESS_STRING)")
+  interface IP_ADDRESS_STRING extends Struct<IP_ADDRESS_STRING> {
+    @NativeGetter("String")
+    Array<Byte> String$get();
+  }
+
+  @NativeStruct(
+      "[u64(Next):${_IP_ADDR_STRING}${IP_ADDRESS_STRING}(IpAddress)${IP_ADDRESS_STRING}(IpMask)i16(Context)x48](_IP_ADDR_STRING)")
+  interface _IP_ADDR_STRING extends Struct<_IP_ADDR_STRING> {
+
+    @NativeGetter("Next")
+    Pointer<_IP_ADDR_STRING> Next$get();
+
+    @NativeGetter("IpAddress")
+    IP_ADDRESS_STRING IpAddress$get();
+
+    @NativeGetter("IpMask")
+    IP_ADDRESS_STRING IpMask$get();
+
+    @NativeGetter("Context")
+    short Context$get();
+  }
+
+  @NativeStruct(
+      "[u64(Next):${_IP_ADAPTER_INFO}i16(ComboIndex)[260u8](AdapterName)[132u8](Description)x16u32(AddressLength)[8u8](Address)i16(Index)x16u32(Type)u32(DhcpEnabled)x32u64(CurrentIpAddress):${_IP_ADDR_STRING}${_IP_ADDR_STRING}(IpAddressList)${_IP_ADDR_STRING}(GatewayList)${_IP_ADDR_STRING}(DhcpServer)i32(HaveWins)x32${_IP_ADDR_STRING}(PrimaryWinsServer)${_IP_ADDR_STRING}(SecondaryWinsServer)i64(LeaseObtained)i64(LeaseExpires)](_IP_ADAPTER_INFO)")
+  interface _IP_ADAPTER_INFO extends Struct<_IP_ADAPTER_INFO> {
+
+    @NativeGetter("Next")
+    Pointer<_IP_ADAPTER_INFO> Next$get();
+
+    @NativeGetter("ComboIndex")
+    short ComboIndex$get();
+
+    @NativeGetter("AdapterName")
+    Array<Byte> AdapterName$get();
+
+    @NativeGetter("Description")
+    Array<Byte> Description$get();
+
+    @NativeGetter("AddressLength")
+    int AddressLength$get();
+
+    @NativeGetter("Address")
+    Array<Byte> Address$get();
+
+    @NativeGetter("Index")
+    short Index$get();
+
+    @NativeGetter("Type")
+    int Type$get();
+
+    @NativeGetter("DhcpEnabled")
+    int DhcpEnabled$get();
+
+    @NativeGetter("CurrentIpAddress")
+    Pointer<_IP_ADDR_STRING> CurrentIpAddress$get();
+
+    @NativeGetter("IpAddressList")
+    _IP_ADDR_STRING IpAddressList$get();
+
+    @NativeGetter("GatewayList")
+    _IP_ADDR_STRING GatewayList$get();
+
+    @NativeGetter("DhcpServer")
+    _IP_ADDR_STRING DhcpServer$get();
+
+    @NativeGetter("HaveWins")
+    int HaveWins$get();
+
+    @NativeGetter("PrimaryWinsServer")
+    _IP_ADDR_STRING PrimaryWinsServer$get();
+
+    @NativeGetter("SecondaryWinsServer")
+    _IP_ADDR_STRING SecondaryWinsServer$get();
+
+    @NativeGetter("LeaseObtained")
+    long LeaseObtained$get();
+
+    @NativeGetter("LeaseExpires")
+    long LeaseExpires$get();
   }
 }

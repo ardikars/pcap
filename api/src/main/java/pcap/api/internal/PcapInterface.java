@@ -6,8 +6,6 @@ import java.util.Iterator;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.api.internal.util.PcapInterfaceIterator;
 import pcap.common.annotation.Inclubating;
-import pcap.common.logging.Logger;
-import pcap.common.logging.LoggerFactory;
 import pcap.common.util.Strings;
 import pcap.spi.Address;
 import pcap.spi.Interface;
@@ -20,25 +18,11 @@ import pcap.spi.Interface;
 @Inclubating
 public class PcapInterface implements Interface {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(PcapInterface.class);
-
-  /** Interface is loopback. */
-  private static final int PCAP_IF_LOOPBACK = 0x00000001;
-
-  /** Interface is up. */
-  private static final int PCAP_IF_UP = 0x00000002;
-
-  /** Interface is running. */
-  private static final int PCAP_IF_RUNNING = 0x00000004;
-
   Interface next;
   String name;
   String description;
   Address addresses;
   int flags;
-  boolean loopback;
-  boolean up;
-  boolean running;
 
   public PcapInterface(pcap_mapping.pcap_if pcap_if) {
     this.name = Pointer.toString(pcap_if.name$get());
@@ -50,9 +34,6 @@ public class PcapInterface implements Interface {
     if (!pcap_if.next$get().isNull()) {
       this.next = new PcapInterface(pcap_if.next$get().get());
     }
-    this.loopback = (this.flags & PCAP_IF_LOOPBACK) != 0;
-    this.up = (this.flags & PCAP_IF_UP) != 0;
-    this.running = (this.flags & PCAP_IF_RUNNING) != 0;
   }
 
   @Override
@@ -80,30 +61,57 @@ public class PcapInterface implements Interface {
   }
 
   /**
-   * Is loopback interface?
+   * Interface is "loopback".
    *
-   * @return true if loopback interface, false otherwise.
+   * @return returns {@code true} if interface if "loopback", {@code false} otherwise.
    */
   public boolean isLoopback() {
-    return loopback;
+    return (flags & 0x00000001) != 0;
   }
 
   /**
-   * Is interface is up?
+   * Interface is up.
    *
-   * @return true if interface is up, false otherwise.
+   * @return returns {@code true} if interface is up, {@code false} otherwise.
    */
   public boolean isUp() {
-    return up;
+    return (flags & 0x00000002) != 0;
   }
 
   /**
-   * Is interface is running?
+   * Interface is running.
    *
-   * @return true if interface is running, false otherwise.
+   * @return returns {@code true} if interface is running, {@code false} otherwise.
    */
   public boolean isRunning() {
-    return running;
+    return (flags & 0x00000004) != 0;
+  }
+
+  /**
+   * interface is wireless (*NOT* necessarily Wi-Fi!)
+   *
+   * @return returns {@code true} if interface is wireless, {@code false}.
+   */
+  public boolean isWireless() {
+    return (flags & 0x00000008) != 0;
+  }
+
+  /**
+   * Connected.
+   *
+   * @return returns {@code true} if interface is connected to the network, {@code false}.
+   */
+  public boolean isConnected() {
+    return (flags & 0x00000030) != 0 && (flags & 0x00000010) != 0;
+  }
+
+  /**
+   * Disconnected.
+   *
+   * @return returns {@code true} if interface is disconnected from the network, {@code false}.
+   */
+  public boolean isDisconnected() {
+    return (flags & 0x00000030) != 0 && (flags & 0x00000020) != 0;
   }
 
   @Override
