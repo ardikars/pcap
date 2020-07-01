@@ -1,15 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal;
 
-import java.foreign.NativeTypes;
-import java.foreign.Scope;
-import java.foreign.memory.Callback;
-import java.foreign.memory.LayoutType;
-import java.foreign.memory.Pointer;
-import java.nio.ByteBuffer;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeoutException;
 import pcap.api.handler.EventLoopHandler;
 import pcap.api.internal.foreign.bpf_mapping;
 import pcap.api.internal.foreign.pcap_mapping;
@@ -20,6 +11,16 @@ import pcap.common.util.Validate;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
+
+import java.foreign.NativeTypes;
+import java.foreign.Scope;
+import java.foreign.memory.Callback;
+import java.foreign.memory.LayoutType;
+import java.foreign.memory.Pointer;
+import java.nio.ByteBuffer;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeoutException;
 
 /**
  * {@code Pcap} handle.
@@ -38,6 +39,7 @@ public class Pcap implements pcap.spi.Pcap {
   private final Scope scope;
   private final Queue<Runnable> loopEvent = new LinkedBlockingQueue<>();
   boolean filterActivated;
+  private Callback<PcapHandler> oneshotCallback;
   /** Event loop handler for {@link #loop(int, PacketHandler, Object)}. */
   private volatile boolean loopTerminated;
 
@@ -240,27 +242,32 @@ public class Pcap implements pcap.spi.Pcap {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Dispatcing {} packets", count);
       }
-      Callback<PcapHandler> callback =
-          scope.allocateCallback(
-              PcapHandler.class,
-              (user, header, packets) -> {
-                PacketHeader packetHeader = header.get().packetHeader();
-                handler.gotPacket(
-                    args,
-                    packetHeader,
-                    PcapPacketBuffer.fromReference(packets, packetHeader.captureLength()));
-              });
-      int result = PcapConstant.MAPPING.pcap_dispatch(pcap, count, callback, Pointer.ofNull());
-      if (result < 0) {
-        if (result == -1) {
-          throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
-        } else if (result == -2) {
-          throw new BreakException("");
-        } else {
-          throw new ErrorException("Generic error.");
+      if (oneshotCallback == null) {
+        oneshotCallback =
+            scope.allocateCallback(
+                PcapHandler.class,
+                (user, header, packets) -> {
+                  PacketHeader packetHeader = header.get().packetHeader();
+                  handler.gotPacket(
+                      args,
+                      packetHeader,
+                      PcapPacketBuffer.fromReference(packets, packetHeader.captureLength()));
+                });
+      }
+      if (oneshotCallback != null) {
+        int result =
+            PcapConstant.MAPPING.pcap_dispatch(pcap, count, oneshotCallback, Pointer.ofNull());
+        if (result < 0) {
+          if (result == -1) {
+            throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
+          } else if (result == -2) {
+            throw new BreakException("");
+          } else {
+            throw new ErrorException("Generic error.");
+          }
+        } else if (result == 0) {
+          LOGGER.debug("No packets were read from a capture.");
         }
-      } else if (result == 0) {
-        LOGGER.debug("No packets were read from a capture.");
       }
     }
   }
