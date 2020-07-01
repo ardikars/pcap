@@ -2,6 +2,7 @@
 package pcap.api;
 
 import java.foreign.NativeTypes;
+import java.foreign.Scope;
 import java.foreign.memory.Pointer;
 import java.net.Inet4Address;
 import pcap.api.internal.Pcap;
@@ -21,8 +22,8 @@ public class PcapLive extends Pcaps {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PcapLive.class);
 
-  private Interface source; // not null
-  private PcapLiveOptions options;
+  private final Interface source; // not null
+  private final PcapLiveOptions options;
 
   public PcapLive(Interface source) {
     this(source, new PcapLiveOptions());
@@ -43,36 +44,36 @@ public class PcapLive extends Pcaps {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Opening live handler on {}.", source.name());
       }
-      Pointer<Byte> errbuf =
-          PcapConstant.SCOPE.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
-      Pointer<pcap_mapping.pcap> pointer =
-          PcapConstant.MAPPING.pcap_create(
-              PcapConstant.SCOPE.allocateCString(source.name()), errbuf);
-      nullCheck(pointer, errbuf);
-      checkSetSnaplen(PcapConstant.MAPPING.pcap_set_snaplen(pointer, options.snapshotLength()));
-      checkSetPromisc(
-          PcapConstant.MAPPING.pcap_set_promisc(pointer, options.isPromiscuous() ? 1 : 0));
-      final int canSetRfmon =
-          canSetRfmon(pointer, PcapConstant.MAPPING.pcap_can_set_rfmon(pointer));
-      if (canSetRfmon == PcapConstant.OK) {
-        checkSetRfmon(PcapConstant.MAPPING.pcap_set_rfmon(pointer, options.isRfmon() ? 1 : 0));
+      try (Scope scope = Scope.globalScope().fork()) {
+        Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
+        Pointer<pcap_mapping.pcap> pointer =
+            PcapConstant.MAPPING.pcap_create(scope.allocateCString(source.name()), errbuf);
+        nullCheck(pointer, errbuf);
+        checkSetSnaplen(PcapConstant.MAPPING.pcap_set_snaplen(pointer, options.snapshotLength()));
+        checkSetPromisc(
+            PcapConstant.MAPPING.pcap_set_promisc(pointer, options.isPromiscuous() ? 1 : 0));
+        final int canSetRfmon =
+            canSetRfmon(pointer, PcapConstant.MAPPING.pcap_can_set_rfmon(pointer));
+        if (canSetRfmon == PcapConstant.OK) {
+          checkSetRfmon(PcapConstant.MAPPING.pcap_set_rfmon(pointer, options.isRfmon() ? 1 : 0));
+        }
+        checkSetTimeout(PcapConstant.MAPPING.pcap_set_timeout(pointer, options.timeout()));
+        if (Objects.nonNull(options.timestampType())) {
+          checkSetTimestampType(
+              PcapConstant.MAPPING.pcap_set_tstamp_type(pointer, options.timestampType().value()));
+        }
+        checkSetImmediateMode(
+            PcapConstant.MAPPING.pcap_set_immediate_mode(pointer, options.isImmediate() ? 1 : 0));
+        if (options.bufferSize() != 0) {
+          checkSetBufferSize(
+              PcapConstant.MAPPING.pcap_set_buffer_size(pointer, options.bufferSize()));
+        }
+        checkSetTimestampPrecision(
+            PcapConstant.MAPPING.pcap_set_tstamp_precision(
+                pointer, options.timestampPrecision().value()));
+        checkActivate(pointer, PcapConstant.MAPPING.pcap_activate(pointer));
+        return new Pcap(pointer, netmask(source));
       }
-      checkSetTimeout(PcapConstant.MAPPING.pcap_set_timeout(pointer, options.timeout()));
-      if (Objects.nonNull(options.timestampType())) {
-        checkSetTimestampType(
-            PcapConstant.MAPPING.pcap_set_tstamp_type(pointer, options.timestampType().value()));
-      }
-      checkSetImmediateMode(
-          PcapConstant.MAPPING.pcap_set_immediate_mode(pointer, options.isImmediate() ? 1 : 0));
-      if (options.bufferSize() != 0) {
-        checkSetBufferSize(
-            PcapConstant.MAPPING.pcap_set_buffer_size(pointer, options.bufferSize()));
-      }
-      checkSetTimestampPrecision(
-          PcapConstant.MAPPING.pcap_set_tstamp_precision(
-              pointer, options.timestampPrecision().value()));
-      checkActivate(pointer, PcapConstant.MAPPING.pcap_activate(pointer));
-      return new Pcap(pointer, netmask(source));
     }
   }
 

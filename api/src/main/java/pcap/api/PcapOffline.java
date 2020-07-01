@@ -2,6 +2,7 @@
 package pcap.api;
 
 import java.foreign.NativeTypes;
+import java.foreign.Scope;
 import java.foreign.memory.Pointer;
 import java.io.File;
 import pcap.api.internal.Pcap;
@@ -17,8 +18,8 @@ public class PcapOffline extends Pcaps {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PcapOffline.class);
 
-  private String file; // not null
-  private PcapOfflineOptions options; // nullable
+  private final String file; // not null
+  private final PcapOfflineOptions options; // nullable
 
   @Deprecated
   public PcapOffline(String file) {
@@ -43,31 +44,28 @@ public class PcapOffline extends Pcaps {
   @Override
   Pcap open() throws ErrorException {
     synchronized (PcapConstant.LOCK) {
-      Pointer<Byte> errbuf =
-          PcapConstant.SCOPE.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
-      Pointer<pcap_mapping.pcap> pointer;
-      if (options.timestampPrecision() == null) {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("Opening file: {}", file);
+      try (Scope scope = Scope.globalScope().fork()) {
+        Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
+        Pointer<pcap_mapping.pcap> pointer;
+        if (options.timestampPrecision() == null) {
+          if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Opening file: {}", file);
+          }
+          pointer = PcapConstant.MAPPING.pcap_open_offline(scope.allocateCString(file), errbuf);
+        } else {
+          if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(
+                "Opening file ({}) with timestamp precision ({})",
+                file,
+                options.timestampPrecision().value());
+          }
+          pointer =
+              PcapConstant.MAPPING.pcap_open_offline_with_tstamp_precision(
+                  scope.allocateCString(file), options.timestampPrecision().value(), errbuf);
         }
-        pointer =
-            PcapConstant.MAPPING.pcap_open_offline(
-                PcapConstant.SCOPE.allocateCString(file), errbuf);
-      } else {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug(
-              "Opening file ({}) with timestamp precision ({})",
-              file,
-              options.timestampPrecision().value());
-        }
-        pointer =
-            PcapConstant.MAPPING.pcap_open_offline_with_tstamp_precision(
-                PcapConstant.SCOPE.allocateCString(file),
-                options.timestampPrecision().value(),
-                errbuf);
+        nullCheck(pointer, errbuf);
+        return new Pcap(pointer);
       }
-      nullCheck(pointer, errbuf);
-      return new Pcap(pointer);
     }
   }
 

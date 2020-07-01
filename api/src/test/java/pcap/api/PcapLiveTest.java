@@ -2,6 +2,7 @@
 package pcap.api;
 
 import java.foreign.NativeTypes;
+import java.foreign.Scope;
 import java.foreign.memory.Pointer;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
@@ -33,10 +34,12 @@ public class PcapLiveTest {
   private static final String FILTER = "ip";
 
   private Pointer<pcap_mapping.pcap> pcapOpen(Interface source) {
-    Pointer<Byte> errbuf = PcapConstant.SCOPE.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
-    Pointer<pcap_mapping.pcap> pointer =
-        PcapConstant.MAPPING.pcap_create(PcapConstant.SCOPE.allocateCString(source.name()), errbuf);
-    return pointer;
+    try (Scope scope = Scope.globalScope().fork()) {
+      Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
+      Pointer<pcap_mapping.pcap> pointer =
+          PcapConstant.MAPPING.pcap_create(scope.allocateCString(source.name()), errbuf);
+      return pointer;
+    }
   }
 
   private void pcapClose(Pointer<pcap_mapping.pcap> pointer) {
@@ -455,11 +458,13 @@ public class PcapLiveTest {
   public void nullCheckTest() throws ErrorException {
     Interface source = Pcaps.lookupInterfaces();
     PcapLive live = new PcapLive(source);
-    Pointer<Byte> errbuf = PcapConstant.SCOPE.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
-    Pointer<pcap_mapping.pcap> pointer =
-        PcapConstant.MAPPING.pcap_create(PcapConstant.SCOPE.allocateCString(source.name()), errbuf);
-    live.nullCheck(pointer, errbuf);
-    Assertions.assertThrows(IllegalStateException.class, () -> live.nullCheck(null, errbuf));
+    try (Scope scope = Scope.globalScope().fork()) {
+      Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
+      Pointer<pcap_mapping.pcap> pointer =
+          PcapConstant.MAPPING.pcap_create(scope.allocateCString(source.name()), errbuf);
+      live.nullCheck(pointer, errbuf);
+      Assertions.assertThrows(IllegalStateException.class, () -> live.nullCheck(null, errbuf));
+    }
   }
 
   @Test

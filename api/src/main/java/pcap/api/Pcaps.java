@@ -2,6 +2,7 @@
 package pcap.api;
 
 import java.foreign.NativeTypes;
+import java.foreign.Scope;
 import java.foreign.memory.Array;
 import java.foreign.memory.LayoutType;
 import java.foreign.memory.Pointer;
@@ -74,18 +75,19 @@ public abstract class Pcaps {
    */
   public static Interface lookupInterfaces() throws ErrorException {
     synchronized (PcapConstant.LOCK) {
-      Pointer<Pointer<pcap_mapping.pcap_if>> pointer =
-          PcapConstant.SCOPE.allocate(LayoutType.ofStruct(pcap_mapping.pcap_if.class).pointer());
-      Pointer<Byte> errbuf =
-          PcapConstant.SCOPE.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
-      int result = PcapConstant.MAPPING.pcap_findalldevs(pointer, errbuf);
-      if (result != PcapConstant.OK) {
-        throw new ErrorException(Pointer.toString(errbuf));
+      try (Scope scope = Scope.globalScope().fork()) {
+        Pointer<Pointer<pcap_mapping.pcap_if>> pointer =
+            scope.allocate(LayoutType.ofStruct(pcap_mapping.pcap_if.class).pointer());
+        Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
+        int result = PcapConstant.MAPPING.pcap_findalldevs(pointer, errbuf);
+        if (result != PcapConstant.OK) {
+          throw new ErrorException(Pointer.toString(errbuf));
+        }
+        pcap_mapping.pcap_if pcap_if = pointer.get().get();
+        Interface devices = new PcapInterface(pcap_if);
+        PcapConstant.MAPPING.pcap_freealldevs(pointer.get());
+        return devices;
       }
-      pcap_mapping.pcap_if pcap_if = pointer.get().get();
-      Interface devices = new PcapInterface(pcap_if);
-      PcapConstant.MAPPING.pcap_freealldevs(pointer.get());
-      return devices;
     }
   }
 
@@ -116,21 +118,22 @@ public abstract class Pcaps {
    */
   public static Interface lookupInterface() throws ErrorException {
     synchronized (PcapConstant.LOCK) {
-      Pointer<Byte> errbuf =
-          PcapConstant.SCOPE.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
-      Pointer<Byte> device = PcapConstant.MAPPING.pcap_lookupdev(errbuf);
-      if (device == null || device.isNull()) {
-        throw new ErrorException(Pointer.toString(errbuf));
+      try (Scope scope = Scope.globalScope().fork()) {
+        Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
+        Pointer<Byte> device = PcapConstant.MAPPING.pcap_lookupdev(errbuf);
+        if (device == null || device.isNull()) {
+          throw new ErrorException(Pointer.toString(errbuf));
+        }
+        String deviceName = Pointer.toString(device);
+        Optional<Interface> optional =
+            StreamSupport.stream(lookupInterfaces().spliterator(), false)
+                .filter(iface -> deviceName.equals(iface.name()))
+                .findFirst();
+        if (!optional.isPresent()) {
+          throw new ErrorException("Device not found!");
+        }
+        return optional.get();
       }
-      String deviceName = Pointer.toString(device);
-      Optional<Interface> optional =
-          StreamSupport.stream(lookupInterfaces().spliterator(), false)
-              .filter(iface -> deviceName.equals(iface.name()))
-              .findFirst();
-      if (!optional.isPresent()) {
-        throw new ErrorException("Device not found!");
-      }
-      return optional.get();
     }
   }
 
@@ -143,17 +146,17 @@ public abstract class Pcaps {
    */
   public static MacAddress lookupMacAddress(Interface source) throws ErrorException {
     if (Platforms.isWindows()) {
+      Scope scope = Scope.globalScope().fork();
       Pointer<windows_struct._IP_ADAPTER_INFO> adapterInfo =
-          WindowsNativeMapping.IPHLPAPI_SCOPE.allocate(
-              LayoutType.ofStruct(windows_struct._IP_ADAPTER_INFO.class));
-      Pointer<Long> length = WindowsNativeMapping.IPHLPAPI_SCOPE.allocate(NativeTypes.LONG);
+          scope.allocate(LayoutType.ofStruct(windows_struct._IP_ADAPTER_INFO.class));
+      Pointer<Long> length = scope.allocate(NativeTypes.LONG);
       length.set(adapterInfo.type().bytesSize());
       if (WindowsNativeMapping.GetAdaptersInfo(adapterInfo, length) == 111) {
-        WindowsNativeMapping.free(adapterInfo.cast(NativeTypes.VOID));
-        adapterInfo =
-            WindowsNativeMapping.IPHLPAPI_SCOPE.allocate(
-                LayoutType.ofStruct(windows_struct._IP_ADAPTER_INFO.class));
+        scope.close();
+        scope = Scope.globalScope().fork(); // new scope
+        adapterInfo = scope.allocate(LayoutType.ofStruct(windows_struct._IP_ADAPTER_INFO.class));
         if (adapterInfo == null || adapterInfo.isNull()) {
+          scope.close();
           throw new ErrorException("The buffer to receive the adapter information is too small.");
         }
       }
@@ -180,7 +183,7 @@ public abstract class Pcaps {
                 for (int i = 0; i < address.length; i++) {
                   address[i] = (byte) (byteAddress.get(i) & 0xFF);
                 }
-                WindowsNativeMapping.free(adapterInfo.cast(NativeTypes.VOID));
+                scope.close();
                 return MacAddress.valueOf(address);
               }
             }
@@ -188,7 +191,7 @@ public abstract class Pcaps {
           next = info.Next$get();
         }
       }
-      WindowsNativeMapping.free(adapterInfo.cast(NativeTypes.VOID));
+      scope.close();
       throw new ErrorException("Error (" + result + ")");
     } else {
       NetworkInterface networkInterface;

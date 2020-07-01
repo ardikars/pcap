@@ -2,6 +2,7 @@
 package pcap.api;
 
 import java.foreign.NativeTypes;
+import java.foreign.Scope;
 import java.foreign.memory.Pointer;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -178,13 +179,15 @@ public class PcapOfflineTest {
 
   @Test
   public void nullCheckTest() throws ErrorException {
-    PcapOffline offline = new PcapOffline(new File(FILE));
-    Pointer<Byte> errbuf = PcapConstant.SCOPE.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
-    Pointer<Byte> source = PcapConstant.SCOPE.allocateCString(new File(FILE).getAbsolutePath());
+    try (Scope scope = Scope.globalScope().fork()) {
+      PcapOffline offline = new PcapOffline(new File(FILE));
+      Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
+      Pointer<Byte> source = scope.allocateCString(new File(FILE).getAbsolutePath());
 
-    Pointer<pcap_mapping.pcap> pointer = PcapConstant.MAPPING.pcap_open_offline(source, errbuf);
-    offline.nullCheck(pointer, errbuf);
+      Pointer<pcap_mapping.pcap> pointer = PcapConstant.MAPPING.pcap_open_offline(source, errbuf);
+      offline.nullCheck(pointer, errbuf);
 
-    Assertions.assertThrows(IllegalStateException.class, () -> offline.nullCheck(null, errbuf));
+      Assertions.assertThrows(IllegalStateException.class, () -> offline.nullCheck(null, errbuf));
+    }
   }
 }
