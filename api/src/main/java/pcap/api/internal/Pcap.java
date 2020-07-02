@@ -377,12 +377,13 @@ public class Pcap implements pcap.spi.Pcap {
   @Override
   public <T> T allocate(Class<T> cls) {
     synchronized (PcapConstant.LOCK) {
-      final Pointer<Pointer<PcapPacketHeader>> pcap_ptr_to_packet_header =
-          scope.allocate(LayoutType.ofStruct(PcapPacketHeader.class).pointer());
-      final Pointer<Pointer<Byte>> pcap_ptr_to_buffer = scope.allocate(NativeTypes.UINT8.pointer());
       if (cls.isAssignableFrom(PacketBuffer.class)) {
+        final Pointer<Pointer<Byte>> pcap_ptr_to_buffer =
+            scope.allocate(NativeTypes.UINT8.pointer());
         return (T) PcapPacketBuffer.fromPointer(pcap_ptr_to_buffer, 0);
       } else if (cls.isAssignableFrom(PacketHeader.class)) {
+        final Pointer<Pointer<PcapPacketHeader>> pcap_ptr_to_packet_header =
+            scope.allocate(LayoutType.ofStruct(PcapPacketHeader.class).pointer());
         return (T)
             PcapPacketHeader.Impl.fromPointer(
                 pcap_ptr_to_packet_header, new Timestamp.Impl(0, 0), 0, 0);
