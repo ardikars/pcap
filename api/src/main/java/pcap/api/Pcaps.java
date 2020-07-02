@@ -16,7 +16,7 @@ import pcap.api.internal.PcapConstant;
 import pcap.api.internal.PcapInterface;
 import pcap.api.internal.foreign.mapping.WindowsNativeMapping;
 import pcap.api.internal.foreign.pcap_mapping;
-import pcap.api.internal.foreign.struct.windows_struct;
+import pcap.api.internal.foreign.struct.windows_structs;
 import pcap.common.annotation.Inclubating;
 import pcap.common.net.Inet4Address;
 import pcap.common.net.Inet6Address;
@@ -147,14 +147,14 @@ public abstract class Pcaps {
   public static MacAddress lookupMacAddress(Interface source) throws ErrorException {
     if (Platforms.isWindows()) {
       Scope scope = Scope.globalScope().fork();
-      Pointer<windows_struct._IP_ADAPTER_INFO> adapterInfo =
-          scope.allocate(LayoutType.ofStruct(windows_struct._IP_ADAPTER_INFO.class));
+      Pointer<windows_structs._IP_ADAPTER_INFO> adapterInfo =
+          scope.allocate(LayoutType.ofStruct(windows_structs._IP_ADAPTER_INFO.class));
       Pointer<Long> length = scope.allocate(NativeTypes.LONG);
       length.set(adapterInfo.type().bytesSize());
       if (WindowsNativeMapping.GetAdaptersInfo(adapterInfo, length) == 111) {
         scope.close();
         scope = Scope.globalScope().fork(); // new scope
-        adapterInfo = scope.allocate(LayoutType.ofStruct(windows_struct._IP_ADAPTER_INFO.class));
+        adapterInfo = scope.allocate(LayoutType.ofStruct(windows_structs._IP_ADAPTER_INFO.class));
         if (adapterInfo == null || adapterInfo.isNull()) {
           scope.close();
           throw new ErrorException("The buffer to receive the adapter information is too small.");
@@ -162,9 +162,9 @@ public abstract class Pcaps {
       }
       long result = WindowsNativeMapping.GetAdaptersInfo(adapterInfo, length);
       if (result == 0) {
-        Pointer<windows_struct._IP_ADAPTER_INFO> next = adapterInfo;
+        Pointer<windows_structs._IP_ADAPTER_INFO> next = adapterInfo;
         while (next != null && !next.isNull()) {
-          windows_struct._IP_ADAPTER_INFO info = next.get();
+          windows_structs._IP_ADAPTER_INFO info = next.get();
           if (info.AddressLength$get() == MacAddress.MAC_ADDRESS_LENGTH) {
             Array<Byte> byteArray = info.AdapterName$get();
             byte[] adapter = new byte[(int) byteArray.bytesSize()];

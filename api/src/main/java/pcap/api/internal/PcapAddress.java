@@ -13,7 +13,7 @@ import java.util.Iterator;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.api.internal.foreign.struct.darwin_structs;
 import pcap.api.internal.foreign.struct.linux_structs;
-import pcap.api.internal.foreign.struct.windows_struct;
+import pcap.api.internal.foreign.struct.windows_structs;
 import pcap.api.internal.foreign.struct_mapping;
 import pcap.api.internal.util.PcapAddressIterator;
 import pcap.common.annotation.Inclubating;
@@ -151,27 +151,27 @@ public class PcapAddress implements Address {
             }
           }
         } else if (Platforms.isWindows()) {
-          windows_struct.sockaddr sockaddr =
+          windows_structs.sockaddr sockaddr =
               pointer
                   .cast(NativeTypes.VOID)
-                  .cast(LayoutType.ofStruct(windows_struct.sockaddr.class))
+                  .cast(LayoutType.ofStruct(windows_structs.sockaddr.class))
                   .get();
           int sa_family = sockaddr.sa_family$get();
           if (sa_family == 2) {
-            windows_struct.sockaddr_in sockaddr_in =
+            windows_structs.sockaddr_in sockaddr_in =
                 pointer
                     .cast(NativeTypes.VOID)
-                    .cast(LayoutType.ofStruct(windows_struct.sockaddr_in.class))
+                    .cast(LayoutType.ofStruct(windows_structs.sockaddr_in.class))
                     .get();
-            windows_struct.anon$S_un_b b = sockaddr_in.sin_addr$get().S_un$get().S_un_b$get();
+            windows_structs.anon$S_un_b b = sockaddr_in.sin_addr$get().S_un$get().S_un_b$get();
             inetAddress =
                 Inet4Address.getByAddress(
                     new byte[] {b.s_b1$get(), b.s_b2$get(), b.s_b3$get(), b.s_b3$get()});
           } else if (sa_family == 23) {
-            windows_struct.sockaddr_in6 sockaddr_in6 =
+            windows_structs.sockaddr_in6 sockaddr_in6 =
                 pointer
                     .cast(NativeTypes.VOID)
-                    .cast(LayoutType.ofStruct(windows_struct.sockaddr_in6.class))
+                    .cast(LayoutType.ofStruct(windows_structs.sockaddr_in6.class))
                     .get();
             Array<Byte> byteArray = sockaddr_in6.sin6_addr$get().u$get().Byte$get();
             if (byteArray.bytesSize() == 16) {

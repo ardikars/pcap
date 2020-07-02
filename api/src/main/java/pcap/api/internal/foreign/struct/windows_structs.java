@@ -6,7 +6,7 @@ import java.foreign.memory.Array;
 import java.foreign.memory.Pointer;
 import java.foreign.memory.Struct;
 
-public interface windows_struct {
+public interface windows_structs {
 
   @NativeStruct("[u16(sa_family)[14u8](sa_data)](sockaddr)")
   interface sockaddr extends Struct<sockaddr> {
