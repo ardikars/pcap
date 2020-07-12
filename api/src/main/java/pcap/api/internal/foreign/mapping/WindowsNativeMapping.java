@@ -18,7 +18,7 @@ public class WindowsNativeMapping {
   }
 
   public static long GetAdaptersInfo(
-          Pointer<windows_structs._IP_ADAPTER_INFO> AdapterInfo, Pointer<Long> SizePointer) {
+      Pointer<windows_structs._IP_ADAPTER_INFO> AdapterInfo, Pointer<Long> SizePointer) {
     return IPHLPAPI_MAPPING.GetAdaptersInfo(AdapterInfo, SizePointer);
   }
 
@@ -27,6 +27,6 @@ public class WindowsNativeMapping {
 
     @NativeFunction("(u64:${IP_ADAPTER_INFO}u64:u64)u64")
     long GetAdaptersInfo(
-            Pointer<windows_structs._IP_ADAPTER_INFO> AdapterInfo, Pointer<Long> SizePointer);
+        Pointer<windows_structs._IP_ADAPTER_INFO> AdapterInfo, Pointer<Long> SizePointer);
   }
 }

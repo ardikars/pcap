@@ -1,7 +1,13 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal;
 
-import pcap.api.handler.EventLoopHandler;
+import java.foreign.NativeTypes;
+import java.foreign.Scope;
+import java.foreign.memory.Callback;
+import java.foreign.memory.LayoutType;
+import java.foreign.memory.Pointer;
+import java.nio.ByteBuffer;
+import java.util.concurrent.TimeoutException;
 import pcap.api.internal.foreign.bpf_mapping;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.common.annotation.Inclubating;
@@ -11,16 +17,6 @@ import pcap.common.util.Validate;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
-
-import java.foreign.NativeTypes;
-import java.foreign.Scope;
-import java.foreign.memory.Callback;
-import java.foreign.memory.LayoutType;
-import java.foreign.memory.Pointer;
-import java.nio.ByteBuffer;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeoutException;
 
 /**
  * {@code Pcap} handle.
@@ -37,7 +33,6 @@ public class Pcap implements pcap.spi.Pcap {
   final int netmask;
   final int linktype;
   private final Scope scope;
-  private final Queue<Runnable> loopEvent = new LinkedBlockingQueue<>();
   boolean filterActivated;
   private Callback<PcapHandler> oneshotCallback;
   /** Event loop handler for {@link #loop(int, PacketHandler, Object)}. */
@@ -124,81 +119,28 @@ public class Pcap implements pcap.spi.Pcap {
   public <T> void loop(int count, PacketHandler<T> handler, T args)
       throws BreakException, ErrorException {
     synchronized (PcapConstant.LOCK) {
-      if (handler instanceof EventLoopHandler) {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("Looping {} packets.", count == -1 ? "infinite" : count);
-          LOGGER.debug("Packets processed with {} using event loop.", handler.getClass().getName());
-        }
-        Thread thread =
-            new Thread(
-                () -> {
-                  Callback<PcapHandler> callback =
-                      scope.allocateCallback(
-                          PcapHandler.class,
-                          (user, header, packets) -> {
-                            PacketHeader packetHeader = header.get().packetHeader();
-                            PacketBuffer packetBuffer =
-                                PcapPacketBuffer.fromReference(
-                                    packets, packetHeader.captureLength());
-                            loopEvent.offer(
-                                () -> {
-                                  handler.gotPacket(args, packetHeader, packetBuffer);
-                                });
-                          });
-                  int result =
-                      PcapConstant.MAPPING.pcap_loop(pcap, count, callback, Pointer.ofNull());
-                  loopTerminated = true;
-                  Pcap.this.loopResult = result;
-                },
-                Pcap.class.getName() + ":EventLoop-0");
-        thread.start();
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("Looping {} packets.", count == -1 ? "infinite" : count);
+        LOGGER.debug("Packets processed with {}.", handler.getClass().getName());
+      }
+      Callback<PcapHandler> callback =
+          scope.allocateCallback(
+              PcapHandler.class,
+              (user, header, packets) -> {
+                PacketHeader packetHeader = header.get().packetHeader();
+                handler.gotPacket(
+                    args,
+                    packetHeader,
+                    PcapPacketBuffer.fromReference(packets, packetHeader.captureLength()));
+              });
 
-        for (; ; ) {
-          if (!loopTerminated) {
-            Runnable runnable = loopEvent.poll();
-            if (runnable != null) {
-              runnable.run();
-            }
-          } else {
-            // wait till all event processed
-            Runnable runnable = loopEvent.poll();
-            while (runnable != null) {
-              runnable.run();
-              runnable = loopEvent.poll();
-            }
-            if (loopResult == 0) {
-              break;
-            } else if (loopResult == -2) {
-              throw new BreakException("");
-            } else {
-              throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
-            }
-          }
-        }
+      int result = PcapConstant.MAPPING.pcap_loop(pcap, count, callback, Pointer.ofNull());
+      if (result == 0) {
+        return;
+      } else if (result == -2) {
+        throw new BreakException("");
       } else {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("Looping {} packets.", count == -1 ? "infinite" : count);
-          LOGGER.debug("Packets processed with {}.", handler.getClass().getName());
-        }
-        Callback<PcapHandler> callback =
-            scope.allocateCallback(
-                PcapHandler.class,
-                (user, header, packets) -> {
-                  PacketHeader packetHeader = header.get().packetHeader();
-                  handler.gotPacket(
-                      args,
-                      packetHeader,
-                      PcapPacketBuffer.fromReference(packets, packetHeader.captureLength()));
-                });
-
-        int result = PcapConstant.MAPPING.pcap_loop(pcap, count, callback, Pointer.ofNull());
-        if (result == 0) {
-          return;
-        } else if (result == -2) {
-          throw new BreakException("");
-        } else {
-          throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
-        }
+        throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
       }
     }
   }

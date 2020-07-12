@@ -1,11 +1,18 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api;
 
+import java.foreign.NativeTypes;
+import java.foreign.Scope;
+import java.foreign.memory.Pointer;
+import java.nio.ByteBuffer;
+import java.util.Iterator;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import pcap.api.handler.EventLoopHandler;
 import pcap.api.internal.PcapConstant;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.common.logging.Logger;
@@ -15,15 +22,6 @@ import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 import pcap.spi.exception.warn.PromiscuousModeNotSupported;
-
-import java.foreign.NativeTypes;
-import java.foreign.Scope;
-import java.foreign.memory.Pointer;
-import java.nio.ByteBuffer;
-import java.util.Iterator;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
 
 // @EnabledOnJre(JRE.JAVA_14)
 @RunWith(JUnitPlatform.class)
@@ -538,7 +536,7 @@ public class PcapLiveTest {
    * @param <T> args type.
    * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
    */
-  public interface HexHandler<T> extends EventLoopHandler<T> {
+  public interface HexHandler<T> extends PacketHandler<T> {
 
     @Override
     default void gotPacket(T args, PacketHeader header, PacketBuffer buffer) {
