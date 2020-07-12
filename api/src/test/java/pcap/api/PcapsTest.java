@@ -57,7 +57,7 @@ public class PcapsTest {
   @Test
   public void lookupInet4AddressTest() throws ErrorException {
     final Interface anInterface = Pcaps.lookupInterfaces();
-    final Inet4Address inet4Address = Pcaps.lookupInet4Addres(anInterface);
+    final Inet4Address inet4Address = Pcaps.lookupInet4Address(anInterface);
     Assertions.assertNotNull(inet4Address);
   }
 

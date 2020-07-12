@@ -217,7 +217,7 @@ public abstract class Pcaps {
    * @return returns {@link Inet4Address}.
    * @throws ErrorException address not found.
    */
-  public static Inet4Address lookupInet4Addres(Interface source) throws ErrorException {
+  public static Inet4Address lookupInet4Address(Interface source) throws ErrorException {
     Iterator<Address> addressIterator = source.addresses().iterator();
     while (addressIterator.hasNext()) {
       Address next = addressIterator.next();
