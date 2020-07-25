@@ -148,6 +148,15 @@ public interface Pcap extends AutoCloseable {
   void send(PacketBuffer directBuffer, int size) throws ErrorException;
 
   /**
+   * Send a raw packet through the network interface.
+   *
+   * @param directBufer buffer started from {@link PacketBuffer#readerIndex()} to {@link
+   *     PacketBuffer#writerIndex()}.
+   * @throws ErrorException generic error.
+   */
+  void send(PacketBuffer directBufer) throws ErrorException;
+
+  /**
    * Used to specify a direction that packets will be captured. This method isn't necessarily fully
    * supported on all platforms; some platforms might return an error for all values, and some other
    * platforms might not support {@link Direction#PCAP_D_OUT}.
@@ -191,8 +200,9 @@ public interface Pcap extends AutoCloseable {
   void close();
 
   /**
-   * Create empty pointer.
+   * Create pointer to given type and automatically deallocate when this handler has been closed.
    *
+   * @see Pcap#close()
    * @param cls a class, ex {@link PacketHeader} and {@link PacketBuffer}.
    * @param <T> pointer type.
    * @return returns {@code <T>} instance.

@@ -1,10 +1,9 @@
 /** This code is licenced under the GPL version 2. */
-package pcap.common.memory.internal;
+package pcap.common.memory;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import pcap.common.annotation.Inclubating;
-import pcap.common.memory.Memory;
 import pcap.common.util.Strings;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */

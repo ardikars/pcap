@@ -1,14 +1,14 @@
 package pcap.common.memory.internal.nio;
 
 import java.nio.ByteBuffer;
+import pcap.common.memory.AbstractMemory;
 import pcap.common.memory.Memory;
-import pcap.common.memory.internal.AbstractMemory;
 
-abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
+public abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
 
-  final int baseIndex;
+  protected final int baseIndex;
 
-  AbstractByteBuffer(
+  public AbstractByteBuffer(
       int baseIndex,
       ByteBuffer buffer,
       int capacity,

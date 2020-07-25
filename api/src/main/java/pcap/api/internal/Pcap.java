@@ -150,8 +150,12 @@ public class Pcap implements pcap.spi.Pcap {
   public void nextEx(PacketBuffer packetBuffer, PacketHeader packetHeader)
       throws BreakException, TimeoutException, ErrorException {
     synchronized (PcapConstant.LOCK) {
-      PcapPacketHeader.Impl pcap_packet_header = (PcapPacketHeader.Impl) packetHeader;
       PcapPacketBuffer pcap_packet_buffer = (PcapPacketBuffer) packetBuffer;
+      PcapPacketHeader.Impl pcap_packet_header = (PcapPacketHeader.Impl) packetHeader;
+
+      if (pcap_packet_buffer.ptr == null) {
+        return;
+      }
 
       int result =
           PcapConstant.MAPPING.pcap_next_ex(pcap, pcap_packet_header.ptr, pcap_packet_buffer.ptr);
@@ -160,12 +164,10 @@ public class Pcap implements pcap.spi.Pcap {
         throw new TimeoutException("");
       } else if (result == 1) {
         PcapPacketHeader pcapPacketHeader = pcap_packet_header.ptr.get().get();
-        Pointer<Byte> pointer = pcap_packet_buffer.ptr.get();
 
         pcap_packet_header.timestamp = pcapPacketHeader.timestamp().timestamp();
         pcap_packet_header.captureLangth = pcapPacketHeader.captureLength();
         pcap_packet_header.length = pcapPacketHeader.length();
-        pcap_packet_buffer.buffer = pointer.asDirectByteBuffer(pcapPacketHeader.captureLength());
       } else {
         if (result == -2) {
           throw new BreakException("");
@@ -257,9 +259,31 @@ public class Pcap implements pcap.spi.Pcap {
           String.format(
               "buffer.capacity(%d) (expected: buffer.capacity(%d) >= size(%d)",
               buffer.capacity(), buffer.capacity(), size));
-      ByteBuffer byteBuffer = buffer.buffer();
+
       int result =
-          PcapConstant.MAPPING.pcap_sendpacket(pcap, Pointer.fromByteBuffer(byteBuffer), size);
+          PcapConstant.MAPPING.pcap_sendpacket(pcap, ((PcapPacketBuffer) buffer).ref, size);
+      if (result < 0) {
+        throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
+      }
+    }
+  }
+
+  @Override
+  public void send(PacketBuffer buffer) throws ErrorException {
+    synchronized (PcapConstant.LOCK) {
+      Validate.notIllegalArgument(
+          buffer.readerIndex() < buffer.writerIndex(),
+          String.format(
+              "readerIndex: %d, writerIndex: %d (expected: buffer.readerIndex(%d) < buffer.writerIndex(%d)",
+              buffer.readerIndex(),
+              buffer.writerIndex(),
+              buffer.readerIndex(),
+              buffer.writerIndex()));
+
+      Pointer<Byte> pointer = ((PcapPacketBuffer) buffer).ref;
+      int result =
+          PcapConstant.MAPPING.pcap_sendpacket(
+              pcap, pointer.offset(buffer.readerIndex()), buffer.writerIndex());
       if (result < 0) {
         throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pcap)));
       }
