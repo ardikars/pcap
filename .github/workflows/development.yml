@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ['macos-10.15', 'ubuntu-16.04']
-        java: [8]
+        java: [9]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/cache@v2
@@ -77,20 +77,20 @@ jobs:
 
       - name: Build (Mac OS)
         run: |
-          export JAVA_HOME_8=${JAVA_HOME}
+          export JAVA_HOME_LEGACY=${JAVA_HOME}
           export JAVA_HOME=/usr/local/jvm/panama
-          echo "JAVA_HOME_8 = $JAVA_HOME_8"
+          echo "JAVA_HOME_LEGACY = $JAVA_HOME_LEGACY"
           echo "JAVA_HOME = $JAVA_HOME"
-          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Pformat -Psonar, -Pjavadoc -Djava.library.path=/usr/lib -Dsonar.login="${{ secrets.sonar_token }}"
+          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Pformat -Psonar, -Pjavadoc -Plegacy-support -Djava.library.path=/usr/lib -Dsonar.login="${{ secrets.sonar_token }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: matrix.os == 'macos-10.15'
 
       - name: Build (Ubuntu)
         run: |
-          export JAVA_HOME_8=${JAVA_HOME}
+          export JAVA_HOME_LEGACY=${JAVA_HOME}
           export JAVA_HOME=/usr/local/jvm/panama
-          echo "JAVA_HOME_8 = $JAVA_HOME_8"
+          echo "JAVA_HOME_LEGACY = $JAVA_HOME_LEGACY"
           echo "JAVA_HOME = $JAVA_HOME"
-          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat, -Pjavadoc -Djava.library.path=/usr/lib
+          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat, -Pjavadoc -Plegacy-support -Djava.library.path=/usr/lib
         if: matrix.os == 'ubuntu-16.04'

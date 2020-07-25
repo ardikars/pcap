@@ -17,7 +17,7 @@
     <description>Crafting network packet</description>
 
     <properties>
-        <jdk.version>${java.version}</jdk.version>
+        <jdk.version>${java.legacy.version}</jdk.version>
         <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
@@ -58,6 +58,21 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>legacy-support</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <source>${jdk.version}</source>
+                            <target>${jdk.version}</target>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>coverage</id>
             <activation>

@@ -2,7 +2,7 @@
     <toolchain>
         <type>jdk</type>
         <provides>
-            <id>JavaLatest</id>
+            <id>Java14</id>
             <version>14</version>
         </provides>
         <configuration>
@@ -12,11 +12,11 @@
     <toolchain>
         <type>jdk</type>
         <provides>
-            <id>Java8</id>
-            <version>8</version>
+            <id>Java13</id>
+            <version>13</version>
         </provides>
         <configuration>
-            <jdkHome>${env.JAVA_HOME_8}</jdkHome>
+            <jdkHome>${env.JAVA_HOME_LEGACY}</jdkHome>
         </configuration>
     </toolchain>
 </toolchains>
