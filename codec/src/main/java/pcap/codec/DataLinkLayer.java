@@ -9,28 +9,17 @@ import pcap.common.util.NamedNumber;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-public final class DataLinkLayer extends NamedNumber<Short, DataLinkLayer> {
-
-  private static final Map<DataLinkLayer, Short> REGISTRY = new HashMap<>();
-
-  private static final Map<Short, AbstractPacket.Builder> BUILDER = new HashMap<>();
+public final class DataLinkLayer extends NamedNumber<Short, DataLinkLayer>
+    implements ProtocolType<Short> {
 
   /** Ethernet (10Mb, 100Mb, 1000Mb, and up): 1 */
   public static final DataLinkLayer EN10MB = new DataLinkLayer((short) 1, "Ethernet");
 
+  private static final Map<DataLinkLayer, Short> REGISTRY = new HashMap<>();
+  private static final Map<Short, AbstractPacket.Builder> BUILDER = new HashMap<>();
+
   public DataLinkLayer(int value, String name) {
     super((short) value, name);
-  }
-
-  public Packet newInstance(Memory buffer) {
-    AbstractPacket.Builder packetBuilder = BUILDER.get(this.value());
-    if (packetBuilder == null) {
-      if (buffer == null || buffer.capacity() <= 0) {
-        return null;
-      }
-      return new UnknownPacket.Builder().build(buffer);
-    }
-    return packetBuilder.build(buffer);
   }
 
   /**
@@ -43,7 +32,7 @@ public final class DataLinkLayer extends NamedNumber<Short, DataLinkLayer> {
         return entry.getKey();
       }
     }
-    return new DataLinkLayer((short) -1, "Unknown");
+    return new DataLinkLayer(value, "Unknown");
   }
 
   /**
@@ -54,5 +43,16 @@ public final class DataLinkLayer extends NamedNumber<Short, DataLinkLayer> {
       DataLinkLayer dataLinkLayer, AbstractPacket.Builder packetBuilder) {
     BUILDER.put(dataLinkLayer.value(), packetBuilder);
     REGISTRY.put(dataLinkLayer, dataLinkLayer.value());
+  }
+
+  public Packet newInstance(Memory buffer) {
+    AbstractPacket.Builder packetBuilder = BUILDER.get(this.value());
+    if (packetBuilder == null) {
+      if (buffer == null || buffer.capacity() <= 0) {
+        return null;
+      }
+      return new UnknownPacket.Builder().build(buffer);
+    }
+    return packetBuilder.build(buffer);
   }
 }

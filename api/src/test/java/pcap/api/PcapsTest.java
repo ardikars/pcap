@@ -56,14 +56,14 @@ public class PcapsTest {
 
   @Test
   public void lookupInet4AddressTest() throws ErrorException {
-    final Interface anInterface = Pcaps.lookupInterfaces();
+    final Interface anInterface = Pcaps.lookupInterface();
     final Inet4Address inet4Address = Pcaps.lookupInet4Address(anInterface);
     Assertions.assertNotNull(inet4Address);
   }
 
   @Test
   public void lookupInet6AddressTest() throws ErrorException {
-    final Interface anInterface = Pcaps.lookupInterfaces();
+    final Interface anInterface = Pcaps.lookupInterface();
     try {
       final Inet6Address inet6Address = Pcaps.lookupInet6Address(anInterface);
       Assertions.assertNotNull(inet6Address);

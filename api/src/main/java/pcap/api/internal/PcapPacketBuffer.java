@@ -6,7 +6,6 @@ import java.nio.ByteBuffer;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.memory.internal.nio.AbstractByteBuffer;
-import pcap.common.memory.internal.nio.DirectByteBuffer;
 import pcap.spi.PacketBuffer;
 
 /**
@@ -23,8 +22,15 @@ public class PcapPacketBuffer extends AbstractByteBuffer
   final int capacity;
 
   private PcapPacketBuffer(
-      Pointer<Pointer<Byte>> ptr, Pointer<Byte> ref, ByteBuffer buffer, int capacity) {
-    super(0, buffer, capacity, capacity, 0, 0);
+      Pointer<Pointer<Byte>> ptr,
+      Pointer<Byte> ref,
+      int baseIndex,
+      ByteBuffer buffer,
+      int capacity,
+      int maxCapacity,
+      int readerIndex,
+      int writerIndex) {
+    super(baseIndex, buffer, capacity, maxCapacity, readerIndex, writerIndex);
     this.ptr = ptr;
     this.ref = ref;
     this.buffer = buffer;
@@ -33,12 +39,12 @@ public class PcapPacketBuffer extends AbstractByteBuffer
 
   public static PcapPacketBuffer fromPointer(Pointer<Pointer<Byte>> pointer, int size) {
     ByteBuffer buffer = pointer.get().asDirectByteBuffer(size);
-    return new PcapPacketBuffer(pointer, pointer.get(), buffer, size);
+    return new PcapPacketBuffer(pointer, pointer.get(), 0, buffer, size, size, 0, 0);
   }
 
   public static PcapPacketBuffer fromReference(Pointer<Byte> reference, int size) {
     ByteBuffer buffer = reference.asDirectByteBuffer(size);
-    return new PcapPacketBuffer(null, reference, buffer, size);
+    return new PcapPacketBuffer(null, reference, 0, buffer, size, size, 0, 0);
   }
 
   @Override
@@ -75,17 +81,24 @@ public class PcapPacketBuffer extends AbstractByteBuffer
 
   @Override
   public Memory slice(int index, int length) {
-    DirectByteBuffer directByteBuffer =
-        new DirectByteBuffer(
-            0, nioBuffer(), capacity(), maxCapacity(), readerIndex(), writerIndex());
-    return directByteBuffer.slice(index, length);
+    if (length > capacity - index) {
+      throw new IllegalArgumentException(
+          String.format("length: %d (expected: length <= %d)", length, capacity - index));
+    }
+    return new Sliced(index, length, this);
   }
 
   @Override
   public Memory duplicate() {
-    return ptr == null
-        ? PcapPacketBuffer.fromReference(ref, capacity())
-        : PcapPacketBuffer.fromPointer(ptr, capacity());
+    return new PcapPacketBuffer(
+        ptr,
+        ref,
+        baseIndex,
+        buffer.duplicate(),
+        capacity(),
+        maxCapacity(),
+        readerIndex(),
+        writerIndex());
   }
 
   @Override
@@ -96,5 +109,23 @@ public class PcapPacketBuffer extends AbstractByteBuffer
   @Override
   public long address() {
     return memoryAddress();
+  }
+
+  public static final class Sliced extends PcapPacketBuffer {
+
+    final PcapPacketBuffer previous;
+
+    public Sliced(int index, int length, PcapPacketBuffer previous) {
+      super(
+          previous.ptr,
+          previous.ref,
+          previous.baseIndex + index,
+          previous.buffer(ByteBuffer.class).duplicate(),
+          length,
+          previous.maxCapacity() - index < 0 ? 0 : previous.maxCapacity() - index,
+          previous.readerIndex() - index < 0 ? 0 : previous.readerIndex() - index,
+          previous.writerIndex() - index < 0 ? 0 : previous.writerIndex() - index);
+      this.previous = previous;
+    }
   }
 }

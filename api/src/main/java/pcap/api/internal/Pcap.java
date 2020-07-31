@@ -35,10 +35,6 @@ public class Pcap implements pcap.spi.Pcap {
   private final Scope scope;
   boolean filterActivated;
   private Callback<PcapHandler> oneshotCallback;
-  /** Event loop handler for {@link #loop(int, PacketHandler, Object)}. */
-  private volatile boolean loopTerminated;
-
-  private volatile int loopResult;
 
   public Pcap(Pointer<pcap_mapping.pcap> pcap) {
     this(pcap, 0xFFFFFF00);

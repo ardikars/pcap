@@ -213,7 +213,7 @@ public class Arp extends AbstractPacket {
 
     @Override
     public NetworkLayer payloadType() {
-      return NetworkLayer.UNKNOWN;
+      return NetworkLayer.EMPTY;
     }
 
     @Override

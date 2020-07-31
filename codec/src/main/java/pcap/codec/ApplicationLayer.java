@@ -9,7 +9,8 @@ import pcap.common.util.NamedNumber;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-public final class ApplicationLayer extends NamedNumber<Short, ApplicationLayer> {
+public final class ApplicationLayer extends NamedNumber<Short, ApplicationLayer>
+    implements ProtocolType<Short> {
 
   private static final Map<ApplicationLayer, Short> REGISTRY = new HashMap<>();
 
@@ -17,6 +18,25 @@ public final class ApplicationLayer extends NamedNumber<Short, ApplicationLayer>
 
   public ApplicationLayer(Short value, String name) {
     super(value, name);
+  }
+
+  public static ApplicationLayer valueOf(short value) {
+    for (Map.Entry<ApplicationLayer, Short> entry : REGISTRY.entrySet()) {
+      if (entry.getValue() == value) {
+        return entry.getKey();
+      }
+    }
+    return new ApplicationLayer(value, "Unknown");
+  }
+
+  /**
+   * @param applicationLayer application type.
+   * @param packetBuilder packet builder.
+   */
+  public static synchronized void register(
+      ApplicationLayer applicationLayer, AbstractPacket.Builder packetBuilder) {
+    BUILDER.put(applicationLayer.value(), packetBuilder);
+    REGISTRY.put(applicationLayer, applicationLayer.value());
   }
 
   public Packet newInstance(Memory buffer) {
@@ -28,24 +48,5 @@ public final class ApplicationLayer extends NamedNumber<Short, ApplicationLayer>
       return new UnknownPacket.Builder().build(buffer);
     }
     return packetBuilder.build(buffer);
-  }
-
-  public static ApplicationLayer valueOf(short value) {
-    for (Map.Entry<ApplicationLayer, Short> entry : REGISTRY.entrySet()) {
-      if (entry.getValue() == value) {
-        return entry.getKey();
-      }
-    }
-    return new ApplicationLayer((short) -1, "Unknown");
-  }
-
-  /**
-   * @param applicationLayer application type.
-   * @param packetBuilder packet builder.
-   */
-  public static synchronized void register(
-      ApplicationLayer applicationLayer, AbstractPacket.Builder packetBuilder) {
-    BUILDER.put(applicationLayer.value(), packetBuilder);
-    REGISTRY.put(applicationLayer, applicationLayer.value());
   }
 }

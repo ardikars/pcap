@@ -9,7 +9,8 @@ import pcap.common.util.NamedNumber;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-public final class TransportLayer extends NamedNumber<Byte, TransportLayer> {
+public final class TransportLayer extends NamedNumber<Byte, TransportLayer>
+    implements ProtocolType<Byte> {
 
   public static final TransportLayer ICMP =
       new TransportLayer((byte) 1, "Internet Control Message Protocol Version 4");
@@ -27,8 +28,6 @@ public final class TransportLayer extends NamedNumber<Byte, TransportLayer> {
 
   public static final TransportLayer UDP = new TransportLayer((byte) 17, "User Datagram Protocol");
 
-  public static final TransportLayer UNKNOWN = new TransportLayer((byte) -1, "Unknown");
-
   private static final Map<Byte, TransportLayer> REGISTRY = new HashMap<>();
 
   private static final Map<Byte, AbstractPacket.Builder> BUILDER = new HashMap<>();
@@ -40,7 +39,7 @@ public final class TransportLayer extends NamedNumber<Byte, TransportLayer> {
   public static TransportLayer valueOf(final Byte value) {
     TransportLayer transportLayer = REGISTRY.get(value);
     if (transportLayer == null) {
-      return UNKNOWN;
+      return new TransportLayer(value, "Unknown");
     } else {
       return transportLayer;
     }
