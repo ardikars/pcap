@@ -40,4 +40,25 @@ public class HeapByteBuffer extends AbstractByteBuffer implements Memory.Heap {
     return new HeapByteBuffer(
         baseIndex, buffer.duplicate(), capacity(), maxCapacity(), readerIndex(), writerIndex());
   }
+
+  public static class SlicedHeapByteBuffer extends HeapByteBuffer implements Memory.Sliced {
+
+    final HeapByteBuffer previous;
+
+    public SlicedHeapByteBuffer(int index, int length, HeapByteBuffer previous) {
+      super(
+          previous.baseIndex + index,
+          previous.buffer(ByteBuffer.class).duplicate(),
+          length,
+          previous.maxCapacity() - index < 0 ? 0 : previous.maxCapacity() - index,
+          previous.readerIndex() - index < 0 ? 0 : previous.readerIndex() - index,
+          previous.writerIndex() - index < 0 ? 0 : previous.writerIndex() - index);
+      this.previous = previous;
+    }
+
+    @Override
+    public Memory unSlice() {
+      return previous;
+    }
+  }
 }

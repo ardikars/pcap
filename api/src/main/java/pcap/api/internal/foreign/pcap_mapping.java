@@ -118,6 +118,9 @@ public interface pcap_mapping {
   @NativeFunction("(u64:${pcap})i32")
   int pcap_datalink(Pointer<pcap> p);
 
+  @NativeFunction("(u64:${pcap})i32")
+  int pcap_bufsize(Pointer<pcap> p);
+
   @NativeFunction("(u64:${pcap}u64:u8)u64:${pcap_dumper}")
   Pointer<pcap_dumper> pcap_dump_open(Pointer<pcap> p, Pointer<Byte> file);
 

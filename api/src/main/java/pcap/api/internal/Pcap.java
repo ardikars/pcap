@@ -7,12 +7,17 @@ import java.foreign.memory.Callback;
 import java.foreign.memory.LayoutType;
 import java.foreign.memory.Pointer;
 import java.nio.ByteBuffer;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeoutException;
 import pcap.api.internal.foreign.bpf_mapping;
 import pcap.api.internal.foreign.pcap_mapping;
 import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
+import pcap.common.memory.Memories;
+import pcap.common.memory.Memory;
+import pcap.common.memory.MemoryAllocator;
+import pcap.common.util.Properties;
 import pcap.common.util.Validate;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
@@ -27,12 +32,18 @@ import pcap.spi.exception.error.BreakException;
 public class Pcap implements pcap.spi.Pcap {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Pcap.class);
+  private static final boolean BUFFER_POOLING = Properties.getBoolean("pcap.bufferPooling", true);
+  private static final int BUFFER_POOL_SIZE = Properties.getInt("pcap.bufferPoolSize", 10);
+  private static final int BUFFER_MAX_POOL_SIZE = Properties.getInt("pcap.bufferMaxPoolSize", 50);
+
   final Pointer<pcap_mapping.pcap> pcap;
   final Pointer<bpf_mapping.bpf_program> bpf_program;
   final Pointer<PcapStatus> pcap_stat;
   final int netmask;
   final int linktype;
+  final MemoryAllocator allocator;
   private final Scope scope;
+
   boolean filterActivated;
   private Callback<PcapHandler> oneshotCallback;
 
@@ -48,6 +59,13 @@ public class Pcap implements pcap.spi.Pcap {
     this.netmask = netmask;
     this.linktype = PcapConstant.MAPPING.pcap_datalink(pcap);
     this.filterActivated = false;
+    if (BUFFER_POOLING) {
+      this.allocator =
+          Memories.directAllocator(
+              BUFFER_POOL_SIZE, BUFFER_MAX_POOL_SIZE, PcapConstant.MAPPING.pcap_bufsize(pcap));
+    } else {
+      this.allocator = Memories.directAllocator();
+    }
   }
 
   /** {@inheritDoc} */
@@ -120,15 +138,7 @@ public class Pcap implements pcap.spi.Pcap {
         LOGGER.debug("Packets processed with {}.", handler.getClass().getName());
       }
       Callback<PcapHandler> callback =
-          scope.allocateCallback(
-              PcapHandler.class,
-              (user, header, packets) -> {
-                PacketHeader packetHeader = header.get().packetHeader();
-                handler.gotPacket(
-                    args,
-                    packetHeader,
-                    PcapPacketBuffer.fromReference(packets, packetHeader.captureLength()));
-              });
+          scope.allocateCallback(PcapHandler.class, newPcapHandler(args, handler));
 
       int result = PcapConstant.MAPPING.pcap_loop(pcap, count, callback, Pointer.ofNull());
       if (result == 0) {
@@ -352,6 +362,33 @@ public class Pcap implements pcap.spi.Pcap {
       }
       throw new IllegalArgumentException(
           "A class (" + cls + ") doesn't supported for this operation.");
+    }
+  }
+
+  private <T> PcapHandler newPcapHandler(T args, PacketHandler<T> handler) {
+    if (args instanceof ExecutorService) {
+      ExecutorService executorService = (ExecutorService) args;
+      return (user, header, packets) -> {
+        PacketHeader packetHeader = header.get().packetHeader();
+        Memory memory = allocator.allocate(packetHeader.captureLength());
+        Pointer<Byte> ptr = Pointer.fromByteBuffer(memory.nioBuffer());
+        Pointer.copy(packets, ptr, packetHeader.captureLength());
+        executorService.submit(
+            () -> {
+              handler.gotPacket(
+                  args,
+                  packetHeader,
+                  PcapPacketBuffer.fromReference(ptr, packetHeader.captureLength()));
+            });
+      };
+    } else {
+      return (user, header, packets) -> {
+        PacketHeader packetHeader = header.get().packetHeader();
+        handler.gotPacket(
+            args,
+            packetHeader,
+            PcapPacketBuffer.fromReference(packets, packetHeader.captureLength()));
+      };
     }
   }
 }

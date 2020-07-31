@@ -5,7 +5,7 @@ import java.foreign.memory.Pointer;
 import java.nio.ByteBuffer;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
-import pcap.common.memory.internal.nio.AbstractByteBuffer;
+import pcap.common.memory.internal.nio.DirectByteBuffer;
 import pcap.spi.PacketBuffer;
 
 /**
@@ -14,8 +14,7 @@ import pcap.spi.PacketBuffer;
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
 @Inclubating
-public class PcapPacketBuffer extends AbstractByteBuffer
-    implements PacketBuffer, Memory.Direct<Long> {
+public class PcapPacketBuffer extends DirectByteBuffer implements PacketBuffer {
 
   final Pointer<Pointer<Byte>> ptr; // nullable
   final Pointer<Byte> ref;
@@ -63,11 +62,6 @@ public class PcapPacketBuffer extends AbstractByteBuffer
   @Override
   public ByteBuffer buffer() {
     return nioBuffer();
-  }
-
-  @Override
-  public int capacity() {
-    return capacity;
   }
 
   @Override
