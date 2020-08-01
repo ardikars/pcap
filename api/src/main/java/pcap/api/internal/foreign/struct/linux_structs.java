@@ -1,3 +1,4 @@
+/** This code is licenced under the GPL version 2. */
 package pcap.api.internal.foreign.struct;
 
 import java.foreign.annotations.NativeGetter;
@@ -5,6 +6,11 @@ import java.foreign.annotations.NativeStruct;
 import java.foreign.memory.Array;
 import java.foreign.memory.Struct;
 
+/**
+ * Linux structs.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 public interface linux_structs {
 
   @NativeStruct("[u16(sa_family)[14u8](sa_data)](sockaddr)")

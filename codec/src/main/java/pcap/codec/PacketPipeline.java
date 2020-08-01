@@ -1,10 +1,12 @@
 package pcap.codec;
 
+import pcap.common.memory.Memory;
+
 import java.lang.annotation.*;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
-import pcap.common.memory.Memory;
 
 public interface PacketPipeline extends Iterable<PacketPipeline.PacketHandler> {
 
@@ -98,20 +100,6 @@ public interface PacketPipeline extends Iterable<PacketPipeline.PacketHandler> {
       }
     }
 
-    private PacketHandlerContext tailContext(Class<? extends PacketHandler> type) {
-      PacketHandlerContext ctx = tail;
-      for (; ; ) {
-        if (ctx == null) {
-          return ctx;
-        }
-        if (ctx.handler.getClass() == type) {
-          return ctx;
-        } else {
-          ctx = ctx.prev;
-        }
-      }
-    }
-
     private void ensureAddable(PacketHandler handler) {
       if (headContext(handler.getClass()) != null) {
         if (handler.getClass().getAnnotation(PacketHandler.Sharable.class) == null) {
@@ -134,6 +122,9 @@ public interface PacketPipeline extends Iterable<PacketPipeline.PacketHandler> {
 
         @Override
         public PacketHandler next() {
+          if (!hasNext()) {
+            throw new NoSuchElementException("No more packet handler.");
+          }
           PacketHandlerContext current = ctx.get();
           ctx.set(ctx.get().next);
           return current.handler;

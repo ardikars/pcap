@@ -1,3 +1,4 @@
+/** This code is licenced under the GPL version 2. */
 package pcap.api.internal.foreign.mapping;
 
 import java.foreign.Libraries;
@@ -7,6 +8,11 @@ import java.foreign.memory.Pointer;
 import java.lang.invoke.MethodHandles;
 import pcap.api.internal.foreign.struct.windows_structs;
 
+/**
+ * Windows native mapping.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
 public class WindowsNativeMapping {
 
   private static final windows_iphlpapi_mapping IPHLPAPI_MAPPING;
@@ -22,7 +28,7 @@ public class WindowsNativeMapping {
     return IPHLPAPI_MAPPING.GetAdaptersInfo(AdapterInfo, SizePointer);
   }
 
-  @NativeHeader()
+  @NativeHeader
   public interface windows_iphlpapi_mapping {
 
     @NativeFunction("(u64:${IP_ADAPTER_INFO}u64:u64)u64")

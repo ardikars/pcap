@@ -18,6 +18,7 @@ import pcap.spi.Pcap;
 import pcap.spi.Timestamp;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
+import pcap.spi.exception.error.NotActivatedException;
 
 // @EnabledOnJre(JRE.JAVA_14)
 @RunWith(JUnitPlatform.class)
@@ -33,6 +34,42 @@ public class PcapOfflineTest {
   public void offlineTest() throws ErrorException {
     Pcap pcap = Pcaps.offline(new PcapOffline(new File(FILE)));
     Assertions.assertNotNull(pcap);
+    pcap.close();
+  }
+
+  @Test
+  public void isSwappedTest() throws ErrorException, NotActivatedException {
+    Pcap pcap = Pcaps.offline(new PcapOffline(new File(FILE)));
+    Assertions.assertNotNull(pcap);
+    boolean swapped = pcap.isSwapped();
+    Assertions.assertTrue(swapped || !swapped);
+    pcap.close();
+  }
+
+  @Test
+  public void minorAndMajorVersionTest() throws ErrorException {
+    Pcap pcap = Pcaps.offline(new PcapOffline(new File(FILE)));
+    Assertions.assertNotNull(pcap);
+    int majorVerson = pcap.majorVersion();
+    int minorVersion = pcap.minorVersion();
+    Assertions.assertTrue(majorVerson >= 0);
+    Assertions.assertTrue(minorVersion >= 0);
+    pcap.close();
+  }
+
+  @Test
+  public void setNonBlokingTest() throws ErrorException {
+    Pcap pcap = Pcaps.offline(new PcapOffline(new File(FILE)));
+    Assertions.assertNotNull(pcap);
+    Assertions.assertThrows(ErrorException.class, () -> pcap.setNonBlock(true));
+    pcap.close();
+  }
+
+  @Test
+  public void getNonBlockingTest() throws ErrorException {
+    Pcap pcap = Pcaps.offline(new PcapOffline(new File(FILE)));
+    Assertions.assertNotNull(pcap);
+    Assertions.assertFalse(pcap.getNonBlock()); // always false on offline handler.
     pcap.close();
   }
 

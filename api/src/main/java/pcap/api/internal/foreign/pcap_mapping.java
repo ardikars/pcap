@@ -60,7 +60,7 @@ public interface pcap_mapping {
 
   @NativeFunction("(u64:u8u32u64:u8)u64:${pcap}")
   Pointer<pcap> pcap_open_offline_with_tstamp_precision(
-      Pointer<Byte> p, int var1, Pointer<Byte> var2);
+      Pointer<Byte> p, int ts_precision, Pointer<Byte> errbuf);
 
   @NativeFunction("(u64:u8u64:u8)u64:${pcap}")
   Pointer<pcap> pcap_open_offline(Pointer<Byte> p, Pointer<Byte> file);
@@ -92,11 +92,14 @@ public interface pcap_mapping {
   @NativeFunction("(u64:${pcap}i32)i32")
   int pcap_setdirection(Pointer<pcap> p, int direction);
 
+  @NativeFunction("(u64:${pcap}u64:u8)i32")
+  int pcap_getnonblock(Pointer<pcap> p, Pointer<Byte> errbuf);
+
   @NativeFunction("(u64:${pcap}i32u64:u8)i32")
-  int pcap_setnonblock(Pointer<pcap> p, int var1, Pointer<Byte> var2);
+  int pcap_setnonblock(Pointer<pcap> p, int nonblock, Pointer<Byte> errbuf);
 
   @NativeFunction("(u64:${pcap}u64:u8i32)i32")
-  int pcap_sendpacket(Pointer<pcap> p, Pointer<Byte> var1, int var2);
+  int pcap_sendpacket(Pointer<pcap> p, Pointer<Byte> buf, int len);
 
   @NativeFunction("(i32)u64:u8")
   Pointer<Byte> pcap_statustostr(int status);
@@ -121,11 +124,23 @@ public interface pcap_mapping {
   @NativeFunction("(u64:${pcap})i32")
   int pcap_bufsize(Pointer<pcap> p);
 
+  @NativeFunction("(u64:${pcap})i32")
+  int pcap_snapshot(Pointer<pcap> p);
+
+  @NativeFunction("(u64:${pcap})i32")
+  int pcap_major_version(Pointer<pcap> p);
+
+  @NativeFunction("(u64:${pcap})i32")
+  int pcap_minor_version(Pointer<pcap> p);
+
+  @NativeFunction("(u64:${pcap})i32")
+  int pcap_is_swapped(Pointer<pcap> p);
+
   @NativeFunction("(u64:${pcap}u64:u8)u64:${pcap_dumper}")
   Pointer<pcap_dumper> pcap_dump_open(Pointer<pcap> p, Pointer<Byte> file);
 
   @NativeFunction("(u64:${pcap}u64:u8)u64:${pcap_dumper}")
-  Pointer<pcap_dumper> pcap_dump_open_append(Pointer<pcap> p, Pointer<Byte> var1);
+  Pointer<pcap_dumper> pcap_dump_open_append(Pointer<pcap> p, Pointer<Byte> file);
 
   @NativeFunction("(u64:${pcap_dumper})i64")
   long pcap_dump_ftell(Pointer<pcap_dumper> p);

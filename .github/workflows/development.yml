@@ -55,9 +55,9 @@ jobs:
 
       - name: actions/setup-pcap
         run: |
-          find /usr/lib/ -iname "libpcap*"
-          mkdir -p ~/Library/Java/Extensions
-          cp -rf /usr/lib/libpcap.* ~/Library/Java/Extensions
+          sudo find /usr/lib/ -iname "libpcap*"
+          sudo mkdir -p ~/Library/Java/Extensions
+          sudo cp -rf /usr/lib/libpcap.* ~/Library/Java/Extensions
           sudo chown $(whoami):admin /dev/bpf*
         if: matrix.os == 'macos-10.15'
 
@@ -66,7 +66,12 @@ jobs:
           sudo apt-get update && sudo apt-get -y install libpcap0.8 libcap2-bin
           sudo setcap cap_net_raw,cap_net_admin=eip /usr/local/jvm/panama/bin/java
           sudo find /usr/lib/ -iname "libpcap*"
-          sudo cp /usr/lib/x86_64-linux-gnu/libpcap.so.0.8 /usr/lib/libpcap.so
+          sudo mkdir -p /usr/java/packages/lib /usr/lib64 /lib64 /lib /usr/lib
+          sudo cp /usr/lib/x86_64-linux-gnu/libpcap.* /usr/lib/
+          sudo cp /usr/lib/x86_64-linux-gnu/libpcap.* /usr/lib64/
+          sudo cp /usr/lib/x86_64-linux-gnu/libpcap.* /lib/
+          sudo cp /usr/lib/x86_64-linux-gnu/libpcap.* /lib64/
+          sudo cp /usr/lib/x86_64-linux-gnu/libpcap.* /usr/java/packages/lib/
         if: matrix.os == 'ubuntu-16.04'
 
       - name: actions/setup-pcap
@@ -81,7 +86,7 @@ jobs:
           export JAVA_HOME=/usr/local/jvm/panama
           echo "JAVA_HOME_LEGACY = $JAVA_HOME_LEGACY"
           echo "JAVA_HOME = $JAVA_HOME"
-          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Pformat -Psonar, -Pjavadoc -Plegacy-support -Djava.library.path=/usr/lib -Dsonar.login="${{ secrets.sonar_token }}"
+          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Pformat -Psonar -Pjavadoc -Plegacy-support -Dsonar.login="${{ secrets.sonar_token }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: matrix.os == 'macos-10.15'
@@ -92,5 +97,7 @@ jobs:
           export JAVA_HOME=/usr/local/jvm/panama
           echo "JAVA_HOME_LEGACY = $JAVA_HOME_LEGACY"
           echo "JAVA_HOME = $JAVA_HOME"
-          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat, -Pjavadoc -Plegacy-support -Djava.library.path=/usr/lib
+          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat -Pjavadoc -Plegacy-support
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: matrix.os == 'ubuntu-16.04'

@@ -22,6 +22,7 @@ import pcap.common.util.Validate;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
+import pcap.spi.exception.error.NotActivatedException;
 
 /**
  * {@code Pcap} handle.
@@ -41,6 +42,9 @@ public class Pcap implements pcap.spi.Pcap {
   final Pointer<PcapStatus> pcap_stat;
   final int netmask;
   final int linktype;
+  final int majorVersion;
+  final int minorVersion;
+  final boolean isSwapped;
   final MemoryAllocator allocator;
   private final Scope scope;
 
@@ -59,10 +63,22 @@ public class Pcap implements pcap.spi.Pcap {
     this.netmask = netmask;
     this.linktype = PcapConstant.MAPPING.pcap_datalink(pcap);
     this.filterActivated = false;
+    int snapshot = PcapConstant.MAPPING.pcap_snapshot(pcap);
+    int bufsize = PcapConstant.MAPPING.pcap_bufsize(pcap);
+    this.majorVersion = PcapConstant.MAPPING.pcap_major_version(pcap);
+    this.minorVersion = PcapConstant.MAPPING.pcap_minor_version(pcap);
+    this.isSwapped = PcapConstant.MAPPING.pcap_is_swapped(pcap) == 1;
+
+    if (snapshot > bufsize) {
+      LOGGER.warn(
+          "snapshot: %d, bufsize: %d (expected: bufsize(%d) > snapshot(%d))",
+          snapshot, bufsize, bufsize, snapshot);
+    }
     if (BUFFER_POOLING) {
-      this.allocator =
-          Memories.directAllocator(
-              BUFFER_POOL_SIZE, BUFFER_MAX_POOL_SIZE, PcapConstant.MAPPING.pcap_bufsize(pcap));
+      LOGGER.debug(
+          "Allocating pooled buffer with poolSize: %d, maxPoolSize: %d, capacity: %d",
+          BUFFER_POOL_SIZE, BUFFER_MAX_POOL_SIZE, snapshot);
+      this.allocator = Memories.directAllocator(BUFFER_POOL_SIZE, BUFFER_MAX_POOL_SIZE, snapshot);
     } else {
       this.allocator = Memories.directAllocator();
     }
@@ -314,6 +330,35 @@ public class Pcap implements pcap.spi.Pcap {
     }
   }
 
+  @Override
+  public boolean isSwapped() throws NotActivatedException {
+    return isSwapped;
+  }
+
+  @Override
+  public int majorVersion() {
+    return majorVersion;
+  }
+
+  @Override
+  public int minorVersion() {
+    return minorVersion;
+  }
+
+  @Override
+  public boolean getNonBlock() throws ErrorException {
+    synchronized (PcapConstant.LOCK) {
+      try (Scope scope = Scope.globalScope().fork()) {
+        Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
+        int result = PcapConstant.MAPPING.pcap_getnonblock(pcap, errbuf);
+        if (result < 0) {
+          throw new ErrorException(Pointer.toString(errbuf));
+        }
+        return result == 1;
+      }
+    }
+  }
+
   /** {@inheritDoc} */
   @Override
   public void setNonBlock(boolean blocking) throws ErrorException {
@@ -369,17 +414,20 @@ public class Pcap implements pcap.spi.Pcap {
     if (args instanceof ExecutorService) {
       ExecutorService executorService = (ExecutorService) args;
       return (user, header, packets) -> {
-        PacketHeader packetHeader = header.get().packetHeader();
-        Memory memory = allocator.allocate(packetHeader.captureLength());
-        Pointer<Byte> ptr = Pointer.fromByteBuffer(memory.nioBuffer());
-        Pointer.copy(packets, ptr, packetHeader.captureLength());
-        executorService.submit(
-            () -> {
-              handler.gotPacket(
-                  args,
-                  packetHeader,
-                  PcapPacketBuffer.fromReference(ptr, packetHeader.captureLength()));
-            });
+        try {
+          PacketHeader packetHeader = header.get().packetHeader();
+          Memory memory = allocator.allocate(packetHeader.captureLength());
+          Pointer<Byte> ptr = Pointer.fromByteBuffer(memory.nioBuffer());
+          Pointer.copy(packets, ptr, packetHeader.captureLength());
+          executorService.submit(
+              () ->
+                  handler.gotPacket(
+                      args,
+                      packetHeader,
+                      PcapPacketBuffer.fromReference(ptr, packetHeader.captureLength())));
+        } catch (IllegalStateException e) { // max pool reached
+          LOGGER.warn(e);
+        }
       };
     } else {
       return (user, header, packets) -> {

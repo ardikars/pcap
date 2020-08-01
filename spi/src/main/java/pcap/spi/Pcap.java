@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.TimeoutException;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
+import pcap.spi.exception.error.NotActivatedException;
 
 /**
  * A handle for {@code pcap} api.
@@ -178,12 +179,49 @@ public interface Pcap extends AutoCloseable {
   void setDirection(Direction direction) throws ErrorException;
 
   /**
+   * Find out out whether a 'savefile' has the native byte order.
+   *
+   * @return returns {@code true} if a handle is on offline mode ('savefile') and using a different
+   *     byte order with current system. For live handle, it's always returns {@code false}.
+   * @throws NotActivatedException if called this function on a capture handle that has been created
+   *     but not activated.
+   */
+  boolean isSwapped() throws NotActivatedException;
+
+  /**
+   * Get major version number of a 'savefile'. If {@link Pcap} handle is in live mode, this method
+   * are not meaningful.
+   *
+   * @return returns major version of a 'savefile.
+   */
+  int majorVersion();
+
+  /**
+   * Get minor version number of a 'savefile'. If {@link Pcap} handle is in live mode, this method
+   * are not meaningful.
+   *
+   * @return returns minor version of a 'savefile'.
+   */
+  int minorVersion();
+
+  /**
+   * Returns blocking mode. Always returns false if a {@link Pcap} handle in offline handle
+   * (savefile).
+   *
+   * @return returns {@code true} if non blocking, {@code false otherwise}.
+   * @throws ErrorException error occurred.
+   */
+  boolean getNonBlock() throws ErrorException;
+
+  /**
    * Puts a this capture handle into `non-blocking` mode, or takes it out of `non-blocking` mode,
    * depending on whether the nonblock argument is `true` or `false`. It has no effect on
    * `savefiles`. In `non-blocking` mode, an attempt to read from the capture descriptor with {@link
    * Pcap#dispatch(int, PacketHandler, Object)} will, if no packets are currently available to be
    * read, return void; immediately rather than blocking waiting for packets to arrive. {@link
    * Pcap#loop(int, PacketHandler, Object)} will not work in `non-blocking` mode.
+   *
+   * <p>When {@link Pcap} handle created, a handle is not in non blocking mode.
    *
    * @param blocking `true` for enable non blocking mode, `false` otherwise.
    * @throws ErrorException throwing some error when calling this method.
