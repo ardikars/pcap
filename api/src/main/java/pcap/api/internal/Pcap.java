@@ -63,16 +63,9 @@ public class Pcap implements pcap.spi.Pcap {
     this.linktype = PcapMapping.MAPPING.pcap_datalink(pcap);
     this.filterActivated = false;
     int snapshot = PcapMapping.MAPPING.pcap_snapshot(pcap);
-    int bufsize = PcapMapping.MAPPING.pcap_bufsize(pcap);
     this.majorVersion = PcapMapping.MAPPING.pcap_major_version(pcap);
     this.minorVersion = PcapMapping.MAPPING.pcap_minor_version(pcap);
     this.isSwapped = PcapMapping.MAPPING.pcap_is_swapped(pcap) == 1;
-
-    if (snapshot > bufsize) {
-      LOGGER.warn(
-          "snapshot: %d, bufsize: %d (expected: bufsize(%d) > snapshot(%d))",
-          snapshot, bufsize, bufsize, snapshot);
-    }
     if (BUFFER_POOLING) {
       LOGGER.debug(
           "Allocating pooled buffer with poolSize: %d, maxPoolSize: %d, capacity: %d",

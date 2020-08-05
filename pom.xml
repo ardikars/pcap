@@ -7,7 +7,7 @@
     <groupId>com.ardikars.pcap</groupId>
     <artifactId>pcap</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.20</version>
+    <version>0.0.21</version>
 
     <modules>
         <module>spi</module>

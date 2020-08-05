@@ -123,9 +123,6 @@ public interface pcap_header {
   int pcap_datalink(Pointer<pcap> p);
 
   @NativeFunction("(u64:${pcap})i32")
-  int pcap_bufsize(Pointer<pcap> p);
-
-  @NativeFunction("(u64:${pcap})i32")
   int pcap_snapshot(Pointer<pcap> p);
 
   @NativeFunction("(u64:${pcap})i32")

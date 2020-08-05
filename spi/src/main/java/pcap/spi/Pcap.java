@@ -307,5 +307,22 @@ public interface Pcap extends AutoCloseable {
   }
 
   /** Windows pcap api extension. */
-  interface WinPcap {}
+  interface WinPcap {
+
+    /**
+     * Get the handle of the event associated with the pcap handle.
+     * @return returns event handle.
+     */
+    Handle event();
+
+    interface Handle {
+
+      /**
+       * Returns memory address for this handle.
+       *
+       * @return returns memory address.
+       */
+      long address();
+    }
+  }
 }
