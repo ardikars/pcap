@@ -6,11 +6,14 @@ import java.foreign.Scope;
 import java.foreign.memory.Pointer;
 import java.io.File;
 import pcap.api.internal.Pcap;
-import pcap.api.internal.PcapConstant;
-import pcap.api.internal.foreign.pcap_mapping;
+import pcap.api.internal.UnixPcap;
+import pcap.api.internal.WinPcap;
+import pcap.api.internal.foreign.mapping.PcapMapping;
+import pcap.api.internal.foreign.pcap_header;
 import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
+import pcap.common.util.Platforms;
 import pcap.spi.exception.ErrorException;
 
 @Inclubating
@@ -43,15 +46,15 @@ public class PcapOffline extends Pcaps {
 
   @Override
   Pcap open() throws ErrorException {
-    synchronized (PcapConstant.LOCK) {
+    synchronized (PcapMapping.LOCK) {
       try (Scope scope = Scope.globalScope().fork()) {
-        Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
-        Pointer<pcap_mapping.pcap> pointer;
+        Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapMapping.ERRBUF_SIZE);
+        Pointer<pcap_header.pcap> pointer;
         if (options.timestampPrecision() == null) {
           if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Opening file: {}", file);
           }
-          pointer = PcapConstant.MAPPING.pcap_open_offline(scope.allocateCString(file), errbuf);
+          pointer = PcapMapping.MAPPING.pcap_open_offline(scope.allocateCString(file), errbuf);
         } else {
           if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(
@@ -60,16 +63,19 @@ public class PcapOffline extends Pcaps {
                 options.timestampPrecision().value());
           }
           pointer =
-              PcapConstant.MAPPING.pcap_open_offline_with_tstamp_precision(
+              PcapMapping.MAPPING.pcap_open_offline_with_tstamp_precision(
                   scope.allocateCString(file), options.timestampPrecision().value(), errbuf);
         }
         nullCheck(pointer, errbuf);
-        return new Pcap(pointer);
+        if (Platforms.isWindows()) {
+          return new WinPcap(pointer);
+        }
+        return new UnixPcap(pointer);
       }
     }
   }
 
-  void nullCheck(Pointer<pcap_mapping.pcap> pointer, Pointer<Byte> errbuf) {
+  void nullCheck(Pointer<pcap_header.pcap> pointer, Pointer<Byte> errbuf) {
     if (pointer == null || pointer.isNull()) {
       throw new IllegalStateException(Pointer.toString(errbuf));
     }

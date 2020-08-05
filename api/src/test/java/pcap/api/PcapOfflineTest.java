@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import pcap.api.internal.PcapConstant;
-import pcap.api.internal.foreign.pcap_mapping;
+import pcap.api.internal.foreign.mapping.PcapMapping;
+import pcap.api.internal.foreign.pcap_header;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.spi.Pcap;
@@ -218,10 +218,10 @@ public class PcapOfflineTest {
   public void nullCheckTest() throws ErrorException {
     try (Scope scope = Scope.globalScope().fork()) {
       PcapOffline offline = new PcapOffline(new File(FILE));
-      Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
+      Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapMapping.ERRBUF_SIZE);
       Pointer<Byte> source = scope.allocateCString(new File(FILE).getAbsolutePath());
 
-      Pointer<pcap_mapping.pcap> pointer = PcapConstant.MAPPING.pcap_open_offline(source, errbuf);
+      Pointer<pcap_header.pcap> pointer = PcapMapping.MAPPING.pcap_open_offline(source, errbuf);
       offline.nullCheck(pointer, errbuf);
 
       Assertions.assertThrows(IllegalStateException.class, () -> offline.nullCheck(null, errbuf));

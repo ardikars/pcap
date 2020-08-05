@@ -66,12 +66,7 @@ jobs:
           sudo apt-get update && sudo apt-get -y install libpcap0.8 libcap2-bin
           sudo setcap cap_net_raw,cap_net_admin=eip /usr/local/jvm/panama/bin/java
           sudo find /usr/lib/ -iname "libpcap*"
-          sudo mkdir -p /usr/java/packages/lib /usr/lib64 /lib64 /lib /usr/lib
-          sudo cp /usr/lib/x86_64-linux-gnu/libpcap.* /usr/lib/
-          sudo cp /usr/lib/x86_64-linux-gnu/libpcap.* /usr/lib64/
-          sudo cp /usr/lib/x86_64-linux-gnu/libpcap.* /lib/
-          sudo cp /usr/lib/x86_64-linux-gnu/libpcap.* /lib64/
-          sudo cp /usr/lib/x86_64-linux-gnu/libpcap.* /usr/java/packages/lib/
+          sudo ln -s /usr/lib/x86_64-linux-gnu/libpcap.so.0.8 /usr/lib/libpcap.so
         if: matrix.os == 'ubuntu-16.04'
 
       - name: actions/setup-pcap

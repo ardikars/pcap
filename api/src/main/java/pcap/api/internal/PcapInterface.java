@@ -3,7 +3,7 @@ package pcap.api.internal;
 
 import java.foreign.memory.Pointer;
 import java.util.Iterator;
-import pcap.api.internal.foreign.pcap_mapping;
+import pcap.api.internal.foreign.pcap_header;
 import pcap.api.internal.util.PcapInterfaceIterator;
 import pcap.common.annotation.Inclubating;
 import pcap.common.util.Strings;
@@ -24,7 +24,7 @@ public class PcapInterface implements Interface {
   Address addresses;
   int flags;
 
-  public PcapInterface(pcap_mapping.pcap_if pcap_if) {
+  public PcapInterface(pcap_header.pcap_if pcap_if) {
     this.name = Pointer.toString(pcap_if.name$get());
     this.description = Pointer.toString(pcap_if.description$get());
     this.flags = pcap_if.flags$get();

@@ -1,7 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal.foreign;
 
-import java.foreign.annotations.NativeFunction;
 import java.foreign.annotations.NativeGetter;
 import java.foreign.annotations.NativeHeader;
 import java.foreign.annotations.NativeStruct;
@@ -16,21 +15,7 @@ import pcap.common.annotation.Inclubating;
  */
 @Inclubating
 @NativeHeader
-public interface bpf_mapping {
-
-  @NativeFunction("(u64:${bpf_insn}i32)i32")
-  int bpf_validate(Pointer<bpf_insn> insn_p, int var1);
-
-  @NativeFunction("(u64:${bpf_insn}u64:u8u32u32)u32")
-  int bpf_filter(Pointer<bpf_insn> insn_p, Pointer<Byte> p, int var1, int var2);
-
-  @NativeFunction("(u64:${bpf_insn}u64:u8u32u32u64:${bpf_aux_data})u32")
-  int bpf_filter_with_aux_data(
-      Pointer<bpf_insn> insn_p,
-      Pointer<Byte> p,
-      int var1,
-      int var2,
-      Pointer<bpf_aux_data> aux_data_p);
+public interface bpf_header {
 
   @NativeStruct("[u32(bf_len)x32u64(bf_insns):${bpf_insn}](bpf_program)")
   interface bpf_program extends Struct<bpf_program> {

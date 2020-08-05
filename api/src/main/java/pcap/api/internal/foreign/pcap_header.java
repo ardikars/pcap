@@ -11,6 +11,7 @@ import java.foreign.memory.Struct;
 import pcap.api.internal.PcapHandler;
 import pcap.api.internal.PcapPacketHeader;
 import pcap.api.internal.PcapStatus;
+import pcap.api.internal.foreign.struct.posix_structs;
 import pcap.common.annotation.Inclubating;
 
 /**
@@ -20,7 +21,7 @@ import pcap.common.annotation.Inclubating;
  */
 @Inclubating
 @NativeHeader(resolutionContext = {PcapPacketHeader.class, PcapStatus.class})
-public interface pcap_mapping {
+public interface pcap_header {
 
   @NativeFunction("(u64:u8)u64:u8")
   Pointer<Byte> pcap_lookupdev(Pointer<Byte> src);
@@ -87,7 +88,7 @@ public interface pcap_mapping {
   int pcap_stats(Pointer<pcap> p, Pointer<PcapStatus> stat_p);
 
   @NativeFunction("(u64:${pcap}u64:${bpf_program})i32")
-  int pcap_setfilter(Pointer<pcap> p, Pointer<bpf_mapping.bpf_program> program_p);
+  int pcap_setfilter(Pointer<pcap> p, Pointer<bpf_header.bpf_program> program_p);
 
   @NativeFunction("(u64:${pcap}i32)i32")
   int pcap_setdirection(Pointer<pcap> p, int direction);
@@ -110,13 +111,13 @@ public interface pcap_mapping {
   @NativeFunction("(u64:${pcap}u64:${bpf_program}u64:u8i32u32)i32")
   int pcap_compile(
       Pointer<pcap> p,
-      Pointer<bpf_mapping.bpf_program> program,
+      Pointer<bpf_header.bpf_program> program,
       Pointer<Byte> filter,
       int var1,
       int var2);
 
   @NativeFunction("(u64:${bpf_program})v")
-  void pcap_freecode(Pointer<bpf_mapping.bpf_program> program);
+  void pcap_freecode(Pointer<bpf_header.bpf_program> program);
 
   @NativeFunction("(u64:${pcap})i32")
   int pcap_datalink(Pointer<pcap> p);
@@ -197,15 +198,15 @@ public interface pcap_mapping {
     Pointer<pcap_addr> next$get();
 
     @NativeGetter("addr")
-    Pointer<struct_mapping.sockaddr> addr$get();
+    Pointer<posix_structs.sockaddr> addr$get();
 
     @NativeGetter("netmask")
-    Pointer<struct_mapping.sockaddr> netmask$get();
+    Pointer<posix_structs.sockaddr> netmask$get();
 
     @NativeGetter("broadaddr")
-    Pointer<struct_mapping.sockaddr> broadaddr$get();
+    Pointer<posix_structs.sockaddr> broadaddr$get();
 
     @NativeGetter("dstaddr")
-    Pointer<struct_mapping.sockaddr> dstaddr$get();
+    Pointer<posix_structs.sockaddr> dstaddr$get();
   }
 }

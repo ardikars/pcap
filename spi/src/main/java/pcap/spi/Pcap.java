@@ -270,4 +270,42 @@ public interface Pcap extends AutoCloseable {
       return PCAP_D_INOUT;
     }
   }
+
+  /** Unix pcap api extension. */
+  interface UnixPcap {
+
+    /**
+     * Get a file descriptor on which a select() can be done for a live capture.
+     *
+     * <p>Some network devices do not support select(), poll(), epoll_wait(), kevent(), or other
+     * such call to wait for it to be possible to read packets without blocking, so (-1) is returned
+     * for those devices. In that case, those calls must be given a timeout less than or equal to
+     * the timeout returned by selectableFd() for the device for which selectableFd() returned (-1),
+     * the device must be put in non-blocking mode with a call to setNonBlock(true), and an attempt
+     * must always be made to read packets from the device when the call returns. If
+     * requiredSelectTimeout returns NULL, it is not possible to wait for packets to arrive on the
+     * device in an event loop.
+     *
+     * <p>Note that a device on which a read can be done without blocking may, on some platforms,
+     * not have any packets to read if the packet buffer timeout has expired. A call to dispatch or
+     * nextEx will return 0 in this case, but will not block.
+     *
+     * @return returns file descriptor associated with the pcap handle, otherwise -1 on error.
+     */
+    int selectableFd();
+
+    /**
+     * Returns {@link Timestamp} containing a value that must be used as the minimum timeout in
+     * select(), poll(), epoll_wait(), and kevent() calls if selectableFd() returns -1.
+     *
+     * <p>The timeout that should be used in those calls must be no larger than the smallest of all
+     * timeouts returned by requiredSelectTimeout() for devices from which packets will be captured.
+     *
+     * @return returns null on error, otherwise {@link Timestamp}.
+     */
+    Timestamp requiredSelectTimeout();
+  }
+
+  /** Windows pcap api extension. */
+  interface WinPcap {}
 }

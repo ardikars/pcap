@@ -12,10 +12,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
-import pcap.api.internal.PcapConstant;
 import pcap.api.internal.PcapInterface;
-import pcap.api.internal.foreign.mapping.WindowsNativeMapping;
-import pcap.api.internal.foreign.pcap_mapping;
+import pcap.api.internal.foreign.mapping.IphlpapiMapping;
+import pcap.api.internal.foreign.mapping.PcapMapping;
+import pcap.api.internal.foreign.pcap_header;
 import pcap.api.internal.foreign.struct.windows_structs;
 import pcap.common.annotation.Inclubating;
 import pcap.common.net.Inet4Address;
@@ -74,18 +74,18 @@ public abstract class Pcaps {
    * @throws ErrorException generic error.
    */
   public static Interface lookupInterfaces() throws ErrorException {
-    synchronized (PcapConstant.LOCK) {
+    synchronized (PcapMapping.LOCK) {
       try (Scope scope = Scope.globalScope().fork()) {
-        Pointer<Pointer<pcap_mapping.pcap_if>> pointer =
-            scope.allocate(LayoutType.ofStruct(pcap_mapping.pcap_if.class).pointer());
-        Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
-        int result = PcapConstant.MAPPING.pcap_findalldevs(pointer, errbuf);
-        if (result != PcapConstant.OK) {
+        Pointer<Pointer<pcap_header.pcap_if>> pointer =
+            scope.allocate(LayoutType.ofStruct(pcap_header.pcap_if.class).pointer());
+        Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapMapping.ERRBUF_SIZE);
+        int result = PcapMapping.MAPPING.pcap_findalldevs(pointer, errbuf);
+        if (result != PcapMapping.OK) {
           throw new ErrorException(Pointer.toString(errbuf));
         }
-        pcap_mapping.pcap_if pcap_if = pointer.get().get();
+        pcap_header.pcap_if pcap_if = pointer.get().get();
         Interface devices = new PcapInterface(pcap_if);
-        PcapConstant.MAPPING.pcap_freealldevs(pointer.get());
+        PcapMapping.MAPPING.pcap_freealldevs(pointer.get());
         return devices;
       }
     }
@@ -117,10 +117,10 @@ public abstract class Pcaps {
    * @throws ErrorException generic error.
    */
   public static Interface lookupInterface() throws ErrorException {
-    synchronized (PcapConstant.LOCK) {
+    synchronized (PcapMapping.LOCK) {
       try (Scope scope = Scope.globalScope().fork()) {
-        Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
-        Pointer<Byte> device = PcapConstant.MAPPING.pcap_lookupdev(errbuf);
+        Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapMapping.ERRBUF_SIZE);
+        Pointer<Byte> device = PcapMapping.MAPPING.pcap_lookupdev(errbuf);
         if (device == null || device.isNull()) {
           throw new ErrorException(Pointer.toString(errbuf));
         }
@@ -151,7 +151,7 @@ public abstract class Pcaps {
           scope.allocate(LayoutType.ofStruct(windows_structs._IP_ADAPTER_INFO.class));
       Pointer<Long> length = scope.allocate(NativeTypes.LONG);
       length.set(adapterInfo.type().bytesSize());
-      if (WindowsNativeMapping.GetAdaptersInfo(adapterInfo, length) == 111) {
+      if (IphlpapiMapping.MAPPING.GetAdaptersInfo(adapterInfo, length) == 111) {
         scope.close();
         scope = Scope.globalScope().fork(); // new scope
         adapterInfo = scope.allocate(LayoutType.ofStruct(windows_structs._IP_ADAPTER_INFO.class));
@@ -160,7 +160,7 @@ public abstract class Pcaps {
           throw new ErrorException("The buffer to receive the adapter information is too small.");
         }
       }
-      long result = WindowsNativeMapping.GetAdaptersInfo(adapterInfo, length);
+      long result = IphlpapiMapping.MAPPING.GetAdaptersInfo(adapterInfo, length);
       if (result == 0) {
         Pointer<windows_structs._IP_ADAPTER_INFO> next = adapterInfo;
         while (next != null && !next.isNull()) {
@@ -262,8 +262,8 @@ public abstract class Pcaps {
    * @return returns native pcap library version.
    */
   public static String version() {
-    synchronized (PcapConstant.LOCK) {
-      return Pointer.toString(PcapConstant.MAPPING.pcap_lib_version());
+    synchronized (PcapMapping.LOCK) {
+      return Pointer.toString(PcapMapping.MAPPING.pcap_lib_version());
     }
   }
 

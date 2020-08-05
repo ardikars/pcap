@@ -10,11 +10,11 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Iterator;
-import pcap.api.internal.foreign.pcap_mapping;
+import pcap.api.internal.foreign.pcap_header;
 import pcap.api.internal.foreign.struct.darwin_structs;
 import pcap.api.internal.foreign.struct.linux_structs;
+import pcap.api.internal.foreign.struct.posix_structs;
 import pcap.api.internal.foreign.struct.windows_structs;
-import pcap.api.internal.foreign.struct_mapping;
 import pcap.api.internal.util.PcapAddressIterator;
 import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
@@ -40,7 +40,7 @@ public class PcapAddress implements Address {
   InetAddress broadcast;
   InetAddress destination;
 
-  PcapAddress(pcap_mapping.pcap_addr pcap_addr) {
+  PcapAddress(pcap_header.pcap_addr pcap_addr) {
     this.address = parse(pcap_addr.addr$get());
     this.netmask = parse(pcap_addr.netmask$get());
     this.broadcast = parse(pcap_addr.broadaddr$get());
@@ -85,7 +85,7 @@ public class PcapAddress implements Address {
         .toString();
   }
 
-  private InetAddress parse(Pointer<struct_mapping.sockaddr> pointer) {
+  private InetAddress parse(Pointer<posix_structs.sockaddr> pointer) {
     if (!pointer.isNull()) {
       try {
         InetAddress inetAddress = null;

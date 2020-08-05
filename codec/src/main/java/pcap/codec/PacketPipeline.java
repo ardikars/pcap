@@ -1,12 +1,11 @@
 package pcap.codec;
 
-import pcap.common.memory.Memory;
-
 import java.lang.annotation.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
+import pcap.common.memory.Memory;
 
 public interface PacketPipeline extends Iterable<PacketPipeline.PacketHandler> {
 

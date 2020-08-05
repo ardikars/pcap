@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import pcap.api.internal.PcapConstant;
-import pcap.api.internal.foreign.pcap_mapping;
+import pcap.api.internal.foreign.mapping.PcapMapping;
+import pcap.api.internal.foreign.pcap_header;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.common.util.Hexs;
@@ -32,17 +32,17 @@ public class PcapLiveTest {
   private static final int MAX_PACKET = 10;
   private static final String FILTER = "ip";
 
-  private Pointer<pcap_mapping.pcap> pcapOpen(Interface source) {
+  private Pointer<pcap_header.pcap> pcapOpen(Interface source) {
     try (Scope scope = Scope.globalScope().fork()) {
-      Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
-      Pointer<pcap_mapping.pcap> pointer =
-          PcapConstant.MAPPING.pcap_create(scope.allocateCString(source.name()), errbuf);
+      Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapMapping.ERRBUF_SIZE);
+      Pointer<pcap_header.pcap> pointer =
+          PcapMapping.MAPPING.pcap_create(scope.allocateCString(source.name()), errbuf);
       return pointer;
     }
   }
 
-  private void pcapClose(Pointer<pcap_mapping.pcap> pointer) {
-    PcapConstant.MAPPING.pcap_close(pointer);
+  private void pcapClose(Pointer<pcap_header.pcap> pointer) {
+    PcapMapping.MAPPING.pcap_close(pointer);
   }
 
   @Test
@@ -66,7 +66,7 @@ public class PcapLiveTest {
   @Test
   public void canSetRfmonTest() throws ErrorException, ActivatedException, NoSuchDeviceException {
     Interface source = Pcaps.lookupInterface();
-    Pointer<pcap_mapping.pcap> pointer = pcapOpen(source);
+    Pointer<pcap_header.pcap> pointer = pcapOpen(source);
     Assertions.assertThrows(
         ActivatedException.class, () -> new PcapLive(source).canSetRfmon(pointer, -4));
     Assertions.assertThrows(
@@ -141,7 +141,7 @@ public class PcapLiveTest {
           RadioFrequencyModeNotSupportedException, ActivatedException, InterfaceNotUpException,
           NoSuchDeviceException {
     Interface source = Pcaps.lookupInterface();
-    Pointer<pcap_mapping.pcap> pointer = pcapOpen(source);
+    Pointer<pcap_header.pcap> pointer = pcapOpen(source);
     Assertions.assertThrows(
         PromiscuousModeNotSupported.class, () -> new PcapLive(source).checkActivate(pointer, 2));
     new PcapLive(source).checkActivate(pointer, 3);
@@ -457,9 +457,9 @@ public class PcapLiveTest {
     Interface source = Pcaps.lookupInterface();
     PcapLive live = new PcapLive(source);
     try (Scope scope = Scope.globalScope().fork()) {
-      Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
-      Pointer<pcap_mapping.pcap> pointer =
-          PcapConstant.MAPPING.pcap_create(scope.allocateCString(source.name()), errbuf);
+      Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapMapping.ERRBUF_SIZE);
+      Pointer<pcap_header.pcap> pointer =
+          PcapMapping.MAPPING.pcap_create(scope.allocateCString(source.name()), errbuf);
       live.nullCheck(pointer, errbuf);
       Assertions.assertThrows(IllegalStateException.class, () -> live.nullCheck(null, errbuf));
     }

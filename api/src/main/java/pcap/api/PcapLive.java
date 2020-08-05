@@ -6,12 +6,15 @@ import java.foreign.Scope;
 import java.foreign.memory.Pointer;
 import java.net.Inet4Address;
 import pcap.api.internal.Pcap;
-import pcap.api.internal.PcapConstant;
-import pcap.api.internal.foreign.pcap_mapping;
+import pcap.api.internal.UnixPcap;
+import pcap.api.internal.WinPcap;
+import pcap.api.internal.foreign.mapping.PcapMapping;
+import pcap.api.internal.foreign.pcap_header;
 import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.common.util.Objects;
+import pcap.common.util.Platforms;
 import pcap.spi.Interface;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
@@ -40,56 +43,59 @@ public class PcapLive extends Pcaps {
           NoSuchDeviceException, PermissionDeniedException, PromiscuousModeNotSupported,
           PromiscuousModePermissionDeniedException, RadioFrequencyModeNotSupportedException,
           InterfaceNotUpException, TimestampPrecisionNotSupportedException {
-    synchronized (PcapConstant.LOCK) {
+    synchronized (PcapMapping.LOCK) {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Opening live handler on {}.", source.name());
       }
       try (Scope scope = Scope.globalScope().fork()) {
-        Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapConstant.ERRBUF_SIZE);
-        Pointer<pcap_mapping.pcap> pointer =
-            PcapConstant.MAPPING.pcap_create(scope.allocateCString(source.name()), errbuf);
+        Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapMapping.ERRBUF_SIZE);
+        Pointer<pcap_header.pcap> pointer =
+            PcapMapping.MAPPING.pcap_create(scope.allocateCString(source.name()), errbuf);
         nullCheck(pointer, errbuf);
-        checkSetSnaplen(PcapConstant.MAPPING.pcap_set_snaplen(pointer, options.snapshotLength()));
+        checkSetSnaplen(PcapMapping.MAPPING.pcap_set_snaplen(pointer, options.snapshotLength()));
         checkSetPromisc(
-            PcapConstant.MAPPING.pcap_set_promisc(pointer, options.isPromiscuous() ? 1 : 0));
+            PcapMapping.MAPPING.pcap_set_promisc(pointer, options.isPromiscuous() ? 1 : 0));
         final int canSetRfmon =
-            canSetRfmon(pointer, PcapConstant.MAPPING.pcap_can_set_rfmon(pointer));
-        if (canSetRfmon == PcapConstant.OK) {
-          checkSetRfmon(PcapConstant.MAPPING.pcap_set_rfmon(pointer, options.isRfmon() ? 1 : 0));
+            canSetRfmon(pointer, PcapMapping.MAPPING.pcap_can_set_rfmon(pointer));
+        if (canSetRfmon == PcapMapping.OK) {
+          checkSetRfmon(PcapMapping.MAPPING.pcap_set_rfmon(pointer, options.isRfmon() ? 1 : 0));
         }
-        checkSetTimeout(PcapConstant.MAPPING.pcap_set_timeout(pointer, options.timeout()));
+        checkSetTimeout(PcapMapping.MAPPING.pcap_set_timeout(pointer, options.timeout()));
         if (Objects.nonNull(options.timestampType())) {
           checkSetTimestampType(
-              PcapConstant.MAPPING.pcap_set_tstamp_type(pointer, options.timestampType().value()));
+              PcapMapping.MAPPING.pcap_set_tstamp_type(pointer, options.timestampType().value()));
         }
         checkSetImmediateMode(
-            PcapConstant.MAPPING.pcap_set_immediate_mode(pointer, options.isImmediate() ? 1 : 0));
+            PcapMapping.MAPPING.pcap_set_immediate_mode(pointer, options.isImmediate() ? 1 : 0));
         if (options.bufferSize() != 0) {
           checkSetBufferSize(
-              PcapConstant.MAPPING.pcap_set_buffer_size(pointer, options.bufferSize()));
+              PcapMapping.MAPPING.pcap_set_buffer_size(pointer, options.bufferSize()));
         }
         checkSetTimestampPrecision(
-            PcapConstant.MAPPING.pcap_set_tstamp_precision(
+            PcapMapping.MAPPING.pcap_set_tstamp_precision(
                 pointer, options.timestampPrecision().value()));
-        checkActivate(pointer, PcapConstant.MAPPING.pcap_activate(pointer));
-        return new Pcap(pointer, netmask(source));
+        checkActivate(pointer, PcapMapping.MAPPING.pcap_activate(pointer));
+        if (Platforms.isWindows()) {
+          return new WinPcap(pointer, netmask(source));
+        }
+        return new UnixPcap(pointer, netmask(source));
       }
     }
   }
 
   void checkSetSnaplen(int result) throws ActivatedException {
-    if (result != PcapConstant.OK) {
+    if (result != PcapMapping.OK) {
       throw new ActivatedException("Error occurred when set snapshot length.");
     }
   }
 
   void checkSetPromisc(int result) throws ActivatedException {
-    if (result != PcapConstant.OK) {
+    if (result != PcapMapping.OK) {
       throw new ActivatedException("Error occurred when set promiscuous mode.");
     }
   }
 
-  int canSetRfmon(Pointer<pcap_mapping.pcap> pointer, int result)
+  int canSetRfmon(Pointer<pcap_header.pcap> pointer, int result)
       throws ActivatedException, NoSuchDeviceException, ErrorException {
     if (result == -4) {
       throw new ActivatedException("Error occurred when set radio frequency monitor mode.");
@@ -97,14 +103,14 @@ public class PcapLive extends Pcaps {
       throw new NoSuchDeviceException("Error occurred when set radio frequency monitor mode.");
     } else {
       if (result == -1) {
-        throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pointer)));
+        throw new ErrorException(Pointer.toString(PcapMapping.MAPPING.pcap_geterr(pointer)));
       } else {
         if (result < 0) {
-          throw new ErrorException(Pointer.toString(PcapConstant.MAPPING.pcap_statustostr(result)));
+          throw new ErrorException(Pointer.toString(PcapMapping.MAPPING.pcap_statustostr(result)));
         } else {
           LOGGER.warn(
               "pcap_can_set_rfmon: {}",
-              Pointer.toString(PcapConstant.MAPPING.pcap_statustostr(result)));
+              Pointer.toString(PcapMapping.MAPPING.pcap_statustostr(result)));
         }
       }
     }
@@ -112,13 +118,13 @@ public class PcapLive extends Pcaps {
   }
 
   void checkSetRfmon(int result) throws ActivatedException {
-    if (result != PcapConstant.OK) {
+    if (result != PcapMapping.OK) {
       throw new ActivatedException("Error occurred when set radio frequency monitor mode.");
     }
   }
 
   void checkSetTimeout(int result) throws ActivatedException {
-    if (result != PcapConstant.OK) {
+    if (result != PcapMapping.OK) {
       throw new ActivatedException("Error occurred when set timeout.");
     }
   }
@@ -133,18 +139,18 @@ public class PcapLive extends Pcaps {
     } else if (result == 3) {
       LOGGER.warn(
           "pcap_set_tstamp_type: {}",
-          Pointer.toString(PcapConstant.MAPPING.pcap_statustostr(result)));
+          Pointer.toString(PcapMapping.MAPPING.pcap_statustostr(result)));
     }
   }
 
   void checkSetImmediateMode(int result) throws ActivatedException {
-    if (result != PcapConstant.OK) {
+    if (result != PcapMapping.OK) {
       throw new ActivatedException("Error occurred when set immediate mode.");
     }
   }
 
   void checkSetBufferSize(int result) throws ActivatedException {
-    if (result != PcapConstant.OK) {
+    if (result != PcapMapping.OK) {
       throw new ActivatedException("Error occurred when set buffer size.");
     }
   }
@@ -159,26 +165,26 @@ public class PcapLive extends Pcaps {
     }
   }
 
-  void checkActivate(Pointer<pcap_mapping.pcap> pointer, int result)
+  void checkActivate(Pointer<pcap_header.pcap> pointer, int result)
       throws PromiscuousModePermissionDeniedException, RadioFrequencyModeNotSupportedException,
           InterfaceNotUpException, NoSuchDeviceException, ActivatedException,
           PermissionDeniedException {
     if (result == 2) {
       throw new PromiscuousModeNotSupported(
-          Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pointer)));
+          Pointer.toString(PcapMapping.MAPPING.pcap_geterr(pointer)));
     } else if (result == 3) {
       LOGGER.warn(
-          "pcap_activate: {}", Pointer.toString(PcapConstant.MAPPING.pcap_statustostr(result)));
+          "pcap_activate: {}", Pointer.toString(PcapMapping.MAPPING.pcap_statustostr(result)));
     } else if (result == 1) {
       LOGGER.warn(
-          "pcap_activate: {}", Pointer.toString(PcapConstant.MAPPING.pcap_statustostr(result)));
+          "pcap_activate: {}", Pointer.toString(PcapMapping.MAPPING.pcap_statustostr(result)));
     } else if (result == -4) {
       throw new ActivatedException("Error occurred when activate a handle.");
     } else if (result == -5) {
-      throw new NoSuchDeviceException(Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pointer)));
+      throw new NoSuchDeviceException(Pointer.toString(PcapMapping.MAPPING.pcap_geterr(pointer)));
     } else if (result == -8) {
       throw new PermissionDeniedException(
-          Pointer.toString(PcapConstant.MAPPING.pcap_geterr(pointer)));
+          Pointer.toString(PcapMapping.MAPPING.pcap_geterr(pointer)));
     } else if (result == -11) {
       throw new PromiscuousModePermissionDeniedException("Error occurred when activate a handle.");
     } else if (result == -6) {
@@ -199,7 +205,7 @@ public class PcapLive extends Pcaps {
     return netmask;
   }
 
-  void nullCheck(Pointer<pcap_mapping.pcap> pointer, Pointer<Byte> errbuf) {
+  void nullCheck(Pointer<pcap_header.pcap> pointer, Pointer<Byte> errbuf) {
     if (pointer == null || pointer.isNull()) {
       throw new IllegalStateException(Pointer.toString(errbuf));
     }
