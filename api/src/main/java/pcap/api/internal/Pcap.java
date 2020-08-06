@@ -6,7 +6,6 @@ import java.foreign.Scope;
 import java.foreign.memory.Callback;
 import java.foreign.memory.LayoutType;
 import java.foreign.memory.Pointer;
-import java.nio.ByteBuffer;
 import java.util.concurrent.TimeoutException;
 import pcap.api.internal.foreign.bpf_header;
 import pcap.api.internal.foreign.mapping.PcapMapping;
@@ -66,7 +65,7 @@ public class Pcap implements pcap.spi.Pcap {
     this.majorVersion = PcapMapping.MAPPING.pcap_major_version(pcap);
     this.minorVersion = PcapMapping.MAPPING.pcap_minor_version(pcap);
     this.isSwapped = PcapMapping.MAPPING.pcap_is_swapped(pcap) == 1;
-    if (BUFFER_POOLING) {
+    if (BUFFER_POOLING && snapshot > 0) {
       LOGGER.debug(
           "Allocating pooled buffer with poolSize: %d, maxPoolSize: %d, capacity: %d",
           BUFFER_POOL_SIZE, BUFFER_MAX_POOL_SIZE, snapshot);

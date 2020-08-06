@@ -48,14 +48,14 @@ public class PcapLiveTest {
 
   @Test
   public void checkSetSnaplenTest() throws ErrorException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertThrows(
         ActivatedException.class, () -> new PcapLive(source).checkSetSnaplen(-1));
   }
 
   @Test
   public void checkSetPromiscTest() throws ErrorException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertThrows(
         ActivatedException.class,
         () -> new PcapLive(source, new PcapLiveOptions().promiscuous(true)).checkSetPromisc(-1));
@@ -66,7 +66,7 @@ public class PcapLiveTest {
 
   @Test
   public void canSetRfmonTest() throws ErrorException, ActivatedException, NoSuchDeviceException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Pointer<pcap_header.pcap> pointer = pcapOpen(source);
     Assertions.assertThrows(
         ActivatedException.class, () -> new PcapLive(source).canSetRfmon(pointer, -4));
@@ -82,13 +82,13 @@ public class PcapLiveTest {
 
   @Test
   public void checkSetRfmonTest() throws ErrorException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertThrows(ActivatedException.class, () -> new PcapLive(source).checkSetRfmon(-1));
   }
 
   @Test
   public void checkSetTimeoutTest() throws ErrorException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertThrows(
         ActivatedException.class, () -> new PcapLive(source).checkSetTimeout(-1));
   }
@@ -96,7 +96,7 @@ public class PcapLiveTest {
   @Test
   public void checkSetTimestampTypeTest()
       throws ErrorException, ActivatedException, InterfaceNotSupportTimestampTypeException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertThrows(
         ActivatedException.class,
         () ->
@@ -113,14 +113,14 @@ public class PcapLiveTest {
 
   @Test
   public void checkSetImmediateModeTest() throws ErrorException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertThrows(
         ActivatedException.class, () -> new PcapLive(source).checkSetImmediateMode(-1));
   }
 
   @Test
   public void checkSetBufferSizeTest() throws ErrorException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertThrows(
         ActivatedException.class,
         () -> new PcapLive(source, new PcapLiveOptions().bufferSize(50000)).checkSetBufferSize(-1));
@@ -128,7 +128,7 @@ public class PcapLiveTest {
 
   @Test
   public void checkSetTimestampPrecisionTest() throws ErrorException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertThrows(
         ActivatedException.class, () -> new PcapLive(source).checkSetTimestampPrecision(-4));
     Assertions.assertThrows(
@@ -141,7 +141,7 @@ public class PcapLiveTest {
       throws ErrorException, PromiscuousModePermissionDeniedException, PermissionDeniedException,
           RadioFrequencyModeNotSupportedException, ActivatedException, InterfaceNotUpException,
           NoSuchDeviceException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Pointer<pcap_header.pcap> pointer = pcapOpen(source);
     Assertions.assertThrows(
         PromiscuousModeNotSupported.class, () -> new PcapLive(source).checkActivate(pointer, 2));
@@ -170,7 +170,7 @@ public class PcapLiveTest {
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     try {
       Pcaps.live(
               new PcapLive(
@@ -187,13 +187,13 @@ public class PcapLiveTest {
 
   @Test
   public void netmaskTest() throws ErrorException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertNotEquals(0, new PcapLive(source).netmask(source));
   }
 
   @Test
   public void iterateInterfaceTest() throws ErrorException {
-    Interface aInterface = Pcaps.lookupInterface();
+    Interface aInterface = Pcaps.loopbackInterface();
     Iterator<Interface> interfaceIterator = aInterface.iterator();
     while (interfaceIterator.hasNext()) {
       Interface nextInterface = interfaceIterator.next();
@@ -219,7 +219,7 @@ public class PcapLiveTest {
 
   @Test
   public void lookupInterfaceTest() throws ErrorException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertNotNull(source);
   }
 
@@ -229,7 +229,7 @@ public class PcapLiveTest {
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertNotNull(source);
     Pcap pcap = Pcaps.live(new PcapLive(source));
     Assertions.assertNotNull(pcap);
@@ -242,7 +242,7 @@ public class PcapLiveTest {
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertNotNull(source);
     Pcap pcap = Pcaps.live(new PcapLive(source));
     Assertions.assertNotNull(pcap);
@@ -253,11 +253,11 @@ public class PcapLiveTest {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
             Assertions.assertNotNull(header);
-            Assertions.assertNotEquals(header.captureLength(), 0);
-            Assertions.assertNotEquals(header.length(), 0);
+            Assertions.assertTrue(header.captureLength() > 0);
+            Assertions.assertTrue(header.length() > 0);
             Assertions.assertNotNull(header.timestamp());
-            Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
-            Assertions.assertNotEquals(header.timestamp().second(), 0L);
+            Assertions.assertTrue(header.timestamp().microSecond() > 0);
+            Assertions.assertTrue(header.timestamp().second() > 0L);
           },
           MAX_PACKET);
     } catch (BreakException e) {
@@ -272,7 +272,7 @@ public class PcapLiveTest {
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertNotNull(source);
     Pcap pcap = Pcaps.live(new PcapLive(source));
     Assertions.assertNotNull(pcap);
@@ -285,11 +285,11 @@ public class PcapLiveTest {
                 Assertions.assertNotNull(buffer);
                 Assertions.assertNotNull(buffer);
                 Assertions.assertNotNull(header);
-                Assertions.assertNotEquals(header.captureLength(), 0);
-                Assertions.assertNotEquals(header.length(), 0);
+                Assertions.assertTrue(header.captureLength() > 0);
+                Assertions.assertTrue(header.length() > 0);
                 Assertions.assertNotNull(header.timestamp());
-                Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
-                Assertions.assertNotEquals(header.timestamp().second(), 0L);
+                Assertions.assertTrue(header.timestamp().microSecond() > 0);
+                Assertions.assertTrue(header.timestamp().second() > 0L);
               },
           MAX_PACKET);
     } catch (BreakException e) {
@@ -304,7 +304,7 @@ public class PcapLiveTest {
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertNotNull(source);
     Pcap pcap = Pcaps.live(new PcapLive(source));
     Assertions.assertNotNull(pcap);
@@ -315,11 +315,11 @@ public class PcapLiveTest {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(header);
             Assertions.assertNotNull(buffer);
-            Assertions.assertNotEquals(header.captureLength(), 0);
-            Assertions.assertNotEquals(header.length(), 0);
+            Assertions.assertTrue(header.captureLength() > 0);
+            Assertions.assertTrue(header.length() > 0);
             Assertions.assertNotNull(header.timestamp());
-            Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
-            Assertions.assertNotEquals(header.timestamp().second(), 0L);
+            Assertions.assertTrue(header.timestamp().microSecond() > 0);
+            Assertions.assertTrue(header.timestamp().second() > 0L);
             try {
               Status status = pcap.status();
               Assertions.assertNotNull(status);
@@ -343,7 +343,7 @@ public class PcapLiveTest {
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertNotNull(source);
     Pcap pcap = Pcaps.live(new PcapLive(source));
     Assertions.assertNotNull(pcap);
@@ -355,11 +355,11 @@ public class PcapLiveTest {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
             Assertions.assertNotNull(header);
-            Assertions.assertNotEquals(header.captureLength(), 0);
-            Assertions.assertNotEquals(header.length(), 0);
+            Assertions.assertTrue(header.captureLength() > 0);
+            Assertions.assertTrue(header.length() > 0);
             Assertions.assertNotNull(header.timestamp());
-            Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
-            Assertions.assertNotEquals(header.timestamp().second(), 0L);
+            Assertions.assertTrue(header.timestamp().microSecond() > 0);
+            Assertions.assertTrue(header.timestamp().second() > 0L);
           },
           MAX_PACKET);
     } catch (BreakException e) {
@@ -374,7 +374,7 @@ public class PcapLiveTest {
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertNotNull(source);
     Pcap pcap = Pcaps.live(new PcapLive(source));
     Assertions.assertNotNull(pcap);
@@ -389,11 +389,11 @@ public class PcapLiveTest {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
             Assertions.assertNotNull(header);
-            Assertions.assertNotEquals(header.captureLength(), 0);
-            Assertions.assertNotEquals(header.length(), 0);
+            Assertions.assertTrue(header.captureLength() > 0);
+            Assertions.assertTrue(header.length() > 0);
             Assertions.assertNotNull(header.timestamp());
-            Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
-            Assertions.assertNotEquals(header.timestamp().second(), 0L);
+            Assertions.assertTrue(header.timestamp().microSecond() > 0);
+            Assertions.assertTrue(header.timestamp().second() > 0L);
           },
           MAX_PACKET);
     } catch (BreakException e) {
@@ -408,7 +408,7 @@ public class PcapLiveTest {
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertNotNull(source);
     Pcap pcap = Pcaps.live(new PcapLive(source));
     Assertions.assertNotNull(pcap);
@@ -426,7 +426,7 @@ public class PcapLiveTest {
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     Assertions.assertNotNull(source);
     Pcap pcap = Pcaps.live(new PcapLive(source));
     Assertions.assertNotNull(pcap);
@@ -451,7 +451,7 @@ public class PcapLiveTest {
 
   @Test
   public void nullCheckTest() throws ErrorException {
-    Interface source = Pcaps.lookupInterface();
+    Interface source = Pcaps.loopbackInterface();
     PcapLive live = new PcapLive(source);
     try (Scope scope = Scope.globalScope().fork()) {
       Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapMapping.ERRBUF_SIZE);

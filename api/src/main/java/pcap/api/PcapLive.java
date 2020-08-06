@@ -196,7 +196,7 @@ public class PcapLive extends Pcaps {
 
   int netmask(Interface source) {
     int netmask = 0xFFFFFF00;
-    if (source.addresses().netmask() instanceof Inet4Address) {
+    if (source.addresses() != null && source.addresses().netmask() instanceof Inet4Address) {
       byte[] address = source.addresses().netmask().getAddress();
       for (int i = 0; i < 4; i++) {
         netmask |= (address[i] & 0xff) << (3 - i) * 8;

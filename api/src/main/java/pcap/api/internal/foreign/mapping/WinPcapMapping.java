@@ -1,10 +1,9 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.api.internal.foreign.mapping;
 
-import pcap.api.internal.foreign.win_pcap_header;
-
 import java.foreign.Libraries;
 import java.lang.invoke.MethodHandles;
+import pcap.api.internal.foreign.win_pcap_header;
 
 /**
  * windows pcap native mapping.
@@ -18,6 +17,6 @@ public final class WinPcapMapping {
   static {
     MAPPING =
         Libraries.bind(
-                win_pcap_header.class, Libraries.loadLibrary(MethodHandles.lookup(), "wpcap"));
+            win_pcap_header.class, Libraries.loadLibrary(MethodHandles.lookup(), "wpcap"));
   }
 }

@@ -81,7 +81,10 @@ jobs:
           export JAVA_HOME=/usr/local/jvm/panama
           echo "JAVA_HOME_LEGACY = $JAVA_HOME_LEGACY"
           echo "JAVA_HOME = $JAVA_HOME"
+          ping 127.0.0.1 &
+          PID=$!
           ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Pformat -Psonar -Pjavadoc -Plegacy-support -Dsonar.login="${{ secrets.sonar_token }}"
+          kill $PID
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: matrix.os == 'macos-10.15'
@@ -92,7 +95,10 @@ jobs:
           export JAVA_HOME=/usr/local/jvm/panama
           echo "JAVA_HOME_LEGACY = $JAVA_HOME_LEGACY"
           echo "JAVA_HOME = $JAVA_HOME"
+          ping 127.0.0.1 &
+          PID=$!
           ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat -Pjavadoc -Plegacy-support
+          kill $PID
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: matrix.os == 'ubuntu-16.04'

@@ -32,10 +32,17 @@ public @interface Immutable {
   String[] except() default {};
 
   /**
-   * Blocking when changing specify field.
+   * Blocking when changing value of specific field.
    *
    * @return returns true if blocking, false otherwise.
    * @since 1.0.0
    */
   boolean blocking() default false;
+
+  /**
+   * Synchronize when changing value of specific field.
+   *
+   * @return returns true if sync, false otherwise,
+   */
+  boolean synchronize() default false;
 }

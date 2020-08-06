@@ -7,6 +7,6 @@ import java.foreign.memory.Pointer;
 @NativeHeader
 public interface win_pcap_header {
 
-    @NativeFunction("(u64:${pcap})u64:v")
-    Pointer<Void> pcap_getevent(Pointer<pcap_header.pcap> p);
+  @NativeFunction("(u64:${pcap})u64:v")
+  Pointer<Void> pcap_getevent(Pointer<pcap_header.pcap> p);
 }

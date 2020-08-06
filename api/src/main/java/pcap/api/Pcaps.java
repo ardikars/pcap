@@ -113,9 +113,10 @@ public abstract class Pcaps {
   /**
    * Lookup interface can be used to open {@link Pcap} live handle.
    *
-   * <p>This functions is deprecated, please use {@link Pcaps#lookupInterfaces()} instead.
-   * @see <a link="https://github.com/ardikars/pcap/issues/30">Github Issue: #30</a>
+   * <p>This functions is deprecated, please use {@link Pcaps#lookupInterfaces()} and use the first
+   * {@link Interface}.
    *
+   * @see <a href="https://github.com/ardikars/pcap/issues/30">Github Issue: #30</a>
    * @return returns {@link Interface}.
    * @throws ErrorException generic error.
    */
@@ -142,6 +143,26 @@ public abstract class Pcaps {
   }
 
   /**
+   * Get loopback interface.
+   *
+   * @return returns loopback interface.
+   * @throws ErrorException loopback interface not found.
+   */
+  public static Interface loopbackInterface() throws ErrorException {
+    Iterator<Interface> iterator = lookupInterfaces().iterator();
+    while (iterator.hasNext()) {
+      Interface devices = iterator.next();
+      if (devices instanceof PcapInterface) {
+        PcapInterface pcapInterface = (PcapInterface) devices;
+        if (pcapInterface.isLoopback()) {
+          return pcapInterface;
+        }
+      }
+    }
+    throw new ErrorException("Loopback interface is not found.");
+  }
+
+  /**
    * Get mac address for given {@link Interface}.
    *
    * @param source interface.
@@ -164,39 +185,43 @@ public abstract class Pcaps {
           throw new ErrorException("The buffer to receive the adapter information is too small.");
         }
       }
-      long result = IphlpapiMapping.MAPPING.GetAdaptersInfo(adapterInfo, length);
-      if (result == 0) {
-        Pointer<windows_structs._IP_ADAPTER_INFO> next = adapterInfo;
-        while (next != null && !next.isNull()) {
-          windows_structs._IP_ADAPTER_INFO info = next.get();
-          if (info.AddressLength$get() == MacAddress.MAC_ADDRESS_LENGTH) {
-            Array<Byte> byteArray = info.AdapterName$get();
-            byte[] adapter = new byte[(int) byteArray.bytesSize()];
-            for (int i = 0; i < adapter.length; i++) {
-              adapter[i] = byteArray.get(i);
-            }
-            String adapterName = new String(adapter, StandardCharsets.UTF_8).trim();
-            if (source.name().contains("{") && source.name().contains("}")) {
-              String sourceName =
-                  source
-                      .name()
-                      .substring(source.name().indexOf('{'), source.name().indexOf('}') + 1);
-              if (adapterName.equals(sourceName)) {
-                Array<Byte> byteAddress = info.Address$get();
-                byte[] address = new byte[MacAddress.MAC_ADDRESS_LENGTH];
-                for (int i = 0; i < address.length; i++) {
-                  address[i] = (byte) (byteAddress.get(i) & 0xFF);
+      try {
+        long result = IphlpapiMapping.MAPPING.GetAdaptersInfo(adapterInfo, length);
+        if (result == 0) {
+          Pointer<windows_structs._IP_ADAPTER_INFO> next = adapterInfo;
+          while (next != null && !next.isNull()) {
+            windows_structs._IP_ADAPTER_INFO info = next.get();
+            if (info.AddressLength$get() == MacAddress.MAC_ADDRESS_LENGTH) {
+              Array<Byte> byteArray = info.AdapterName$get();
+              byte[] adapter = new byte[(int) byteArray.bytesSize()];
+              for (int i = 0; i < adapter.length; i++) {
+                adapter[i] = byteArray.get(i);
+              }
+              String adapterName = new String(adapter, StandardCharsets.UTF_8).trim();
+              if (source.name().contains("{") && source.name().contains("}")) {
+                String sourceName =
+                    source
+                        .name()
+                        .substring(source.name().indexOf('{'), source.name().indexOf('}') + 1);
+                if (adapterName.equals(sourceName)) {
+                  Array<Byte> byteAddress = info.Address$get();
+                  byte[] address = new byte[MacAddress.MAC_ADDRESS_LENGTH];
+                  for (int i = 0; i < address.length; i++) {
+                    address[i] = (byte) (byteAddress.get(i) & 0xFF);
+                  }
+                  scope.close();
+                  return MacAddress.valueOf(address);
                 }
-                scope.close();
-                return MacAddress.valueOf(address);
               }
             }
+            next = info.Next$get();
           }
-          next = info.Next$get();
         }
+        scope.close();
+        throw new ErrorException("Error (" + result + ")");
+      } catch (IllegalStateException e) {
+        throw new ErrorException("Error getting mac address for " + source.name());
       }
-      scope.close();
-      throw new ErrorException("Error (" + result + ")");
     } else {
       NetworkInterface networkInterface;
       try {
@@ -222,15 +247,17 @@ public abstract class Pcaps {
    * @throws ErrorException address not found.
    */
   public static Inet4Address lookupInet4Address(Interface source) throws ErrorException {
-    Iterator<Address> addressIterator = source.addresses().iterator();
-    while (addressIterator.hasNext()) {
-      Address next = addressIterator.next();
-      if (next.address() != null
-          && !next.address().isLoopbackAddress()
-          && next.address() instanceof java.net.Inet4Address) {
-        Inet4Address inet4Address = Inet4Address.valueOf(next.address().getAddress());
-        if (!inet4Address.equals(Inet4Address.ZERO)) {
-          return inet4Address;
+    if (source.addresses() != null) {
+      Iterator<Address> addressIterator = source.addresses().iterator();
+      while (addressIterator.hasNext()) {
+        Address next = addressIterator.next();
+        if (next.address() != null
+            && !next.address().isLoopbackAddress()
+            && next.address() instanceof java.net.Inet4Address) {
+          Inet4Address inet4Address = Inet4Address.valueOf(next.address().getAddress());
+          if (!inet4Address.equals(Inet4Address.ZERO)) {
+            return inet4Address;
+          }
         }
       }
     }
@@ -245,15 +272,17 @@ public abstract class Pcaps {
    * @throws ErrorException address not found.
    */
   public static Inet6Address lookupInet6Address(Interface source) throws ErrorException {
-    Iterator<Address> addressIterator = source.addresses().iterator();
-    while (addressIterator.hasNext()) {
-      Address next = addressIterator.next();
-      if (next.address() != null
-          && !next.address().isLoopbackAddress()
-          && next.address() instanceof java.net.Inet6Address) {
-        Inet6Address inet6Address = Inet6Address.valueOf(next.address().getAddress());
-        if (!inet6Address.equals(Inet6Address.ZERO)) {
-          return inet6Address;
+    if (source.addresses() != null) {
+      Iterator<Address> addressIterator = source.addresses().iterator();
+      while (addressIterator.hasNext()) {
+        Address next = addressIterator.next();
+        if (next.address() != null
+            && !next.address().isLoopbackAddress()
+            && next.address() instanceof java.net.Inet6Address) {
+          Inet6Address inet6Address = Inet6Address.valueOf(next.address().getAddress());
+          if (!inet6Address.equals(Inet6Address.ZERO)) {
+            return inet6Address;
+          }
         }
       }
     }

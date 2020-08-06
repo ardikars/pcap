@@ -1,7 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.spi;
 
-import java.nio.ByteBuffer;
 import java.util.concurrent.TimeoutException;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
@@ -301,6 +300,7 @@ public interface Pcap extends AutoCloseable {
 
     /**
      * Get the handle of the event associated with the pcap handle.
+     *
      * @return returns event handle.
      */
     Handle event();

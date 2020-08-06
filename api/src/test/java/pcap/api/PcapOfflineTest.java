@@ -84,11 +84,11 @@ public class PcapOfflineTest {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
             Assertions.assertNotNull(header);
-            Assertions.assertNotEquals(header.captureLength(), 0);
-            Assertions.assertNotEquals(header.length(), 0);
+            Assertions.assertTrue(header.captureLength() == 105);
+            Assertions.assertTrue(header.length() == 105);
             Assertions.assertNotNull(header.timestamp());
-            Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
-            Assertions.assertNotEquals(header.timestamp().second(), 0L);
+            Assertions.assertTrue(header.timestamp().microSecond() > 0);
+            Assertions.assertTrue(header.timestamp().second() > 0L);
           },
           MAX_PACKET);
     } catch (BreakException e) {
@@ -116,11 +116,11 @@ public class PcapOfflineTest {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
             Assertions.assertNotNull(header);
-            Assertions.assertNotEquals(header.captureLength(), 0);
-            Assertions.assertNotEquals(header.length(), 0);
+            Assertions.assertTrue(header.captureLength() == 105);
+            Assertions.assertTrue(header.length() == 105);
             Assertions.assertNotNull(header.timestamp());
-            Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
-            Assertions.assertNotEquals(header.timestamp().second(), 0L);
+            Assertions.assertTrue(header.timestamp().microSecond() > 0);
+            Assertions.assertTrue(header.timestamp().second() > 0L);
           },
           MAX_PACKET);
     } catch (BreakException e) {
@@ -130,7 +130,7 @@ public class PcapOfflineTest {
   }
 
   @Test
-  public void liveLoopBreakTest() throws ErrorException {
+  public void loopBreakTest() throws ErrorException {
     Pcap pcap = Pcaps.offline(new PcapOffline(new File(FILE)));
     Assertions.assertNotNull(pcap);
     try {
@@ -144,11 +144,11 @@ public class PcapOfflineTest {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
             Assertions.assertNotNull(header);
-            Assertions.assertNotEquals(header.captureLength(), 0);
-            Assertions.assertNotEquals(header.length(), 0);
+            Assertions.assertTrue(header.captureLength() == 105);
+            Assertions.assertTrue(header.length() == 105);
             Assertions.assertNotNull(header.timestamp());
-            Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
-            Assertions.assertNotEquals(header.timestamp().second(), 0L);
+            Assertions.assertTrue(header.timestamp().microSecond() > 0);
+            Assertions.assertTrue(header.timestamp().second() > 0L);
           },
           MAX_PACKET);
     } catch (BreakException e) {
@@ -168,11 +168,11 @@ public class PcapOfflineTest {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
             Assertions.assertNotNull(header);
-            Assertions.assertNotEquals(header.captureLength(), 0);
-            Assertions.assertNotEquals(header.length(), 0);
+            Assertions.assertTrue(header.captureLength() == 105);
+            Assertions.assertTrue(header.length() == 105);
             Assertions.assertNotNull(header.timestamp());
-            Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
-            Assertions.assertNotEquals(header.timestamp().second(), 0L);
+            Assertions.assertTrue(header.timestamp().microSecond() > 0);
+            Assertions.assertTrue(header.timestamp().second() > 0L);
           },
           MAX_PACKET);
     } catch (BreakException e) {
@@ -196,11 +196,11 @@ public class PcapOfflineTest {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
             Assertions.assertNotNull(header);
-            Assertions.assertNotEquals(header.captureLength(), 0);
-            Assertions.assertNotEquals(header.length(), 0);
+            Assertions.assertTrue(header.captureLength() == 105);
+            Assertions.assertTrue(header.length() == 105);
             Assertions.assertNotNull(header.timestamp());
-            Assertions.assertNotEquals(header.timestamp().microSecond(), 0);
-            Assertions.assertNotEquals(header.timestamp().second(), 0L);
+            Assertions.assertTrue(header.timestamp().microSecond() > 0);
+            Assertions.assertTrue(header.timestamp().second() > 0L);
           },
           MAX_PACKET);
     } catch (BreakException e) {

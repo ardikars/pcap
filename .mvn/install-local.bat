@@ -1,0 +1,1 @@
+mvnw.cmd -t .mvn/toolchains.xml clean install jacoco:report-aggregate -Pcoverage -Pformat -Pjavadoc -Plegacy-support

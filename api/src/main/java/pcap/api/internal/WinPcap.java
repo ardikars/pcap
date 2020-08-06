@@ -2,7 +2,6 @@
 package pcap.api.internal;
 
 import java.foreign.memory.Pointer;
-
 import pcap.api.internal.foreign.mapping.WinPcapMapping;
 import pcap.api.internal.foreign.pcap_header;
 
