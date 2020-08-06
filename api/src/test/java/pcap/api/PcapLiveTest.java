@@ -17,6 +17,7 @@ import pcap.api.internal.foreign.mapping.PcapMapping;
 import pcap.api.internal.foreign.pcap_header;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
+import pcap.common.memory.Memory;
 import pcap.common.util.Hexs;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
@@ -251,7 +252,6 @@ public class PcapLiveTest {
           (args, header, buffer) -> {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
-            Assertions.assertNotNull(buffer.buffer());
             Assertions.assertNotNull(header);
             Assertions.assertNotEquals(header.captureLength(), 0);
             Assertions.assertNotEquals(header.length(), 0);
@@ -313,7 +313,6 @@ public class PcapLiveTest {
           MAX_PACKET,
           (args, header, buffer) -> {
             Assertions.assertEquals(args, MAX_PACKET);
-            Assertions.assertNotNull(buffer.buffer());
             Assertions.assertNotNull(header);
             Assertions.assertNotNull(buffer);
             Assertions.assertNotEquals(header.captureLength(), 0);
@@ -355,7 +354,6 @@ public class PcapLiveTest {
           (args, header, buffer) -> {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
-            Assertions.assertNotNull(buffer.buffer());
             Assertions.assertNotNull(header);
             Assertions.assertNotEquals(header.captureLength(), 0);
             Assertions.assertNotEquals(header.length(), 0);
@@ -390,7 +388,6 @@ public class PcapLiveTest {
             }
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
-            Assertions.assertNotNull(buffer.buffer());
             Assertions.assertNotNull(header);
             Assertions.assertNotEquals(header.captureLength(), 0);
             Assertions.assertNotEquals(header.length(), 0);
@@ -540,7 +537,7 @@ public class PcapLiveTest {
 
     @Override
     default void gotPacket(T args, PacketHeader header, PacketBuffer buffer) {
-      ByteBuffer byteBuf = buffer.buffer();
+      ByteBuffer byteBuf = ((Memory) buffer).nioBuffer();
       byte[] bytes = new byte[byteBuf.capacity()];
       byteBuf.get(0, bytes);
       String hex = Hexs.toHexString(bytes, 0, byteBuf.capacity());

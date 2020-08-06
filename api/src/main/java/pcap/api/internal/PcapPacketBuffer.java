@@ -58,12 +58,6 @@ public class PcapPacketBuffer extends DirectByteBuffer implements PacketBuffer {
     return this;
   }
 
-  @Deprecated
-  @Override
-  public ByteBuffer buffer() {
-    return nioBuffer();
-  }
-
   @Override
   public Memory copy(int index, int length) {
     int capacity = buffer.capacity();

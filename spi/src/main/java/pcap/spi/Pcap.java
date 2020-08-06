@@ -136,26 +136,16 @@ public interface Pcap extends AutoCloseable {
    * @param size the number of bytes in the packet.
    * @throws ErrorException generic error.
    */
-  @Deprecated
-  void send(ByteBuffer directBuffer, int size) throws ErrorException;
-
-  /**
-   * Sends a raw packet through the network interface.
-   *
-   * @param directBuffer the data of the packet, including the link-layer header.
-   * @param size the number of bytes in the packet.
-   * @throws ErrorException generic error.
-   */
   void send(PacketBuffer directBuffer, int size) throws ErrorException;
 
   /**
    * Send a raw packet through the network interface.
    *
-   * @param directBufer buffer started from {@link PacketBuffer#readerIndex()} to {@link
+   * @param directBuffer buffer started from {@link PacketBuffer#readerIndex()} to {@link
    *     PacketBuffer#writerIndex()}.
    * @throws ErrorException generic error.
    */
-  void send(PacketBuffer directBufer) throws ErrorException;
+  void send(PacketBuffer directBuffer) throws ErrorException;
 
   /**
    * Used to specify a direction that packets will be captured. This method isn't necessarily fully

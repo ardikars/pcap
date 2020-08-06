@@ -113,9 +113,13 @@ public abstract class Pcaps {
   /**
    * Lookup interface can be used to open {@link Pcap} live handle.
    *
+   * <p>This functions is deprecated, please use {@link Pcaps#lookupInterfaces()} instead.
+   * @see <a link="https://github.com/ardikars/pcap/issues/30">Github Issue: #30</a>
+   *
    * @return returns {@link Interface}.
    * @throws ErrorException generic error.
    */
+  @Deprecated
   public static Interface lookupInterface() throws ErrorException {
     synchronized (PcapMapping.LOCK) {
       try (Scope scope = Scope.globalScope().fork()) {

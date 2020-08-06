@@ -12,15 +12,6 @@ import java.nio.ByteBuffer;
 public interface PacketBuffer {
 
   /**
-   * Returned direct buffer.
-   *
-   * @return returns direct buffer.
-   * @since 1.0.0
-   */
-  @Deprecated
-  ByteBuffer buffer();
-
-  /**
    * Returns buffer reader index.
    *
    * @return returns buffer reader index.

@@ -83,7 +83,6 @@ public class PcapOfflineTest {
           (args, header, buffer) -> {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
-            Assertions.assertNotNull(buffer.buffer());
             Assertions.assertNotNull(header);
             Assertions.assertNotEquals(header.captureLength(), 0);
             Assertions.assertNotEquals(header.length(), 0);
@@ -116,7 +115,6 @@ public class PcapOfflineTest {
           (args, header, buffer) -> {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
-            Assertions.assertNotNull(buffer.buffer());
             Assertions.assertNotNull(header);
             Assertions.assertNotEquals(header.captureLength(), 0);
             Assertions.assertNotEquals(header.length(), 0);
@@ -145,7 +143,6 @@ public class PcapOfflineTest {
             }
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
-            Assertions.assertNotNull(buffer.buffer());
             Assertions.assertNotNull(header);
             Assertions.assertNotEquals(header.captureLength(), 0);
             Assertions.assertNotEquals(header.length(), 0);
@@ -170,7 +167,6 @@ public class PcapOfflineTest {
           (args, header, buffer) -> {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
-            Assertions.assertNotNull(buffer.buffer());
             Assertions.assertNotNull(header);
             Assertions.assertNotEquals(header.captureLength(), 0);
             Assertions.assertNotEquals(header.length(), 0);
@@ -199,7 +195,6 @@ public class PcapOfflineTest {
           (args, header, buffer) -> {
             Assertions.assertEquals(args, MAX_PACKET);
             Assertions.assertNotNull(buffer);
-            Assertions.assertNotNull(buffer.buffer());
             Assertions.assertNotNull(header);
             Assertions.assertNotEquals(header.captureLength(), 0);
             Assertions.assertNotEquals(header.length(), 0);

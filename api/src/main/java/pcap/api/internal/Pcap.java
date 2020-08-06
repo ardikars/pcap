@@ -263,17 +263,6 @@ public class Pcap implements pcap.spi.Pcap {
 
   /** {@inheritDoc} */
   @Override
-  public void send(ByteBuffer buffer, int size) throws ErrorException {
-    synchronized (PcapMapping.LOCK) {
-      int result = PcapMapping.MAPPING.pcap_sendpacket(pcap, Pointer.fromByteBuffer(buffer), size);
-      if (result < 0) {
-        throw new ErrorException(Pointer.toString(PcapMapping.MAPPING.pcap_geterr(pcap)));
-      }
-    }
-  }
-
-  /** {@inheritDoc} */
-  @Override
   public void send(PacketBuffer buffer, int size) throws ErrorException {
     synchronized (PcapMapping.LOCK) {
       Validate.notIllegalArgument(

@@ -50,7 +50,6 @@ public class PcapDumperTest {
       pcap.loop(
           MAX_PACKET,
           (args, header, buffer) -> {
-            Assertions.assertNotNull(buffer.buffer());
             Assertions.assertNotNull(header);
             Assertions.assertNotNull(buffer);
             Assertions.assertNotEquals(header.captureLength(), 0);
@@ -88,7 +87,6 @@ public class PcapDumperTest {
       pcap.loop(
           MAX_PACKET,
           (args, header, buffer) -> {
-            Assertions.assertNotNull(buffer.buffer());
             Assertions.assertNotNull(header);
             Assertions.assertNotNull(buffer);
             Assertions.assertNotEquals(header.captureLength(), 0);

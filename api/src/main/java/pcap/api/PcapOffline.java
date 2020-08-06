@@ -24,12 +24,10 @@ public class PcapOffline extends Pcaps {
   private final String file; // not null
   private final PcapOfflineOptions options; // nullable
 
-  @Deprecated
   public PcapOffline(String file) {
     this(file, new PcapOfflineOptions());
   }
 
-  @Deprecated
   public PcapOffline(String file, PcapOfflineOptions options) {
     this.file = file;
     this.options = options;
