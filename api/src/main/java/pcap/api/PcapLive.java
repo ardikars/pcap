@@ -5,9 +5,7 @@ import java.foreign.NativeTypes;
 import java.foreign.Scope;
 import java.foreign.memory.Pointer;
 import java.net.Inet4Address;
-import pcap.api.internal.Pcap;
-import pcap.api.internal.UnixPcap;
-import pcap.api.internal.WinPcap;
+import pcap.api.internal.*;
 import pcap.api.internal.foreign.mapping.PcapMapping;
 import pcap.api.internal.foreign.pcap_header;
 import pcap.common.annotation.Inclubating;
@@ -75,10 +73,15 @@ public class PcapLive extends Pcaps {
             PcapMapping.MAPPING.pcap_set_tstamp_precision(
                 pointer, options.timestampPrecision().value()));
         checkActivate(pointer, PcapMapping.MAPPING.pcap_activate(pointer));
-        if (Platforms.isWindows()) {
-          return new WinPcap(pointer, netmask(source));
+        switch (Platforms.name()) {
+          case LINUX:
+            return new LinuxPcap(pointer, netmask(source));
+          case DARWIN:
+            return new DarwinPcap(pointer, netmask(source));
+          case WINDOWS:
+            return new WindowsPcap(pointer, netmask(source));
         }
-        return new UnixPcap(pointer, netmask(source));
+        throw new UnsupportedOperationException();
       }
     }
   }

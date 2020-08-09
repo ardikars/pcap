@@ -3,20 +3,20 @@ package pcap.api.internal.foreign.mapping;
 
 import java.foreign.Libraries;
 import java.lang.invoke.MethodHandles;
-import pcap.api.internal.foreign.win_pcap_header;
+import pcap.api.internal.foreign.linux_pcap_header;
 
 /**
- * windows pcap native mapping.
+ * Linux pcap native mapping.
  *
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
-public final class WinPcapMapping {
+public final class LinuxPcapMapping {
 
-  public static final win_pcap_header MAPPING;
+  public static final linux_pcap_header MAPPING;
 
   static {
     MAPPING =
         Libraries.bind(
-            win_pcap_header.class, Libraries.loadLibrary(MethodHandles.lookup(), "wpcap"));
+            linux_pcap_header.class, Libraries.loadLibrary(MethodHandles.lookup(), "pcap"));
   }
 }

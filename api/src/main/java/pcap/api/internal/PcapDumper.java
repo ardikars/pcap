@@ -7,8 +7,6 @@ import pcap.api.internal.foreign.mapping.PcapMapping;
 import pcap.api.internal.foreign.pcap_header;
 import pcap.common.annotation.Inclubating;
 import pcap.spi.Dumper;
-import pcap.spi.PacketBuffer;
-import pcap.spi.PacketHeader;
 
 /**
  * {@code Pcap} dumper implementation.
@@ -16,7 +14,7 @@ import pcap.spi.PacketHeader;
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
 @Inclubating
-public class PcapDumper implements Dumper {
+public abstract class PcapDumper implements Dumper {
 
   final Pointer<pcap_header.pcap_dumper> pcap_dumper;
   final Pointer<Byte> reference;
@@ -24,14 +22,6 @@ public class PcapDumper implements Dumper {
   public PcapDumper(Pointer<pcap_header.pcap_dumper> pcap_dumper) {
     this.pcap_dumper = pcap_dumper;
     this.reference = pcap_dumper.cast(NativeTypes.VOID).cast(NativeTypes.UINT8);
-  }
-
-  @Override
-  public void dump(PacketHeader header, PacketBuffer buffer) {
-    synchronized (PcapMapping.LOCK) {
-      PcapMapping.MAPPING.pcap_dump(
-          reference, ((PcapPacketHeader.Impl) header).ref, ((PcapPacketBuffer) buffer).ref);
-    }
   }
 
   @Override

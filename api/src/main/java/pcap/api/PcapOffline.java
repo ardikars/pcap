@@ -5,9 +5,10 @@ import java.foreign.NativeTypes;
 import java.foreign.Scope;
 import java.foreign.memory.Pointer;
 import java.io.File;
+import pcap.api.internal.DarwinPcap;
+import pcap.api.internal.LinuxPcap;
 import pcap.api.internal.Pcap;
-import pcap.api.internal.UnixPcap;
-import pcap.api.internal.WinPcap;
+import pcap.api.internal.WindowsPcap;
 import pcap.api.internal.foreign.mapping.PcapMapping;
 import pcap.api.internal.foreign.pcap_header;
 import pcap.common.annotation.Inclubating;
@@ -65,10 +66,15 @@ public class PcapOffline extends Pcaps {
                   scope.allocateCString(file), options.timestampPrecision().value(), errbuf);
         }
         nullCheck(pointer, errbuf);
-        if (Platforms.isWindows()) {
-          return new WinPcap(pointer);
+        switch (Platforms.name()) {
+          case LINUX:
+            return new LinuxPcap(pointer);
+          case DARWIN:
+            return new DarwinPcap(pointer);
+          case WINDOWS:
+            return new WindowsPcap(pointer);
         }
-        return new UnixPcap(pointer);
+        throw new UnsupportedOperationException();
       }
     }
   }

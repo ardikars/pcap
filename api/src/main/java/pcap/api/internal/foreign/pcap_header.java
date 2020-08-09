@@ -5,11 +5,8 @@ import java.foreign.annotations.NativeFunction;
 import java.foreign.annotations.NativeGetter;
 import java.foreign.annotations.NativeHeader;
 import java.foreign.annotations.NativeStruct;
-import java.foreign.memory.Callback;
 import java.foreign.memory.Pointer;
 import java.foreign.memory.Struct;
-import pcap.api.internal.PcapHandler;
-import pcap.api.internal.PcapPacketHeader;
 import pcap.api.internal.PcapStatus;
 import pcap.api.internal.foreign.struct.posix_structs;
 import pcap.common.annotation.Inclubating;
@@ -20,7 +17,7 @@ import pcap.common.annotation.Inclubating;
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
 @Inclubating
-@NativeHeader(resolutionContext = {PcapPacketHeader.class, PcapStatus.class})
+@NativeHeader(resolutionContext = {PcapStatus.class})
 public interface pcap_header {
 
   @NativeFunction("(u64:u8)u64:u8")
@@ -68,18 +65,6 @@ public interface pcap_header {
 
   @NativeFunction("(u64:${pcap})v")
   void pcap_close(Pointer<pcap> p);
-
-  @NativeFunction("(u64:${pcap}i32u64:(u64:u8u64:${pcap_pkthdr}u64:u8)vu64:u8)i32")
-  int pcap_loop(Pointer<pcap> p, int cnt, Callback<PcapHandler> callback, Pointer<Byte> usr);
-
-  @NativeFunction("(u64:${pcap}i32u64:(u64:u8u64:${pcap_pkthdr}u64:u8)vu64:u8)i32")
-  int pcap_dispatch(Pointer<pcap> p, int cnt, Callback<PcapHandler> usr, Pointer<Byte> pp);
-
-  @NativeFunction("(u64:${pcap}u64:u64:${pcap_pkthdr}u64:u64:u8)i32")
-  int pcap_next_ex(
-      Pointer<pcap> p,
-      Pointer<? extends Pointer<PcapPacketHeader>> pkthdr_p,
-      Pointer<? extends Pointer<Byte>> buf);
 
   @NativeFunction("(u64:${pcap})v")
   void pcap_breakloop(Pointer<pcap> p);
@@ -148,9 +133,6 @@ public interface pcap_header {
 
   @NativeFunction("(u64:${pcap_dumper})v")
   void pcap_dump_close(Pointer<pcap_dumper> p);
-
-  @NativeFunction("(u64:u8u64:${pcap_pkthdr}u64:u8)v")
-  void pcap_dump(Pointer<Byte> p, Pointer<PcapPacketHeader> pkthdr_p, Pointer<Byte> buf);
 
   @NativeFunction("(u64:u64:${pcap_if}u64:u8)i32")
   int pcap_findalldevs(Pointer<? extends Pointer<pcap_if>> alldevs, Pointer<Byte> errbuf);
