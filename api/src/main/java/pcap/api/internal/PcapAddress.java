@@ -182,6 +182,8 @@ public class PcapAddress implements Address {
               inetAddress = Inet6Address.getByAddress(data);
             }
           }
+        } else {
+          throw new UnsupportedOperationException();
         }
         return inetAddress;
       } catch (UnknownHostException e) {

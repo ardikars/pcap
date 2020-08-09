@@ -3,20 +3,20 @@ package pcap.api.internal.foreign.mapping;
 
 import java.foreign.Libraries;
 import java.lang.invoke.MethodHandles;
-import pcap.api.internal.foreign.unix_pcap_header;
+import pcap.api.internal.foreign.darwin_pcap_header;
 
 /**
- * unix pcap native mapping.
+ * Darwin pcap native mapping.
  *
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
-public final class UnixPcapMapping {
+public final class DarwinPcapMapping {
 
-  public static final unix_pcap_header MAPPING;
+  public static final darwin_pcap_header MAPPING;
 
   static {
     MAPPING =
         Libraries.bind(
-            unix_pcap_header.class, Libraries.loadLibrary(MethodHandles.lookup(), "pcap"));
+            darwin_pcap_header.class, Libraries.loadLibrary(MethodHandles.lookup(), "pcap"));
   }
 }

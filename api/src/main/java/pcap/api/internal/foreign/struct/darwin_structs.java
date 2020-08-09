@@ -101,4 +101,29 @@ public interface darwin_structs {
     @NativeGetter("sin6_scope_id")
     int sin6_scope_id$get();
   }
+
+  @NativeStruct(
+      value = "[${timeval}(ts)u32(caplen)u32(len)](pcap_pkthdr)",
+      resolutionContext = {timeval.class})
+  interface pcap_pkthdr extends Struct<pcap_pkthdr> {
+
+    @NativeGetter("ts")
+    timeval timestamp();
+
+    @NativeGetter("caplen")
+    int captureLength();
+
+    @NativeGetter("len")
+    int length();
+  }
+
+  @NativeStruct("[i64(tv_sec)i32(tv_usec)x32](timeval)")
+  interface timeval extends Struct<timeval> {
+
+    @NativeGetter("tv_sec")
+    long second();
+
+    @NativeGetter("tv_usec")
+    int microSecond();
+  }
 }
