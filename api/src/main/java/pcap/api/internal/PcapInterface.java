@@ -18,11 +18,11 @@ import pcap.spi.Interface;
 @Inclubating
 public class PcapInterface implements Interface {
 
-  Interface next;
-  String name;
-  String description;
-  Address addresses;
-  int flags;
+  public Interface next;
+  public String name;
+  public String description;
+  public Address addresses;
+  public int flags;
 
   public PcapInterface(pcap_header.pcap_if pcap_if) {
     this.name = Pointer.toString(pcap_if.name$get());

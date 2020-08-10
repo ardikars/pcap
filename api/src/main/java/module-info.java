@@ -9,4 +9,7 @@ module pcap.api {
       java.base;
   exports pcap.api.internal.foreign.struct to
       java.base;
+
+  provides pcap.spi.Service with
+      pcap.api.internal.PcapService;
 }

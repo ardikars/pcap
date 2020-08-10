@@ -17,6 +17,8 @@ import pcap.common.logging.LoggerFactory;
 import pcap.common.util.Platforms;
 import pcap.spi.exception.ErrorException;
 
+/** Deprecated please use {@link pcap.spi.Service} instead. */
+@Deprecated
 @Inclubating
 public class PcapOffline extends Pcaps {
 

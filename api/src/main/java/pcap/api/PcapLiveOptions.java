@@ -4,10 +4,11 @@ package pcap.api;
 import pcap.common.annotation.Inclubating;
 import pcap.common.util.Properties;
 import pcap.common.util.Strings;
+import pcap.spi.Service;
 import pcap.spi.Timestamp;
 
 @Inclubating
-public class PcapLiveOptions {
+public class PcapLiveOptions implements Service.LiveOptions {
 
   private int snapshotLength; // not zero and not minus
   private boolean promiscuous;

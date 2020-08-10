@@ -29,6 +29,7 @@ import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+@Deprecated
 @Inclubating
 public abstract class Pcaps {
 

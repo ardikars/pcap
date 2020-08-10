@@ -17,9 +17,9 @@ public class DarwinPacketHeader implements pcap.spi.PacketHeader {
 
   final Pointer<Pointer<darwin_structs.pcap_pkthdr>> ptr;
   final Pointer<darwin_structs.pcap_pkthdr> ref;
-  volatile DefaultTimestamp timestamp;
-  volatile int captureLength;
-  volatile int length;
+  DefaultTimestamp timestamp;
+  int captureLength;
+  int length;
 
   public DarwinPacketHeader(
       Pointer<Pointer<darwin_structs.pcap_pkthdr>> ptr,

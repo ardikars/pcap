@@ -17,9 +17,9 @@ public class WindowsPacketHeader implements pcap.spi.PacketHeader {
 
   final Pointer<Pointer<windows_structs.pcap_pkthdr>> ptr;
   final Pointer<windows_structs.pcap_pkthdr> ref;
-  volatile DefaultTimestamp timestamp;
-  volatile int captureLength;
-  volatile int length;
+  DefaultTimestamp timestamp;
+  int captureLength;
+  int length;
 
   public WindowsPacketHeader(
       Pointer<Pointer<windows_structs.pcap_pkthdr>> ptr,

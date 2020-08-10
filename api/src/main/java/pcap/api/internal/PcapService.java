@@ -1,48 +1,169 @@
-/** This code is licenced under the GPL version 2. */
-package pcap.api;
+package pcap.api.internal;
 
 import java.foreign.NativeTypes;
 import java.foreign.Scope;
+import java.foreign.memory.LayoutType;
 import java.foreign.memory.Pointer;
 import java.net.Inet4Address;
-import pcap.api.internal.*;
+import java.net.Inet6Address;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Predicate;
 import pcap.api.internal.foreign.mapping.PcapMapping;
 import pcap.api.internal.foreign.pcap_header;
-import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.common.util.Objects;
 import pcap.common.util.Platforms;
+import pcap.spi.Address;
 import pcap.spi.Interface;
+import pcap.spi.Service;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 import pcap.spi.exception.warn.PromiscuousModeNotSupported;
 
-/** Deprecated please use {@link pcap.spi.Service} instead. */
-@Deprecated
-@Inclubating
-public class PcapLive extends Pcaps {
+public class PcapService implements Service {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(PcapLive.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(PcapService.class);
 
-  private final Interface source; // not null
-  private final PcapLiveOptions options;
+  private final String name;
 
-  public PcapLive(Interface source) {
-    this(source, new PcapLiveOptions());
-  }
-
-  public PcapLive(Interface source, PcapLiveOptions options) {
-    this.source = source;
-    this.options = options;
+  public PcapService() {
+    this.name = "PcapService";
   }
 
   @Override
-  Pcap open()
-      throws ErrorException, ActivatedException, InterfaceNotSupportTimestampTypeException,
-          NoSuchDeviceException, PermissionDeniedException, PromiscuousModeNotSupported,
-          PromiscuousModePermissionDeniedException, RadioFrequencyModeNotSupportedException,
-          InterfaceNotUpException, TimestampPrecisionNotSupportedException {
+  public String name() {
+    return name;
+  }
+
+  @Override
+  public String version() {
+    synchronized (PcapMapping.LOCK) {
+      return Pointer.toString(PcapMapping.MAPPING.pcap_lib_version());
+    }
+  }
+
+  @Override
+  public Interface lookupInterfaces() throws ErrorException {
+    synchronized (PcapMapping.LOCK) {
+      try (Scope scope = Scope.globalScope().fork()) {
+        Pointer<Pointer<pcap_header.pcap_if>> pointer =
+            scope.allocate(LayoutType.ofStruct(pcap_header.pcap_if.class).pointer());
+        Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapMapping.ERRBUF_SIZE);
+        int result = PcapMapping.MAPPING.pcap_findalldevs(pointer, errbuf);
+        if (result != PcapMapping.OK) {
+          throw new ErrorException(Pointer.toString(errbuf));
+        }
+        pcap_header.pcap_if pcap_if = pointer.get().get();
+        Interface devices = new PcapInterface(pcap_if);
+        PcapMapping.MAPPING.pcap_freealldevs(pointer.get());
+        return devices;
+      }
+    }
+  }
+
+  @Override
+  public Interface lookupIntefaces(Predicate<Interface> predicate) throws ErrorException {
+    List<Interface> collections = new LinkedList<>();
+    Interface interfaces = lookupInterfaces();
+    Iterator<Interface> interfaceIterator = interfaces.iterator();
+    while (interfaceIterator.hasNext()) {
+      Interface next = interfaceIterator.next();
+      if (predicate.test(next)) {
+        collections.add(next);
+      }
+    }
+    if (collections.isEmpty()) {
+      throw new ErrorException("Interface not found");
+    }
+    PcapInterface pcapInterface;
+    Iterator<Interface> iterator = collections.iterator();
+    pcapInterface = (PcapInterface) iterator.next();
+    pcapInterface.next = null;
+    while (iterator.hasNext()) {
+      PcapInterface next = (PcapInterface) iterator.next();
+      next.next = null;
+      pcapInterface.next = next;
+    }
+    return pcapInterface;
+  }
+
+  @Override
+  public Inet4Address lookupInet4Address(Interface source) throws ErrorException {
+    if (source.addresses() != null) {
+      Iterator<Address> addressIterator = source.addresses().iterator();
+      while (addressIterator.hasNext()) {
+        Address next = addressIterator.next();
+        if (next.address() != null
+            && !next.address().isLoopbackAddress()
+            && next.address() instanceof Inet4Address) {
+          return (Inet4Address) next.address();
+        }
+      }
+    }
+    throw new ErrorException("Not found.");
+  }
+
+  @Override
+  public Inet6Address lookupInet6Address(Interface source) throws ErrorException {
+    if (source.addresses() != null) {
+      Iterator<Address> addressIterator = source.addresses().iterator();
+      while (addressIterator.hasNext()) {
+        Address next = addressIterator.next();
+        if (next.address() != null
+            && !next.address().isLoopbackAddress()
+            && next.address() instanceof Inet6Address) {
+          return (Inet6Address) next.address();
+        }
+      }
+    }
+    throw new ErrorException("IPv6 address not found for " + source.name());
+  }
+
+  @Override
+  public Pcap offline(String source, OfflineOptions options) throws ErrorException {
+    synchronized (PcapMapping.LOCK) {
+      try (Scope scope = Scope.globalScope().fork()) {
+        Pointer<Byte> errbuf = scope.allocate(NativeTypes.INT8, PcapMapping.ERRBUF_SIZE);
+        Pointer<pcap_header.pcap> pointer;
+        if (options.timestampPrecision() == null) {
+          if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Opening file: {}", source);
+          }
+          pointer = PcapMapping.MAPPING.pcap_open_offline(scope.allocateCString(source), errbuf);
+        } else {
+          if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(
+                "Opening file ({}) with timestamp precision ({})",
+                source,
+                options.timestampPrecision().value());
+          }
+          pointer =
+              PcapMapping.MAPPING.pcap_open_offline_with_tstamp_precision(
+                  scope.allocateCString(source), options.timestampPrecision().value(), errbuf);
+        }
+        nullCheck(pointer, errbuf);
+        switch (Platforms.name()) {
+          case LINUX:
+            return new LinuxPcap(pointer);
+          case DARWIN:
+            return new DarwinPcap(pointer);
+          case WINDOWS:
+            return new WindowsPcap(pointer);
+        }
+        throw new UnsupportedOperationException();
+      }
+    }
+  }
+
+  @Override
+  public Pcap live(Interface source, LiveOptions options)
+      throws InterfaceNotSupportTimestampTypeException, InterfaceNotUpException,
+          RadioFrequencyModeNotSupportedException, ActivatedException, PermissionDeniedException,
+          NoSuchDeviceException, PromiscuousModePermissionDeniedException, ErrorException,
+          TimestampPrecisionNotSupportedException {
     synchronized (PcapMapping.LOCK) {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Opening live handler on {}.", source.name());
@@ -85,6 +206,12 @@ public class PcapLive extends Pcaps {
         }
         throw new UnsupportedOperationException();
       }
+    }
+  }
+
+  void nullCheck(Pointer<pcap_header.pcap> pointer, Pointer<Byte> errbuf) {
+    if (pointer == null || pointer.isNull()) {
+      throw new IllegalStateException(Pointer.toString(errbuf));
     }
   }
 
@@ -208,11 +335,5 @@ public class PcapLive extends Pcaps {
       }
     }
     return netmask;
-  }
-
-  void nullCheck(Pointer<pcap_header.pcap> pointer, Pointer<Byte> errbuf) {
-    if (pointer == null || pointer.isNull()) {
-      throw new IllegalStateException(Pointer.toString(errbuf));
-    }
   }
 }

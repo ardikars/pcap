@@ -3,10 +3,11 @@ package pcap.api;
 
 import pcap.common.annotation.Inclubating;
 import pcap.common.util.Strings;
+import pcap.spi.Service;
 import pcap.spi.Timestamp;
 
 @Inclubating
-public class PcapOfflineOptions {
+public class PcapOfflineOptions implements Service.OfflineOptions {
 
   private Timestamp.Precision timestampPrecision; // nullable
 
