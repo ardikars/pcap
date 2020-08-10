@@ -9,73 +9,64 @@ import org.junit.runner.RunWith;
 @RunWith(JUnitPlatform.class)
 public class PlatformsTest {
 
-  @Test
-  public void getNameTest() {
-    assert Platforms.name().name() != null;
+  public void getNameTest(String name) {
+    assert Platforms.name().name().equals(name);
+  }
+
+  public void isWindowsTest(boolean windows) {
+    assert Platforms.isWindows() == windows;
+  }
+
+  public void isLinuxTest(boolean linux) {
+    assert Platforms.isLinux() == linux;
+  }
+
+  public void isDarwinTest(boolean darwin) {
+    assert Platforms.isDarwin() == darwin;
   }
 
   @Test
-  public void getArchitectureTest() {
-    assert Platforms.architecture() != null;
+  public void platformTest() {
+    switch (Platforms.name()) {
+      case DARWIN:
+        doMacOsTest();
+        break;
+      case LINUX:
+        doLinuxTest();
+        break;
+      case WINDOWS:
+        doWindowsTest();
+        break;
+      default:
+        doUnknownTest();
+    }
   }
 
-  @Test
-  public void isWindowsTest() {
-    assert Platforms.isWindows() || !Platforms.isWindows();
+  void doLinuxTest() {
+    getNameTest("LINUX");
+    isWindowsTest(false);
+    isLinuxTest(true);
+    isDarwinTest(false);
   }
 
-  @Test
-  public void isLinuxTest() {
-    assert Platforms.isLinux() || !Platforms.isLinux();
+  void doMacOsTest() {
+    getNameTest("DARWIN");
+    isWindowsTest(false);
+    isLinuxTest(false);
+    isDarwinTest(true);
   }
 
-  @Test
-  public void isAndroidTest() {
-    assert Platforms.isAndroid() || !Platforms.isAndroid();
+  void doWindowsTest() {
+    getNameTest("WINDOWS");
+    isWindowsTest(true);
+    isLinuxTest(false);
+    isDarwinTest(false);
   }
 
-  @Test
-  public void isFreeBsdTest() {
-    assert Platforms.isFreeBsd() || !Platforms.isFreeBsd();
-  }
-
-  @Test
-  public void isDarwinTest() {
-    assert Platforms.isDarwin() || !Platforms.isDarwin();
-  }
-
-  @Test
-  public void is32BitTest() {
-    assert Platforms.is32Bit() || !Platforms.is32Bit();
-  }
-
-  @Test
-  public void is64BitTest() {
-    assert Platforms.is64Bit() || !Platforms.is64Bit();
-  }
-
-  @Test
-  public void isArmTest() {
-    assert Platforms.isArm() || !Platforms.isArm();
-  }
-
-  @Test
-  public void isIntelTest() {
-    assert Platforms.isIntel() || !Platforms.isIntel();
-  }
-
-  @Test
-  public void isAmdTest() {
-    assert Platforms.isAmd() || !Platforms.isAmd();
-  }
-
-  @Test
-  public void getCpuVersionTest() {
-    assert Platforms.cpuVersion() != null;
-  }
-
-  @Test
-  public void getJavaMajorVersionTest() {
-    assert Platforms.javaMojorVersion() != 0;
+  void doUnknownTest() {
+    getNameTest("UNKNOWN");
+    isWindowsTest(false);
+    isLinuxTest(false);
+    isDarwinTest(false);
   }
 }

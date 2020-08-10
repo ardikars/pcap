@@ -25,14 +25,26 @@ public class PcapLiveOptions implements Service.LiveOptions {
         Properties.getBoolean("pcap.promiscuous", true),
         Properties.getBoolean("pcap.rfmon", false),
         Properties.getInt("pcap.timeout", 2000),
-        Properties.getProperty("pcap.timestampType", null) == null
-            ? null
-            : Timestamp.Type.valueOf(Properties.getProperty("pcap.timestampType")),
+        defaultTimestampType(),
         Properties.getBoolean("pcap.immediate", true),
         Properties.getInt("pcap.bufferSize", 0),
-        Properties.getProperty("pcap.timestampPrecision", "MICRO").equalsIgnoreCase("MICRO")
-            ? Timestamp.Precision.MICRO
-            : Timestamp.Precision.NANO);
+        defaultTimestampPrecision());
+  }
+
+  private static Timestamp.Type defaultTimestampType() {
+    String value = Properties.getProperty("pcap.timestampType");
+    if (value == null) {
+      return null;
+    }
+    return Timestamp.Type.valueOf(value);
+  }
+
+  private static Timestamp.Precision defaultTimestampPrecision() {
+    String value = Properties.getProperty("pcap.timestampPrecision");
+    if (value == null) {
+      return Timestamp.Precision.MICRO;
+    }
+    return Timestamp.Precision.valueOf(value);
   }
 
   private PcapLiveOptions(

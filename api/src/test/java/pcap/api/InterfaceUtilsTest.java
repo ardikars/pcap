@@ -2,11 +2,14 @@ package pcap.api;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 import pcap.common.net.MacAddress;
 import pcap.spi.Interface;
 import pcap.spi.Service;
 import pcap.spi.exception.ErrorException;
 
+@RunWith(JUnitPlatform.class)
 public class InterfaceUtilsTest {
 
   @Test
