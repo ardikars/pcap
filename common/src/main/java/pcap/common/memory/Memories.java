@@ -182,13 +182,24 @@ public final class Memories {
    * @return returns new direct {@link Memory} instance.
    */
   private static Memory doAssemble(Memory... memories) {
+    return assemble(allocator(), memories);
+  }
+
+  /**
+   * Assemble (combining) memory buffers (copying memories into single buffer).
+   *
+   * @param allocator allocator.
+   * @param memories memories.
+   * @return returns assembled buffers.
+   */
+  public static Memory assemble(MemoryAllocator allocator, Memory... memories) {
     int capacity = 0;
     int maxCapacity = 0;
     for (int i = 0; i < memories.length; i++) {
       capacity += memories[i].capacity();
       maxCapacity += memories[i].maxCapacity();
     }
-    Memory memory = allocator().allocate(capacity, maxCapacity);
+    Memory memory = allocator.allocate(capacity, maxCapacity);
     int index = 0;
     for (int i = 0; i < memories.length; i++) {
       memory.setBytes(index, memories[i], 0, memories[i].capacity());

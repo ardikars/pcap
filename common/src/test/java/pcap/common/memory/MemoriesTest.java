@@ -100,4 +100,13 @@ public class MemoriesTest {
         Memories.allocateRandom(10, Memories.allocator(), new SecureRandom());
     Assertions.assertTrue(defaultHeapSecureRandom instanceof HeapByteBuffer);
   }
+
+  @Test
+  public void assembleWithAllocatorTest() {
+    Memory a = Memories.directAllocator().allocate(4);
+    Memory b = Memories.directAllocator().allocate(4);
+    Memory assemble = Memories.assemble(Memories.directAllocator(), a, b);
+    Assertions.assertNotNull(assemble);
+    Assertions.assertTrue(assemble.capacity() == (a.capacity() + b.capacity()));
+  }
 }
