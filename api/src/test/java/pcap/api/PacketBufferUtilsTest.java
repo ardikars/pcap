@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import pcap.common.memory.Memories;
 import pcap.common.memory.Memory;
+import pcap.common.memory.MemoryAllocator;
 import pcap.spi.PacketBuffer;
 
 @RunWith(JUnitPlatform.class)
@@ -29,7 +29,7 @@ public class PacketBufferUtilsTest {
   @Test
   public void fromMemoryTest() {
     ByteBuffer buffer = ByteBuffer.allocateDirect(8);
-    Memory memory = Memories.wrap(buffer);
+    Memory memory = MemoryAllocator.create("NioDirectMemoryAllocator").wrap(buffer);
     PacketBuffer packetBuffer = PacketBufferUtils.fromMemory(memory);
     Assertions.assertNotNull(packetBuffer);
     memory.release();
@@ -38,7 +38,7 @@ public class PacketBufferUtilsTest {
   @Test
   public void fromMemoryNegativeTest() {
     ByteBuffer buffer = ByteBuffer.allocate(8);
-    Memory memory = Memories.wrap(buffer);
+    Memory memory = MemoryAllocator.create("NioHeapMemoryAllocator").wrap(buffer);
     Assertions.assertThrows(
         IllegalArgumentException.class, () -> PacketBufferUtils.fromMemory(memory));
   }

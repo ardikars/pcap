@@ -10,7 +10,6 @@ import pcap.codec.TransportLayer;
 import pcap.codec.UnknownPacket;
 import pcap.codec.ethernet.Ethernet;
 import pcap.codec.ip.ip6.Authentication;
-import pcap.common.memory.Memories;
 import pcap.common.memory.Memory;
 import pcap.common.memory.internal.nio.PooledDirectByteBuffer;
 import pcap.common.net.Inet6Address;
@@ -34,7 +33,7 @@ class Ip6Test extends BaseTest {
         .destinationAddress(Inet6Address.valueOf("ff02::5"))
         .sourceAddress(Inet6Address.ZERO)
         .payloadLength(60)
-        .payload(new UnknownPacket.Builder().build(Memories.directAllocator().allocate(60)));
+        .payload(new UnknownPacket.Builder().build(DIRECT_ALLOCATOR.allocate(60)));
   }
 
   @Override

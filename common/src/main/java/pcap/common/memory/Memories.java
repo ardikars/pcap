@@ -5,10 +5,6 @@ import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.Random;
 import pcap.common.annotation.Inclubating;
-import pcap.common.memory.internal.allocator.DirectMemoryAllocator;
-import pcap.common.memory.internal.allocator.HeapMemoryAllocator;
-import pcap.common.memory.internal.allocator.PooledDirectMemoryAllocator;
-import pcap.common.memory.internal.allocator.PooledHeapMemoryAllocator;
 import pcap.common.memory.internal.nio.DirectByteBuffer;
 import pcap.common.memory.internal.nio.HeapByteBuffer;
 import pcap.common.util.Hexs;
@@ -28,7 +24,7 @@ public final class Memories {
    * @return returns default memory allocator.
    */
   public static MemoryAllocator allocator() {
-    return new HeapMemoryAllocator();
+    return MemoryAllocator.create("NioHeapMemoryAllocator");
   }
 
   /**
@@ -37,7 +33,7 @@ public final class Memories {
    * @return returns direct memory allocator.
    */
   public static MemoryAllocator directAllocator() {
-    return new DirectMemoryAllocator();
+    return MemoryAllocator.create("NioDirectMemoryAllocator");
   }
 
   /**
@@ -50,7 +46,8 @@ public final class Memories {
    */
   public static MemoryAllocator allocator(int poolSize, int maxPoolSize, int maxMemoryCapacity) {
     synchronized (Memories.class) {
-      return new PooledHeapMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
+      return MemoryAllocator.create(
+          "NioPooledHeapMemoryAllocator", poolSize, maxPoolSize, maxMemoryCapacity);
     }
   }
 
@@ -65,7 +62,8 @@ public final class Memories {
   public static MemoryAllocator directAllocator(
       int poolSize, int maxPoolSize, int maxMemoryCapacity) {
     synchronized (Memories.class) {
-      return new PooledDirectMemoryAllocator(poolSize, maxPoolSize, maxMemoryCapacity);
+      return MemoryAllocator.create(
+          "NioPooledDirectMemoryAllocator", poolSize, maxPoolSize, maxMemoryCapacity);
     }
   }
 

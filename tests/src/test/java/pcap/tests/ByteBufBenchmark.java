@@ -1,8 +1,8 @@
 package pcap.tests;
 
 import org.openjdk.jmh.annotations.*;
-import pcap.common.memory.Memories;
 import pcap.common.memory.Memory;
+import pcap.common.memory.MemoryAllocator;
 
 public class ByteBufBenchmark {
 
@@ -468,7 +468,7 @@ public class ByteBufBenchmark {
 
     @Setup(Level.Invocation)
     public void setUp() {
-      memory = Memories.directAllocator().allocate(iterations);
+      memory = MemoryAllocator.create("NioDirectMemoryAllocator").allocate(iterations);
     }
   }
 }

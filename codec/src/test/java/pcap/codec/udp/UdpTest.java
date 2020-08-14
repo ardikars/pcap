@@ -9,8 +9,8 @@ import pcap.codec.BaseTest;
 import pcap.codec.UnknownPacket;
 import pcap.codec.ethernet.Ethernet;
 import pcap.codec.ip.Ip4;
-import pcap.common.memory.Memories;
 import pcap.common.memory.Memory;
+import pcap.common.memory.MemoryAllocator;
 import pcap.common.memory.internal.nio.PooledDirectByteBuffer;
 import pcap.common.net.Inet4Address;
 import pcap.common.util.Hexs;
@@ -36,8 +36,10 @@ public class UdpTest extends BaseTest {
   public void checksumTest() {
     Ethernet ethernet =
         Ethernet.newPacket(
-            Memories.wrap(
-                "00090f090014e86f38393dbf080045000051349800004011ce2a0a0e4c730a0e174b97d30035003d807a8c710120000100000000000108617264696b61727303636f6d0000010001000029100000000000000c000a0008e1113ba1c6eb7772"));
+            MemoryAllocator.create("NioHeapMemoryAllocator")
+                .wrap(
+                    Hexs.parseHex(
+                        "00090f090014e86f38393dbf080045000051349800004011ce2a0a0e4c730a0e174b97d30035003d807a8c710120000100000000000108617264696b61727303636f6d0000010001000029100000000000000c000a0008e1113ba1c6eb7772")));
     final Ip4 ip4 = ethernet.getFirst(Ip4.class);
     final Udp udp = ethernet.getFirst(Udp.class);
 
@@ -53,8 +55,10 @@ public class UdpTest extends BaseTest {
             .payload(
                 new UnknownPacket.Builder()
                     .build(
-                        Memories.wrap(
-                            "8c710120000100000000000108617264696b61727303636f6d0000010001000029100000000000000c000a0008e1113ba1c6eb7772")))
+                        MemoryAllocator.create("NioHeapMemoryAllocator")
+                            .wrap(
+                                Hexs.parseHex(
+                                    "8c710120000100000000000108617264696b61727303636f6d0000010001000029100000000000000c000a0008e1113ba1c6eb7772"))))
             .calculateChecksum(
                 ip4.header().sourceAddress(), ip4.header().destinationAddress(), true);
     final Udp newUdp = builder.build();
@@ -70,8 +74,9 @@ public class UdpTest extends BaseTest {
             .payload(
                 new UnknownPacket.Builder()
                     .build(
-                        Memories.wrap(
-                            "17030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8")))
+                        HEAP_ALLOCATOR.wrap(
+                            Hexs.parseHex(
+                                "17030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8"))))
             .calculateChecksum(
                 Inet4Address.valueOf("192.168.1.2"), Inet4Address.valueOf("192.168.1.3"), true);
     return builder.build();

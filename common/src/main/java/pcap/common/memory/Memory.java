@@ -10,8 +10,8 @@ import pcap.common.annotation.Inclubating;
  *
  * <p>Creation of a buffer
  *
- * <p>It is recommended to create a new buffer using the helper methods in {@link Memories} rather
- * than calling an individual implementation's constructor.
+ * <p>It is recommended to create a new buffer using the helper methods in {@link MemoryAllocator}
+ * rather than calling an individual implementation's constructor.
  *
  * <p>
  *

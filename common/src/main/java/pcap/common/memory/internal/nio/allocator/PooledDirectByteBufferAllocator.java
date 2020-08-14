@@ -1,18 +1,21 @@
-package pcap.common.memory.internal.allocator;
+package pcap.common.memory.internal.nio.allocator;
 
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
-import pcap.common.memory.internal.nio.AbstractPooledByteBuffer;
+import pcap.common.memory.Memory;
+import pcap.common.memory.MemoryAllocator;
 import pcap.common.memory.internal.nio.PooledDirectByteBuffer;
 
-public class PooledDirectMemoryAllocator extends AbstractPooledMemoryAllocator {
+public final class PooledDirectByteBufferAllocator
+    extends MemoryAllocator.AbstractPooledMemoryAllocator {
 
-  public PooledDirectMemoryAllocator(int poolSize, int maxPoolSize, int maxMemoryCapacity) {
-    super(poolSize, maxPoolSize, maxMemoryCapacity);
+  @Override
+  public String name() {
+    return "NioPooledDirectMemoryAllocator";
   }
 
   @Override
-  WeakReference<AbstractPooledByteBuffer> allocatePooledMemory(
+  protected WeakReference<Memory.Pooled> allocatePooledMemory(
       int capacity, int readerIndex, int writerIndex) {
     ByteBuffer buffer = ByteBuffer.allocateDirect(maxMemoryCapacity);
     return new WeakReference<>(

@@ -8,8 +8,8 @@ import org.junit.runner.RunWith;
 import pcap.codec.ethernet.Ethernet;
 import pcap.codec.ip.Ip4;
 import pcap.codec.tcp.Tcp;
-import pcap.common.memory.Memories;
 import pcap.common.memory.Memory;
+import pcap.common.memory.MemoryAllocator;
 import pcap.common.util.Hexs;
 
 @RunWith(JUnitPlatform.class)
@@ -42,7 +42,7 @@ public class PacketPipelineTest {
     final byte[] data =
         Hexs.parseHex(
             "8c8590c30b33ce9f7a7bd74e08004500002827194000fd0636a70378304dc0a82ba201bbdb948a599b5fe9edcc3350105290840a0000");
-    Memory memory = Memories.directAllocator().allocate(data.length);
+    Memory memory = MemoryAllocator.create("NioDirectMemoryAllocator").allocate(data.length);
     memory.writeBytes(data);
 
     DataLinkLayer.register(DataLinkLayer.EN10MB, new Ethernet.Builder());

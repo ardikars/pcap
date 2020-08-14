@@ -9,7 +9,8 @@ import org.junit.runner.RunWith;
 @RunWith(JUnitPlatform.class)
 public class PooledDirectByteBufferSetterAndGetterTest extends AbstractMemorySetterAndGetterTest {
 
-  private final MemoryAllocator MEMORY_ALLOCATOR = Memories.directAllocator(1, 10, 50);
+  private final MemoryAllocator MEMORY_ALLOCATOR =
+      MemoryAllocator.create("NioPooledDirectMemoryAllocator", 1, 10, 50);
 
   @Override
   protected MemoryAllocator memoryAllocator() {

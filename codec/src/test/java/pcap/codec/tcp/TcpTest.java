@@ -9,8 +9,8 @@ import pcap.codec.BaseTest;
 import pcap.codec.UnknownPacket;
 import pcap.codec.ethernet.Ethernet;
 import pcap.codec.ip.Ip4;
-import pcap.common.memory.Memories;
 import pcap.common.memory.Memory;
+import pcap.common.memory.MemoryAllocator;
 import pcap.common.memory.internal.nio.PooledDirectByteBuffer;
 import pcap.common.net.Inet4Address;
 import pcap.common.util.Hexs;
@@ -36,8 +36,10 @@ public class TcpTest extends BaseTest {
   public void checksumTest() {
     Ethernet ethernet =
         Ethernet.newPacket(
-            Memories.wrap(
-                "8c8590c30b33d80d17269cee08004500005baa7f00007406c82c4a7dc85ec0a8006d01bbc82f394d0f5bf373184d80180108991a00000101080ad9dec62025cbc8a917030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8"));
+            MemoryAllocator.create("NioHeapMemoryAllocator")
+                .wrap(
+                    Hexs.parseHex(
+                        "8c8590c30b33d80d17269cee08004500005baa7f00007406c82c4a7dc85ec0a8006d01bbc82f394d0f5bf373184d80180108991a00000101080ad9dec62025cbc8a917030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8")));
     final Ip4 ip4 = ethernet.getFirst(Ip4.class);
     final Tcp tcp = ethernet.getFirst(Tcp.class);
 
@@ -59,8 +61,10 @@ public class TcpTest extends BaseTest {
             .payload(
                 new UnknownPacket.Builder()
                     .build(
-                        Memories.wrap(
-                            "17030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8")))
+                        MemoryAllocator.create("NioHeapMemoryAllocator")
+                            .wrap(
+                                Hexs.parseHex(
+                                    "17030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8"))))
             .calculateChecksum(
                 ip4.header().sourceAddress(), ip4.header().destinationAddress(), true);
     final Tcp newTcp = builder.build();
@@ -82,8 +86,10 @@ public class TcpTest extends BaseTest {
             .payload(
                 new UnknownPacket.Builder()
                     .build(
-                        Memories.wrap(
-                            "17030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8")))
+                        MemoryAllocator.create("NioHeapMemoryAllocator")
+                            .wrap(
+                                Hexs.parseHex(
+                                    "17030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8"))))
             .calculateChecksum(
                 Inet4Address.valueOf("192.168.1.2"), Inet4Address.valueOf("192.168.1.3"), true);
     return builder.build();

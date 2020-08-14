@@ -2,7 +2,6 @@
 package pcap.codec;
 
 import pcap.common.annotation.Inclubating;
-import pcap.common.memory.Memories;
 import pcap.common.memory.MemoryAllocator;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
@@ -22,8 +21,11 @@ final class Properties {
 
   static {
     DIRECT_ALLOCATOR =
-        Memories.directAllocator(
-            DEFAULT_POOL_SIZE, DEFAULT_MAX_POOL_SIZE, DEFAULT_MEMORY_POOL_CAPACITY);
+        MemoryAllocator.create(
+            "NioPooledDirectMemoryAllocator",
+            DEFAULT_POOL_SIZE,
+            DEFAULT_MAX_POOL_SIZE,
+            DEFAULT_MEMORY_POOL_CAPACITY);
   }
 
   private Properties() {}

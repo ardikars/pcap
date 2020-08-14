@@ -5,12 +5,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import pcap.common.memory.internal.allocator.DirectMemoryAllocator;
 
 @RunWith(JUnitPlatform.class)
 public class DirectByteBufferSetterAndGetterTest extends AbstractMemorySetterAndGetterTest {
 
-  private final MemoryAllocator MEMORY_ALLOCATOR = new DirectMemoryAllocator();
+  private final MemoryAllocator MEMORY_ALLOCATOR =
+      MemoryAllocator.create("NioDirectMemoryAllocator");
 
   @Override
   protected MemoryAllocator memoryAllocator() {

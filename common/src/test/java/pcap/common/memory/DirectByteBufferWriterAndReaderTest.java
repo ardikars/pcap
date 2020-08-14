@@ -5,13 +5,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import pcap.common.memory.internal.allocator.DirectMemoryAllocator;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @RunWith(JUnitPlatform.class)
 public class DirectByteBufferWriterAndReaderTest extends AbstractMemoryWriterAndReaderTest {
 
-  private final MemoryAllocator MEMORY_ALLOCATOR = new DirectMemoryAllocator();
+  private final MemoryAllocator MEMORY_ALLOCATOR =
+      MemoryAllocator.create("NioDirectMemoryAllocator");
 
   @Override
   protected MemoryAllocator memoryAllocator() {

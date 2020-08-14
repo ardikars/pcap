@@ -3,7 +3,7 @@ package pcap.common.memory.internal.nio;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import pcap.common.memory.Memory;
-import pcap.common.memory.internal.allocator.AbstractPooledMemoryAllocator;
+import pcap.common.memory.MemoryAllocator;
 import pcap.common.util.Validate;
 
 public abstract class AbstractPooledByteBuffer extends AbstractByteBuffer implements Memory.Pooled {
@@ -12,12 +12,12 @@ public abstract class AbstractPooledByteBuffer extends AbstractByteBuffer implem
       AtomicIntegerFieldUpdater.newUpdater(AbstractPooledByteBuffer.class, "refCnt");
 
   final int id;
-  AbstractPooledMemoryAllocator allocator;
+  MemoryAllocator.AbstractPooledMemoryAllocator allocator;
   volatile int refCnt;
 
   AbstractPooledByteBuffer(
       int id,
-      AbstractPooledMemoryAllocator allocator,
+      MemoryAllocator.AbstractPooledMemoryAllocator allocator,
       int baseIndex,
       ByteBuffer buffer,
       int capacity,

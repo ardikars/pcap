@@ -11,10 +11,7 @@ import pcap.api.internal.foreign.pcap_header;
 import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
-import pcap.common.memory.Memories;
-import pcap.common.memory.MemoryAllocator;
 import pcap.common.util.Platforms;
-import pcap.common.util.Properties;
 import pcap.common.util.Validate;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
@@ -29,9 +26,6 @@ import pcap.spi.exception.error.NotActivatedException;
 public abstract class Pcap implements pcap.spi.Pcap {
 
   protected static final Logger LOGGER = LoggerFactory.getLogger(Pcap.class);
-  private static final boolean BUFFER_POOLING = Properties.getBoolean("pcap.bufferPooling", true);
-  private static final int BUFFER_POOL_SIZE = Properties.getInt("pcap.bufferPoolSize", 10);
-  private static final int BUFFER_MAX_POOL_SIZE = Properties.getInt("pcap.bufferMaxPoolSize", 50);
 
   final Pointer<pcap_header.pcap> pcap;
   final Pointer<bpf_header.bpf_program> bpf_program;
@@ -41,7 +35,6 @@ public abstract class Pcap implements pcap.spi.Pcap {
   final int majorVersion;
   final int minorVersion;
   final boolean isSwapped;
-  final MemoryAllocator allocator;
   protected final Scope scope;
 
   boolean filterActivated;
@@ -62,14 +55,6 @@ public abstract class Pcap implements pcap.spi.Pcap {
     this.majorVersion = PcapMapping.MAPPING.pcap_major_version(pcap);
     this.minorVersion = PcapMapping.MAPPING.pcap_minor_version(pcap);
     this.isSwapped = PcapMapping.MAPPING.pcap_is_swapped(pcap) == 1;
-    if (BUFFER_POOLING && snapshot > 0) {
-      LOGGER.debug(
-          "Allocating pooled buffer with poolSize: %d, maxPoolSize: %d, capacity: %d",
-          BUFFER_POOL_SIZE, BUFFER_MAX_POOL_SIZE, snapshot);
-      this.allocator = Memories.directAllocator(BUFFER_POOL_SIZE, BUFFER_MAX_POOL_SIZE, snapshot);
-    } else {
-      this.allocator = Memories.directAllocator();
-    }
   }
 
   /** {@inheritDoc} */

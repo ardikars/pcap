@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import pcap.common.memory.internal.allocator.DirectMemoryAllocator;
-import pcap.common.memory.internal.allocator.HeapMemoryAllocator;
 import pcap.common.memory.internal.nio.DirectByteBuffer;
 import pcap.common.memory.internal.nio.HeapByteBuffer;
 import pcap.common.memory.internal.nio.PooledDirectByteBuffer;
 import pcap.common.memory.internal.nio.PooledHeapByteBuffer;
+import pcap.common.memory.internal.nio.allocator.DirectMemoryAllocator;
+import pcap.common.memory.internal.nio.allocator.HeapMemoryAllocator;
 
 @RunWith(JUnitPlatform.class)
 public class MemoriesTest {
