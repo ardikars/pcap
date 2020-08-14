@@ -2,12 +2,12 @@ package pcap.common.memory.internal.nio.allocator;
 
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
+import pcap.common.memory.AbstractMemoryAllocator;
 import pcap.common.memory.Memory;
-import pcap.common.memory.MemoryAllocator;
 import pcap.common.memory.internal.nio.PooledHeapByteBuffer;
 
 public final class PooledHeapByteBufferAllocator
-    extends MemoryAllocator.AbstractPooledMemoryAllocator {
+    extends AbstractMemoryAllocator.AbstractPooledMemoryAllocator {
 
   @Override
   public String name() {

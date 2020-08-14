@@ -1,6 +1,8 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.ip.ip6;
 
+import java.util.Arrays;
+import java.util.Objects;
 import pcap.codec.AbstractPacket;
 import pcap.codec.Packet;
 import pcap.codec.TransportLayer;
@@ -28,6 +30,10 @@ public class Authentication extends AbstractPacket {
       payload = null;
     }
     this.builder = builder;
+  }
+
+  public static Authentication newPacket(Memory buffer) {
+    return new Builder().build(buffer);
   }
 
   @Override
@@ -145,8 +151,8 @@ public class Authentication extends AbstractPacket {
         buffer.writeByte(nextHeader.value());
         buffer.writeByte(payloadLength);
         buffer.writeShort((short) 0); // reserved
-        buffer.writeInt(sequenceNumber);
         buffer.writeInt(securityParameterIndex);
+        buffer.writeInt(sequenceNumber);
         if (integrityCheckValue != null) {
           buffer.writeBytes(integrityCheckValue);
         }
@@ -157,6 +163,25 @@ public class Authentication extends AbstractPacket {
     @Override
     public Builder builder() {
       return builder;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Header header = (Header) o;
+      return payloadLength == header.payloadLength()
+          && securityParameterIndex == header.securityParameterIndex()
+          && sequenceNumber == header.sequenceNumber()
+          && nextHeader.equals(header.nextHeader())
+          && Arrays.equals(integrityCheckValue, header.integrityCheckValue());
+    }
+
+    @Override
+    public int hashCode() {
+      int result = Objects.hash(nextHeader, payloadLength, securityParameterIndex, sequenceNumber);
+      result = 31 * result + Arrays.hashCode(integrityCheckValue);
+      return result;
     }
 
     @Override
@@ -246,12 +271,15 @@ public class Authentication extends AbstractPacket {
     }
 
     @Override
-    public Packet build() {
+    public Authentication build() {
+      if (buffer != null) {
+        return build(buffer);
+      }
       return new Authentication(this);
     }
 
     @Override
-    public Packet build(final Memory buffer) {
+    public Authentication build(final Memory buffer) {
       resetIndex(buffer);
       this.nextHeader = TransportLayer.valueOf(buffer.readByte());
       this.payloadLength = buffer.readByte();
@@ -275,6 +303,7 @@ public class Authentication extends AbstractPacket {
     @Override
     public Builder reset(int offset, int length) {
       if (buffer != null) {
+        resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(nextHeader != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(payloadLength >= 0, ILLEGAL_HEADER_EXCEPTION);

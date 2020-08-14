@@ -1,8 +1,10 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.ip.ip6;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import pcap.codec.AbstractPacket;
 import pcap.codec.Packet;
 import pcap.codec.TransportLayer;
@@ -32,6 +34,10 @@ public class Routing extends AbstractPacket {
       this.payload = null;
     }
     this.builder = builder;
+  }
+
+  public static Routing newPacket(final Memory buffer) {
+    return new Builder().build(buffer);
   }
 
   @Override
@@ -159,6 +165,25 @@ public class Routing extends AbstractPacket {
     }
 
     @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Header header = (Header) o;
+      return extensionLength == header.extensionLength()
+          && segmentLeft == header.segmentLeft()
+          && nextHeader.equals(header.nextHeader())
+          && routingType.equals(header.routingType())
+          && Arrays.equals(routingData, header.routingData());
+    }
+
+    @Override
+    public int hashCode() {
+      int result = Objects.hash(nextHeader, extensionLength, routingType, segmentLeft);
+      result = 31 * result + Arrays.hashCode(routingData);
+      return result;
+    }
+
+    @Override
     public String toString() {
       return Strings.toStringBuilder(this)
           .add("nextHeader", nextHeader)
@@ -276,6 +301,7 @@ public class Routing extends AbstractPacket {
     @Override
     public Builder reset(int offset, int length) {
       if (buffer != null) {
+        resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(nextHeader != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(extensionLength >= 0, ILLEGAL_HEADER_EXCEPTION);

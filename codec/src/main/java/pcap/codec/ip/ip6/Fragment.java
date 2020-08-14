@@ -1,14 +1,12 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.ip.ip6;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 import pcap.codec.AbstractPacket;
 import pcap.codec.Packet;
 import pcap.codec.TransportLayer;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
-import pcap.common.util.NamedNumber;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
@@ -31,6 +29,10 @@ public class Fragment extends AbstractPacket {
       this.payload = null;
     }
     this.builder = builder;
+  }
+
+  public static Fragment newPacket(final Memory buffer) {
+    return new Builder().build(buffer);
   }
 
   @Override
@@ -67,7 +69,7 @@ public class Fragment extends AbstractPacket {
 
     private final TransportLayer nextHeader;
     private final short fragmentOffset;
-    private final FlagType flagType;
+    private final boolean moreFlag;
     private final int identification;
 
     private final Builder builder;
@@ -75,7 +77,7 @@ public class Fragment extends AbstractPacket {
     private Header(final Builder builder) {
       this.nextHeader = builder.nextHeader;
       this.fragmentOffset = builder.fragmentOffset;
-      this.flagType = builder.flagType;
+      this.moreFlag = builder.moreFlag;
       this.identification = builder.identification;
       this.buffer = resetIndex(builder.buffer, length());
       this.builder = builder;
@@ -102,10 +104,10 @@ public class Fragment extends AbstractPacket {
     /**
      * Flag type.
      *
-     * @return return {@link FlagType}.
+     * @return returns {@code true} for more flag, {@code false} otherwise.
      */
-    public FlagType flagType() {
-      return flagType;
+    public boolean moreFlag() {
+      return moreFlag;
     }
 
     /**
@@ -133,7 +135,7 @@ public class Fragment extends AbstractPacket {
         buffer = ALLOCATOR.allocate(length());
         buffer.writeByte(nextHeader.value());
         buffer.writeByte(0); // reserved
-        buffer.writeShort((fragmentOffset & 0x1fff) << 3 | flagType.value() & 0x1);
+        buffer.writeShort((fragmentOffset & 0x1fff) << 3 | (moreFlag ? 1 : 0));
         buffer.writeInt(identification);
       }
       return buffer;
@@ -145,11 +147,27 @@ public class Fragment extends AbstractPacket {
     }
 
     @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Header header = (Header) o;
+      return fragmentOffset == header.fragmentOffset()
+          && identification == header.identification()
+          && nextHeader.equals(header.nextHeader())
+          && moreFlag == header.moreFlag();
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(nextHeader, fragmentOffset, moreFlag, identification);
+    }
+
+    @Override
     public String toString() {
       return Strings.toStringBuilder(this)
           .add("nextHeader", nextHeader)
           .add("fragmentOffset", fragmentOffset)
-          .add("flagType", flagType)
+          .add("moreFlag", moreFlag)
           .add("identification", identification)
           .toString();
     }
@@ -159,7 +177,7 @@ public class Fragment extends AbstractPacket {
 
     private TransportLayer nextHeader;
     private short fragmentOffset;
-    private FlagType flagType;
+    private boolean moreFlag;
     private int identification;
 
     private Memory buffer;
@@ -190,11 +208,11 @@ public class Fragment extends AbstractPacket {
     /**
      * Flag type.
      *
-     * @param flagType flag type.
+     * @param moreFlag flag type.
      * @return returns this {@link Builder}.
      */
-    public Builder flagType(FlagType flagType) {
-      this.flagType = flagType;
+    public Builder moreFlag(boolean moreFlag) {
+      this.moreFlag = moreFlag;
       return this;
     }
 
@@ -227,7 +245,7 @@ public class Fragment extends AbstractPacket {
       buffer.readByte(); // reserved
       short sscratch = buffer.readShort();
       this.fragmentOffset = (short) (sscratch >> 3 & 0x1fff);
-      this.flagType = FlagType.valueOf((byte) (sscratch & 0x1));
+      this.moreFlag = (sscratch & 0x1) == 1 ? true : false;
       this.identification = buffer.readInt();
       this.buffer = buffer;
       this.payloadBuffer = buffer.slice();
@@ -242,56 +260,22 @@ public class Fragment extends AbstractPacket {
     @Override
     public Builder reset(int offset, int length) {
       if (buffer != null) {
+        resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(nextHeader != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(fragmentOffset >= 0, ILLEGAL_HEADER_EXCEPTION);
-        Validate.notIllegalArgument(flagType != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(identification >= 0, ILLEGAL_HEADER_EXCEPTION);
         int index = offset;
         buffer.setByte(index, nextHeader.value());
         index += 1;
         buffer.setByte(index, 0); // reserved
         index += 1;
-        int sscratch = (fragmentOffset & 0x1fff) << 3 | flagType.value() & 0x1;
+        int sscratch = (fragmentOffset & 0x1fff) << 3 | (moreFlag ? 1 : 0);
         buffer.setShort(index, sscratch);
         index += 2;
-        buffer.setIndex(index, identification);
+        buffer.setInt(index, identification);
       }
       return this;
-    }
-  }
-
-  public static final class FlagType extends NamedNumber<Byte, FlagType> {
-
-    public static final FlagType LAST_FRAGMENT = new FlagType((byte) 0, "Last fragment.");
-
-    public static final FlagType MORE_FRAGMENT = new FlagType((byte) 1, "More fragment.");
-
-    public static final FlagType UNKNOWN = new FlagType((byte) -1, "UNKNOWN.");
-
-    private static final Map<Byte, FlagType> REGISTRY = new HashMap<>();
-
-    protected FlagType(Byte value, String name) {
-      super(value, name);
-    }
-
-    public static FlagType register(final FlagType flagType) {
-      REGISTRY.put(flagType.value(), flagType);
-      return flagType;
-    }
-
-    /**
-     * Get flag type from value.
-     *
-     * @param flag value.
-     * @return returns {@link FlagType}.
-     */
-    public static FlagType valueOf(final byte flag) {
-      FlagType flagType = REGISTRY.get(flag);
-      if (flagType == null) {
-        return UNKNOWN;
-      }
-      return flagType;
     }
   }
 }

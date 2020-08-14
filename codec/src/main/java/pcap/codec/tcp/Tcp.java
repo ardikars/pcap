@@ -550,6 +550,7 @@ public class Tcp extends AbstractPacket {
     @Override
     public Builder reset(int offset, int length) {
       if (buffer != null) {
+        resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument((sourcePort & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument((destinationPort & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);

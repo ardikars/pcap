@@ -586,6 +586,7 @@ public class Ip4 extends Ip {
     @Override
     public Builder reset(int offset, int length) {
       if (buffer != null) {
+        resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument((headerLength & 0xF) >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument((diffServ & 0x3F) >= 0, ILLEGAL_HEADER_EXCEPTION);

@@ -355,6 +355,7 @@ public class Udp extends AbstractPacket {
     @Override
     public Builder reset(int offset, int length) {
       if (buffer != null) {
+        resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument((this.sourcePort & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument((this.destinationPort & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);

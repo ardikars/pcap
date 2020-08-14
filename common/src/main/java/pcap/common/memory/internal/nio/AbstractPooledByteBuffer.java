@@ -2,8 +2,8 @@ package pcap.common.memory.internal.nio;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import pcap.common.memory.AbstractMemoryAllocator;
 import pcap.common.memory.Memory;
-import pcap.common.memory.MemoryAllocator;
 import pcap.common.util.Validate;
 
 public abstract class AbstractPooledByteBuffer extends AbstractByteBuffer implements Memory.Pooled {
@@ -12,12 +12,12 @@ public abstract class AbstractPooledByteBuffer extends AbstractByteBuffer implem
       AtomicIntegerFieldUpdater.newUpdater(AbstractPooledByteBuffer.class, "refCnt");
 
   final int id;
-  MemoryAllocator.AbstractPooledMemoryAllocator allocator;
+  AbstractMemoryAllocator.AbstractPooledMemoryAllocator allocator;
   volatile int refCnt;
 
   AbstractPooledByteBuffer(
       int id,
-      MemoryAllocator.AbstractPooledMemoryAllocator allocator,
+      AbstractMemoryAllocator.AbstractPooledMemoryAllocator allocator,
       int baseIndex,
       ByteBuffer buffer,
       int capacity,
@@ -206,7 +206,7 @@ public abstract class AbstractPooledByteBuffer extends AbstractByteBuffer implem
   }
 
   private void ensureNotInPool() {
-    if (refCnt <= 0) {
+    if (refCnt == 0) {
       throw new IllegalStateException(
           String.format("This buffer has been released to the pool. ID: %d.", id()));
     }

@@ -348,6 +348,9 @@ public class Ip6 extends Ip {
 
     @Override
     public Ip6 build() {
+      if (buffer != null) {
+        return build(buffer);
+      }
       return new Ip6(this);
     }
 
@@ -379,6 +382,7 @@ public class Ip6 extends Ip {
     @Override
     public Builder reset(int offset, int length) {
       if (buffer != null) {
+        resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument((trafficClass & 0xFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument((flowLabel & 0xFFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
