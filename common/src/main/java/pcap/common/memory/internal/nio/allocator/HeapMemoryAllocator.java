@@ -3,13 +3,13 @@ package pcap.common.memory.internal.nio.allocator;
 
 import java.nio.ByteBuffer;
 import pcap.common.annotation.Inclubating;
+import pcap.common.memory.AbstractMemoryAllocator;
 import pcap.common.memory.Memory;
-import pcap.common.memory.MemoryAllocator;
 import pcap.common.memory.internal.nio.HeapByteBuffer;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-public final class HeapMemoryAllocator implements MemoryAllocator {
+public final class HeapMemoryAllocator extends AbstractMemoryAllocator {
 
   @Override
   public String name() {

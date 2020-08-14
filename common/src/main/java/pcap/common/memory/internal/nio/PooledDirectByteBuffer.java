@@ -1,14 +1,14 @@
 package pcap.common.memory.internal.nio;
 
 import java.nio.ByteBuffer;
+import pcap.common.memory.AbstractMemoryAllocator;
 import pcap.common.memory.Memory;
-import pcap.common.memory.MemoryAllocator;
 
 public class PooledDirectByteBuffer extends AbstractPooledByteBuffer {
 
   public PooledDirectByteBuffer(
       int id,
-      MemoryAllocator.AbstractPooledMemoryAllocator allocator,
+      AbstractMemoryAllocator.AbstractPooledMemoryAllocator allocator,
       int baseIndex,
       ByteBuffer buffer,
       int capacity,
