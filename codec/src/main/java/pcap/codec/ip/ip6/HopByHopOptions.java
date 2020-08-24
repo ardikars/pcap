@@ -31,6 +31,10 @@ public class HopByHopOptions extends Options {
     this.builder = builder;
   }
 
+  public static HopByHopOptions newPacket(Memory buffer) {
+    return new Builder().build(buffer);
+  }
+
   @Override
   public Header header() {
     return header;
@@ -70,6 +74,16 @@ public class HopByHopOptions extends Options {
     }
 
     @Override
+    public boolean equals(Object o) {
+      return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+      return super.hashCode();
+    }
+
+    @Override
     public String toString() {
       return super.toString();
     }
@@ -89,6 +103,25 @@ public class HopByHopOptions extends Options {
     @Override
     public Builder payload(AbstractPacket packet) {
       this.payloadBuffer = packet.buffer();
+      return this;
+    }
+
+    @Override
+    public Builder nextHeader(TransportLayer nextHeader) {
+      this.nextHeader = nextHeader;
+      return this;
+    }
+
+    @Override
+    public Builder extensionLength(int extensionLength) {
+      this.extensionLength = extensionLength;
+      return this;
+    }
+
+    @Override
+    public Builder options(byte[] options) {
+      this.options = new byte[options.length];
+      System.arraycopy(options, 0, this.options, 0, this.options.length);
       return this;
     }
 

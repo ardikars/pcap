@@ -66,6 +66,7 @@ public class PooledDirectByteBuffer extends AbstractPooledByteBuffer {
           previous.maxCapacity() - index < 0 ? 0 : previous.maxCapacity() - index,
           previous.readerIndex() - index < 0 ? 0 : previous.readerIndex() - index,
           previous.writerIndex() - index < 0 ? 0 : previous.writerIndex() - index);
+      this.refCnt = previous.refCnt;
       this.previous = previous;
     }
 

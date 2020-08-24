@@ -23,7 +23,7 @@ class Ip6Test extends BaseTest {
 
   private final Memory buf = allocator.allocate(data.length);
 
-  public static Ip6.Builder builder() {
+  public static Ip6 build() {
     return new Ip6.Builder()
         .trafficClass(224)
         .flowLabel(0)
@@ -33,7 +33,8 @@ class Ip6Test extends BaseTest {
         .destinationAddress(Inet6Address.valueOf("ff02::5"))
         .sourceAddress(Inet6Address.ZERO)
         .payloadLength(60)
-        .payload(new UnknownPacket.Builder().build(DIRECT_ALLOCATOR.allocate(60)));
+        .payload(new UnknownPacket.Builder().build(DIRECT_ALLOCATOR.allocate(60)))
+        .build();
   }
 
   @Override
@@ -48,7 +49,7 @@ class Ip6Test extends BaseTest {
 
   @Test
   public void buildTest() {
-    final Ip6 pkt = builder().build();
+    final Ip6 pkt = build();
     final Memory buffer = pkt.buffer();
     Assertions.assertEquals(0, buffer.readerIndex());
     Assertions.assertEquals(Ip6.Header.IPV6_HEADER_LENGTH, buffer.writerIndex());
@@ -70,8 +71,7 @@ class Ip6Test extends BaseTest {
 
   @Test
   public void mutateBuffer() {
-
-    final Ip6 pkt = builder().build();
+    final Ip6 pkt = build();
     final Memory buffer = pkt.buffer();
 
     final Ip6 mutate =

@@ -206,7 +206,7 @@ public abstract class AbstractPooledByteBuffer extends AbstractByteBuffer implem
   }
 
   private void ensureNotInPool() {
-    if (refCnt <= 0) {
+    if (refCnt == 0) {
       throw new IllegalStateException(
           String.format("This buffer has been released to the pool. ID: %d.", id()));
     }

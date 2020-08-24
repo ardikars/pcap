@@ -1,6 +1,8 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.codec.ip.ip6;
 
+import java.util.Arrays;
+import java.util.Objects;
 import pcap.codec.AbstractPacket;
 import pcap.codec.TransportLayer;
 import pcap.codec.ip.Ip6;
@@ -66,7 +68,7 @@ public abstract class Options extends AbstractPacket {
 
     @Override
     public int length() {
-      return FIXED_OPTIONS_LENGTH + LENGTH_UNIT * extensionLength;
+      return options == null ? 2 : options.length + 2;
     }
 
     @Override
@@ -74,12 +76,29 @@ public abstract class Options extends AbstractPacket {
       if (buffer == null) {
         buffer = ALLOCATOR.allocate(length());
         buffer.writeByte(nextHeader.value());
-        buffer.writeInt(extensionLength);
+        buffer.writeByte(extensionLength);
         if (options != null) {
           buffer.writeBytes(options);
         }
       }
       return buffer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Header header = (Header) o;
+      return extensionLength == header.extensionLength
+          && nextHeader.equals(header.nextHeader)
+          && Arrays.equals(options, header.options);
+    }
+
+    @Override
+    public int hashCode() {
+      int result = Objects.hash(nextHeader, extensionLength);
+      result = 31 * result + Arrays.hashCode(options);
+      return result;
     }
 
     @Override
@@ -106,15 +125,20 @@ public abstract class Options extends AbstractPacket {
     }
 
     /**
+     * Next header.
+     *
+     * @param nextHeader next header.
+     * @return returns {@link Builder}.
+     */
+    public abstract Builder nextHeader(TransportLayer nextHeader);
+
+    /**
      * Extension length.
      *
      * @param extensionLength extension length.
      * @return returns {@link Builder}.
      */
-    public Builder extensionLength(final int extensionLength) {
-      this.extensionLength = extensionLength;
-      return this;
-    }
+    public abstract Builder extensionLength(final int extensionLength);
 
     /**
      * Options.
@@ -122,10 +146,6 @@ public abstract class Options extends AbstractPacket {
      * @param options options.
      * @return returns this {@link Builder}.
      */
-    public Builder options(final byte[] options) {
-      this.options = new byte[options.length];
-      System.arraycopy(options, 0, this.options, 0, this.options.length);
-      return this;
-    }
+    public abstract Builder options(final byte[] options);
   }
 }

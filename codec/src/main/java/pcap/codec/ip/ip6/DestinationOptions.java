@@ -70,6 +70,16 @@ public class DestinationOptions extends Options {
     }
 
     @Override
+    public boolean equals(Object o) {
+      return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+      return super.hashCode();
+    }
+
+    @Override
     public String toString() {
       return super.toString();
     }
@@ -93,12 +103,31 @@ public class DestinationOptions extends Options {
     }
 
     @Override
+    public Options.Builder nextHeader(TransportLayer nextHeader) {
+      this.nextHeader = nextHeader;
+      return this;
+    }
+
+    @Override
+    public Builder extensionLength(int extensionLength) {
+      this.extensionLength = extensionLength;
+      return this;
+    }
+
+    @Override
+    public Builder options(byte[] options) {
+      this.options = new byte[options.length];
+      System.arraycopy(options, 0, this.options, 0, this.options.length);
+      return this;
+    }
+
+    @Override
     public DestinationOptions build() {
       return new DestinationOptions(this);
     }
 
     @Override
-    public Packet build(final Memory buffer) {
+    public DestinationOptions build(final Memory buffer) {
       resetIndex(buffer);
       nextHeader = TransportLayer.valueOf(buffer.readByte());
       extensionLength = buffer.readInt();
@@ -119,6 +148,7 @@ public class DestinationOptions extends Options {
     @Override
     public Builder reset(int offset, int length) {
       if (buffer != null) {
+        resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(nextHeader != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(extensionLength >= 0, ILLEGAL_HEADER_EXCEPTION);
