@@ -20,6 +20,11 @@ public final class ApplicationLayer extends NamedNumber<Short, ApplicationLayer>
     super(value, name);
   }
 
+  @Override
+  public int compareTo(ApplicationLayer o) {
+    return value().compareTo(o.value());
+  }
+
   public static ApplicationLayer valueOf(short value) {
     for (Map.Entry<ApplicationLayer, Short> entry : REGISTRY.entrySet()) {
       if (entry.getValue() == value) {

@@ -532,6 +532,11 @@ public class Arp extends AbstractPacket {
       super(value, name);
     }
 
+    @Override
+    public int compareTo(OperationCode o) {
+      return value().compareTo(o.value());
+    }
+
     /**
      * Add new {@link OperationCode} to registry.
      *

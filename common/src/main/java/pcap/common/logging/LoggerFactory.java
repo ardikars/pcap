@@ -35,8 +35,6 @@ public abstract class LoggerFactory {
         loggerFactory = Slf4jLoggerFactory.getInstance();
       } else if (Log4j2LoggerFactory.hasLog4j2()) {
         loggerFactory = Log4j2LoggerFactory.getInstance();
-      } else if (Log4jLoggerFactory.hasLog4j()) {
-        loggerFactory = Log4jLoggerFactory.getInstance();
       } else {
         loggerFactory = NoLoggerFactory.getInstance();
       }
@@ -47,4 +45,13 @@ public abstract class LoggerFactory {
   }
 
   abstract Logger newInstance(String name);
+
+  static boolean hasClass(String name) {
+    try {
+      Class.forName(name);
+      return true;
+    } catch (ClassNotFoundException e) {
+      return false;
+    }
+  }
 }

@@ -1,6 +1,5 @@
 module pcap.common {
   requires org.apache.logging.log4j;
-  requires log4j;
   requires org.slf4j;
 
   exports pcap.common.annotation;

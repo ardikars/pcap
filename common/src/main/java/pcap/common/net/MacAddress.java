@@ -57,9 +57,6 @@ public final class MacAddress implements Address {
     Validate.notIllegalArgument(
         isValidAddress(stringAddress), String.format("Invalid address: %s.", stringAddress));
     final String[] elements = stringAddress.split(":|-");
-    Validate.notIllegalArgument(
-        elements.length == MAC_ADDRESS_LENGTH,
-        String.format("Address length: (%d) expected(%d)", elements.length, MAC_ADDRESS_LENGTH));
     final byte[] b = new byte[MAC_ADDRESS_LENGTH];
     for (int i = 0; i < MAC_ADDRESS_LENGTH; i++) {
       final String element = elements[i];
@@ -163,7 +160,7 @@ public final class MacAddress implements Address {
     if (this.isBroadcast()) {
       return false;
     }
-    return (this.address[0] & 0x01) != 0;
+    return (this.address[0] & 1) != 0;
   }
 
   /**
@@ -250,8 +247,13 @@ public final class MacAddress implements Address {
     public Oui(final Integer value, final String name) {
       super(value, name);
       Validate.notIllegalArgument(
-          (value & 0xFF000000) == 0,
+          value <= 0xFFFFFF,
           value + " is invalid value. " + " Value must be between 0 and 16777215.");
+    }
+
+    @Override
+    public int compareTo(Oui o) {
+      return value().compareTo(o.value());
     }
 
     /**

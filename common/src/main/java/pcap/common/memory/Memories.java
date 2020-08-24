@@ -10,7 +10,12 @@ import pcap.common.memory.internal.nio.HeapByteBuffer;
 import pcap.common.util.Hexs;
 import pcap.common.util.Validate;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * {@link Deprecated}, please use {@link MemoryAllocator} instead.
+ *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ */
+@Deprecated
 @Inclubating
 public final class Memories {
 

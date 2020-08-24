@@ -71,6 +71,22 @@ public class PooledHeapByteBuffer extends AbstractPooledByteBuffer {
     }
 
     @Override
+    public Memory copy(int index, int length) {
+      byte[] b = new byte[length];
+      int currentIndex = baseIndex + index;
+      getBytes(currentIndex, b, 0, length);
+      ByteBuffer copy = ByteBuffer.allocate(length);
+      copy.put(b);
+      return new HeapByteBuffer(
+          baseIndex, copy, capacity(), maxCapacity(), readerIndex(), writerIndex());
+    }
+
+    @Override
+    public Memory duplicate() {
+      throw new UnsupportedOperationException("Duplicating heap pooled buffer is unsupported.");
+    }
+
+    @Override
     public Memory unSlice() {
       return previous;
     }

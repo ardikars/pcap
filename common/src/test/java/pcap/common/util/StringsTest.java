@@ -47,6 +47,8 @@ public class StringsTest extends BaseTest {
   public void lengthTest() {
     Assertions.assertEquals(6, Strings.length(4, 1, 5));
     Assertions.assertEquals(5, Strings.length(5, 0, 5));
+    Assertions.assertEquals(1, Strings.length(1, 1, 1));
+    Assertions.assertEquals(1, Strings.length(4, 0, 1));
   }
 
   @Test
@@ -192,5 +194,11 @@ public class StringsTest extends BaseTest {
         "StringsTest{a=1}", Strings.toStringBuilder(this).add("a", 1).toString());
     Assertions.assertEquals(
         "{\"a\":\"d\"}", Strings.toStringJsonBuilder().add("a", "d").toString());
+    Assertions.assertEquals("{\"a\":1}", Strings.toStringJsonBuilder().add("a", 1).toString());
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        () -> Strings.toStringBuilder(this).add(null, "").toString());
+    Assertions.assertThrows(
+        IllegalArgumentException.class, () -> Strings.toStringBuilder(this).add("", "").toString());
   }
 }

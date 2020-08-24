@@ -8,6 +8,8 @@ import pcap.common.annotation.Inclubating;
 public final class Validate {
 
   private static final String ARRAY_IS_EMPTY = "Array is empty.";
+  private static final String NOT_INBOUNDS_EXCEPTION =
+      "Arguments: array(size(%d)), offset(%d), length(%d).";
 
   private Validate() {
     //
@@ -168,8 +170,7 @@ public final class Validate {
         || (length <= 0 || length > array.length)
         || offset + length > array.length) {
       throw new ArrayIndexOutOfBoundsException(
-          String.format(
-              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
+          String.format(NOT_INBOUNDS_EXCEPTION, array.length, offset, length));
     }
   }
 
@@ -190,8 +191,7 @@ public final class Validate {
         || (length <= 0 || length > array.length)
         || offset + length > array.length) {
       throw new ArrayIndexOutOfBoundsException(
-          String.format(
-              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
+          String.format(NOT_INBOUNDS_EXCEPTION, array.length, offset, length));
     }
   }
 
@@ -212,8 +212,7 @@ public final class Validate {
         || (length <= 0 || length > array.length)
         || offset + length > array.length) {
       throw new ArrayIndexOutOfBoundsException(
-          String.format(
-              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
+          String.format(NOT_INBOUNDS_EXCEPTION, array.length, offset, length));
     }
   }
 
@@ -234,8 +233,7 @@ public final class Validate {
         || (length <= 0 || length > array.length)
         || offset + length > array.length) {
       throw new ArrayIndexOutOfBoundsException(
-          String.format(
-              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
+          String.format(NOT_INBOUNDS_EXCEPTION, array.length, offset, length));
     }
   }
 
@@ -256,8 +254,7 @@ public final class Validate {
         || (length <= 0 || length > array.length)
         || offset + length > array.length) {
       throw new ArrayIndexOutOfBoundsException(
-          String.format(
-              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
+          String.format(NOT_INBOUNDS_EXCEPTION, array.length, offset, length));
     }
   }
 
@@ -278,8 +275,7 @@ public final class Validate {
         || (length <= 0 || length > array.length)
         || offset + length > array.length) {
       throw new ArrayIndexOutOfBoundsException(
-          String.format(
-              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
+          String.format(NOT_INBOUNDS_EXCEPTION, array.length, offset, length));
     }
   }
 
@@ -300,8 +296,7 @@ public final class Validate {
         || (length <= 0 || length > array.length)
         || offset + length > array.length) {
       throw new ArrayIndexOutOfBoundsException(
-          String.format(
-              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
+          String.format(NOT_INBOUNDS_EXCEPTION, array.length, offset, length));
     }
   }
 
@@ -323,8 +318,7 @@ public final class Validate {
         || (length <= 0 || length > array.length)
         || offset + length > array.length) {
       throw new ArrayIndexOutOfBoundsException(
-          String.format(
-              "Arguments: array(size(%d)), offset(%d), length(%d).", array.length, offset, length));
+          String.format(NOT_INBOUNDS_EXCEPTION, array.length, offset, length));
     }
   }
 

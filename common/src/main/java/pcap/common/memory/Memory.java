@@ -1180,6 +1180,21 @@ public interface Memory {
    */
   Memory duplicate();
 
+  /**
+   * Retrieves this buffer's byte order.
+   *
+   * @return returns {@link ByteOrder#BIG_ENDIAN} or {@link ByteOrder#LITTLE_ENDIAN}.
+   */
+  ByteOrder byteOrder();
+
+  /**
+   * Change this buffer's byte order.
+   *
+   * @param byteOrder byte order.
+   * @return returns this buffer's with new byte order.
+   */
+  Memory byteOrder(ByteOrder byteOrder);
+
   /** Release this {@link Memory} buffer */
   @Inclubating
   boolean release();
@@ -1198,6 +1213,16 @@ public interface Memory {
   ByteBuffer nioBuffer();
 
   <T> T buffer(Class<T> clazz);
+
+  /** Byte order. */
+  enum ByteOrder {
+    BIG_ENDIAN,
+    LITTLE_ENDIAN;
+    public static ByteOrder NATIVE =
+        java.nio.ByteOrder.nativeOrder() == java.nio.ByteOrder.BIG_ENDIAN
+            ? ByteOrder.BIG_ENDIAN
+            : ByteOrder.LITTLE_ENDIAN;
+  }
 
   /** Indicate the buffer is sliced. */
   @Inclubating

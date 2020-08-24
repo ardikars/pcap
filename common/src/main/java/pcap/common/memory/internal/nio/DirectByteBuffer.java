@@ -66,6 +66,22 @@ public class DirectByteBuffer extends AbstractByteBuffer implements Memory.Direc
     }
 
     @Override
+    public Memory copy(int index, int length) {
+      byte[] b = new byte[length];
+      int currentIndex = baseIndex + index;
+      getBytes(currentIndex, b, 0, length);
+      ByteBuffer copy = ByteBuffer.allocateDirect(length);
+      copy.put(b);
+      return new DirectByteBuffer(
+          baseIndex, copy, capacity(), maxCapacity(), readerIndex(), writerIndex());
+    }
+
+    @Override
+    public Memory duplicate() {
+      return new SlicedDirectByteBuffer(previous.baseIndex - baseIndex, capacity, previous);
+    }
+
+    @Override
     public Memory unSlice() {
       return previous;
     }

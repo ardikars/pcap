@@ -7,7 +7,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitPlatform.class)
-public class InetAddressTest extends BaseTest {
+public class InetAddressTest {
 
   private static final String IPV4_LOCALHOST_ADDRESS = "127.0.0.1";
 
@@ -15,7 +15,8 @@ public class InetAddressTest extends BaseTest {
 
   @Test
   public void validIpv4() {
-    Assertions.assertEquals(true, isValidAddress(IPV4_LOCALHOST_ADDRESS));
+    Assertions.assertTrue(isValidAddress(IPV4_LOCALHOST_ADDRESS));
+    Assertions.assertFalse(isValidAddress("IPV4_LOCALHOST_ADDRESS"));
   }
 
   @Test
@@ -26,7 +27,8 @@ public class InetAddressTest extends BaseTest {
 
   @Test
   public void validIpv6() {
-    Assertions.assertEquals(true, isValidAddress(IPV6_LOCALHOST_ADDRESS));
+    Assertions.assertTrue(isValidAddress(IPV6_LOCALHOST_ADDRESS));
+    Assertions.assertFalse(isValidAddress("IPV6_LOCALHOST_ADDRESS"));
   }
 
   @Test

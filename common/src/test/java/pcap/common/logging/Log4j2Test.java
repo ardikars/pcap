@@ -82,6 +82,7 @@ public class Log4j2Test extends AbstractLoggerTest {
     doLogLevelAndThrowableTest();
   }
 
+  @Test
   @Override
   public void logLevelAndMessageThrowableTest() {
     doLogLevelAndMessageThrowableTest();

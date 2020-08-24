@@ -57,6 +57,22 @@ public class HeapByteBuffer extends AbstractByteBuffer implements Memory.Heap {
     }
 
     @Override
+    public Memory copy(int index, int length) {
+      byte[] b = new byte[length];
+      int currentIndex = baseIndex + index;
+      getBytes(currentIndex, b, 0, length);
+      ByteBuffer copy = ByteBuffer.allocate(length);
+      copy.put(b);
+      return new HeapByteBuffer(
+          baseIndex, copy, capacity(), maxCapacity(), readerIndex(), writerIndex());
+    }
+
+    @Override
+    public Memory duplicate() {
+      return new SlicedHeapByteBuffer(previous.baseIndex - baseIndex, capacity, previous);
+    }
+
+    @Override
     public Memory unSlice() {
       return previous;
     }

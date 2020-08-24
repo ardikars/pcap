@@ -23,6 +23,11 @@ public final class HttpStatusCode extends NamedNumber<Integer, HttpStatusCode> {
     super(value, name);
   }
 
+  @Override
+  public int compareTo(HttpStatusCode o) {
+    return value().compareTo(o.value());
+  }
+
   public static final HttpStatusCode register(final HttpStatusCode httpStatusCode) {
     registry.put(httpStatusCode.value(), httpStatusCode);
     return httpStatusCode;

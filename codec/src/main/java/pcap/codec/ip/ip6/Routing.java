@@ -372,6 +372,11 @@ public class Routing extends AbstractPacket {
       super(value, name);
     }
 
+    @Override
+    public int compareTo(Type o) {
+      return value().compareTo(o.value());
+    }
+
     /**
      * Get routing type from value.
      *

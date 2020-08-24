@@ -1,6 +1,8 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.logging;
 
+import org.junit.jupiter.api.Assertions;
+
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 abstract class AbstractLoggerTest {
 
@@ -24,6 +26,8 @@ abstract class AbstractLoggerTest {
 
   protected void doInitLogger(LoggerFactory loggerFactory) {
     logger = loggerFactory.newInstance(DEFAULT_NAME);
+    Logger logger = loggerFactory.newInstance(null);
+    Assertions.assertNotNull(logger);
   }
 
   public abstract void nameTest();
@@ -39,6 +43,7 @@ abstract class AbstractLoggerTest {
     assert logger.isEnabled(LogLevel.ERROR) || !logger.isEnabled(LogLevel.ERROR);
     assert logger.isEnabled(LogLevel.WARN) || !logger.isEnabled(LogLevel.WARN);
     assert logger.isEnabled(LogLevel.INFO) || !logger.isEnabled(LogLevel.INFO);
+    Assertions.assertThrows(Error.class, () -> logger.isEnabled(LogLevel.UNKNOWN));
   }
 
   public abstract void isDebugEnabledTest();
@@ -72,6 +77,7 @@ abstract class AbstractLoggerTest {
     logger.log(LogLevel.ERROR, DEFAULT_MESSAGE_ONE);
     logger.log(LogLevel.WARN, DEFAULT_MESSAGE_ONE);
     logger.log(LogLevel.INFO, DEFAULT_MESSAGE_ONE);
+    Assertions.assertThrows(Error.class, () -> logger.log(LogLevel.UNKNOWN, DEFAULT_MESSAGE_ONE));
   }
 
   public abstract void logLevelAndMessageFormatOneTest();
@@ -81,6 +87,8 @@ abstract class AbstractLoggerTest {
     logger.log(LogLevel.ERROR, DEFAULT_FORMAT_ONE, DEFAULT_MESSAGE_ONE);
     logger.log(LogLevel.WARN, DEFAULT_FORMAT_ONE, DEFAULT_MESSAGE_ONE);
     logger.log(LogLevel.INFO, DEFAULT_FORMAT_ONE, DEFAULT_MESSAGE_ONE);
+    Assertions.assertThrows(
+        Error.class, () -> logger.log(LogLevel.UNKNOWN, DEFAULT_FORMAT_ONE, DEFAULT_MESSAGE_ONE));
   }
 
   public abstract void logLevelAndMessageFormatTwoTest();
@@ -90,6 +98,11 @@ abstract class AbstractLoggerTest {
     logger.log(LogLevel.ERROR, DEFAULT_FORMAT_TWO, DEFAULT_MESSAGE_ONE, DEFAULT_MESSAGE_TWO);
     logger.log(LogLevel.WARN, DEFAULT_FORMAT_TWO, DEFAULT_MESSAGE_ONE, DEFAULT_MESSAGE_TWO);
     logger.log(LogLevel.INFO, DEFAULT_FORMAT_TWO, DEFAULT_MESSAGE_ONE, DEFAULT_MESSAGE_TWO);
+    Assertions.assertThrows(
+        Error.class,
+        () ->
+            logger.log(
+                LogLevel.UNKNOWN, DEFAULT_FORMAT_TWO, DEFAULT_MESSAGE_ONE, DEFAULT_MESSAGE_TWO));
   }
 
   public abstract void logLevelAndMessageFormatThreeTest();
@@ -119,6 +132,15 @@ abstract class AbstractLoggerTest {
         DEFAULT_MESSAGE_ONE,
         DEFAULT_MESSAGE_TWO,
         DEFAULT_MESSAGE_THREE);
+    Assertions.assertThrows(
+        Error.class,
+        () ->
+            logger.log(
+                LogLevel.UNKNOWN,
+                DEFAULT_FORMAT_THREE,
+                DEFAULT_MESSAGE_ONE,
+                DEFAULT_MESSAGE_TWO,
+                DEFAULT_MESSAGE_THREE));
   }
 
   public abstract void logLevelAndThrowableTest();
@@ -128,6 +150,8 @@ abstract class AbstractLoggerTest {
     logger.log(LogLevel.ERROR, new Throwable("Log some error here"));
     logger.log(LogLevel.WARN, new Throwable("Log some error here"));
     logger.log(LogLevel.INFO, new Throwable("Log some error here"));
+    Assertions.assertThrows(
+        Error.class, () -> logger.log(LogLevel.UNKNOWN, new Throwable("Log some error here")));
   }
 
   public abstract void logLevelAndMessageThrowableTest();
@@ -137,6 +161,11 @@ abstract class AbstractLoggerTest {
     logger.log(LogLevel.ERROR, DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
     logger.log(LogLevel.WARN, DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
     logger.log(LogLevel.INFO, DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
+    Assertions.assertThrows(
+        Error.class,
+        () ->
+            logger.log(
+                LogLevel.UNKNOWN, DEFAULT_MESSAGE_ONE, new Throwable("Log some error here")));
   }
 
   public abstract void debugMessageOneTest();
@@ -173,7 +202,7 @@ abstract class AbstractLoggerTest {
   public abstract void debugMessageThrowableTest();
 
   protected void doDebugMessageThrowableTest() {
-    // logger.debug(DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
+    logger.debug(DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
   }
 
   public abstract void errorMessageOneTest();

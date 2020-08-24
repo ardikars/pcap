@@ -6,7 +6,7 @@ import pcap.common.annotation.Inclubating;
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 public abstract class NamedNumber<T extends Number, U extends NamedNumber<T, ?>>
-    implements ObjectName<T, U> {
+    implements Comparable<U>, ObjectName {
 
   private static final long serialVersionUID = -7754849362562086047L;
 

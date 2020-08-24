@@ -82,6 +82,7 @@ public class NoLoggerTest extends AbstractLoggerTest {
     doLogLevelAndThrowableTest();
   }
 
+  @Test
   @Override
   public void logLevelAndMessageThrowableTest() {
     doLogLevelAndMessageThrowableTest();

@@ -9,18 +9,14 @@ import pcap.common.util.Validate;
 @Inclubating
 public final class Inet4Address extends InetAddress {
 
-  /** IPv4 Address (0.0.0.0). */
+  /** IPv4 Any local address (0.0.0.0). */
   public static final Inet4Address ZERO = valueOf(0);
-
+  /** IPv4 Address Length. */
+  public static final int IPV4_ADDRESS_LENGTH = 4;
   /** IPv4 Loopback address (127.0.0.1). */
   public static final Inet4Address LOCALHOST = valueOf("127.0.0.1");
 
-  /** IPv4 Address Length. */
-  public static final int IPV4_ADDRESS_LENGTH = 4;
-
-  private byte[] address = new byte[Inet4Address.IPV4_ADDRESS_LENGTH];
-
-  private Inet4Address() {}
+  private final byte[] address;
 
   private Inet4Address(final byte[] address) {
     Validate.nullPointer(address);
@@ -35,15 +31,16 @@ public final class Inet4Address extends InetAddress {
    * @return an IPv4 address.
    */
   public static Inet4Address valueOf(String stringAddress) {
-    stringAddress = Validate.nullPointerThenReturns(stringAddress, "0.0.0.0");
     String[] parts = stringAddress.split("\\.");
     byte[] result = new byte[parts.length];
     Validate.notIllegalArgument(result.length == IPV4_ADDRESS_LENGTH);
     for (int i = 0; i < result.length; i++) {
-      Validate.notIllegalArgument(parts[i] != null || parts[i].length() != 0);
-      Validate.notIllegalArgument(!(parts[i].length() > 1 && parts[i].startsWith("0")));
+      Validate.notIllegalArgument(
+          !(parts[i].length() > 1 && parts[i].startsWith("0")),
+          "Number must be not started with '9' (" + parts[i] + ")");
+      int value = Integer.valueOf(parts[i]).intValue();
+      Validate.notIllegalArgument(value <= 0xFF, "To large number (" + value + ").");
       result[i] = Integer.valueOf(parts[i]).byteValue();
-      Validate.notIllegalArgument((result[i] & 0xff) <= 0xff);
     }
     return Inet4Address.valueOf(result);
   }
@@ -74,11 +71,24 @@ public final class Inet4Address extends InetAddress {
         });
   }
 
+  /**
+   * Check whether ip is multicast address.
+   *
+   * @see <a
+   *     href="https://www.iana.org/assignments/multicast-addresses/multicast-addresses.xhtml">Muslticast
+   *     address.</a>
+   * @return returns {@code true} if multicast, {@code false} otherwise.
+   */
   @Override
   public boolean isMulticastAddress() {
     return (toInt() & 0xf0000000) == 0xe0000000;
   }
 
+  /**
+   * Check whether ip is any local address (0.0.0.0).
+   *
+   * @return @return returns {@code true} if any local address, {@code false} otherwise.
+   */
   @Override
   public boolean isAnyLocalAddress() {
     return toInt() == 0;

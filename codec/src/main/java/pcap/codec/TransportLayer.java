@@ -65,4 +65,9 @@ public final class TransportLayer extends NamedNumber<Byte, TransportLayer>
     }
     return packetBuilder.build(buffer);
   }
+
+  @Override
+  public int compareTo(TransportLayer o) {
+    return value().compareTo(o.value());
+  }
 }

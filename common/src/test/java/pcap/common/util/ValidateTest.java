@@ -64,6 +64,9 @@ public class ValidateTest {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 5, 5));
 
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 3, 3));
+
     Validate.notInBounds(data, 0, 5);
   }
 
@@ -87,6 +90,9 @@ public class ValidateTest {
 
     Assertions.assertThrows(
         IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 5, 5));
+
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 3, 3));
 
     Validate.notInBounds(data, 0, 5);
   }
@@ -112,6 +118,9 @@ public class ValidateTest {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 5, 5));
 
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 3, 3));
+
     Validate.notInBounds(data, 0, 5);
   }
 
@@ -135,6 +144,9 @@ public class ValidateTest {
 
     Assertions.assertThrows(
         IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 5, 5));
+
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 3, 3));
 
     Validate.notInBounds(data, 0, 5);
   }
@@ -160,6 +172,9 @@ public class ValidateTest {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 5, 5));
 
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 3, 3));
+
     Validate.notInBounds(data, 0, 5);
   }
 
@@ -183,6 +198,9 @@ public class ValidateTest {
 
     Assertions.assertThrows(
         IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 5, 5));
+
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 3, 3));
 
     Validate.notInBounds(data, 0, 5);
   }
@@ -208,6 +226,9 @@ public class ValidateTest {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 5, 5));
 
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 3, 3));
+
     Validate.notInBounds(data, 0, 5);
   }
 
@@ -232,6 +253,9 @@ public class ValidateTest {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 5, 5));
 
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 3, 3));
+
     Validate.notInBounds(data, 0, 5);
   }
 
@@ -254,6 +278,8 @@ public class ValidateTest {
 
     Assertions.assertThrows(
         IndexOutOfBoundsException.class, () -> Validate.notInBounds(data, 5, 5));
+
+    Assertions.assertThrows(IndexOutOfBoundsException.class, () -> Validate.notInBounds(10, 5, 6));
 
     Validate.notInBounds(data, 0, 5);
   }

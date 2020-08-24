@@ -92,6 +92,11 @@ public final class NetworkLayer extends NamedNumber<Short, NetworkLayer>
   }
 
   @Override
+  public int compareTo(NetworkLayer o) {
+    return value().compareTo(o.value());
+  }
+
+  @Override
   public String toString() {
     return super.toString();
   }

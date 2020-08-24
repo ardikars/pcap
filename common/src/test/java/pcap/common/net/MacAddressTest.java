@@ -7,7 +7,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitPlatform.class)
-public class MacAddressTest extends BaseTest {
+public class MacAddressTest {
 
   private static final String STRING_MAC_ADDRESS = MacAddress.DUMMY.toString();
   private static final long LONG_MAC_ADDRESS = MacAddress.DUMMY.toLong();
@@ -43,6 +43,8 @@ public class MacAddressTest extends BaseTest {
     Assertions.assertThrows(IllegalArgumentException.class, () -> MacAddress.valueOf(-1));
     Assertions.assertThrows(IllegalArgumentException.class, () -> MacAddress.valueOf(""));
     Assertions.assertThrows(IllegalArgumentException.class, () -> MacAddress.valueOf("23423d.."));
+    Assertions.assertThrows(
+        IllegalArgumentException.class, () -> MacAddress.valueOf("de:ad:be:ef:c0"));
     Assertions.assertFalse(MacAddress.isValidAddress("##%DF234"));
   }
 
@@ -55,10 +57,12 @@ public class MacAddressTest extends BaseTest {
     Assertions.assertEquals(true, MacAddress.BROADCAST.isBroadcast());
     Assertions.assertEquals(true, MacAddress.IPV4_MULTICAST.isMulticast());
     Assertions.assertEquals(true, MacAddress.IPV4_MULTICAST_MASK.isMulticast());
+    Assertions.assertEquals(false, MacAddress.ZERO.isMulticast());
     Assertions.assertEquals(false, MacAddress.BROADCAST.isMulticast());
     Assertions.assertEquals(true, MacAddress.ZERO.isGloballyUnique());
+    Assertions.assertEquals(false, MacAddress.BROADCAST.isGloballyUnique());
     Assertions.assertEquals(true, MacAddress.valueOf("00:01:01:01:01:01").isUnicast());
-    Assertions.assertEquals(true, MacAddress.valueOf("00:01:01:01:01:01").isUnicast());
+    Assertions.assertEquals(false, MacAddress.valueOf("03:01:01:01:01:01").isUnicast());
   }
 
   @Test
@@ -75,10 +79,15 @@ public class MacAddressTest extends BaseTest {
 
   @Test
   public void ouiTest() {
-    Assertions.assertNotNull(MacAddress.valueOf("E8-6F-38-39-3D-BF").oui());
+    Assertions.assertEquals(
+        new MacAddress.Oui(1, "UNKNOWN"), MacAddress.valueOf("E8-6F-38-39-3D-BF").oui());
+    Assertions.assertEquals(
+        MacAddress.Oui.CISCO_00000C, MacAddress.valueOf("00-00-0C-39-3D-BF").oui());
     MacAddress.Oui oui = new MacAddress.Oui(0x08005B, "Random");
     MacAddress.Oui.register(oui);
     Assertions.assertNotNull(oui);
+    Assertions.assertThrows(
+        IllegalArgumentException.class, () -> new MacAddress.Oui(16777216, "Random"));
   }
 
   @Test
@@ -88,5 +97,16 @@ public class MacAddressTest extends BaseTest {
     Assertions.assertTrue(macAddress.equals(MacAddress.ZERO));
     Assertions.assertFalse(macAddress.equals(macAddressCmp));
     Assertions.assertFalse(macAddress.hashCode() == macAddressCmp.hashCode());
+    Assertions.assertFalse(macAddress.equals(""));
+    Assertions.assertFalse(macAddress.equals(null));
+  }
+
+  @Test
+  public void ouiCompareTest() {
+    MacAddress.Oui cisco = MacAddress.Oui.CISCO_00000C;
+    MacAddress.Oui ibm = MacAddress.Oui.IBM_08005A;
+    Assertions.assertTrue(cisco.compareTo(ibm) < 0);
+    Assertions.assertTrue(ibm.compareTo(cisco) > 0);
+    Assertions.assertTrue(ibm.compareTo(ibm) == 0);
   }
 }

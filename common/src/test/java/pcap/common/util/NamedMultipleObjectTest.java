@@ -16,6 +16,14 @@ public class NamedMultipleObjectTest {
     IcmpTypeAndCode second =
         new IcmpTypeAndCode(MultipleObject.of((byte) 1, (byte) 0), "No route to destination");
 
+    IcmpTypeAndCode diffValfirst =
+        new IcmpTypeAndCode(MultipleObject.of((byte) 1, (byte) 1), "No route to destination");
+
+    IcmpTypeAndCode diffNameSecond =
+        new IcmpTypeAndCode(MultipleObject.of((byte) 1, (byte) 0), "No route to destination X");
+
+    Assertions.assertNotEquals(first, diffValfirst);
+    Assertions.assertNotEquals(second, diffNameSecond);
     Assertions.assertEquals(first, second);
     Assertions.assertEquals(first.hashCode(), second.hashCode());
     Assertions.assertFalse(first.equals(""));
@@ -31,7 +39,7 @@ public class NamedMultipleObjectTest {
             .toString());
   }
 
-  static class IcmpTypeAndCode extends NamedMultipleObject<MultipleObject<Byte>, IcmpTypeAndCode> {
+  static class IcmpTypeAndCode extends NamedMultipleObject<MultipleObject<Byte>> {
 
     protected IcmpTypeAndCode(MultipleObject<Byte> multiKey, String name) {
       super(multiKey, name);

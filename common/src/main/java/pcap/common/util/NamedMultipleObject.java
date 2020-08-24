@@ -6,9 +6,7 @@ import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
-public abstract class NamedMultipleObject<
-        T extends MultipleObject, U extends NamedMultipleObject<T, ?>>
-    implements ObjectName<T, U> {
+public abstract class NamedMultipleObject<T extends MultipleObject> implements ObjectName {
 
   private final T value;
   private final String name;
@@ -45,7 +43,7 @@ public abstract class NamedMultipleObject<
     if (!(o instanceof NamedMultipleObject)) {
       return false;
     }
-    NamedMultipleObject<?, ?> that = (NamedMultipleObject<?, ?>) o;
+    NamedMultipleObject<?> that = (NamedMultipleObject<?>) o;
     return Objects.equals(value(), that.value()) && Objects.equals(name(), that.name());
   }
 

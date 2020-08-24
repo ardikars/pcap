@@ -20,6 +20,9 @@ class NoLogger implements Logger {
 
   @Override
   public boolean isEnabled(LogLevel level) {
+    if (level == LogLevel.UNKNOWN) {
+      throw new Error(AbstractLogger.UNKNOWN_LOG_LEVEL);
+    }
     return false;
   }
 
@@ -44,22 +47,46 @@ class NoLogger implements Logger {
   }
 
   @Override
-  public void log(LogLevel level, String message) {}
+  public void log(LogLevel level, String message) {
+    if (level == LogLevel.UNKNOWN) {
+      throw new Error(AbstractLogger.UNKNOWN_LOG_LEVEL);
+    }
+  }
 
   @Override
-  public void log(LogLevel level, String format, Object arg1) {}
+  public void log(LogLevel level, String format, Object arg1) {
+    if (level == LogLevel.UNKNOWN) {
+      throw new Error(AbstractLogger.UNKNOWN_LOG_LEVEL);
+    }
+  }
 
   @Override
-  public void log(LogLevel level, String format, Object arg1, Object arg2) {}
+  public void log(LogLevel level, String format, Object arg1, Object arg2) {
+    if (level == LogLevel.UNKNOWN) {
+      throw new Error(AbstractLogger.UNKNOWN_LOG_LEVEL);
+    }
+  }
 
   @Override
-  public void log(LogLevel level, String format, Object... args) {}
+  public void log(LogLevel level, String format, Object... args) {
+    if (level == LogLevel.UNKNOWN) {
+      throw new Error(AbstractLogger.UNKNOWN_LOG_LEVEL);
+    }
+  }
 
   @Override
-  public void log(LogLevel level, Throwable throwable) {}
+  public void log(LogLevel level, Throwable throwable) {
+    if (level == LogLevel.UNKNOWN) {
+      throw new Error(AbstractLogger.UNKNOWN_LOG_LEVEL);
+    }
+  }
 
   @Override
-  public void log(LogLevel level, String message, Throwable throwable) {}
+  public void log(LogLevel level, String message, Throwable throwable) {
+    if (level == LogLevel.UNKNOWN) {
+      throw new Error(AbstractLogger.UNKNOWN_LOG_LEVEL);
+    }
+  }
 
   @Override
   public void debug(String message) {}

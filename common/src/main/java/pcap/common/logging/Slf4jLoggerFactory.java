@@ -29,13 +29,6 @@ class Slf4jLoggerFactory extends LoggerFactory {
   }
 
   static {
-    boolean hasSlf4j;
-    try {
-      Class.forName("org.slf4j.LoggerFactory");
-      hasSlf4j = true;
-    } catch (ClassNotFoundException e) {
-      hasSlf4j = false;
-    }
-    HAS_SLF4J = hasSlf4j;
+    HAS_SLF4J = hasClass("org.slf4j.LoggerFactory");
   }
 }

@@ -233,8 +233,7 @@ final class MessageFormatter {
   }
 
   // special treatment of array values was suggested by 'lizongbo'
-  private static void deeplyAppendParameter(
-      StringBuilder sbuf, Object o, Map<Object[], Object> seenMap) {
+  static void deeplyAppendParameter(StringBuilder sbuf, Object o, Map<Object[], Object> seenMap) {
     if (o == null) {
       sbuf.append("null");
       return;
@@ -266,7 +265,7 @@ final class MessageFormatter {
     }
   }
 
-  private static void safeObjectAppend(StringBuilder sbuf, Object o) {
+  static void safeObjectAppend(StringBuilder sbuf, Object o) {
     try {
       String oAsString = o.toString();
       sbuf.append(oAsString);
@@ -277,8 +276,7 @@ final class MessageFormatter {
     }
   }
 
-  private static void objectArrayAppend(
-      StringBuilder sbuf, Object[] a, Map<Object[], Object> seenMap) {
+  static void objectArrayAppend(StringBuilder sbuf, Object[] a, Map<Object[], Object> seenMap) {
     sbuf.append('[');
     if (!seenMap.containsKey(a)) {
       seenMap.put(a, null);
@@ -295,7 +293,7 @@ final class MessageFormatter {
     sbuf.append(']');
   }
 
-  private static void booleanArrayAppend(StringBuilder sbuf, boolean[] a) {
+  static void booleanArrayAppend(StringBuilder sbuf, boolean[] a) {
     sbuf.append('[');
     final int len = a.length;
     for (int i = 0; i < len; i++) {
@@ -305,7 +303,7 @@ final class MessageFormatter {
     sbuf.append(']');
   }
 
-  private static void byteArrayAppend(StringBuilder sbuf, byte[] a) {
+  static void byteArrayAppend(StringBuilder sbuf, byte[] a) {
     sbuf.append('[');
     final int len = a.length;
     for (int i = 0; i < len; i++) {
@@ -315,7 +313,7 @@ final class MessageFormatter {
     sbuf.append(']');
   }
 
-  private static void charArrayAppend(StringBuilder sbuf, char[] a) {
+  static void charArrayAppend(StringBuilder sbuf, char[] a) {
     sbuf.append('[');
     final int len = a.length;
     for (int i = 0; i < len; i++) {
@@ -325,7 +323,7 @@ final class MessageFormatter {
     sbuf.append(']');
   }
 
-  private static void shortArrayAppend(StringBuilder sbuf, short[] a) {
+  static void shortArrayAppend(StringBuilder sbuf, short[] a) {
     sbuf.append('[');
     final int len = a.length;
     for (int i = 0; i < len; i++) {
@@ -335,7 +333,7 @@ final class MessageFormatter {
     sbuf.append(']');
   }
 
-  private static void intArrayAppend(StringBuilder sbuf, int[] a) {
+  static void intArrayAppend(StringBuilder sbuf, int[] a) {
     sbuf.append('[');
     final int len = a.length;
     for (int i = 0; i < len; i++) {
@@ -345,7 +343,7 @@ final class MessageFormatter {
     sbuf.append(']');
   }
 
-  private static void longArrayAppend(StringBuilder sbuf, long[] a) {
+  static void longArrayAppend(StringBuilder sbuf, long[] a) {
     sbuf.append('[');
     final int len = a.length;
     for (int i = 0; i < len; i++) {
@@ -355,7 +353,7 @@ final class MessageFormatter {
     sbuf.append(']');
   }
 
-  private static void floatArrayAppend(StringBuilder sbuf, float[] a) {
+  static void floatArrayAppend(StringBuilder sbuf, float[] a) {
     sbuf.append('[');
     final int len = a.length;
     for (int i = 0; i < len; i++) {
@@ -365,7 +363,7 @@ final class MessageFormatter {
     sbuf.append(']');
   }
 
-  private static void doubleArrayAppend(StringBuilder sbuf, double[] a) {
+  static void doubleArrayAppend(StringBuilder sbuf, double[] a) {
     sbuf.append('[');
     final int len = a.length;
     for (int i = 0; i < len; i++) {

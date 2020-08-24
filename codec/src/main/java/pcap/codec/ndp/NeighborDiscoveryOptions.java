@@ -155,6 +155,11 @@ public class NeighborDiscoveryOptions extends AbstractPacket {
     protected OptionType(Byte value, String name) {
       super(value, name);
     }
+
+    @Override
+    public int compareTo(OptionType o) {
+      return value().compareTo(o.value());
+    }
   }
 
   public static final class Option implements Serializable {

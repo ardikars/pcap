@@ -126,6 +126,11 @@ public abstract class Icmp extends AbstractPacket {
     }
 
     @Override
+    public int compareTo(IcmpTypeAndCode o) {
+      return value().compareTo(o.value());
+    }
+
+    @Override
     public String toString() {
       return new StringBuilder("IcmpTypeAndCode{")
           .append("type=")

@@ -25,7 +25,7 @@ public final class Sets {
    */
   public static <E> Set<E> createHashSet(int expectedMapSize) {
     final int initialCapacity = (int) (expectedMapSize / HASHSET_DEFAULT_LOAD_FACTOR) + 1;
-    return new HashSet<E>(initialCapacity, HASHSET_DEFAULT_LOAD_FACTOR);
+    return new HashSet<>(initialCapacity, HASHSET_DEFAULT_LOAD_FACTOR);
   }
 
   /**
@@ -38,6 +38,6 @@ public final class Sets {
    */
   public static <E> Set<E> createLinkedHashSet(int expectedMapSize) {
     final int initialCapacity = (int) (expectedMapSize / HASHSET_DEFAULT_LOAD_FACTOR) + 1;
-    return new LinkedHashSet<E>(initialCapacity, HASHSET_DEFAULT_LOAD_FACTOR);
+    return new LinkedHashSet<>(initialCapacity, HASHSET_DEFAULT_LOAD_FACTOR);
   }
 }

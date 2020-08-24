@@ -55,4 +55,9 @@ public final class DataLinkLayer extends NamedNumber<Short, DataLinkLayer>
     }
     return packetBuilder.build(buffer);
   }
+
+  @Override
+  public int compareTo(DataLinkLayer o) {
+    return value().compareTo(o.value());
+  }
 }

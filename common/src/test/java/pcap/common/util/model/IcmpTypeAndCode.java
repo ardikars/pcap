@@ -10,7 +10,7 @@ import pcap.common.util.NamedMultipleObject;
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
-public class IcmpTypeAndCode extends NamedMultipleObject<MultipleObject<Byte>, IcmpTypeAndCode> {
+public class IcmpTypeAndCode extends NamedMultipleObject<MultipleObject<Byte>> {
 
   public static final IcmpTypeAndCode NO_ROUTE_TO_DESTINATION =
       new IcmpTypeAndCode(MultipleObject.of((byte) 1, (byte) 0), "No route to destination");

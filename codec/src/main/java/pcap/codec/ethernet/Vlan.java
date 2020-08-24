@@ -344,6 +344,11 @@ public class Vlan extends AbstractPacket {
       super(value, name);
     }
 
+    @Override
+    public int compareTo(PriorityCodePoint o) {
+      return value().compareTo(o.value());
+    }
+
     /**
      * Get priority code point from value.
      *

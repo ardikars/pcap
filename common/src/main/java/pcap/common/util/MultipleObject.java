@@ -14,7 +14,7 @@ public class MultipleObject<K> implements Serializable {
 
   private static final long serialVersionUID = -7486266343955776290L;
 
-  private final Set<K> keys;
+  private final transient Set<K> keys;
 
   protected MultipleObject(Set<K> keys) {
     this.keys = keys;

@@ -13,7 +13,9 @@ public final class Strings {
   /** Default charset (UTF-8). */
   public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
-  private Strings() {}
+  private Strings() {
+    //
+  }
 
   /**
    * Ensure given string is not empty.
@@ -437,46 +439,52 @@ public final class Strings {
         if (value != null) {
           builder.append(nextSeparator);
           nextSeparator = separator;
-          if (valueHolder.name != null) {
-            if (quoteString) {
-              builder.append('\"').append(valueHolder.name).append('\"').append(delimiter);
-            } else {
-              builder.append(valueHolder.name).append(delimiter);
-            }
+          if (quoteString) {
+            builder.append('\"').append(valueHolder.name).append('\"').append(delimiter);
+          } else {
+            builder.append(valueHolder.name).append(delimiter);
           }
           if (value.getClass().isArray()) {
-            String arrayString;
-            if (value instanceof byte[]) {
-              byte[] array = (byte[]) value;
-              arrayString = Strings.hex(array);
-            } else if (value instanceof short[]) {
-              arrayString = Strings.hex((short[]) value);
-            } else if (value instanceof int[]) {
-              arrayString = Strings.hex((int[]) value);
-            } else if (value instanceof float[]) {
-              arrayString = Strings.hex((float[]) value);
-            } else if (value instanceof long[]) {
-              arrayString = Strings.hex((long[]) value);
-            } else if (value instanceof double[]) {
-              arrayString = Strings.hex((double[]) value);
-            } else {
-              arrayString = Arrays.toString((Object[]) value);
-            }
-            if (quoteString) {
-              builder.append('\"').append(arrayString).append('\"');
-            } else {
-              builder.append(arrayString);
-            }
+            appendArrayValue(builder, value);
           } else {
-            if (quoteString && value instanceof CharSequence) {
-              builder.append("\"").append(value).append("\"");
-            } else {
-              builder.append(value);
-            }
+            appendStringValue(builder, value);
           }
         }
       }
       return builder.append(end).toString();
+    }
+
+    private void appendStringValue(StringBuilder builder, Object value) {
+      if (quoteString && value instanceof CharSequence) {
+        builder.append("\"").append(value).append("\"");
+      } else {
+        builder.append(value);
+      }
+    }
+
+    private void appendArrayValue(StringBuilder builder, Object value) {
+      String arrayString;
+      if (value instanceof byte[]) {
+        byte[] array = (byte[]) value;
+        arrayString = Strings.hex(array);
+      } else if (value instanceof short[]) {
+        arrayString = Strings.hex((short[]) value);
+      } else if (value instanceof int[]) {
+        arrayString = Strings.hex((int[]) value);
+      } else if (value instanceof float[]) {
+        arrayString = Strings.hex((float[]) value);
+      } else if (value instanceof long[]) {
+        arrayString = Strings.hex((long[]) value);
+      } else if (value instanceof double[]) {
+        arrayString = Strings.hex((double[]) value);
+      } else {
+        arrayString = Arrays.toString((Object[]) value);
+      }
+      if (quoteString) {
+        builder.append('\"').append(arrayString).append('\"');
+      } else {
+        builder.append(arrayString);
+      }
     }
 
     private ValueHolder addHolder() {

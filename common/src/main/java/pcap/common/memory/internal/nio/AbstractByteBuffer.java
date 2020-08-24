@@ -146,7 +146,22 @@ public abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
     return this;
   }
 
-  //
+  @Override
+  public ByteOrder byteOrder() {
+    return buffer.order() == java.nio.ByteOrder.BIG_ENDIAN
+        ? ByteOrder.BIG_ENDIAN
+        : ByteOrder.LITTLE_ENDIAN;
+  }
+
+  @Override
+  public Memory byteOrder(ByteOrder byteOrder) {
+    if (byteOrder() == ByteOrder.LITTLE_ENDIAN && byteOrder == ByteOrder.BIG_ENDIAN) {
+      buffer.order(java.nio.ByteOrder.BIG_ENDIAN);
+    } else if (byteOrder() == ByteOrder.BIG_ENDIAN && byteOrder == ByteOrder.LITTLE_ENDIAN) {
+      buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+    }
+    return this;
+  }
 
   @Override
   public ByteBuffer nioBuffer() {

@@ -30,13 +30,6 @@ class Log4j2LoggerFactory extends LoggerFactory {
   }
 
   static {
-    boolean hasLog4j2;
-    try {
-      Class.forName("org.apache.logging.log4j.LogManager");
-      hasLog4j2 = true;
-    } catch (ClassNotFoundException e) {
-      hasLog4j2 = false;
-    }
-    HAS_LOG4J2 = hasLog4j2;
+    HAS_LOG4J2 = hasClass("org.apache.logging.log4j.LogManager");
   }
 }
