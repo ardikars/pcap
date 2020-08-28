@@ -478,7 +478,7 @@ public class Arp extends AbstractPacket {
     }
 
     @Override
-    public Builder reset(int offset, int length) {
+    public Builder reset(long offset, long length) {
       if (buffer != null) {
         resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
@@ -490,7 +490,7 @@ public class Arp extends AbstractPacket {
         Validate.notIllegalArgument(senderProtocolAddress != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(targetHardwareAddress != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(targetProtocolAddress != null, ILLEGAL_HEADER_EXCEPTION);
-        int index = offset;
+        long index = offset;
         buffer.setShort(index, hardwareType.value());
         index += 2;
         buffer.setShort(index, protocolType.value());

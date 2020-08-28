@@ -19,23 +19,31 @@ public class PooledDirectByteBuffer extends AbstractPooledByteBuffer {
   }
 
   @Override
-  public Memory copy(int index, int length) {
-    byte[] b = new byte[length];
-    int currentIndex = baseIndex + index;
+  public Memory copy(long index, long length) {
+    byte[] b = new byte[(int) length & 0x7FFFFFFF];
+    int currentIndex = baseIndex + (int) index & 0x7FFFFFFF;
     getBytes(currentIndex, b, 0, length);
-    ByteBuffer copy = ByteBuffer.allocateDirect(length);
+    ByteBuffer copy = ByteBuffer.allocateDirect(b.length);
     copy.put(b);
     return new PooledDirectByteBuffer(
-        id(), allocator, baseIndex, copy, capacity(), maxCapacity(), readerIndex(), writerIndex());
+        id(),
+        allocator,
+        baseIndex,
+        copy,
+        (int) capacity(),
+        (int) maxCapacity(),
+        (int) readerIndex(),
+        (int) writerIndex());
   }
 
   @Override
-  public Memory slice(int index, int length) {
+  public Memory slice(long index, long length) {
     if (length > capacity - index) {
       throw new IllegalArgumentException(
           String.format("length: %d (expected: length <= %d)", length, capacity - index));
     }
-    return new SlicedPooledDirectByteBuffer(index, length, this);
+    return new SlicedPooledDirectByteBuffer(
+        (int) index & 0x7FFFFFFF, (int) length & 0x7FFFFFFF, this);
   }
 
   @Override
@@ -45,10 +53,10 @@ public class PooledDirectByteBuffer extends AbstractPooledByteBuffer {
         allocator,
         baseIndex,
         buffer.duplicate(),
-        capacity(),
-        maxCapacity(),
-        readerIndex(),
-        writerIndex());
+        (int) capacity(),
+        (int) maxCapacity(),
+        (int) readerIndex(),
+        (int) writerIndex());
   }
 
   public static class SlicedPooledDirectByteBuffer extends PooledDirectByteBuffer
@@ -63,22 +71,27 @@ public class PooledDirectByteBuffer extends AbstractPooledByteBuffer {
           previous.baseIndex + index,
           previous.buffer(ByteBuffer.class).duplicate(),
           length,
-          previous.maxCapacity() - index < 0 ? 0 : previous.maxCapacity() - index,
-          previous.readerIndex() - index < 0 ? 0 : previous.readerIndex() - index,
-          previous.writerIndex() - index < 0 ? 0 : previous.writerIndex() - index);
+          previous.maxCapacity() - index < 0 ? 0 : (int) previous.maxCapacity() - index,
+          previous.readerIndex() - index < 0 ? 0 : (int) previous.readerIndex() - index,
+          previous.writerIndex() - index < 0 ? 0 : (int) previous.writerIndex() - index);
       this.refCnt = previous.refCnt;
       this.previous = previous;
     }
 
     @Override
-    public Memory copy(int index, int length) {
-      byte[] b = new byte[length];
-      int currentIndex = baseIndex + index;
+    public Memory copy(long index, long length) {
+      byte[] b = new byte[(int) length & 0x7FFFFFFF];
+      int currentIndex = baseIndex + (int) index & 0x7FFFFFFF;
       getBytes(currentIndex, b, 0, length);
-      ByteBuffer copy = ByteBuffer.allocateDirect(length);
+      ByteBuffer copy = ByteBuffer.allocateDirect(b.length);
       copy.put(b);
       return new DirectByteBuffer(
-          baseIndex, copy, capacity(), maxCapacity(), readerIndex(), writerIndex());
+          baseIndex,
+          copy,
+          (int) capacity(),
+          (int) maxCapacity(),
+          (int) readerIndex(),
+          (int) writerIndex());
     }
 
     @Override

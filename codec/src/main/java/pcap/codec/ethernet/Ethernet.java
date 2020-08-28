@@ -237,14 +237,14 @@ public class Ethernet extends AbstractPacket {
     }
 
     @Override
-    public Builder reset(int offset, int length) {
+    public Builder reset(long offset, long length) {
       if (buffer != null) {
         resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(destinationMacAddress != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(sourceMacAddress != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(ethernetType != null, ILLEGAL_HEADER_EXCEPTION);
-        int index = offset;
+        long index = offset;
         buffer.setBytes(index, destinationMacAddress.address());
         index += MacAddress.MAC_ADDRESS_LENGTH;
         buffer.setBytes(index, sourceMacAddress.address());

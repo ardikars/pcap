@@ -128,7 +128,7 @@ public abstract class AbstractPacket implements Packet {
      * @param length length.
      * @return returns buffer with new writer and reader index.
      */
-    protected Memory resetIndex(Memory buffer, int length) {
+    protected Memory resetIndex(Memory buffer, long length) {
       if (buffer != null) {
         buffer.setIndex(0, length);
       }
@@ -156,8 +156,8 @@ public abstract class AbstractPacket implements Packet {
 
     protected static final MemoryAllocator ALLOCATOR = Properties.DIRECT_ALLOCATOR;
 
-    protected int readerIndex = -1;
-    protected int writerIndex = -1;
+    protected long readerIndex = -1;
+    protected long writerIndex = -1;
 
     protected void resetIndex(Memory buffer) {
       if (readerIndex < 0 || writerIndex < 0) {
@@ -170,7 +170,7 @@ public abstract class AbstractPacket implements Packet {
       return reset(-1, -1);
     }
 
-    public Builder reset(int offset, int length) {
+    public Builder reset(long offset, long length) {
       return this;
     }
 

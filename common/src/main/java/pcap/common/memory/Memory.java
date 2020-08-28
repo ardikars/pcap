@@ -21,7 +21,7 @@ import pcap.common.annotation.Inclubating;
 public interface Memory {
 
   /** @return returns the number of bytes (octets) this buffer can contain. */
-  int capacity();
+  long capacity();
 
   /**
    * Adjusts the capacity of this buffer. If the {@code newCapacity} is less than the current
@@ -32,19 +32,19 @@ public interface Memory {
    * @param newCapacity new capacity.
    * @return returns this {@link Memory}.
    */
-  Memory capacity(int newCapacity);
+  Memory capacity(long newCapacity);
 
   /**
    * If a user attempts to increase the capacity of this buffer beyond the maximum capacity using
-   * {@link #capacity(int)} or {@link #ensureWritable(int)}, those methods will raise an {@link
+   * {@link #capacity(long)} or {@link #ensureWritable(long)}, those methods will raise an {@link
    * IllegalArgumentException}.
    *
    * @return returns the maximum allowed capacity of this buffer.
    */
-  int maxCapacity();
+  long maxCapacity();
 
   /** @return returns the {@code readerIndex} of this buffer. */
-  int readerIndex();
+  long readerIndex();
 
   /**
    * Sets the {@code readerIndex} of this buffer.
@@ -54,10 +54,10 @@ public interface Memory {
    * @param readerIndex reader index.
    * @return returns this {@link Memory}.
    */
-  Memory readerIndex(int readerIndex);
+  Memory readerIndex(long readerIndex);
 
   /** @return returns the {@code writerIndex} of this buffer. */
-  int writerIndex();
+  long writerIndex();
 
   /**
    * Sets the {@code writerIndex} of this buffer.
@@ -67,7 +67,7 @@ public interface Memory {
    * @param writerIndex writer index.
    * @return returns this {@link Memory}.
    */
-  Memory writerIndex(int writerIndex);
+  Memory writerIndex(long writerIndex);
 
   /**
    * Combination of {@code writerIndex(...)} and {@code readerIndex(...)}.
@@ -76,25 +76,25 @@ public interface Memory {
    * @param writerIndex writer index.
    * @return returns this {@link Memory}.
    */
-  Memory setIndex(int readerIndex, int writerIndex);
+  Memory setIndex(long readerIndex, long writerIndex);
 
   /**
    * @return returns the number of readable bytes which is equal to {@code (this.writerIndex -
    *     this.readerIndex)}.
    */
-  int readableBytes();
+  long readableBytes();
 
   /**
    * @return returns the number of writable bytes which is equal to {@code (this.capacity -
    *     this.writerIndex)}.
    */
-  int writableBytes();
+  long writableBytes();
 
   /**
    * @return returns the maximum possible number of writable bytes, which is equal to {@code
    *     (this.maxCapacity - this.writerIndex)}.
    */
-  int maxWritableBytes();
+  long maxWritableBytes();
 
   /**
    * @return returns {@code true} if and only if {@code (this.writerIndex - this.readerIndex)} is
@@ -106,7 +106,7 @@ public interface Memory {
    * @return returns {@code true} if and only if this buffer contains equal to or more than the
    *     specified number of elements.
    */
-  boolean isReadable(int numBytes);
+  boolean isReadable(long numBytes);
 
   /**
    * @return returns {@code true} if and only if {@code (this.capacity - this.writerIndex)} is
@@ -118,11 +118,11 @@ public interface Memory {
    * @return returns {@code true} if and only if this buffer has enough room to allow writing the
    *     specified number of elements.
    */
-  boolean isWritable(int numBytes);
+  boolean isWritable(long numBytes);
 
   /**
    * Sets the {@code readerIndex} and {@code writerIndex} of this buffer to {@code 0}. This method
-   * is identical to {@link #setIndex(int, int) setIndex(0, 0)}.
+   * is identical to {@link #setIndex(long, long) setIndex(0, 0)}.
    *
    * @return this {@link Memory}.
    */
@@ -174,7 +174,7 @@ public interface Memory {
    *     {@link #maxCapacity()}
    * @return this {@link Memory}.
    */
-  Memory ensureWritable(int minWritableBytes);
+  Memory ensureWritable(long minWritableBytes);
 
   /**
    * Gets a boolean at the specified absolute (@code index) in this buffer. This method does not
@@ -184,7 +184,7 @@ public interface Memory {
    *     {@code index + 1} is greater than {@code this.capacity}
    * @return boolean value.
    */
-  boolean getBoolean(int index);
+  boolean getBoolean(long index);
 
   /**
    * Gets a byte at the specified absolute {@code index} in this buffer. This method does not modify
@@ -194,7 +194,7 @@ public interface Memory {
    *     {@code index + 1} is greater than {@code this.capacity}
    * @return byte value.
    */
-  byte getByte(int index);
+  byte getByte(long index);
 
   /**
    * Gets an unsigned byte at the specified absolute {@code index} in this buffer. This method does
@@ -204,7 +204,7 @@ public interface Memory {
    *     {@code index + 1} is greater than {@code this.capacity}
    * @return unsigned byte value stored in {@code short}.
    */
-  short getUnsignedByte(int index);
+  short getUnsignedByte(long index);
 
   /**
    * Gets a 16-bit short integer at the specified absolute {@code index} in this buffer. This method
@@ -214,7 +214,7 @@ public interface Memory {
    *     {@code index + 2} is greater than {@code this.capacity}
    * @return short value.
    */
-  short getShort(int index);
+  short getShort(long index);
 
   /**
    * Gets a 16-bit short integer at the specified absolute {@code index} in this buffer in Little
@@ -225,7 +225,7 @@ public interface Memory {
    *     {@code index + 2} is greater than {@code this.capacity}
    * @return little endian short value.
    */
-  short getShortLE(int index);
+  short getShortLE(long index);
 
   /**
    * Gets an unsigned 16-bit short integer at the specified absolute {@code index} in this buffer.
@@ -235,7 +235,7 @@ public interface Memory {
    *     {@code index + 2} is greater than {@code this.capacity}
    * @return unsigned short value stored in {@code integer}.
    */
-  int getUnsignedShort(int index);
+  int getUnsignedShort(long index);
 
   /**
    * Gets an unsigned 16-bit short integer at the specified absolute {@code index} in this buffer in
@@ -246,7 +246,7 @@ public interface Memory {
    *     {@code index + 2} is greater than {@code this.capacity}
    * @return unsigned little endian short value stored in {@code integer}.
    */
-  int getUnsignedShortLE(int index);
+  int getUnsignedShortLE(long index);
 
   /**
    * Gets a 32-bit integer at the specified absolute {@code index} in this buffer. This method does
@@ -256,7 +256,7 @@ public interface Memory {
    *     {@code index + 4} is greater than {@code this.capacity}
    * @return integer value.
    */
-  int getInt(int index);
+  int getInt(long index);
 
   /**
    * Gets a 32-bit integer at the specified absolute {@code index} in this buffer with Little Endian
@@ -267,7 +267,7 @@ public interface Memory {
    *     {@code index + 4} is greater than {@code this.capacity}
    * @return little endian integer value.
    */
-  int getIntLE(int index);
+  int getIntLE(long index);
 
   /**
    * Gets an unsigned 32-bit integer at the specified absolute {@code index} in this buffer. This
@@ -277,7 +277,7 @@ public interface Memory {
    *     {@code index + 4} is greater than {@code this.capacity}
    * @return unsigned integer value stored in {@code long}.
    */
-  long getUnsignedInt(int index);
+  long getUnsignedInt(long index);
 
   /**
    * Gets an unsigned 32-bit integer at the specified absolute {@code index} in this buffer in
@@ -288,7 +288,7 @@ public interface Memory {
    *     {@code index + 4} is greater than {@code this.capacity}
    * @return unsigned little endian integer value stored in {@code long}.
    */
-  long getUnsignedIntLE(int index);
+  long getUnsignedIntLE(long index);
 
   /**
    * Gets a 64-bit long integer at the specified absolute {@code index} in this buffer. This method
@@ -298,7 +298,7 @@ public interface Memory {
    *     {@code index + 8} is greater than {@code this.capacity}
    * @return long value.
    */
-  long getLong(int index);
+  long getLong(long index);
 
   /**
    * Gets a 64-bit long integer at the specified absolute {@code index} in this buffer in Little
@@ -309,7 +309,7 @@ public interface Memory {
    *     {@code index + 8} is greater than {@code this.capacity}
    * @return little endian long value.
    */
-  long getLongLE(int index);
+  long getLongLE(long index);
 
   /**
    * Gets a 32-bit floating point number at the specified absolute {@code index} in this buffer.
@@ -319,7 +319,7 @@ public interface Memory {
    *     {@code index + 4} is greater than {@code this.capacity}
    * @return float value.
    */
-  float getFloat(int index);
+  float getFloat(long index);
 
   /**
    * Gets a 32-bit floating point number at the specified absolute {@code index} in this buffer in
@@ -330,7 +330,7 @@ public interface Memory {
    *     {@code index + 4} is greater than {@code this.capacity}
    * @return little endian float value.
    */
-  float getFloatLE(int index);
+  float getFloatLE(long index);
 
   /**
    * Gets a 64-bit floating point number at the specified absolute {@code index} in this buffer.
@@ -340,7 +340,7 @@ public interface Memory {
    *     {@code index + 8} is greater than {@code this.capacity}
    * @return double value.
    */
-  double getDouble(int index);
+  double getDouble(long index);
 
   /**
    * Gets a 64-bit floating point number at the specified absolute {@code index} in this buffer in
@@ -351,15 +351,15 @@ public interface Memory {
    *     {@code index + 8} is greater than {@code this.capacity}
    * @return little endian double value.
    */
-  double getDoubleLE(int index);
+  double getDoubleLE(long index);
 
   /**
    * Transfers this buffer's data to the specified destination starting at the specified absolute
    * {@code index} until the destination becomes non-writable. This method is basically same with
-   * {@link #getBytes(int, Memory, int, int)}, except that this method increases the {@code
+   * {@link #getBytes(long, Memory, long, long)}, except that this method increases the {@code
    * writerIndex} of the destination by the number of the transferred bytes while {@link
-   * #getBytes(int, Memory, int, int)} does not. This method does not modify {@code readerIndex} or
-   * {@code writerIndex} of the source buffer (i.e. {@code this}).
+   * #getBytes(long, Memory, long, long)} does not. This method does not modify {@code readerIndex}
+   * or {@code writerIndex} of the source buffer (i.e. {@code this}).
    *
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or if
    *     {@code index + dst.writableBytes} is greater than {@code this.capacity}
@@ -367,14 +367,15 @@ public interface Memory {
    * @param dst destination.
    * @return this {@link Memory}.
    */
-  Memory getBytes(int index, Memory dst);
+  Memory getBytes(long index, Memory dst);
 
   /**
    * Transfers this buffer's data to the specified destination starting at the specified absolute
-   * {@code index}. This method is basically same with {@link #getBytes(int, Memory, int, int)},
+   * {@code index}. This method is basically same with {@link #getBytes(long, Memory, long, long)},
    * except that this method increases the {@code writerIndex} of the destination by the number of
-   * the transferred bytes while {@link #getBytes(int, Memory, int, int)} does not. This method does
-   * not modify {@code readerIndex} or {@code writerIndex} of the source buffer (i.e. {@code this}).
+   * the transferred bytes while {@link #getBytes(long, Memory, long, long)} does not. This method
+   * does not modify {@code readerIndex} or {@code writerIndex} of the source buffer (i.e. {@code
+   * this}).
    *
    * @param length the number of bytes to transfer
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0}, if
@@ -385,7 +386,7 @@ public interface Memory {
    * @param length length.
    * @return this {@link Memory}.
    */
-  Memory getBytes(int index, Memory dst, int length);
+  Memory getBytes(long index, Memory dst, long length);
 
   /**
    * Transfers this buffer's data to the specified destination starting at the specified absolute
@@ -404,7 +405,7 @@ public interface Memory {
    * @param length length.
    * @return this {@link Memory}.
    */
-  Memory getBytes(int index, Memory dst, int dstIndex, int length);
+  Memory getBytes(long index, Memory dst, long dstIndex, long length);
 
   /**
    * Transfers this buffer's data to the specified destination starting at the specified absolute
@@ -417,7 +418,7 @@ public interface Memory {
    * @param dst destination.
    * @return this {@link Memory}.
    */
-  Memory getBytes(int index, byte[] dst);
+  Memory getBytes(long index, byte[] dst);
 
   /**
    * Transfers this buffer's data to the specified destination starting at the specified absolute
@@ -436,7 +437,7 @@ public interface Memory {
    * @param length length.
    * @return this {@link Memory}.
    */
-  Memory getBytes(int index, byte[] dst, int dstIndex, int length);
+  Memory getBytes(long index, byte[] dst, long dstIndex, long length);
 
   /**
    * Gets a {@link CharSequence} with the given length at the given index.
@@ -447,7 +448,7 @@ public interface Memory {
    * @return the sequence
    * @return a string from buffer.
    */
-  CharSequence getCharSequence(int index, int length, Charset charset);
+  CharSequence getCharSequence(long index, long length, Charset charset);
 
   /**
    * Sets the specified boolean at the specified absolute {@code index} in this buffer. This method
@@ -459,7 +460,7 @@ public interface Memory {
    * @param value value.
    * @return this {@link Memory}.
    */
-  Memory setBoolean(int index, boolean value);
+  Memory setBoolean(long index, boolean value);
 
   /**
    * Sets the specified byte at the specified absolute {@code index} in this buffer. The 24
@@ -472,7 +473,7 @@ public interface Memory {
    * @param value value.
    * @return this {@link Memory}.
    */
-  Memory setByte(int index, int value);
+  Memory setByte(long index, int value);
 
   /**
    * Sets the specified 16-bit short integer at the specified absolute {@code index} in this buffer.
@@ -485,7 +486,7 @@ public interface Memory {
    * @param value value.
    * @return this {@link Memory}.
    */
-  Memory setShort(int index, int value);
+  Memory setShort(long index, int value);
 
   /**
    * Sets the specified 16-bit short integer at the specified absolute {@code index} in this buffer
@@ -498,7 +499,7 @@ public interface Memory {
    * @param value value.
    * @return this {@link Memory}.
    */
-  Memory setShortLE(int index, int value);
+  Memory setShortLE(long index, int value);
 
   /**
    * Sets the specified 32-bit integer at the specified absolute {@code index} in this buffer. This
@@ -510,7 +511,7 @@ public interface Memory {
    * @param value value.
    * @return this {@link Memory}.
    */
-  Memory setInt(int index, int value);
+  Memory setInt(long index, int value);
 
   /**
    * Sets the specified 32-bit integer at the specified absolute {@code index} in this buffer with
@@ -523,7 +524,7 @@ public interface Memory {
    * @param value value.
    * @return this {@link Memory}.
    */
-  Memory setIntLE(int index, int value);
+  Memory setIntLE(long index, int value);
 
   /**
    * Sets the specified 64-bit long integer at the specified absolute {@code index} in this buffer.
@@ -535,7 +536,7 @@ public interface Memory {
    * @param value value.
    * @return this {@link Memory}.
    */
-  Memory setLong(int index, long value);
+  Memory setLong(long index, long value);
 
   /**
    * Sets the specified 64-bit long integer at the specified absolute {@code index} in this buffer
@@ -548,7 +549,7 @@ public interface Memory {
    * @param value value.
    * @return this {@link Memory}.
    */
-  Memory setLongLE(int index, long value);
+  Memory setLongLE(long index, long value);
 
   /**
    * Sets the specified 32-bit floating-point number at the specified absolute {@code index} in this
@@ -560,7 +561,7 @@ public interface Memory {
    * @param value value.
    * @return this {@link Memory}.
    */
-  Memory setFloat(int index, float value);
+  Memory setFloat(long index, float value);
 
   /**
    * Sets the specified 32-bit floating-point number at the specified absolute {@code index} in this
@@ -573,7 +574,7 @@ public interface Memory {
    * @param value value.
    * @return this {@link Memory}.
    */
-  Memory setFloatLE(int index, float value);
+  Memory setFloatLE(long index, float value);
 
   /**
    * Sets the specified 64-bit floating-point number at the specified absolute {@code index} in this
@@ -585,7 +586,7 @@ public interface Memory {
    * @param value value.
    * @return this {@link Memory}.
    */
-  Memory setDouble(int index, double value);
+  Memory setDouble(long index, double value);
 
   /**
    * Sets the specified 64-bit floating-point number at the specified absolute {@code index} in this
@@ -598,15 +599,15 @@ public interface Memory {
    * @param value value.
    * @return this {@link Memory}.
    */
-  Memory setDoubleLE(int index, double value);
+  Memory setDoubleLE(long index, double value);
 
   /**
    * Transfers the specified source buffer's data to this buffer starting at the specified absolute
    * {@code index} until the source buffer becomes unreadable. This method is basically same with
-   * {@link #setBytes(int, Memory, int, int)}, except that this method increases the {@code
+   * {@link #setBytes(long, Memory, long, long)}, except that this method increases the {@code
    * readerIndex} of the source buffer by the number of the transferred bytes while {@link
-   * #setBytes(int, Memory, int, int)} does not. This method does not modify {@code readerIndex} or
-   * {@code writerIndex} of the source buffer (i.e. {@code this}).
+   * #setBytes(long, Memory, long, long)} does not. This method does not modify {@code readerIndex}
+   * or {@code writerIndex} of the source buffer (i.e. {@code this}).
    *
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or if
    *     {@code index + src.readableBytes} is greater than {@code this.capacity}
@@ -614,14 +615,15 @@ public interface Memory {
    * @param src source.
    * @return this {@link Memory}.
    */
-  Memory setBytes(int index, Memory src);
+  Memory setBytes(long index, Memory src);
 
   /**
    * Transfers the specified source buffer's data to this buffer starting at the specified absolute
-   * {@code index}. This method is basically same with {@link #setBytes(int, Memory, int, int)},
+   * {@code index}. This method is basically same with {@link #setBytes(long, Memory, long, long)},
    * except that this method increases the {@code readerIndex} of the source buffer by the number of
-   * the transferred bytes while {@link #setBytes(int, Memory, int, int)} does not. This method does
-   * not modify {@code readerIndex} or {@code writerIndex} of the source buffer (i.e. {@code this}).
+   * the transferred bytes while {@link #setBytes(long, Memory, long, long)} does not. This method
+   * does not modify {@code readerIndex} or {@code writerIndex} of the source buffer (i.e. {@code
+   * this}).
    *
    * @param length the number of bytes to transfer
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0}, if
@@ -632,7 +634,7 @@ public interface Memory {
    * @param length length.
    * @return this {@link Memory}.
    */
-  Memory setBytes(int index, Memory src, int length);
+  Memory setBytes(long index, Memory src, long length);
 
   /**
    * Transfers the specified source buffer's data to this buffer starting at the specified absolute
@@ -651,7 +653,7 @@ public interface Memory {
    * @param length length.
    * @return this {@link Memory}.
    */
-  Memory setBytes(int index, Memory src, int srcIndex, int length);
+  Memory setBytes(long index, Memory src, long srcIndex, long length);
 
   /**
    * Transfers the specified source array's data to this buffer starting at the specified absolute
@@ -664,7 +666,7 @@ public interface Memory {
    * @param src source.
    * @return this {@link Memory}.
    */
-  Memory setBytes(int index, byte[] src);
+  Memory setBytes(long index, byte[] src);
 
   /**
    * Transfers the specified source array's data to this buffer starting at the specified absolute
@@ -681,7 +683,7 @@ public interface Memory {
    * @param length length.
    * @return this {@link Memory}.
    */
-  Memory setBytes(int index, byte[] src, int srcIndex, int length);
+  Memory setBytes(long index, byte[] src, long srcIndex, long length);
 
   /**
    * Writes the specified {@link CharSequence} at the current {@code writerIndex} and increases the
@@ -694,7 +696,7 @@ public interface Memory {
    * @param charset that should be used.
    * @return this {@link Memory}.
    */
-  Memory setCharSequence(int index, CharSequence sequence, Charset charset);
+  Memory setCharSequence(long index, CharSequence sequence, Charset charset);
 
   /**
    * Gets a boolean at the current {@code readerIndex} and increases the {@code readerIndex} by
@@ -853,9 +855,9 @@ public interface Memory {
    * Transfers this buffer's data to the specified destination starting at the current {@code
    * readerIndex} until the destination becomes non-writable, and increases the {@code readerIndex}
    * by the number of the transferred bytes. This method is basically same with {@link
-   * #readBytes(Memory, int, int)}, except that this method increases the {@code writerIndex} of the
-   * destination by the number of the transferred bytes while {@link #readBytes(Memory, int, int)}
-   * does not.
+   * #readBytes(Memory, long, long)}, except that this method increases the {@code writerIndex} of
+   * the destination by the number of the transferred bytes while {@link #readBytes(Memory, long,
+   * long)} does not.
    *
    * @return this {@link Memory}.
    * @throws IndexOutOfBoundsException if {@code dst.writableBytes} is greater than {@code
@@ -866,14 +868,14 @@ public interface Memory {
   /**
    * Transfers this buffer's data to the specified destination starting at the current {@code
    * readerIndex} and increases the {@code readerIndex} by the number of the transferred bytes (=
-   * {@code length}). This method is basically same with {@link #readBytes(Memory, int, int)},
+   * {@code length}). This method is basically same with {@link #readBytes(Memory, long, long)},
    * except that this method increases the {@code writerIndex} of the destination by the number of
-   * the transferred bytes (= {@code length}) while {@link #readBytes(Memory, int, int)} does not.
+   * the transferred bytes (= {@code length}) while {@link #readBytes(Memory, long, long)} does not.
    *
    * @throws IndexOutOfBoundsException if {@code length} is greater than {@code this.readableBytes}
    *     or if {@code length} is greater than {@code dst.writableBytes}
    */
-  Memory readBytes(Memory dst, int length);
+  Memory readBytes(Memory dst, long length);
 
   /**
    * Transfers this buffer's data to the specified destination starting at the current {@code
@@ -888,7 +890,7 @@ public interface Memory {
    *     {@code length} is greater than {@code this.readableBytes}, or if {@code dstIndex + length}
    *     is greater than {@code dst.capacity}
    */
-  Memory readBytes(Memory dst, int dstIndex, int length);
+  Memory readBytes(Memory dst, long dstIndex, long length);
 
   /**
    * Transfers this buffer's data to the specified destination starting at the current {@code
@@ -915,7 +917,7 @@ public interface Memory {
    *     {@code length} is greater than {@code this.readableBytes}, or if {@code dstIndex + length}
    *     is greater than {@code dst.length}
    */
-  Memory readBytes(byte[] dst, int dstIndex, int length);
+  Memory readBytes(byte[] dst, long dstIndex, long length);
 
   /**
    * Increases the current {@code readerIndex} by the specified {@code length} in this buffer.
@@ -923,7 +925,7 @@ public interface Memory {
    * @return this {@link Memory}.
    * @throws IndexOutOfBoundsException if {@code length} is greater than {@code this.readableBytes}
    */
-  Memory skipBytes(int length);
+  Memory skipBytes(long length);
 
   /**
    * Gets a {@link CharSequence} with the given length at the current {@code readerIndex} and
@@ -934,7 +936,7 @@ public interface Memory {
    * @return the char sequence.
    * @throws IndexOutOfBoundsException if {@code length} is greater than {@code this.readableBytes}
    */
-  CharSequence readCharSequence(int length, Charset charset);
+  CharSequence readCharSequence(long length, Charset charset);
 
   /**
    * Sets the specified boolean at the current {@code writerIndex} and increases the {@code
@@ -1051,9 +1053,9 @@ public interface Memory {
    * Transfers the specified source buffer's data to this buffer starting at the current {@code
    * writerIndex} until the source buffer becomes unreadable, and increases the {@code writerIndex}
    * by the number of the transferred bytes. This method is basically same with {@link
-   * #writeBytes(Memory, int, int)}, except that this method increases the {@code readerIndex} of
-   * the source buffer by the number of the transferred bytes while {@link #writeBytes(Memory, int,
-   * int)} does not.
+   * #writeBytes(Memory, long, long)}, except that this method increases the {@code readerIndex} of
+   * the source buffer by the number of the transferred bytes while {@link #writeBytes(Memory, long,
+   * long)} does not.
    *
    * @return this {@link Memory}.
    * @throws IndexOutOfBoundsException if {@code src.readableBytes} is greater than {@code
@@ -1064,9 +1066,10 @@ public interface Memory {
   /**
    * Transfers the specified source buffer's data to this buffer starting at the current {@code
    * writerIndex} and increases the {@code writerIndex} by the number of the transferred bytes (=
-   * {@code length}). This method is basically same with {@link #writeBytes(Memory, int, int)},
+   * {@code length}). This method is basically same with {@link #writeBytes(Memory, long, long)},
    * except that this method increases the {@code readerIndex} of the source buffer by the number of
-   * the transferred bytes (= {@code length}) while {@link #writeBytes(Memory, int, int)} does not.
+   * the transferred bytes (= {@code length}) while {@link #writeBytes(Memory, long, long)} does
+   * not.
    *
    * @param src source.
    * @param length the number of bytes to transfer.
@@ -1074,7 +1077,7 @@ public interface Memory {
    * @throws IndexOutOfBoundsException if {@code length} is greater than {@code this.writableBytes}
    *     or if {@code length} is greater then {@code src.readableBytes}
    */
-  Memory writeBytes(Memory src, int length);
+  Memory writeBytes(Memory src, long length);
 
   /**
    * Transfers the specified source buffer's data to this buffer starting at the current {@code
@@ -1089,7 +1092,7 @@ public interface Memory {
    *     {@code srcIndex + length} is greater than {@code src.capacity}, or if {@code length} is
    *     greater than {@code this.writableBytes}
    */
-  Memory writeBytes(Memory src, int srcIndex, int length);
+  Memory writeBytes(Memory src, long srcIndex, long length);
 
   /**
    * Transfers the specified source array's data to this buffer starting at the current {@code
@@ -1116,7 +1119,7 @@ public interface Memory {
    *     {@code srcIndex + length} is greater than {@code src.length}, or if {@code length} is
    *     greater than {@code this.writableBytes}
    */
-  Memory writeBytes(byte[] src, int srcIndex, int length);
+  Memory writeBytes(byte[] src, long srcIndex, long length);
 
   /**
    * Writes the specified {@link CharSequence} at the current {@code writerIndex} and increases the
@@ -1149,7 +1152,7 @@ public interface Memory {
    * @param length length.
    * @return copied {@link Memory} buffer's.
    */
-  Memory copy(int index, int length);
+  Memory copy(long index, long length);
 
   /**
    * Returns a slice of this buffer's readable bytes. Modifying the content of the returned buffer
@@ -1170,7 +1173,7 @@ public interface Memory {
    * @param length length.
    * @return returns sliced {@link Memory} buffer's.
    */
-  Memory slice(int index, int length);
+  Memory slice(long index, long length);
 
   /**
    * Duplicate the this {@link Memory} buffer. Modifying the content of the returned buffer or this

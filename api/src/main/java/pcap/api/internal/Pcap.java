@@ -188,7 +188,7 @@ public abstract class Pcap implements pcap.spi.Pcap {
       Pointer<Byte> pointer = ((PcapPacketBuffer) buffer).ref;
       int result =
           PcapMapping.MAPPING.pcap_sendpacket(
-              pcap, pointer.offset(buffer.readerIndex()), buffer.writerIndex());
+              pcap, pointer.offset(buffer.readerIndex()), (int) buffer.writerIndex());
       if (result < 0) {
         throw new ErrorException(Pointer.toString(PcapMapping.MAPPING.pcap_geterr(pcap)));
       }

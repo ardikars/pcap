@@ -20,56 +20,59 @@ public class HeapByteBuffer extends AbstractByteBuffer implements Memory.Heap {
   }
 
   @Override
-  public Memory copy(int index, int length) {
-    byte[] b = new byte[length];
-    int currentIndex = baseIndex + index;
+  public HeapByteBuffer copy(long index, long length) {
+    byte[] b = new byte[(int) length & 0x7FFFFFFF];
+    int currentIndex = baseIndex + (int) index & 0x7FFFFFFF;
     getBytes(currentIndex, b, 0, length);
-    ByteBuffer copy = ByteBuffer.allocate(length);
+    ByteBuffer copy = ByteBuffer.allocate(b.length);
     copy.put(b);
     return new HeapByteBuffer(
-        baseIndex, copy, capacity(), maxCapacity(), readerIndex(), writerIndex());
+        baseIndex,
+        copy,
+        (int) capacity(),
+        (int) maxCapacity(),
+        (int) readerIndex(),
+        (int) writerIndex());
   }
 
   @Override
-  public Memory slice(int index, int length) {
-    return new SlicedHeapByteBuffer(index, length, this);
+  public HeapByteBuffer slice(long index, long length) {
+    if (length > capacity - index) {
+      throw new IllegalArgumentException(
+          String.format("length: %d (expected: length <= %d)", length, capacity - index));
+    }
+    return new SlicedHeapByteBuffer((int) index & 0x7FFFFFFF, (int) length & 0x7FFFFFFF, this);
   }
 
   @Override
-  public Memory duplicate() {
+  public HeapByteBuffer duplicate() {
     return new HeapByteBuffer(
-        baseIndex, buffer.duplicate(), capacity(), maxCapacity(), readerIndex(), writerIndex());
+        baseIndex,
+        buffer.duplicate(),
+        (int) capacity(),
+        (int) maxCapacity(),
+        (int) readerIndex(),
+        (int) writerIndex());
   }
 
   public static class SlicedHeapByteBuffer extends HeapByteBuffer implements Memory.Sliced {
 
-    final HeapByteBuffer previous;
+    final AbstractByteBuffer previous;
 
-    public SlicedHeapByteBuffer(int index, int length, HeapByteBuffer previous) {
+    public SlicedHeapByteBuffer(int index, int length, AbstractByteBuffer previous) {
       super(
           previous.baseIndex + index,
           previous.buffer(ByteBuffer.class).duplicate(),
           length,
-          previous.maxCapacity() - index < 0 ? 0 : previous.maxCapacity() - index,
-          previous.readerIndex() - index < 0 ? 0 : previous.readerIndex() - index,
-          previous.writerIndex() - index < 0 ? 0 : previous.writerIndex() - index);
+          previous.maxCapacity() - index < 0 ? 0 : (int) previous.maxCapacity() - index,
+          previous.readerIndex() - index < 0 ? 0 : (int) previous.readerIndex() - index,
+          previous.writerIndex() - index < 0 ? 0 : (int) previous.writerIndex() - index);
       this.previous = previous;
     }
 
     @Override
-    public Memory copy(int index, int length) {
-      byte[] b = new byte[length];
-      int currentIndex = baseIndex + index;
-      getBytes(currentIndex, b, 0, length);
-      ByteBuffer copy = ByteBuffer.allocate(length);
-      copy.put(b);
-      return new HeapByteBuffer(
-          baseIndex, copy, capacity(), maxCapacity(), readerIndex(), writerIndex());
-    }
-
-    @Override
-    public Memory duplicate() {
-      return new SlicedHeapByteBuffer(previous.baseIndex - baseIndex, capacity, previous);
+    public SlicedHeapByteBuffer duplicate() {
+      return new SlicedHeapByteBuffer(baseIndex - previous.baseIndex, (int) capacity, previous);
     }
 
     @Override

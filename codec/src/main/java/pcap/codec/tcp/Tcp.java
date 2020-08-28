@@ -99,7 +99,7 @@ public class Tcp extends AbstractPacket {
     }
 
     static short calculateChecksum(Memory buffer, InetAddress srcAddr, InetAddress dstAddr) {
-      int length = buffer.capacity();
+      int length = (int) buffer.capacity();
       Memory buf;
       int pseudoSize;
       if (srcAddr instanceof Inet4Address && dstAddr instanceof Inet4Address) {
@@ -497,7 +497,7 @@ public class Tcp extends AbstractPacket {
       if (calculateChecksum && srcAddr != null && dstAddr != null) {
         if (buffer == null) {
           final Tcp tcp = new Tcp(this);
-          int length =
+          long length =
               tcp.header.length()
                   + (this.payloadBuffer == null ? 0 : this.payloadBuffer.capacity());
           this.buffer = ALLOCATOR.allocate(length);
@@ -526,13 +526,13 @@ public class Tcp extends AbstractPacket {
       this.checksum = buffer.readShort();
       this.urgentPointer = buffer.readShort();
       if (this.dataOffset > 5 && buffer.readableBytes() > 0) {
-        int optionLength = (this.dataOffset << 2) - Header.TCP_HEADER_LENGTH;
+        long optionLength = (this.dataOffset << 2) - Header.TCP_HEADER_LENGTH;
         if (buffer.capacity() < Header.TCP_HEADER_LENGTH + optionLength) {
           optionLength = buffer.capacity() - Header.TCP_HEADER_LENGTH;
         }
-        this.options = new byte[optionLength];
+        this.options = new byte[(int) optionLength];
         buffer.readBytes(options);
-        int length = 20 + optionLength;
+        long length = 20 + optionLength;
         this.payloadBuffer = buffer.slice(length, buffer.capacity() - length);
       } else {
         this.options = new byte[0];
@@ -548,7 +548,7 @@ public class Tcp extends AbstractPacket {
     }
 
     @Override
-    public Builder reset(int offset, int length) {
+    public Builder reset(long offset, long length) {
       if (buffer != null) {
         resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
@@ -562,7 +562,7 @@ public class Tcp extends AbstractPacket {
         Validate.notIllegalArgument((urgentPointer & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument((dataOffset & 0xF) >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(options != null, ILLEGAL_HEADER_EXCEPTION);
-        int index = offset;
+        long index = offset;
         buffer.setShort(index, sourcePort);
         index += 2;
         buffer.setShort(index, destinationPort);

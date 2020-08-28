@@ -25,6 +25,6 @@ public class PacketBufferUtils {
       throw new IllegalArgumentException("Buffer must be direct buffer.");
     }
     Pointer<Byte> p = Pointer.fromByteBuffer(bb);
-    return PcapPacketBuffer.fromReference(p, memory.capacity());
+    return PcapPacketBuffer.fromReference(p, (int) memory.capacity());
   }
 }

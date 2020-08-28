@@ -146,14 +146,14 @@ public class DestinationOptions extends Options {
     }
 
     @Override
-    public Builder reset(int offset, int length) {
+    public Builder reset(long offset, long length) {
       if (buffer != null) {
         resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(nextHeader != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(extensionLength >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(options != null, ILLEGAL_HEADER_EXCEPTION);
-        int index = offset;
+        long index = offset;
         buffer.setByte(index, nextHeader.value());
         index += 1;
         buffer.setInt(index, extensionLength);

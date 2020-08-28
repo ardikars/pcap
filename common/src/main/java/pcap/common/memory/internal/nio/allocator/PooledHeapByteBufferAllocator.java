@@ -16,17 +16,17 @@ public final class PooledHeapByteBufferAllocator
 
   @Override
   protected WeakReference<Memory.Pooled> allocatePooledMemory(
-      int capacity, int readerIndex, int writerIndex) {
-    ByteBuffer buffer = ByteBuffer.allocate(maxMemoryCapacity);
+      long capacity, long readerIndex, long writerIndex) {
+    ByteBuffer buffer = ByteBuffer.allocate((int) maxMemoryCapacity & 0x7FFFFFFF);
     return new WeakReference<>(
         new PooledHeapByteBuffer(
             ID_GERERATOR_UPDATER.incrementAndGet(this),
             this,
             0,
             buffer,
-            capacity,
-            maxMemoryCapacity,
-            readerIndex,
-            writerIndex));
+            (int) capacity & 0x7FFFFFFF,
+            (int) maxMemoryCapacity & 0x7FFFFFFF,
+            (int) readerIndex & 0x7FFFFFFF,
+            (int) writerIndex & 0x7FFFFFFF));
   }
 }

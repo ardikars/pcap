@@ -584,7 +584,7 @@ public class Ip4 extends Ip {
     }
 
     @Override
-    public Builder reset(int offset, int length) {
+    public Builder reset(long offset, long length) {
       if (buffer != null) {
         resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
@@ -600,7 +600,7 @@ public class Ip4 extends Ip {
         Validate.notIllegalArgument(checksum >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(sourceAddress != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(destinationAddress != null, ILLEGAL_HEADER_EXCEPTION);
-        int index = offset;
+        long index = offset;
         buffer.setByte(index, (((0x4 & 0xF) << 4) | this.headerLength & 0xF));
         index += 1;
         int tmp = ((diffServ << 2) & 0x3F) | (expCon & 0x3);

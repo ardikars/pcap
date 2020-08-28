@@ -16,17 +16,17 @@ public final class PooledDirectByteBufferAllocator
 
   @Override
   protected WeakReference<Memory.Pooled> allocatePooledMemory(
-      int capacity, int readerIndex, int writerIndex) {
-    ByteBuffer buffer = ByteBuffer.allocateDirect(maxMemoryCapacity);
+      long capacity, long readerIndex, long writerIndex) {
+    ByteBuffer buffer = ByteBuffer.allocateDirect((int) maxMemoryCapacity & 0x7FFFFFFF);
     return new WeakReference<>(
         new PooledDirectByteBuffer(
             ID_GERERATOR_UPDATER.incrementAndGet(this),
             this,
             0,
             buffer,
-            capacity,
-            maxMemoryCapacity,
-            readerIndex,
-            writerIndex));
+            (int) capacity & 0x7FFFFFFF,
+            (int) maxMemoryCapacity & 0x7FFFFFFF,
+            (int) readerIndex & 0x7FFFFFFF,
+            (int) writerIndex & 0x7FFFFFFF));
   }
 }

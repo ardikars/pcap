@@ -20,7 +20,8 @@ public abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
   }
 
   @Override
-  public Memory capacity(int newCapacity) {
+  public Memory capacity(long newCapacityL) {
+    int newCapacity = (int) (newCapacityL & 0x7FFFFFFF);
     checkNewCapacity(newCapacity);
     if (newCapacity > capacity) {
       if (buffer.isDirect()) {
@@ -36,51 +37,60 @@ public abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
   }
 
   @Override
-  public byte getByte(int index) {
+  public byte getByte(long indexL) {
+    int index = (int) indexL & 0x7FFFFFFF;
     return buffer.get(baseIndex + index);
   }
 
   @Override
-  public short getShort(int index) {
+  public short getShort(long indexL) {
+    int index = (int) indexL & 0x7FFFFFFF;
     return buffer.getShort(baseIndex + index);
   }
 
   @Override
-  public short getShortLE(int index) {
+  public short getShortLE(long indexL) {
+    int index = (int) indexL & 0x7FFFFFFF;
     return Short.reverseBytes(buffer.getShort(baseIndex + index));
   }
 
   @Override
-  public int getInt(int index) {
+  public int getInt(long indexL) {
+    int index = (int) indexL & 0x7FFFFFFF;
     return buffer.getInt(baseIndex + index);
   }
 
   @Override
-  public int getIntLE(int index) {
+  public int getIntLE(long indexL) {
+    int index = (int) indexL & 0x7FFFFFFF;
     return Integer.reverseBytes(buffer.getInt(baseIndex + index));
   }
 
   @Override
-  public long getLong(int index) {
+  public long getLong(long indexL) {
+    int index = (int) indexL & 0x7FFFFFFF;
     return buffer.getLong(baseIndex + index);
   }
 
   @Override
-  public long getLongLE(int index) {
+  public long getLongLE(long indexL) {
+    int index = (int) indexL & 0x7FFFFFFF;
     return Long.reverseBytes(buffer.getLong(baseIndex + index));
   }
 
   @Override
-  public Memory getBytes(int index, Memory dst, int dstIndex, int length) {
-    byte[] b = new byte[length];
+  public Memory getBytes(long index, Memory dst, long dstIndex, long length) {
+    byte[] b = new byte[(int) length & 0x7FFFFFFF];
     getBytes(index, b, 0, length);
     dst.setBytes(dstIndex, b);
     return this;
   }
 
   @Override
-  public Memory getBytes(int index, byte[] dst, int dstIndex, int length) {
-    int currectIndex = baseIndex + index;
+  public Memory getBytes(long index, byte[] dst, long dstIndexL, long lengthL) {
+    int currectIndex = baseIndex + (int) index & 0x7FFFFFFF;
+    int dstIndex = (int) dstIndexL & 0x7FFFFFFF;
+    int length = (int) lengthL & 0x7FFFFFFF;
     for (int i = dstIndex; i < (length + dstIndex); i++) {
       dst[i] = buffer.get(currectIndex++);
     }
@@ -88,58 +98,60 @@ public abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
   }
 
   @Override
-  public Memory setByte(int index, int value) {
-    buffer.put(baseIndex + index, (byte) value);
+  public Memory setByte(long index, int value) {
+    buffer.put(baseIndex + (int) index & 0x7FFFFFFF, (byte) value);
     return this;
   }
 
   @Override
-  public Memory setShort(int index, int value) {
-    buffer.putShort(baseIndex + index, (short) value);
+  public Memory setShort(long index, int value) {
+    buffer.putShort(baseIndex + (int) index & 0x7FFFFFFF, (short) value);
     return this;
   }
 
   @Override
-  public Memory setShortLE(int index, int value) {
-    buffer.putShort(baseIndex + index, Short.reverseBytes((short) value));
+  public Memory setShortLE(long index, int value) {
+    buffer.putShort(baseIndex + (int) index & 0x7FFFFFFF, Short.reverseBytes((short) value));
     return this;
   }
 
   @Override
-  public Memory setInt(int index, int value) {
-    buffer.putInt(baseIndex + index, value);
+  public Memory setInt(long index, int value) {
+    buffer.putInt(baseIndex + (int) index & 0x7FFFFFFF, value);
     return this;
   }
 
   @Override
-  public Memory setIntLE(int index, int value) {
-    buffer.putInt(baseIndex + index, Integer.reverseBytes(value));
+  public Memory setIntLE(long index, int value) {
+    buffer.putInt(baseIndex + (int) index & 0x7FFFFFFF, Integer.reverseBytes(value));
     return this;
   }
 
   @Override
-  public Memory setLong(int index, long value) {
-    buffer.putLong(baseIndex + index, value);
+  public Memory setLong(long index, long value) {
+    buffer.putLong(baseIndex + (int) index & 0x7FFFFFFF, value);
     return this;
   }
 
   @Override
-  public Memory setLongLE(int index, long value) {
-    buffer.putLong(baseIndex + index, Long.reverseBytes(value));
+  public Memory setLongLE(long index, long value) {
+    buffer.putLong(baseIndex + (int) index & 0x7FFFFFFF, Long.reverseBytes(value));
     return this;
   }
 
   @Override
-  public Memory setBytes(int index, Memory src, int srcIndex, int length) {
-    byte[] b = new byte[src.capacity()];
+  public Memory setBytes(long index, Memory src, long srcIndex, long length) {
+    byte[] b = new byte[(int) src.capacity() & 0x7FFFFFFF];
     src.getBytes(0, b);
     setBytes(index, b, srcIndex, length);
     return this;
   }
 
   @Override
-  public Memory setBytes(int index, byte[] src, int srcIndex, int length) {
-    int currentIndex = baseIndex + index;
+  public Memory setBytes(long index, byte[] src, long srcIndexL, long lengthL) {
+    int currentIndex = baseIndex + (int) index & 0x7FFFFFFF;
+    int srcIndex = (int) srcIndexL & 0x7FFFFFFF;
+    int length = (int) lengthL & 0x7FFFFFFF;
     for (int i = srcIndex; i < (length + srcIndex); i++) {
       buffer.put(currentIndex++, src[i]);
     }

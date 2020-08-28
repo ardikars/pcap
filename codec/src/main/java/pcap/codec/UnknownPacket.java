@@ -73,7 +73,7 @@ public class UnknownPacket extends AbstractPacket {
 
     @Override
     public int length() {
-      return buffer.capacity();
+      return (int) buffer.capacity();
     }
 
     @Override
@@ -120,7 +120,7 @@ public class UnknownPacket extends AbstractPacket {
     }
 
     @Override
-    public Builder reset(int offset, int length) {
+    public Builder reset(long offset, long length) {
       return this;
     }
 

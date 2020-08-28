@@ -286,7 +286,7 @@ public class Vlan extends AbstractPacket {
     }
 
     @Override
-    public Builder reset(int offset, int length) {
+    public Builder reset(long offset, long length) {
       if (buffer != null) {
         resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
@@ -294,7 +294,7 @@ public class Vlan extends AbstractPacket {
         Validate.notIllegalArgument(canonicalFormatIndicator >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(vlanIdentifier >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(type != null, ILLEGAL_HEADER_EXCEPTION);
-        int index = offset;
+        long index = offset;
         int tci =
             ((priorityCodePoint.value() << 13) & 0x07)
                 | ((canonicalFormatIndicator << 14) & 0x01)

@@ -23,7 +23,7 @@ public interface MemoryAllocator {
     throw new IllegalStateException("No memory allocator implementation for (" + name + ").");
   }
 
-  static MemoryAllocator create(String name, int poolSize, int maxPoolSize, int maxCapacity) {
+  static MemoryAllocator create(String name, int poolSize, int maxPoolSize, long maxCapacity) {
     ServiceLoader<MemoryAllocator> loader = ServiceLoader.load(MemoryAllocator.class);
     Iterator<MemoryAllocator> iterator = loader.iterator();
     while (iterator.hasNext()) {
@@ -40,11 +40,11 @@ public interface MemoryAllocator {
 
   String name();
 
-  Memory allocate(int capacity);
+  Memory allocate(long capacity);
 
-  Memory allocate(int capacity, int maxCapacity);
+  Memory allocate(long capacity, long maxCapacity);
 
-  Memory allocate(int capacity, int maxCapacity, int readerIndex, int writerIndex);
+  Memory allocate(long capacity, long maxCapacity, long readerIndex, long writerIndex);
 
   Memory wrap(byte[] bytes);
 

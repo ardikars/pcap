@@ -17,18 +17,24 @@ public final class DirectMemoryAllocator extends AbstractMemoryAllocator {
   }
 
   @Override
-  public Memory allocate(int capacity) {
+  public Memory allocate(long capacity) {
     return allocate(capacity, capacity);
   }
 
   @Override
-  public Memory allocate(int capacity, int maxCapacity) {
+  public Memory allocate(long capacity, long maxCapacity) {
     return allocate(capacity, maxCapacity, 0, 0);
   }
 
   @Override
-  public Memory allocate(int capacity, int maxCapacity, int readerIndex, int writerIndex) {
-    ByteBuffer buffer = ByteBuffer.allocateDirect(capacity);
-    return new DirectByteBuffer(0, buffer, capacity, maxCapacity, readerIndex, writerIndex);
+  public Memory allocate(long capacity, long maxCapacity, long readerIndex, long writerIndex) {
+    ByteBuffer buffer = ByteBuffer.allocateDirect((int) capacity & 0x7FFFFFFF);
+    return new DirectByteBuffer(
+        0,
+        buffer,
+        (int) capacity & 0x7FFFFFFF,
+        (int) maxCapacity & 0x7FFFFFFF,
+        (int) readerIndex & 0x7FFFFFFF,
+        (int) writerIndex & 0x7FFFFFFF);
   }
 }

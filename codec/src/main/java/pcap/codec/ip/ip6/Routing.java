@@ -299,7 +299,7 @@ public class Routing extends AbstractPacket {
     }
 
     @Override
-    public Builder reset(int offset, int length) {
+    public Builder reset(long offset, long length) {
       if (buffer != null) {
         resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
@@ -308,7 +308,7 @@ public class Routing extends AbstractPacket {
         Validate.notIllegalArgument(routingType != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(segmentLeft >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(routingData != null, ILLEGAL_HEADER_EXCEPTION);
-        int index = offset;
+        long index = offset;
         buffer.setByte(index, nextHeader.value());
         index += 1;
         buffer.setByte(index, extensionLength);

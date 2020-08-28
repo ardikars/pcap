@@ -179,12 +179,12 @@ public class Icmp6 extends AbstractPacket {
     }
 
     @Override
-    public Builder reset(int offset, int length) {
+    public Builder reset(long offset, long length) {
       if (buffer != null) {
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
         Validate.notIllegalArgument(typeAndCode != null, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument(checksum >= 0, ILLEGAL_HEADER_EXCEPTION);
-        int index = offset;
+        long index = offset;
         buffer.setByte(index, typeAndCode.type());
         index += 1;
         buffer.setByte(index, typeAndCode.code());

@@ -89,7 +89,7 @@ public class Udp extends AbstractPacket {
     }
 
     static short calculateChecksum(Memory buffer, InetAddress srcAddr, InetAddress dstAddr) {
-      int length = buffer.capacity();
+      int length = (int) buffer.capacity();
       Memory buf;
       int pseudoSize;
       if (srcAddr instanceof Inet4Address && dstAddr instanceof Inet4Address) {
@@ -320,7 +320,7 @@ public class Udp extends AbstractPacket {
       if (calculateChecksum && srcAddr != null && dstAddr != null) {
         if (buffer == null) {
           final Udp udp = new Udp(this);
-          int bufLen =
+          long bufLen =
               udp.header.length()
                   + (this.payloadBuffer == null ? 0 : this.payloadBuffer.capacity());
           this.buffer = ALLOCATOR.allocate(bufLen);
@@ -353,7 +353,7 @@ public class Udp extends AbstractPacket {
     }
 
     @Override
-    public Builder reset(int offset, int length) {
+    public Builder reset(long offset, long length) {
       if (buffer != null) {
         resetIndex(buffer);
         Validate.notIllegalArgument(offset + length <= buffer.capacity());
@@ -361,7 +361,7 @@ public class Udp extends AbstractPacket {
         Validate.notIllegalArgument((this.destinationPort & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument((this.length & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
         Validate.notIllegalArgument((this.checksum & 0xFFFF) >= 0, ILLEGAL_HEADER_EXCEPTION);
-        int index = offset;
+        long index = offset;
         buffer.setShort(index, sourcePort);
         index += 2;
         buffer.setShort(index, destinationPort);

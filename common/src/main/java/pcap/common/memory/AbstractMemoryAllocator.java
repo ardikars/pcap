@@ -35,14 +35,14 @@ public abstract class AbstractMemoryAllocator implements MemoryAllocator {
     Validate.notIllegalArgument(memories != null, "memories: null (expected: non null)");
     Validate.notIllegalArgument(
         memories.length > 1, "size: " + memories.length + " (expected: memories > 1)");
-    int capacity = 0;
-    int maxCapacity = 0;
+    long capacity = 0;
+    long maxCapacity = 0;
     for (int i = 0; i < memories.length; i++) {
       capacity += memories[i].capacity();
       maxCapacity += memories[i].maxCapacity();
     }
     Memory memory = allocate(capacity, maxCapacity);
-    int index = 0;
+    long index = 0;
     for (int i = 0; i < memories.length; i++) {
       memory.setBytes(index, memories[i], 0, memories[i].capacity());
       index += memories[i].capacity();
@@ -61,33 +61,33 @@ public abstract class AbstractMemoryAllocator implements MemoryAllocator {
 
     protected int poolSize;
     protected int maxPoolSize;
-    protected int maxMemoryCapacity;
+    protected long maxMemoryCapacity;
     protected Queue<WeakReference<Memory.Pooled>> pool;
 
     protected volatile int id = 0;
 
-    protected void create(int poolSize, int maxPoolSize, int maxMemoryCapacity) {
+    protected void create(int poolSize, int maxPoolSize, long maxMemoryCapacity) {
       this.poolSize = poolSize;
       this.maxPoolSize = maxPoolSize;
       this.maxMemoryCapacity = maxMemoryCapacity;
       this.pool = new ConcurrentLinkedQueue<>();
       for (int i = 0; i < poolSize; i++) {
-        pool.offer(allocatePooledMemory(maxMemoryCapacity, 0, 0));
+        pool.offer(allocatePooledMemory(maxMemoryCapacity, 0L, 0L));
       }
     }
 
     @Override
-    public Memory allocate(int capacity) {
+    public Memory allocate(long capacity) {
       return allocate(capacity, capacity);
     }
 
     @Override
-    public Memory allocate(int capacity, int maxCapacity) {
+    public Memory allocate(long capacity, long maxCapacity) {
       return allocate(capacity, maxCapacity, 0, 0);
     }
 
     @Override
-    public Memory allocate(int capacity, int maxCapacity, int readerIndex, int writerIndex) {
+    public Memory allocate(long capacity, long maxCapacity, long readerIndex, long writerIndex) {
       Validate.notIllegalArgument(
           capacity > 0 && maxCapacity > 0,
           String.format(
@@ -148,7 +148,7 @@ public abstract class AbstractMemoryAllocator implements MemoryAllocator {
       }
     }
 
-    void retainBuffer(Memory.Pooled buffer, int capacity, int writerIndex, int readerIndex) {
+    void retainBuffer(Memory.Pooled buffer, long capacity, long writerIndex, long readerIndex) {
       if (buffer.refCnt() == 0) {
         buffer.retain();
         ((Memory) buffer).capacity(capacity);
@@ -161,6 +161,6 @@ public abstract class AbstractMemoryAllocator implements MemoryAllocator {
     }
 
     protected abstract WeakReference<Memory.Pooled> allocatePooledMemory(
-        int capacity, int readerIndex, int writerIndex);
+        long capacity, long readerIndex, long writerIndex);
   }
 }

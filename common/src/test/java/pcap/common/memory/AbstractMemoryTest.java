@@ -181,8 +181,8 @@ abstract class AbstractMemoryTest extends BaseTest {
   public abstract void newCapacityTest();
 
   protected void doNewCapacityTest() {
-    int capacity = memory.capacity();
-    int maxCapacity = memory.maxCapacity();
+    long capacity = memory.capacity();
+    long maxCapacity = memory.maxCapacity();
     assert capacity < maxCapacity;
     Memory newMemory = memory.capacity(maxCapacity);
     assert newMemory.readerIndex() == memory.readerIndex();

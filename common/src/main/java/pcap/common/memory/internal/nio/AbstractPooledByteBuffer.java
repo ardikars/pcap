@@ -30,7 +30,7 @@ public abstract class AbstractPooledByteBuffer extends AbstractByteBuffer implem
   }
 
   @Override
-  public AbstractPooledByteBuffer capacity(int newCapacity) {
+  public AbstractPooledByteBuffer capacity(long newCapacity) {
     ensureNotInPool();
     Validate.notIllegalArgument(
         newCapacity <= maxCapacity(),
@@ -42,109 +42,109 @@ public abstract class AbstractPooledByteBuffer extends AbstractByteBuffer implem
   }
 
   @Override
-  public byte getByte(int index) {
+  public byte getByte(long index) {
     ensureNotInPool();
     return super.getByte(index);
   }
 
   @Override
-  public short getShort(int index) {
+  public short getShort(long index) {
     ensureNotInPool();
     return super.getShort(index);
   }
 
   @Override
-  public short getShortLE(int index) {
+  public short getShortLE(long index) {
     ensureNotInPool();
     return super.getShortLE(index);
   }
 
   @Override
-  public int getInt(int index) {
+  public int getInt(long index) {
     ensureNotInPool();
     return super.getInt(index);
   }
 
   @Override
-  public int getIntLE(int index) {
+  public int getIntLE(long index) {
     ensureNotInPool();
     return super.getIntLE(index);
   }
 
   @Override
-  public long getLong(int index) {
+  public long getLong(long index) {
     ensureNotInPool();
     return super.getLong(index);
   }
 
   @Override
-  public long getLongLE(int index) {
+  public long getLongLE(long index) {
     ensureNotInPool();
     return super.getLongLE(index);
   }
 
   @Override
-  public Memory getBytes(int index, Memory dst, int dstIndex, int length) {
+  public Memory getBytes(long index, Memory dst, long dstIndex, long length) {
     ensureNotInPool();
     return super.getBytes(index, dst, dstIndex, length);
   }
 
   @Override
-  public Memory getBytes(int index, byte[] dst, int dstIndex, int length) {
+  public Memory getBytes(long index, byte[] dst, long dstIndex, long length) {
     ensureNotInPool();
     return super.getBytes(index, dst, dstIndex, length);
   }
 
   @Override
-  public Memory setByte(int index, int value) {
+  public Memory setByte(long index, int value) {
     ensureNotInPool();
     return super.setByte(index, value);
   }
 
   @Override
-  public Memory setShort(int index, int value) {
+  public Memory setShort(long index, int value) {
     ensureNotInPool();
     return super.setShort(index, value);
   }
 
   @Override
-  public Memory setShortLE(int index, int value) {
+  public Memory setShortLE(long index, int value) {
     ensureNotInPool();
     return super.setShortLE(index, value);
   }
 
   @Override
-  public Memory setInt(int index, int value) {
+  public Memory setInt(long index, int value) {
     ensureNotInPool();
     return super.setInt(index, value);
   }
 
   @Override
-  public Memory setIntLE(int index, int value) {
+  public Memory setIntLE(long index, int value) {
     ensureNotInPool();
     return super.setIntLE(index, value);
   }
 
   @Override
-  public Memory setLong(int index, long value) {
+  public Memory setLong(long index, long value) {
     ensureNotInPool();
     return super.setLong(index, value);
   }
 
   @Override
-  public Memory setLongLE(int index, long value) {
+  public Memory setLongLE(long index, long value) {
     ensureNotInPool();
     return super.setLongLE(index, value);
   }
 
   @Override
-  public Memory setBytes(int index, Memory src, int srcIndex, int length) {
+  public Memory setBytes(long index, Memory src, long srcIndex, long length) {
     ensureNotInPool();
     return super.setBytes(index, src, srcIndex, length);
   }
 
   @Override
-  public Memory setBytes(int index, byte[] src, int srcIndex, int length) {
+  public Memory setBytes(long index, byte[] src, long srcIndex, long length) {
     ensureNotInPool();
     return super.setBytes(index, src, srcIndex, length);
   }

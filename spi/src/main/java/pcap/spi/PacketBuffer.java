@@ -16,7 +16,7 @@ public interface PacketBuffer {
    *
    * @return returns buffer reader index.
    */
-  int readerIndex();
+  long readerIndex();
 
   /**
    * Set buffer reader index.
@@ -25,7 +25,7 @@ public interface PacketBuffer {
    * @return returns this buffer.
    * @since 1.0.0
    */
-  PacketBuffer readerIndex(int readerIndex);
+  PacketBuffer readerIndex(long readerIndex);
 
   /**
    * Returns buffer writer index.
@@ -33,7 +33,7 @@ public interface PacketBuffer {
    * @return returns buffer writer index.
    * @since 1.0.0
    */
-  int writerIndex();
+  long writerIndex();
 
   /**
    * Set writer index.
@@ -42,7 +42,7 @@ public interface PacketBuffer {
    * @return returns this buffer.
    * @since 1.0.0
    */
-  PacketBuffer writerIndex(int writerIndex);
+  PacketBuffer writerIndex(long writerIndex);
 
   /**
    * Returns buffer capacity.
@@ -50,7 +50,7 @@ public interface PacketBuffer {
    * @return returns buffer capacity.
    * @since 1.0.0
    */
-  int capacity();
+  long capacity();
 
   /**
    * Returns first byte address of this buffer.
