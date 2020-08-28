@@ -295,7 +295,8 @@ public class Routing extends AbstractPacket {
 
     @Override
     public Builder reset() {
-      return reset(readerIndex, Header.FIXED_ROUTING_HEADER_LENGTH + routingData.length);
+      return reset(
+          readerIndex, (long) Header.FIXED_ROUTING_HEADER_LENGTH + (long) routingData.length);
     }
 
     @Override

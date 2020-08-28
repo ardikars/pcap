@@ -100,7 +100,8 @@ public class Udp extends AbstractPacket {
         return 0;
       }
 
-      buf = ALLOCATOR.allocate(length + pseudoSize + (length % 2 == 0 ? 0 : 1));
+      int size = length + pseudoSize + (length % 2 == 0 ? 0 : 1);
+      buf = ALLOCATOR.allocate(size);
       buf.writeBytes(buffer, 0, buffer.capacity());
       buf.writeByte(0);
 

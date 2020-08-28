@@ -110,7 +110,8 @@ public class Tcp extends AbstractPacket {
         return 0;
       }
 
-      buf = ALLOCATOR.allocate(length + pseudoSize + (length % 2 == 0 ? 0 : 1));
+      int size = length + pseudoSize + (length % 2 == 0 ? 0 : 1);
+      buf = ALLOCATOR.allocate(size);
       buf.writeBytes(buffer, 0, buffer.capacity());
       buf.writeByte(0);
 
@@ -526,14 +527,15 @@ public class Tcp extends AbstractPacket {
       this.checksum = buffer.readShort();
       this.urgentPointer = buffer.readShort();
       if (this.dataOffset > 5 && buffer.readableBytes() > 0) {
-        long optionLength = (this.dataOffset << 2) - Header.TCP_HEADER_LENGTH;
-        if (buffer.capacity() < Header.TCP_HEADER_LENGTH + optionLength) {
-          optionLength = buffer.capacity() - Header.TCP_HEADER_LENGTH;
+        int capacity = (int) buffer.capacity() & 0xFFFFFFFF;
+        int optionLength = (this.dataOffset << 2) - Header.TCP_HEADER_LENGTH;
+        if (capacity < Header.TCP_HEADER_LENGTH + optionLength) {
+          optionLength = capacity - Header.TCP_HEADER_LENGTH;
         }
-        this.options = new byte[(int) optionLength];
+        this.options = new byte[optionLength];
         buffer.readBytes(options);
-        long length = 20 + optionLength;
-        this.payloadBuffer = buffer.slice(length, buffer.capacity() - length);
+        int length = 20 + optionLength;
+        this.payloadBuffer = buffer.slice(length, capacity - length);
       } else {
         this.options = new byte[0];
       }
