@@ -82,6 +82,7 @@ public class Slf4jTest extends AbstractLoggerTest {
     doLogLevelAndThrowableTest();
   }
 
+  @Test
   @Override
   public void logLevelAndMessageThrowableTest() {
     doLogLevelAndMessageThrowableTest();

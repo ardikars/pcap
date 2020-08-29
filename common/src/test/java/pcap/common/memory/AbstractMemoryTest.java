@@ -24,6 +24,28 @@ abstract class AbstractMemoryTest extends BaseTest {
 
   public abstract void deallocate();
 
+  public abstract void checkIndexTest();
+
+  protected void doCheckIndexTest() {
+    AbstractMemory abstractMemory = (AbstractMemory) memory;
+    abstractMemory.checkIndex(0, 1);
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        () -> abstractMemory.checkIndex(0, abstractMemory.capacity() + BYTE_SIZE));
+  }
+
+  public abstract void checkNewCapacityTest();
+
+  protected void doCheckNewCapacityTest() {
+    AbstractMemory abstractMemory = (AbstractMemory) memory;
+    abstractMemory.checkNewCapacity(1);
+    Assertions.assertThrows(
+        IllegalArgumentException.class, () -> abstractMemory.checkNewCapacity(-1));
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        () -> abstractMemory.checkNewCapacity(abstractMemory.maxCapacity + BYTE_SIZE));
+  }
+
   public abstract void capacityAndMaxCapacityTest();
 
   protected void doCapacityAndMaxCapacityTest() {
@@ -34,15 +56,39 @@ abstract class AbstractMemoryTest extends BaseTest {
   public abstract void readerAndWriterIndexTest();
 
   protected void doReaderAndWriterIndexTest() {
-    assert memory.writerIndex() == 0;
-    assert memory.readerIndex() == 0;
+    Assertions.assertEquals(0, memory.writerIndex());
+    Assertions.assertEquals(0, memory.readerIndex());
     memory.writerIndex(BYTE_SIZE);
-    assert memory.writerIndex() == BYTE_SIZE;
+    Assertions.assertEquals(BYTE_SIZE, memory.writerIndex());
     memory.readerIndex(BYTE_SIZE);
-    assert memory.readerIndex() == BYTE_SIZE;
+    Assertions.assertEquals(BYTE_SIZE, memory.readerIndex());
     memory.setIndex(BYTE_SIZE / BIT_SIZE, BYTE_SIZE / BIT_SIZE);
-    assert memory.writerIndex() == BYTE_SIZE / BIT_SIZE;
-    assert memory.readerIndex() == BYTE_SIZE / BIT_SIZE;
+    Assertions.assertEquals(BYTE_SIZE / BIT_SIZE, memory.writerIndex());
+    Assertions.assertEquals(BYTE_SIZE / BIT_SIZE, memory.readerIndex());
+
+    Assertions.assertThrows(IndexOutOfBoundsException.class, () -> memory.readerIndex(-1));
+    memory.writerIndex(BYTE_SIZE);
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        () -> memory.readerIndex(memory.writerIndex() + BYTE_SIZE));
+
+    Assertions.assertThrows(IndexOutOfBoundsException.class, () -> memory.writerIndex(-1));
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class, () -> memory.writerIndex(memory.capacity() + BYTE_SIZE));
+  }
+
+  public abstract void setIndexTest();
+
+  protected void doSetIndexTest() {
+    memory.setIndex(0, 0);
+    Assertions.assertEquals(0, memory.writerIndex());
+    Assertions.assertEquals(0, memory.readerIndex());
+    Assertions.assertThrows(IndexOutOfBoundsException.class, () -> memory.setIndex(-1, 0));
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class, () -> memory.setIndex(BYTE_SIZE + BYTE_SIZE, BYTE_SIZE));
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        () -> memory.setIndex(BYTE_SIZE, memory.capacity() + BYTE_SIZE));
   }
 
   public abstract void isReadableTest();
@@ -103,6 +149,16 @@ abstract class AbstractMemoryTest extends BaseTest {
     memory.resetWriterIndex();
     memory.writeByte(1);
     assert memory.getByte(2) == 1;
+  }
+
+  public abstract void ensureWritableTest();
+
+  protected void doEnsureWritableTest() {
+    Assertions.assertNotNull(memory.ensureWritable(1L));
+    Assertions.assertThrows(IllegalArgumentException.class, () -> memory.ensureWritable(-1));
+    memory.writeByte(1);
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class, () -> memory.ensureWritable(memory.capacity()));
   }
 
   public abstract void skipBytesTest();
@@ -204,16 +260,17 @@ abstract class AbstractMemoryTest extends BaseTest {
       memory.writeByte(val);
     }
     Memory duplicated = memory.duplicate();
-    if (memory instanceof Memory.Direct && duplicated instanceof Memory.Direct) {
-      assert (((Memory.Direct) memory).memoryAddress())
-          .equals(((Memory.Direct) duplicated).memoryAddress());
-    }
+    assert !(memory instanceof Memory.Direct)
+        || !(duplicated instanceof Memory.Direct)
+        || (((Memory.Direct) memory).memoryAddress())
+            .equals(((Memory.Direct) duplicated).memoryAddress());
     assert duplicated.capacity() == memory.capacity();
     assert duplicated.maxCapacity() == memory.maxCapacity();
     for (int i = 0; i < DUMMY.length; i++) {
       assert duplicated.readByte() == DUMMY[i];
     }
     // test visibility (sharing buffer)
+    memory.writerIndex(memory.capacity() - 1);
     memory.writeByte(9);
     duplicated.setByte(duplicated.writerIndex() - 1, 9);
     assert duplicated.getByte(duplicated.writerIndex() - 1) == 9;
@@ -225,7 +282,7 @@ abstract class AbstractMemoryTest extends BaseTest {
     for (byte val : DUMMY) {
       memory.writeByte(val);
     }
-    ByteBuffer buffer = memory.nioBuffer();
+    ByteBuffer buffer = memory.buffer(ByteBuffer.class);
     buffer.position(0);
     //        assert buffer.capacity() == memory.capacity();
     for (int i = 0; i < DUMMY.length; i++) {

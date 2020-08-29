@@ -4,8 +4,8 @@ package pcap.api.internal.foreign.mapping;
 import java.foreign.Libraries;
 import java.lang.invoke.MethodHandles;
 import pcap.api.internal.foreign.pcap_header;
+import pcap.api.internal.util.Platforms;
 import pcap.common.annotation.Inclubating;
-import pcap.common.util.Platforms;
 
 /**
  * Variable holder

@@ -11,10 +11,10 @@ import pcap.api.internal.Pcap;
 import pcap.api.internal.WindowsPcap;
 import pcap.api.internal.foreign.mapping.PcapMapping;
 import pcap.api.internal.foreign.pcap_header;
+import pcap.api.internal.util.Platforms;
 import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
-import pcap.common.util.Platforms;
 import pcap.spi.exception.ErrorException;
 
 /** Deprecated please use {@link pcap.spi.Service} instead. */

@@ -16,11 +16,11 @@ import pcap.api.internal.foreign.struct.linux_structs;
 import pcap.api.internal.foreign.struct.posix_structs;
 import pcap.api.internal.foreign.struct.windows_structs;
 import pcap.api.internal.util.PcapAddressIterator;
+import pcap.api.internal.util.Platforms;
 import pcap.common.annotation.Inclubating;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.common.util.Bytes;
-import pcap.common.util.Platforms;
 import pcap.common.util.Strings;
 import pcap.spi.Address;
 

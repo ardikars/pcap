@@ -177,7 +177,7 @@ public class PcapLiveTest {
                   source, new PcapLiveOptions().promiscuous(true).rfmon(true).bufferSize(6000000)))
           .close();
     } catch (RadioFrequencyModeNotSupportedException e) {
-      System.out.println(e);
+      // System.out.println(e);
     }
     Pcaps.live(
             new PcapLive(
@@ -413,7 +413,7 @@ public class PcapLiveTest {
     Pcap pcap = Pcaps.live(new PcapLive(source));
     Assertions.assertNotNull(pcap);
     try {
-      pcap.dispatch(1, (args, header, buffer) -> System.out.println(header), "");
+      pcap.dispatch(1, (args, header, buffer) -> {}, "");
     } catch (BreakException e) {
       LOGGER.warn(e);
     }
@@ -437,7 +437,6 @@ public class PcapLiveTest {
             value -> {
               try {
                 pcap.nextEx(packetBuffer, packetHeader);
-                System.out.println(packetHeader);
               } catch (BreakException e) {
                 // ok
               } catch (TimeoutException e) {
@@ -537,7 +536,7 @@ public class PcapLiveTest {
 
     @Override
     default void gotPacket(T args, PacketHeader header, PacketBuffer buffer) {
-      ByteBuffer byteBuf = ((Memory) buffer).nioBuffer();
+      ByteBuffer byteBuf = ((Memory) buffer).buffer(ByteBuffer.class);
       byte[] bytes = new byte[byteBuf.capacity()];
       byteBuf.get(0, bytes);
       String hex = Hexs.toHexString(bytes, 0, byteBuf.capacity());

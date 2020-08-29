@@ -20,7 +20,7 @@ public interface MemoryAllocator {
         return service;
       }
     }
-    throw new IllegalStateException("No memory allocator implementation for (" + name + ").");
+    throw new IllegalArgumentException("No memory allocator implementation for (" + name + ").");
   }
 
   static MemoryAllocator create(String name, int poolSize, int maxPoolSize, long maxCapacity) {
@@ -35,7 +35,7 @@ public interface MemoryAllocator {
         return service;
       }
     }
-    throw new IllegalStateException("No memory allocator implementation for (" + name + ").");
+    throw new IllegalArgumentException("No memory allocator implementation for (" + name + ").");
   }
 
   String name();

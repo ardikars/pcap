@@ -56,9 +56,15 @@ public interface PacketBuffer {
    * Returns first byte address of this buffer.
    *
    * @return returns first byte address of this buffer.
+   * @since 1.0.0
    */
   long address();
 
-  /** Release this buffer. */
+  /**
+   * Release this buffer.
+   *
+   * @return returns {@code true} if buffer's released successfully, {@code false} otherwise.
+   * @since 1.0.0
+   */
   boolean release();
 }

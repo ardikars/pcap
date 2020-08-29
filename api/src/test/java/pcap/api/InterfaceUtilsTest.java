@@ -19,7 +19,7 @@ public class InterfaceUtilsTest {
     try {
       // non loopback
       Interface source =
-          pcaps.lookupIntefaces(anInterface -> !((anInterface.flags() & 0x00000001) != 0));
+          pcaps.lookupInterfaces(anInterface -> !((anInterface.flags() & 0x00000001) != 0));
       MacAddress macAddress = InterfaceUtils.lookupHardwareAddress(source, MacAddress.class);
       Assertions.assertNotNull(macAddress);
     } catch (ErrorException e) {
@@ -31,7 +31,7 @@ public class InterfaceUtilsTest {
     }
     // loopback
     Interface source =
-        pcaps.lookupIntefaces(anInterface -> (anInterface.flags() & 0x00000001) != 0);
+        pcaps.lookupInterfaces(anInterface -> (anInterface.flags() & 0x00000001) != 0);
     Assertions.assertThrows(
         ErrorException.class, () -> InterfaceUtils.lookupHardwareAddress(source, MacAddress.class));
   }

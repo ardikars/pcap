@@ -150,12 +150,6 @@ public abstract class AbstractPooledByteBuffer extends AbstractByteBuffer implem
   }
 
   @Override
-  public ByteBuffer nioBuffer() {
-    ensureNotInPool();
-    return super.nioBuffer();
-  }
-
-  @Override
   public <T> T buffer(Class<T> clazz) {
     ensureNotInPool();
     return super.buffer(clazz);

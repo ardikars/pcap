@@ -1,5 +1,4 @@
-/** This code is licenced under the GPL version 2. */
-package pcap.common.util;
+package pcap.api.internal.util;
 
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;

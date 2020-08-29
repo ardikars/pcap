@@ -16,9 +16,35 @@ public class LoggerFactoryTest {
   }
 
   @Test
-  public void getLoggerTestTest() {
+  public void sl4jLoggerTest() {
     Assertions.assertNotNull(LoggerFactory.getLogger(LoggerFactory.class.getSimpleName()));
     Assertions.assertNotNull(LoggerFactory.getLogger(LoggerFactory.class));
     Assertions.assertNotNull(LoggerFactory.getLogger(this));
   }
+
+  //  @Test
+  //  public void log4j2LoggerTest() {
+  //    try (MockedStatic<Slf4jLoggerFactory> theMock =
+  // Mockito.mockStatic(Slf4jLoggerFactory.class)) {
+  //      theMock.when(Slf4jLoggerFactory::hasSlf4j).thenReturn(false);
+  //      Assertions.assertNotNull(LoggerFactory.getLogger(LoggerFactory.class.getSimpleName()));
+  //      Assertions.assertNotNull(LoggerFactory.getLogger(LoggerFactory.class));
+  //      Assertions.assertNotNull(LoggerFactory.getLogger(this));
+  //    }
+  //  }
+
+  //  @Test
+  //  public void noLoggerTest() {
+  //    try (MockedStatic<Slf4jLoggerFactory> slf4jMock =
+  //        Mockito.mockStatic(Slf4jLoggerFactory.class)) {
+  //      try (MockedStatic<Log4j2LoggerFactory> log4j2Mock =
+  //          Mockito.mockStatic(Log4j2LoggerFactory.class)) {
+  //        slf4jMock.when(Slf4jLoggerFactory::hasSlf4j).thenReturn(false);
+  //        log4j2Mock.when(Log4j2LoggerFactory::hasLog4j2).thenReturn(false);
+  //        Assertions.assertNotNull(LoggerFactory.getLogger(LoggerFactory.class.getSimpleName()));
+  //        Assertions.assertNotNull(LoggerFactory.getLogger(LoggerFactory.class));
+  //        Assertions.assertNotNull(LoggerFactory.getLogger(this));
+  //      }
+  //    }
+  //  }
 }

@@ -26,8 +26,8 @@ abstract class AbstractLoggerTest {
 
   protected void doInitLogger(LoggerFactory loggerFactory) {
     logger = loggerFactory.newInstance(DEFAULT_NAME);
-    Logger logger = loggerFactory.newInstance(null);
-    Assertions.assertNotNull(logger);
+    Assertions.assertThrows(IllegalArgumentException.class, () -> new TestLogger(null));
+    Assertions.assertThrows(IllegalArgumentException.class, () -> new TestLogger(""));
   }
 
   public abstract void nameTest();
@@ -314,5 +314,80 @@ abstract class AbstractLoggerTest {
 
   protected void doInfoMessageThrowableTest() {
     logger.info(DEFAULT_MESSAGE_ONE, new Throwable("Log some error here"));
+  }
+
+  static class TestLogger extends AbstractLogger {
+
+    TestLogger(String name) {
+      super(name);
+    }
+
+    @Override
+    public boolean isDebugEnabled() {
+      return false;
+    }
+
+    @Override
+    public boolean isInfoEnabled() {
+      return false;
+    }
+
+    @Override
+    public boolean isWarnEnabled() {
+      return false;
+    }
+
+    @Override
+    public boolean isErrorEnabled() {
+      return false;
+    }
+
+    @Override
+    public void debug(String format, Object arg1) {}
+
+    @Override
+    public void debug(String format, Object arg1, Object arg2) {}
+
+    @Override
+    public void debug(String format, Object... args) {}
+
+    @Override
+    public void debug(String message, Throwable throwable) {}
+
+    @Override
+    public void info(String format, Object obj1) {}
+
+    @Override
+    public void info(String format, Object obj1, Object obj2) {}
+
+    @Override
+    public void info(String format, Object... args) {}
+
+    @Override
+    public void info(String message, Throwable throwable) {}
+
+    @Override
+    public void warn(String format, Object arg1) {}
+
+    @Override
+    public void warn(String format, Object arg1, Object obj2) {}
+
+    @Override
+    public void warn(String format, Object... args) {}
+
+    @Override
+    public void warn(String message, Throwable throwable) {}
+
+    @Override
+    public void error(String format, Object obj1) {}
+
+    @Override
+    public void error(String format, Object obj1, Object obj2) {}
+
+    @Override
+    public void error(String format, Object... args) {}
+
+    @Override
+    public void error(String message, Throwable throwable) {}
   }
 }

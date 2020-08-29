@@ -24,7 +24,7 @@ public interface Timestamp {
    * @return returns time interval, in micro second.
    * @since 1.0.0
    */
-  int microSecond();
+  long microSecond();
 
   /**
    * Timestamp precision.

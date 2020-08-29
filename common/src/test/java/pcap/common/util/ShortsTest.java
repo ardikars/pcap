@@ -1,7 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.util;
 
-import java.nio.ByteOrder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -16,14 +15,18 @@ public class ShortsTest {
     short value = (short) 65533;
     byte[] bytes = Bytes.toByteArray(value);
     short actualValue = Shorts.toShort(bytes);
+    short actualValueFromOffset = Shorts.toShort(bytes, 0);
     Assertions.assertEquals(value, actualValue);
+    Assertions.assertEquals(value, actualValueFromOffset);
   }
 
   @Test
   public void toShortTestLE() {
     short shortValue = (short) 65533;
-    byte[] bytes = Bytes.toByteArray(shortValue, ByteOrder.LITTLE_ENDIAN);
-    short actualValue = Shorts.toShort(bytes, 0, ByteOrder.LITTLE_ENDIAN);
+    byte[] bytes = Bytes.toByteArrayLE(shortValue);
+    short actualValue = Shorts.toShortLE(bytes);
+    short actualValueFromOffset = Shorts.toShortLE(bytes, 0);
     Assertions.assertEquals(shortValue, actualValue);
+    Assertions.assertEquals(shortValue, actualValueFromOffset);
   }
 }

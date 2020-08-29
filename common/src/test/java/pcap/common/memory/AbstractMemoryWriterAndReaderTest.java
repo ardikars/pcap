@@ -1,14 +1,13 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.Assertions;
 
 abstract class AbstractMemoryWriterAndReaderTest extends BaseTest {
 
-  protected Memory memory;
-
   private final boolean pooled;
+  protected Memory memory;
 
   AbstractMemoryWriterAndReaderTest() {
     this.pooled = false;
@@ -285,20 +284,27 @@ abstract class AbstractMemoryWriterAndReaderTest extends BaseTest {
     for (int i = 1; i < dstMem.capacity() - 1; i++) {
       assert dstMem.getByte(i) == DUMMY[i - 1];
     }
+
+    Memory finalDstMem = dstMem;
+    Assertions.assertThrows(
+        IllegalArgumentException.class, () -> memory.readBytes(finalDstMem, 1, -1));
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        () -> memory.readBytes(finalDstMem, 1, finalDstMem.capacity() - 1));
     doRelease(dstMem);
   }
 
   public abstract void writeReadCharSequaceTest();
 
   protected void doWriteReadCharSequaceTest() {
-    String msg = "Hello java!.....";
+    String msg = "Need $?";
     int length = msg.length();
-    Charset charset = StandardCharsets.US_ASCII;
+    Memory.Charset charset = () -> StandardCharsets.UTF_8.name();
     memory.writeCharSequence(msg, charset);
     assert msg.equals(memory.readCharSequence(length, charset));
 
     memory.setIndex(0, 0);
-    charset = StandardCharsets.UTF_8;
+    charset = () -> StandardCharsets.US_ASCII.name();
     memory.writeCharSequence(msg, charset);
     assert msg.equals(memory.readCharSequence(length, charset));
   }

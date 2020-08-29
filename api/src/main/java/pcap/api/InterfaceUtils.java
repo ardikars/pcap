@@ -11,9 +11,9 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import pcap.api.internal.foreign.mapping.IphlpapiMapping;
 import pcap.api.internal.foreign.struct.windows_structs;
+import pcap.api.internal.util.Platforms;
 import pcap.common.annotation.Inclubating;
 import pcap.common.net.MacAddress;
-import pcap.common.util.Platforms;
 import pcap.spi.Interface;
 import pcap.spi.exception.ErrorException;
 

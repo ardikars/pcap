@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.function.Predicate;
 import pcap.api.internal.foreign.mapping.PcapMapping;
 import pcap.api.internal.foreign.pcap_header;
+import pcap.api.internal.util.Platforms;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.common.util.Objects;
-import pcap.common.util.Platforms;
 import pcap.spi.Address;
 import pcap.spi.Interface;
 import pcap.spi.Service;
@@ -65,7 +65,7 @@ public class PcapService implements Service {
   }
 
   @Override
-  public Interface lookupIntefaces(Predicate<Interface> predicate) throws ErrorException {
+  public Interface lookupInterfaces(Predicate<Interface> predicate) throws ErrorException {
     List<Interface> collections = new LinkedList<>();
     Interface interfaces = lookupInterfaces();
     Iterator<Interface> interfaceIterator = interfaces.iterator();

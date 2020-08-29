@@ -1,7 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.util;
 
-import java.nio.ByteOrder;
 import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
@@ -29,23 +28,7 @@ public final class Bytes {
    * @since 1.0.0
    */
   public static byte[] toByteArray(final short value) {
-    return toByteArray(value, ByteOrder.BIG_ENDIAN);
-  }
-
-  /**
-   * Short to byte array.
-   *
-   * @param value value.
-   * @param bo byte order.
-   * @return byte array.
-   * @since 1.0.0
-   */
-  public static byte[] toByteArray(final short value, final ByteOrder bo) {
-    if (bo.equals(ByteOrder.LITTLE_ENDIAN)) {
-      return new byte[] {(byte) (value & 0xff), (byte) (value >> 8 & 0xff)};
-    } else {
-      return new byte[] {(byte) (value >> 8 & 0xff), (byte) (value & 0xff)};
-    }
+    return new byte[] {(byte) (value >> 8 & 0xff), (byte) (value & 0xff)};
   }
 
   /**
@@ -56,52 +39,67 @@ public final class Bytes {
    * @since 1.0.0
    */
   public static byte[] toByteArray(final short[] value) {
-    return toByteArray(value, ByteOrder.BIG_ENDIAN);
+    Validate.notInBounds(value, 0, value.length);
+    byte[] array = new byte[value.length << 1];
+    for (int i = 0; i < value.length; i++) {
+      short x = value[i];
+      int j = i << 1;
+      array[j++] = (byte) ((x >> 8) & 0xff);
+      array[j] = (byte) (x & 0xff);
+    }
+    return array;
   }
 
-  /**
-   * Short array to byte array.
-   *
-   * @param value value.
-   * @param bo byte order.
-   * @return byte array.
-   * @since 1.0.0
-   */
-  public static byte[] toByteArray(final short[] value, final ByteOrder bo) {
-    return toByteArray(value, 0, value.length, bo);
-  }
-
-  /**
-   * Short array to byte array.
-   *
-   * @param value value.
-   * @param offset offset.
-   * @param length length.
-   * @param bo byte order.
-   * @return byte array.
-   * @since 1.0.0
-   */
-  public static byte[] toByteArray(
-      final short[] value, final int offset, final int length, final ByteOrder bo) {
+  public static byte[] toByteArray(final short[] value, final int offset, final int length) {
     Validate.notInBounds(value, offset, length);
     byte[] array = new byte[length << 1];
-    if (bo.equals(ByteOrder.LITTLE_ENDIAN)) {
-      for (int i = offset; i < length; i++) {
-        short x = value[i];
-        int j = i << 1;
-        array[j++] = (byte) (x & 0xff);
-        array[j] = (byte) ((x >> 8) & 0xff);
-      }
-      return array;
-    } else {
-      for (int i = offset; i < length; i++) {
-        short x = value[i];
-        int j = i << 1;
-        array[j++] = (byte) ((x >> 8) & 0xff);
-        array[j] = (byte) (x & 0xff);
-      }
-      return array;
+    int index = 0;
+    for (int i = offset; i < offset + length; i++) {
+      array[index++] = (byte) (value[i] >> 8 & 0xff);
+      array[index++] = (byte) (value[i] & 0xff);
     }
+    return array;
+  }
+
+  /**
+   * Short to byte array.
+   *
+   * @param value value.
+   * @return byte array.
+   * @since 1.0.0
+   */
+  public static byte[] toByteArrayLE(final short value) {
+    return new byte[] {(byte) (value & 0xff), (byte) (value >> 8 & 0xff)};
+  }
+
+  /**
+   * Short array to byte array.
+   *
+   * @param value value.
+   * @return byte array.
+   * @since 1.0.0
+   */
+  public static byte[] toByteArrayLE(final short[] value) {
+    Validate.notInBounds(value, 0, value.length);
+    byte[] array = new byte[value.length << 1];
+    for (int i = 0; i < value.length; i++) {
+      short x = value[i];
+      int j = i << 1;
+      array[j++] = (byte) (x & 0xff);
+      array[j] = (byte) ((x >> 8) & 0xff);
+    }
+    return array;
+  }
+
+  public static byte[] toByteArrayLE(final short[] value, final int offset, final int length) {
+    Validate.notInBounds(value, offset, length);
+    byte[] array = new byte[length << 1];
+    int index = 0;
+    for (int i = offset; i < offset + length; i++) {
+      array[index++] = (byte) (value[i] & 0xff);
+      array[index++] = (byte) (value[i] >> 8 & 0xff);
+    }
+    return array;
   }
 
   /**
@@ -112,33 +110,12 @@ public final class Bytes {
    * @since 1.0.0
    */
   public static byte[] toByteArray(final int value) {
-    return toByteArray(value, ByteOrder.BIG_ENDIAN);
-  }
-
-  /**
-   * Int to byte array.
-   *
-   * @param value value.
-   * @param bo byte order.
-   * @return byte array.
-   * @since 1.0.0
-   */
-  public static byte[] toByteArray(final int value, final ByteOrder bo) {
-    if (bo.equals(ByteOrder.LITTLE_ENDIAN)) {
-      return new byte[] {
-        (byte) (value & 0xff),
-        (byte) ((value >> 8) & 0xff),
-        (byte) (value >> 16 & 0xff),
-        (byte) (value >> 24 & 0xff)
-      };
-    } else {
-      return new byte[] {
-        (byte) ((value >> 24) & 0xff),
-        (byte) ((value >> 16) & 0xff),
-        (byte) ((value >> 8) & 0xff),
-        (byte) (value & 0xff)
-      };
-    }
+    return new byte[] {
+      (byte) ((value >> 24) & 0xff),
+      (byte) ((value >> 16) & 0xff),
+      (byte) ((value >> 8) & 0xff),
+      (byte) (value & 0xff)
+    };
   }
 
   /**
@@ -149,56 +126,80 @@ public final class Bytes {
    * @since 1.0.0
    */
   public static byte[] toByteArray(final int[] value) {
-    return toByteArray(value, ByteOrder.BIG_ENDIAN);
+    Validate.notInBounds(value, 0, value.length);
+    byte[] array = new byte[value.length << 2];
+    for (int i = 0; i < value.length; i++) {
+      int x = value[i];
+      int j = i << 2;
+      array[j++] = (byte) ((x >> 24) & 0xff);
+      array[j++] = (byte) ((x >> 16) & 0xff);
+      array[j++] = (byte) ((x >> 8) & 0xff);
+      array[j] = (byte) (x & 0xff);
+    }
+    return array;
   }
 
-  /**
-   * Int array to byte array.
-   *
-   * @param value value.
-   * @param bo byte order.
-   * @return byte array.
-   * @since 1.0.0
-   */
-  public static byte[] toByteArray(final int[] value, final ByteOrder bo) {
-    return toByteArray(value, 0, value.length, bo);
-  }
-
-  /**
-   * Int array to byte array.
-   *
-   * @param value value.
-   * @param offset offset.
-   * @param length length.
-   * @param bo byte order.
-   * @return byte array.
-   * @since 1.0.0
-   */
-  public static byte[] toByteArray(
-      final int[] value, final int offset, final int length, final ByteOrder bo) {
+  public static byte[] toByteArray(final int[] value, final int offset, final int length) {
     Validate.notInBounds(value, offset, length);
     byte[] array = new byte[length << 2];
-    if (bo.equals(ByteOrder.LITTLE_ENDIAN)) {
-      for (int i = offset; i < length; i++) {
-        int x = value[i];
-        int j = i << 2;
-        array[j++] = (byte) (x & 0xff);
-        array[j++] = (byte) ((x >> 8) & 0xff);
-        array[j++] = (byte) ((x >> 16) & 0xff);
-        array[j] = (byte) ((x >> 24) & 0xff);
-      }
-      return array;
-    } else {
-      for (int i = offset; i < length; i++) {
-        int x = value[i];
-        int j = i << 2;
-        array[j++] = (byte) ((x >> 24) & 0xff);
-        array[j++] = (byte) ((x >> 16) & 0xff);
-        array[j++] = (byte) ((x >> 8) & 0xff);
-        array[j] = (byte) (x & 0xff);
-      }
-      return array;
+    int index = 0;
+    for (int i = offset; i < offset + length; i++) {
+      array[index++] = (byte) ((value[i] >> 24) & 0xff);
+      array[index++] = (byte) ((value[i] >> 16) & 0xff);
+      array[index++] = (byte) ((value[i] >> 8) & 0xff);
+      array[index++] = (byte) (value[i] & 0xff);
     }
+    return array;
+  }
+
+  /**
+   * Int to byte array.
+   *
+   * @param value value.
+   * @return byte array.
+   * @since 1.0.0
+   */
+  public static byte[] toByteArrayLE(final int value) {
+    return new byte[] {
+      (byte) (value & 0xff),
+      (byte) ((value >> 8) & 0xff),
+      (byte) (value >> 16 & 0xff),
+      (byte) (value >> 24 & 0xff)
+    };
+  }
+
+  /**
+   * Int array to byte array.
+   *
+   * @param value value.
+   * @return byte array.
+   * @since 1.0.0
+   */
+  public static byte[] toByteArrayLE(final int[] value) {
+    Validate.notInBounds(value, 0, value.length);
+    byte[] array = new byte[value.length << 2];
+    for (int i = 0; i < value.length; i++) {
+      int x = value[i];
+      int j = i << 2;
+      array[j++] = (byte) (x & 0xff);
+      array[j++] = (byte) ((x >> 8) & 0xff);
+      array[j++] = (byte) (x >> 16 & 0xff);
+      array[j] = (byte) (x >> 24 & 0xff);
+    }
+    return array;
+  }
+
+  public static byte[] toByteArrayLE(final int[] value, final int offset, final int length) {
+    Validate.notInBounds(value, offset, length);
+    byte[] array = new byte[length << 2];
+    int index = 0;
+    for (int i = offset; i < offset + length; i++) {
+      array[index++] = (byte) (value[i] & 0xff);
+      array[index++] = (byte) ((value[i] >> 8) & 0xff);
+      array[index++] = (byte) ((value[i] >> 16) & 0xff);
+      array[index++] = (byte) ((value[i] >> 24) & 0xff);
+    }
+    return array;
   }
 
   /**
@@ -209,41 +210,36 @@ public final class Bytes {
    * @since 1.0.0
    */
   public static byte[] toByteArray(final long value) {
-    return toByteArray(value, ByteOrder.BIG_ENDIAN);
+    return new byte[] {
+      (byte) ((value >> 56) & 0xff),
+      (byte) ((value >> 48) & 0xff),
+      (byte) ((value >> 40) & 0xff),
+      (byte) ((value >> 32) & 0xff),
+      (byte) ((value >> 24) & 0xff),
+      (byte) ((value >> 16) & 0xff),
+      (byte) ((value >> 8) & 0xff),
+      (byte) (value & 0xff)
+    };
   }
 
   /**
    * Long to byte array.
    *
    * @param value value.
-   * @param bo byte order.
    * @return byte array.
    * @since 1.0.0
    */
-  public static byte[] toByteArray(final long value, final ByteOrder bo) {
-    if (bo.equals(ByteOrder.LITTLE_ENDIAN)) {
-      return new byte[] {
-        (byte) (value & 0xff),
-        (byte) ((value >> 8) & 0xff),
-        (byte) ((value >> 16) & 0xff),
-        (byte) ((value >> 24) & 0xff),
-        (byte) ((value >> 32) & 0xff),
-        (byte) ((value >> 40) & 0xff),
-        (byte) ((value >> 48) & 0xff),
-        (byte) ((value >> 56) & 0xff)
-      };
-    } else {
-      return new byte[] {
-        (byte) ((value >> 56) & 0xff),
-        (byte) ((value >> 48) & 0xff),
-        (byte) ((value >> 40) & 0xff),
-        (byte) ((value >> 32) & 0xff),
-        (byte) ((value >> 24) & 0xff),
-        (byte) ((value >> 16) & 0xff),
-        (byte) ((value >> 8) & 0xff),
-        (byte) (value & 0xff)
-      };
-    }
+  public static byte[] toByteArrayLE(final long value) {
+    return new byte[] {
+      (byte) (value & 0xff),
+      (byte) ((value >> 8) & 0xff),
+      (byte) ((value >> 16) & 0xff),
+      (byte) ((value >> 24) & 0xff),
+      (byte) ((value >> 32) & 0xff),
+      (byte) ((value >> 40) & 0xff),
+      (byte) ((value >> 48) & 0xff),
+      (byte) ((value >> 56) & 0xff)
+    };
   }
 
   /**
@@ -254,62 +250,79 @@ public final class Bytes {
    * @since 1.0.0
    */
   public static byte[] toByteArray(final long[] value) {
-    return toByteArray(value, ByteOrder.BIG_ENDIAN);
+    Validate.notInBounds(value, 0, value.length);
+    byte[] array = new byte[value.length << 3];
+    for (int i = 0; i < value.length; i++) {
+      long x = value[i];
+      int j = i << 3;
+      array[j++] = (byte) ((x >> 56) & 0xff);
+      array[j++] = (byte) ((x >> 48) & 0xff);
+      array[j++] = (byte) ((x >> 40) & 0xff);
+      array[j++] = (byte) ((x >> 32) & 0xff);
+      array[j++] = (byte) ((x >> 24) & 0xff);
+      array[j++] = (byte) ((x >> 16) & 0xff);
+      array[j++] = (byte) ((x >> 8) & 0xff);
+      array[j] = (byte) (x & 0xff);
+    }
+    return array;
+  }
+
+  public static byte[] toByteArray(final long[] value, final int offset, final int length) {
+    Validate.notInBounds(value, offset, length);
+    byte[] array = new byte[length << 3];
+    int index = 0;
+    for (int i = offset; i < offset + length; i++) {
+      array[index++] = (byte) ((value[i] >> 56) & 0xff);
+      array[index++] = (byte) ((value[i] >> 48) & 0xff);
+      array[index++] = (byte) ((value[i] >> 40) & 0xff);
+      array[index++] = (byte) ((value[i] >> 32) & 0xff);
+      array[index++] = (byte) ((value[i] >> 24) & 0xff);
+      array[index++] = (byte) ((value[i] >> 16) & 0xff);
+      array[index++] = (byte) ((value[i] >> 8) & 0xff);
+      array[index++] = (byte) (value[i] & 0xff);
+    }
+    return array;
+  }
+
+  public static byte[] toByteArrayLE(final long[] value, final int offset, final int length) {
+    Validate.notInBounds(value, offset, length);
+    byte[] array = new byte[length << 3];
+    int index = 0;
+    for (int i = offset; i < offset + length; i++) {
+      array[index++] = (byte) (value[i] & 0xff);
+      array[index++] = (byte) ((value[i] >> 8) & 0xff);
+      array[index++] = (byte) ((value[i] >> 16) & 0xff);
+      array[index++] = (byte) ((value[i] >> 24) & 0xff);
+      array[index++] = (byte) ((value[i] >> 32) & 0xff);
+      array[index++] = (byte) ((value[i] >> 40) & 0xff);
+      array[index++] = (byte) ((value[i] >> 48) & 0xff);
+      array[index++] = (byte) ((value[i] >> 56) & 0xff);
+    }
+    return array;
   }
 
   /**
    * Long array to byte array.
    *
    * @param value value.
-   * @param bo byte order.
-   * @return byte array.
-   */
-  public static byte[] toByteArray(final long[] value, final ByteOrder bo) {
-    return toByteArray(value, 0, value.length, bo);
-  }
-
-  /**
-   * Long array to byte array.
-   *
-   * @param value value.
-   * @param offset offset.
-   * @param length length.
-   * @param bo byte order.
    * @return byte array.
    * @since 1.0.0
    */
-  public static byte[] toByteArray(
-      final long[] value, final int offset, final int length, final ByteOrder bo) {
-    Validate.notInBounds(value, offset, length);
-    byte[] array = new byte[length << 3];
-    if (bo.equals(ByteOrder.LITTLE_ENDIAN)) {
-      for (int i = offset; i < length; i++) {
-        long x = value[i];
-        int j = i << 3;
-        array[j++] = (byte) (x & 0xff);
-        array[j++] = (byte) ((x >> 8) & 0xff);
-        array[j++] = (byte) ((x >> 16) & 0xff);
-        array[j++] = (byte) ((x >> 24) & 0xff);
-        array[j++] = (byte) ((x >> 32) & 0xff);
-        array[j++] = (byte) ((x >> 40) & 0xff);
-        array[j++] = (byte) ((x >> 48) & 0xff);
-        array[j] = (byte) ((x >> 56) & 0xff);
-      }
-      return array;
-    } else {
-      for (int i = offset; i < length; i++) {
-        long x = value[i];
-        int j = i << 3;
-        array[j++] = (byte) ((x >> 56) & 0xff);
-        array[j++] = (byte) ((x >> 48) & 0xff);
-        array[j++] = (byte) ((x >> 40) & 0xff);
-        array[j++] = (byte) ((x >> 32) & 0xff);
-        array[j++] = (byte) ((x >> 24) & 0xff);
-        array[j++] = (byte) ((x >> 16) & 0xff);
-        array[j++] = (byte) ((x >> 8) & 0xff);
-        array[j] = (byte) (x & 0xff);
-      }
-      return array;
+  public static byte[] toByteArrayLE(final long[] value) {
+    Validate.notInBounds(value, 0, value.length);
+    byte[] array = new byte[value.length << 3];
+    for (int i = 0; i < value.length; i++) {
+      long x = value[i];
+      int j = i << 3;
+      array[j++] = (byte) (x & 0xff);
+      array[j++] = (byte) ((x >> 8) & 0xff);
+      array[j++] = (byte) ((x >> 16) & 0xff);
+      array[j++] = (byte) ((x >> 24) & 0xff);
+      array[j++] = (byte) ((x >> 32) & 0xff);
+      array[j++] = (byte) ((x >> 40) & 0xff);
+      array[j++] = (byte) ((x >> 48) & 0xff);
+      array[j] = (byte) ((x >> 56) & 0xff);
     }
+    return array;
   }
 }

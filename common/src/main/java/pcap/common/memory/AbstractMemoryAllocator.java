@@ -14,7 +14,6 @@ public abstract class AbstractMemoryAllocator implements MemoryAllocator {
 
   @Override
   public Memory wrap(byte[] bytes) {
-    Validate.notIllegalArgument(bytes != null, "hexStream: null (expected: non null)");
     Memory memory = allocate(bytes.length);
     memory.writeBytes(bytes);
     return memory;
@@ -22,7 +21,6 @@ public abstract class AbstractMemoryAllocator implements MemoryAllocator {
 
   @Override
   public Memory wrap(ByteBuffer bb) {
-    Validate.notIllegalArgument(bb != null, "bb: null (expected: non null)");
     byte[] data = new byte[bb.capacity()];
     bb.get(data);
     Memory memory = allocate(bb.capacity());
@@ -39,7 +37,11 @@ public abstract class AbstractMemoryAllocator implements MemoryAllocator {
     long maxCapacity = 0;
     for (int i = 0; i < memories.length; i++) {
       capacity += memories[i].capacity();
-      maxCapacity += memories[i].maxCapacity();
+      if (memories[i] instanceof Memory.Pooled) {
+        maxCapacity += memories[i].capacity();
+      } else {
+        maxCapacity += memories[i].maxCapacity();
+      }
     }
     Memory memory = allocate(capacity, maxCapacity);
     long index = 0;
@@ -98,7 +100,7 @@ public abstract class AbstractMemoryAllocator implements MemoryAllocator {
           String.format(
               "capacity: %d (expected: %d <= maxCapacity(%d))", capacity, capacity, maxCapacity));
       Validate.notIllegalArgument(
-          capacity <= maxMemoryCapacity && maxCapacity <= maxMemoryCapacity,
+          maxCapacity <= maxMemoryCapacity,
           String.format(
               "capacity: %d <= maxCapacity(%d), maxCapacity: %d <= maxMemoryCapacity(%d)",
               capacity, maxCapacity, maxCapacity, maxMemoryCapacity));

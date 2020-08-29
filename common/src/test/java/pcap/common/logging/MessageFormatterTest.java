@@ -13,13 +13,49 @@ import org.junit.runner.RunWith;
 public class MessageFormatterTest {
 
   @Test
-  public void formatTest() {}
+  public void newInstanceTest() {
+    MessageFormatter formatter = new MessageFormatter();
+    Assertions.assertNotNull(formatter);
+  }
 
   @Test
-  public void getThrowableCandidateTest() {}
+  public void formatTest() {
+    Object[] objects = new String[] {"World", "!"};
+    FormattingTuple tuple;
+    tuple = MessageFormatter.format(null, objects);
+    Assertions.assertNull(tuple.getMessage());
+    Assertions.assertEquals(objects, tuple.getArgArray()[0]);
+    Assertions.assertNull(tuple.getThrowable());
+    tuple = MessageFormatter.format("Hello", null);
+    Assertions.assertEquals("Hello", tuple.getMessage());
+    Assertions.assertNull(tuple.getArgArray()[0]);
+    Assertions.assertNull(tuple.getThrowable());
+    tuple = MessageFormatter.format("Hello", new RuntimeException());
+    Assertions.assertEquals("Hello", tuple.getMessage());
+    Assertions.assertNotNull(tuple.getArgArray());
+    Assertions.assertNotNull(tuple.getThrowable());
+    tuple = MessageFormatter.format("Hello {} {}", "Java", "World!");
+    Assertions.assertEquals("Hello Java World!", tuple.getMessage());
+    Assertions.assertNotNull(tuple.getArgArray());
+    Assertions.assertNull(tuple.getThrowable());
+  }
 
   @Test
-  public void trimmedCopyTest() {}
+  public void getThrowableCandidateTest() {
+    Assertions.assertNull(MessageFormatter.getThrowableCandidate(null));
+    Assertions.assertNull(MessageFormatter.getThrowableCandidate(new Object[0]));
+    Assertions.assertNull(MessageFormatter.getThrowableCandidate(new String[] {"Hello"}));
+    Assertions.assertNotNull(
+        MessageFormatter.getThrowableCandidate(new RuntimeException[] {new RuntimeException()}));
+  }
+
+  @Test
+  public void trimmedCopyTest() {
+    Assertions.assertThrows(IllegalStateException.class, () -> MessageFormatter.trimmedCopy(null));
+    Assertions.assertThrows(
+        IllegalStateException.class, () -> MessageFormatter.trimmedCopy(new Object[0]));
+    Assertions.assertNotNull(MessageFormatter.trimmedCopy(new Object[] {new RuntimeException()}));
+  }
 
   @Test
   public void arrayFormatTest() {
@@ -29,14 +65,26 @@ public class MessageFormatterTest {
     Assertions.assertEquals("Hello World!", tuple.getMessage());
     Assertions.assertEquals(objects, tuple.getArgArray());
     Assertions.assertNull(tuple.getThrowable());
-    tuple = MessageFormatter.format(null, objects);
-    Assertions.assertNull(tuple.getMessage());
-    Assertions.assertEquals(objects, tuple.getArgArray()[0]);
-    Assertions.assertNull(tuple.getThrowable());
-    tuple = MessageFormatter.format("Hello", null);
+    tuple = MessageFormatter.arrayFormat("Hello", null, new RuntimeException());
     Assertions.assertEquals("Hello", tuple.getMessage());
-    Assertions.assertNull(tuple.getArgArray()[0]);
+    Assertions.assertNull(tuple.getArgArray());
     Assertions.assertNull(tuple.getThrowable());
+    tuple = MessageFormatter.arrayFormat("Hello", null, new RuntimeException());
+    Assertions.assertEquals("Hello", tuple.getMessage());
+    Assertions.assertNull(tuple.getArgArray());
+    Assertions.assertNull(tuple.getThrowable());
+    tuple = MessageFormatter.arrayFormat("Hello {} x", objects, new RuntimeException());
+    Assertions.assertEquals("Hello World x", tuple.getMessage());
+    Assertions.assertEquals(objects, tuple.getArgArray());
+    Assertions.assertNotNull(tuple.getThrowable());
+    tuple = MessageFormatter.arrayFormat("Hello {} x \\{}", objects, new RuntimeException());
+    Assertions.assertEquals("Hello World x {}", tuple.getMessage());
+    Assertions.assertEquals(objects, tuple.getArgArray());
+    Assertions.assertNotNull(tuple.getThrowable());
+    tuple = MessageFormatter.arrayFormat("Hello {} x \\\\{}", objects, new RuntimeException());
+    Assertions.assertEquals("Hello World x \\!", tuple.getMessage());
+    Assertions.assertEquals(objects, tuple.getArgArray());
+    Assertions.assertNotNull(tuple.getThrowable());
   }
 
   @Test
@@ -68,6 +116,11 @@ public class MessageFormatterTest {
 
     StringBuilder sb;
     Map<Object[], Object> seenMap;
+
+    sb = new StringBuilder();
+    seenMap = new HashMap<>();
+    MessageFormatter.deeplyAppendParameter(sb, null, seenMap);
+    Assertions.assertEquals("null", sb.toString());
 
     sb = new StringBuilder();
     seenMap = new HashMap<>();
@@ -144,6 +197,11 @@ public class MessageFormatterTest {
     Object[] value = new String[] {"Hello", "World", "!"};
     MessageFormatter.objectArrayAppend(sb, value, seenMap);
     Assertions.assertEquals("[Hello, World, !]", sb.toString());
+
+    sb = new StringBuilder();
+    seenMap.put(value, "Whoa!");
+    MessageFormatter.objectArrayAppend(sb, value, seenMap);
+    Assertions.assertEquals("[...]", sb.toString());
   }
 
   @Test

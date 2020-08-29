@@ -30,21 +30,15 @@ public abstract class LoggerFactory {
 
   private static LoggerFactory newDefaultFactory() {
     LoggerFactory loggerFactory;
-    try {
-      if (Slf4jLoggerFactory.hasSlf4j()) {
-        loggerFactory = Slf4jLoggerFactory.getInstance();
-      } else if (Log4j2LoggerFactory.hasLog4j2()) {
-        loggerFactory = Log4j2LoggerFactory.getInstance();
-      } else {
-        loggerFactory = NoLoggerFactory.getInstance();
-      }
-    } catch (Exception e) {
-      throw new IllegalStateException(e);
+    if (Slf4jLoggerFactory.hasSlf4j()) {
+      loggerFactory = Slf4jLoggerFactory.getInstance();
+    } else if (Log4j2LoggerFactory.hasLog4j2()) {
+      loggerFactory = Log4j2LoggerFactory.getInstance();
+    } else {
+      loggerFactory = NoLoggerFactory.getInstance();
     }
     return loggerFactory;
   }
-
-  abstract Logger newInstance(String name);
 
   static boolean hasClass(String name) {
     try {
@@ -54,4 +48,6 @@ public abstract class LoggerFactory {
       return false;
     }
   }
+
+  abstract Logger newInstance(String name);
 }

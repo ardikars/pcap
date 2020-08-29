@@ -1,7 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.util;
 
-import java.nio.ByteOrder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -16,14 +15,18 @@ public class IntegersTest {
     int intValue = 2147483647;
     byte[] bytes = Bytes.toByteArray(intValue);
     int actualValue = Integers.toInteger(bytes);
+    int actualValueFromOffset = Integers.toInteger(bytes, 0);
     Assertions.assertEquals(intValue, actualValue);
+    Assertions.assertEquals(intValue, actualValueFromOffset);
   }
 
   @Test
   public void toIntegerTestLE() {
     int intValue = 2147483647;
-    byte[] bytes = Bytes.toByteArray(intValue, ByteOrder.LITTLE_ENDIAN);
-    int actualValue = Integers.toInteger(bytes, 0, ByteOrder.LITTLE_ENDIAN);
+    byte[] bytes = Bytes.toByteArrayLE(intValue);
+    int actualValue = Integers.toIntegerLE(bytes);
+    int actualValueFromOffset = Integers.toIntegerLE(bytes, 0);
     Assertions.assertEquals(intValue, actualValue);
+    Assertions.assertEquals(intValue, actualValueFromOffset);
   }
 }
