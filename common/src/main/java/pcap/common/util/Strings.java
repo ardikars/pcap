@@ -436,19 +436,18 @@ public final class Strings {
           valueHolder != null;
           valueHolder = valueHolder.next) {
         Object value = valueHolder.value;
-        if (value != null) {
-          builder.append(nextSeparator);
-          nextSeparator = separator;
-          if (quoteString) {
-            builder.append('\"').append(valueHolder.name).append('\"').append(delimiter);
-          } else {
-            builder.append(valueHolder.name).append(delimiter);
-          }
-          if (value.getClass().isArray()) {
-            appendArrayValue(builder, value);
-          } else {
-            appendStringValue(builder, value);
-          }
+        value = Validate.nullPointerThenReturns(value, "null");
+        builder.append(nextSeparator);
+        nextSeparator = separator;
+        if (quoteString) {
+          builder.append('\"').append(valueHolder.name).append('\"').append(delimiter);
+        } else {
+          builder.append(valueHolder.name).append(delimiter);
+        }
+        if (value.getClass().isArray()) {
+          appendArrayValue(builder, value);
+        } else {
+          appendStringValue(builder, value);
         }
       }
       return builder.append(end).toString();

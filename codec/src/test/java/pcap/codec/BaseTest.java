@@ -133,7 +133,7 @@ public abstract class BaseTest {
     if (ethernet != null) {
       Iterator<Packet> packetIterator = ethernet.iterator();
       while (packetIterator.hasNext()) {
-        System.out.println(packetIterator.next());
+        packetIterator.next();
       }
     }
   }

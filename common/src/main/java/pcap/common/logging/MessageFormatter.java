@@ -150,7 +150,7 @@ final class MessageFormatter {
     return arrayFormat(messagePattern, args, throwableCandidate);
   }
 
-  private static Object[] trimmedCopy(Object[] argArray) {
+  static Object[] trimmedCopy(Object[] argArray) {
     if (argArray == null || argArray.length == 0) {
       throw new IllegalStateException("non-sensical empty or null argument array");
     }

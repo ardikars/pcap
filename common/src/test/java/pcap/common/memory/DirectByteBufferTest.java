@@ -31,6 +31,18 @@ public class DirectByteBufferTest extends AbstractMemoryTest {
 
   @Test
   @Override
+  public void checkIndexTest() {
+    doCheckIndexTest();
+  }
+
+  @Test
+  @Override
+  public void checkNewCapacityTest() {
+    doCheckNewCapacityTest();
+  }
+
+  @Test
+  @Override
   public void capacityAndMaxCapacityTest() {
     doCapacityAndMaxCapacityTest();
   }
@@ -41,6 +53,13 @@ public class DirectByteBufferTest extends AbstractMemoryTest {
     doReaderAndWriterIndexTest();
   }
 
+  @Test
+  @Override
+  public void setIndexTest() {
+    doSetIndexTest();
+  }
+
+  @Test
   @Override
   public void isReadableTest() {
     doIsReadableTest();
@@ -62,6 +81,12 @@ public class DirectByteBufferTest extends AbstractMemoryTest {
   @Override
   public void writerIndexTest() {
     doWriterIndexTest();
+  }
+
+  @Test
+  @Override
+  public void ensureWritableTest() {
+    doEnsureWritableTest();
   }
 
   @Test

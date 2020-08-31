@@ -236,7 +236,7 @@ public abstract class AbstractMemory<B> implements Memory {
   public CharSequence getCharSequence(long index, long length, Charset charset) {
     byte[] bytes = new byte[(int) length & 0x7FFFFFFF];
     this.getBytes(index, bytes);
-    return new String(bytes, charset);
+    return new String(bytes, java.nio.charset.Charset.forName(charset.name()));
   }
 
   @Override
@@ -302,7 +302,7 @@ public abstract class AbstractMemory<B> implements Memory {
     // see netty-buffer code
     final byte WRITE_UTF_UNKNOWN = (byte) '?';
     final char MAX_CHAR_VALUE = 255;
-    if (charset.equals(StandardCharsets.UTF_8)) {
+    if (charset.name().equals(StandardCharsets.UTF_8.name())) {
       int len = seq.length();
 
       long oldIndex = index;
@@ -343,13 +343,13 @@ public abstract class AbstractMemory<B> implements Memory {
         }
       }
       writtenBytes = index - oldIndex;
-    } else if (charset.equals(StandardCharsets.US_ASCII)) {
+    } else if (charset.name().equals(StandardCharsets.US_ASCII.name())) {
       for (int i = 0; i < seq.length(); i++) {
         this.setByte(index++, (byte) (seq.charAt(i) > MAX_CHAR_VALUE ? '?' : seq.charAt(i)));
       }
       writtenBytes = seq.length();
     } else {
-      byte[] chars = seq.toString().getBytes(charset);
+      byte[] chars = seq.toString().getBytes(java.nio.charset.Charset.forName(charset.name()));
       this.setBytes(index, chars);
       writtenBytes = chars.length;
     }
@@ -643,59 +643,13 @@ public abstract class AbstractMemory<B> implements Memory {
     return slice(readerIndex, readableBytes());
   }
 
-  private long calculateNewCapacity(long minNewCapacity, long maxCapacity) {
-    if (minNewCapacity < 0) {
-      throw new IllegalArgumentException("minNewCapacity: " + minNewCapacity + " (expected: 0+)");
-    }
-    if (minNewCapacity > maxCapacity) {
-      throw new IllegalArgumentException(
-          String.format(
-              "minNewCapacity: %d (expected: not greater than maxCapacity(%d)",
-              minNewCapacity, maxCapacity));
-    }
-    final int threshold = 1048576 * 4; // 4 MiB page
-
-    if (minNewCapacity == threshold) {
-      return threshold;
-    }
-
-    // If over threshold, do not double but just increase by threshold.
-    if (minNewCapacity > threshold) {
-      long newCapacity = minNewCapacity / threshold * threshold;
-      if (newCapacity > maxCapacity - threshold) {
-        newCapacity = maxCapacity;
-      } else {
-        newCapacity += threshold;
-      }
-      return newCapacity;
-    }
-
-    // Not over threshold. Double up to 4 MiB, starting from 64.
-    long newCapacity = 64;
-    while (newCapacity < minNewCapacity) {
-      newCapacity <<= 1;
-    }
-
-    return Math.min(newCapacity, maxCapacity);
-  }
-
   private void checkWritableBytes(long minWritableBytes) {
-    if (minWritableBytes <= writableBytes()) {
-      return;
-    }
-
-    if (minWritableBytes > maxCapacity - writerIndex()) {
+    if (minWritableBytes > capacity() - writerIndex()) {
       throw new IndexOutOfBoundsException(
           String.format(
               "writerIndex(%d) + minWritableBytes(%d) exceeds maxCapacity(%d): %s",
-              writerIndex(), minWritableBytes, maxCapacity, this));
+              writerIndex(), minWritableBytes, maxCapacity(), this));
     }
-
-    // Normalize the current capacity to the power of 2.
-    long newCapacity = calculateNewCapacity(writerIndex() + minWritableBytes, maxCapacity);
-
-    // Adjust to the new capacity.
-    capacity(newCapacity);
   }
 
   private void checkReadableBytes(long minimumReadableBytes) {

@@ -1,22 +1,29 @@
-/** This code is licenced under the GPL version 2. */
-package pcap.common.util;
+package pcap.api.internal.util;
 
+/** This code is licenced under the GPL version 2. */
 import pcap.common.annotation.Inclubating;
+import pcap.common.util.Properties;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
 public final class Platforms {
 
-  public enum Name {
-    WINDOWS,
-    LINUX,
-    DARWIN,
-    UNKNOWN
+  private static final Name NAME;
+
+  static {
+    final String osName = Properties.getProperty("os.name").toUpperCase().trim();
+    if (osName.startsWith("LINUX")) {
+      NAME = Name.LINUX;
+    } else if (osName.startsWith("WINDOWS")) {
+      NAME = Name.WINDOWS;
+    } else if (osName.startsWith("MAC OS")) {
+      NAME = Name.DARWIN;
+    } else {
+      NAME = Name.UNKNOWN;
+    }
   }
 
   private Platforms() {}
-
-  private static final Name NAME;
 
   /**
    * Get platform name.
@@ -54,16 +61,10 @@ public final class Platforms {
     return NAME == Name.DARWIN;
   }
 
-  static {
-    final String osName = Properties.getProperty("os.name").toUpperCase().trim();
-    if (osName.startsWith("LINUX")) {
-      NAME = Name.LINUX;
-    } else if (osName.startsWith("WINDOWS")) {
-      NAME = Name.WINDOWS;
-    } else if (osName.startsWith("MAC OS")) {
-      NAME = Name.DARWIN;
-    } else {
-      NAME = Name.UNKNOWN;
-    }
+  public enum Name {
+    WINDOWS,
+    LINUX,
+    DARWIN,
+    UNKNOWN
   }
 }

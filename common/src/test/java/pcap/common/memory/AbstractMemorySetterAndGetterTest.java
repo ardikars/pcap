@@ -1,11 +1,12 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
+import org.junit.jupiter.api.Assertions;
+
 abstract class AbstractMemorySetterAndGetterTest extends BaseTest {
 
-  protected Memory memory;
-
   private final boolean pooled;
+  protected Memory memory;
 
   AbstractMemorySetterAndGetterTest() {
     this.pooled = false;
@@ -226,6 +227,11 @@ abstract class AbstractMemorySetterAndGetterTest extends BaseTest {
     for (int i = 1; i < DUMMY.length - 2; i++) {
       assert memory.getByte(i) == srcMem.getByte(i);
     }
+    Assertions.assertThrows(
+        NullPointerException.class, () -> memory.setBytes(1, null, DUMMY.length - 1));
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        () -> memory.setBytes(1, srcMem, srcMem.readableBytes() + BYTE_SIZE));
   }
 
   public abstract void getBytesTest();

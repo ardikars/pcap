@@ -1,8 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import pcap.common.annotation.Inclubating;
 
 /**
@@ -1202,29 +1200,13 @@ public interface Memory {
   @Inclubating
   boolean release();
 
-  /**
-   * Exposes this {@link Memory} buffer's as an NIO {@link ByteBuffer}'s. The returned buffer either
-   * share or contains the copied content of this buffer, while changing the position and limit of
-   * the returned NIO buffer does not affect the indexes and marks of this buffer. This method does
-   * not modify {@code readerIndex} or {@code writerIndex} of this buffer. Please note that the
-   * returned NIO buffer will not see the changes of this buffer if this buffer is a dynamic buffer
-   * and it adjusted its capacity and returned NIO buffer has no cleaner.
-   *
-   * @return returns direct {@link ByteBuffer} with no cleaner.
-   */
-  @Inclubating
-  ByteBuffer nioBuffer();
-
   <T> T buffer(Class<T> clazz);
 
   /** Byte order. */
   enum ByteOrder {
     BIG_ENDIAN,
     LITTLE_ENDIAN;
-    public static ByteOrder NATIVE =
-        java.nio.ByteOrder.nativeOrder() == java.nio.ByteOrder.BIG_ENDIAN
-            ? ByteOrder.BIG_ENDIAN
-            : ByteOrder.LITTLE_ENDIAN;
+    public static ByteOrder NATIVE = ByteOrder.valueOf(java.nio.ByteOrder.nativeOrder().toString());
   }
 
   /** Indicate the buffer is sliced. */
@@ -1278,5 +1260,9 @@ public interface Memory {
     /** Increment reference counter by spesific delte. */
     @Inclubating
     int retain(int retain);
+  }
+
+  interface Charset {
+    String name();
   }
 }

@@ -5,4 +5,7 @@ module pcap.spi {
   exports pcap.spi.exception.error;
 
   uses pcap.spi.Service;
+
+  provides pcap.spi.Service with
+      pcap.spi.Service.NoService;
 }

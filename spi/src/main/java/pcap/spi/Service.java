@@ -65,7 +65,7 @@ public interface Service {
    * @return returns {@link Interface}.
    * @throws ErrorException interface not found.
    */
-  Interface lookupIntefaces(Predicate<Interface> preicate) throws ErrorException;
+  Interface lookupInterfaces(Predicate<Interface> preicate) throws ErrorException;
 
   /**
    * Lookup {@link Inet4Address} from {@link Interface}.
@@ -257,5 +257,52 @@ public interface Service {
      * @return returns this instance.
      */
     LiveOptions timestampPrecision(Timestamp.Precision timestampPrecision);
+  }
+
+  class NoService implements Service {
+
+    @Override
+    public String name() {
+      return "NoService";
+    }
+
+    @Override
+    public String version() {
+      return "0.0.0";
+    }
+
+    @Override
+    public Interface lookupInterfaces() throws ErrorException {
+      throw new ErrorException("No API implementation.");
+    }
+
+    @Override
+    public Interface lookupInterfaces(Predicate<Interface> preicate) throws ErrorException {
+      throw new ErrorException("No API implementation.");
+    }
+
+    @Override
+    public Inet4Address lookupInet4Address(Interface source) throws ErrorException {
+      throw new ErrorException("No API implementation.");
+    }
+
+    @Override
+    public Inet6Address lookupInet6Address(Interface source) throws ErrorException {
+      throw new ErrorException("No API implementation.");
+    }
+
+    @Override
+    public Pcap offline(String source, OfflineOptions options) throws ErrorException {
+      throw new ErrorException("No API implementation.");
+    }
+
+    @Override
+    public Pcap live(Interface source, LiveOptions options)
+        throws InterfaceNotSupportTimestampTypeException, InterfaceNotUpException,
+            RadioFrequencyModeNotSupportedException, ActivatedException, PermissionDeniedException,
+            NoSuchDeviceException, PromiscuousModePermissionDeniedException, ErrorException,
+            TimestampPrecisionNotSupportedException {
+      throw new ErrorException("No API implementation.");
+    }
   }
 }

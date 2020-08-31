@@ -25,7 +25,7 @@ public class DefaultTimestamp implements Timestamp {
   }
 
   @Override
-  public int microSecond() {
+  public long microSecond() {
     return microSecond;
   }
 

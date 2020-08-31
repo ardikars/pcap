@@ -72,7 +72,7 @@ public class PcapsTest {
       final Inet6Address inet6Address = Pcaps.lookupInet6Address(anInterface);
       Assertions.assertNotNull(inet6Address);
     } catch (ErrorException e) {
-      System.out.println(e);
+      // System.out.println(e);
     }
   }
 }

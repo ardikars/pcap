@@ -54,7 +54,7 @@ public class PcapServiceTest {
     Assertions.assertNotNull(pcaps);
     // non loopback
     Interface nonLoopback =
-        pcaps.lookupIntefaces(anInterface -> !((anInterface.flags() & 0x00000001) != 0));
+        pcaps.lookupInterfaces(anInterface -> !((anInterface.flags() & 0x00000001) != 0));
     Iterator<Interface> iterator = nonLoopback.iterator();
     while (iterator.hasNext()) {
       Assertions.assertTrue(!((iterator.next().flags() & 0x00000001) != 0));

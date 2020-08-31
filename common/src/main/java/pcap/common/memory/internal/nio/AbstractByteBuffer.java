@@ -176,11 +176,6 @@ public abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
   }
 
   @Override
-  public ByteBuffer nioBuffer() {
-    return buffer;
-  }
-
-  @Override
   public boolean release() {
     buffer.clear();
     return true;
