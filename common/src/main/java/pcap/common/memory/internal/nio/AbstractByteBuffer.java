@@ -3,6 +3,7 @@ package pcap.common.memory.internal.nio;
 import java.nio.ByteBuffer;
 import pcap.common.memory.AbstractMemory;
 import pcap.common.memory.Memory;
+import pcap.common.util.Validate;
 
 public abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
 
@@ -19,9 +20,14 @@ public abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
     this.baseIndex = baseIndex;
   }
 
+  static void validateSize(long size) {
+    Validate.notIllegalArgument(size <= Integer.MAX_VALUE && size >= 0);
+  }
+
   @Override
   public Memory capacity(long newCapacityL) {
-    int newCapacity = (int) (newCapacityL & 0x7FFFFFFF);
+    validateSize(newCapacityL);
+    int newCapacity = (int) (newCapacityL & Integer.MAX_VALUE);
     checkNewCapacity(newCapacity);
     if (newCapacity > capacity) {
       if (buffer.isDirect()) {
@@ -38,49 +44,59 @@ public abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
 
   @Override
   public byte getByte(long indexL) {
-    int index = (int) indexL & 0x7FFFFFFF;
+    validateSize(indexL);
+    int index = (int) indexL & Integer.MAX_VALUE;
     return buffer.get(baseIndex + index);
   }
 
   @Override
   public short getShort(long indexL) {
-    int index = (int) indexL & 0x7FFFFFFF;
+    validateSize(indexL);
+    int index = (int) indexL & Integer.MAX_VALUE;
     return buffer.getShort(baseIndex + index);
   }
 
   @Override
   public short getShortLE(long indexL) {
-    int index = (int) indexL & 0x7FFFFFFF;
+    validateSize(indexL);
+    int index = (int) indexL & Integer.MAX_VALUE;
     return Short.reverseBytes(buffer.getShort(baseIndex + index));
   }
 
   @Override
   public int getInt(long indexL) {
-    int index = (int) indexL & 0x7FFFFFFF;
+    validateSize(indexL);
+    int index = (int) indexL & Integer.MAX_VALUE;
     return buffer.getInt(baseIndex + index);
   }
 
   @Override
   public int getIntLE(long indexL) {
-    int index = (int) indexL & 0x7FFFFFFF;
+    validateSize(indexL);
+    int index = (int) indexL & Integer.MAX_VALUE;
     return Integer.reverseBytes(buffer.getInt(baseIndex + index));
   }
 
   @Override
   public long getLong(long indexL) {
-    int index = (int) indexL & 0x7FFFFFFF;
+    validateSize(indexL);
+    int index = (int) indexL & Integer.MAX_VALUE;
     return buffer.getLong(baseIndex + index);
   }
 
   @Override
   public long getLongLE(long indexL) {
-    int index = (int) indexL & 0x7FFFFFFF;
+    validateSize(indexL);
+    int index = (int) indexL & Integer.MAX_VALUE;
     return Long.reverseBytes(buffer.getLong(baseIndex + index));
   }
 
   @Override
   public Memory getBytes(long index, Memory dst, long dstIndex, long length) {
-    byte[] b = new byte[(int) length & 0x7FFFFFFF];
+    validateSize(index);
+    validateSize(dstIndex);
+    validateSize(length);
+    byte[] b = new byte[(int) length & Integer.MAX_VALUE];
     getBytes(index, b, 0, length);
     dst.setBytes(dstIndex, b);
     return this;
@@ -88,9 +104,12 @@ public abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
 
   @Override
   public Memory getBytes(long index, byte[] dst, long dstIndexL, long lengthL) {
-    int currectIndex = baseIndex + (int) index & 0x7FFFFFFF;
-    int dstIndex = (int) dstIndexL & 0x7FFFFFFF;
-    int length = (int) lengthL & 0x7FFFFFFF;
+    validateSize(index);
+    validateSize(dstIndexL);
+    validateSize(lengthL);
+    int currectIndex = baseIndex + (int) index & Integer.MAX_VALUE;
+    int dstIndex = (int) dstIndexL & Integer.MAX_VALUE;
+    int length = (int) lengthL & Integer.MAX_VALUE;
     for (int i = dstIndex; i < (length + dstIndex); i++) {
       dst[i] = buffer.get(currectIndex++);
     }
@@ -99,49 +118,57 @@ public abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
 
   @Override
   public Memory setByte(long index, int value) {
-    buffer.put(baseIndex + (int) index & 0x7FFFFFFF, (byte) value);
+    validateSize(index);
+    buffer.put(baseIndex + (int) index & Integer.MAX_VALUE, (byte) value);
     return this;
   }
 
   @Override
   public Memory setShort(long index, int value) {
-    buffer.putShort(baseIndex + (int) index & 0x7FFFFFFF, (short) value);
+    validateSize(index);
+    buffer.putShort(baseIndex + (int) index & Integer.MAX_VALUE, (short) value);
     return this;
   }
 
   @Override
   public Memory setShortLE(long index, int value) {
-    buffer.putShort(baseIndex + (int) index & 0x7FFFFFFF, Short.reverseBytes((short) value));
+    validateSize(index);
+    buffer.putShort(baseIndex + (int) index & Integer.MAX_VALUE, Short.reverseBytes((short) value));
     return this;
   }
 
   @Override
   public Memory setInt(long index, int value) {
-    buffer.putInt(baseIndex + (int) index & 0x7FFFFFFF, value);
+    validateSize(index);
+    buffer.putInt(baseIndex + (int) index & Integer.MAX_VALUE, value);
     return this;
   }
 
   @Override
   public Memory setIntLE(long index, int value) {
-    buffer.putInt(baseIndex + (int) index & 0x7FFFFFFF, Integer.reverseBytes(value));
+    validateSize(index);
+    buffer.putInt(baseIndex + (int) index & Integer.MAX_VALUE, Integer.reverseBytes(value));
     return this;
   }
 
   @Override
   public Memory setLong(long index, long value) {
-    buffer.putLong(baseIndex + (int) index & 0x7FFFFFFF, value);
+    validateSize(index);
+    buffer.putLong(baseIndex + (int) index & Integer.MAX_VALUE, value);
     return this;
   }
 
   @Override
   public Memory setLongLE(long index, long value) {
-    buffer.putLong(baseIndex + (int) index & 0x7FFFFFFF, Long.reverseBytes(value));
+    validateSize(index);
+    buffer.putLong(baseIndex + (int) index & Integer.MAX_VALUE, Long.reverseBytes(value));
     return this;
   }
 
   @Override
   public Memory setBytes(long index, Memory src, long srcIndex, long length) {
-    byte[] b = new byte[(int) src.capacity() & 0x7FFFFFFF];
+    validateSize(index);
+    byte[] b = new byte[(int) src.capacity() & Integer.MAX_VALUE];
     src.getBytes(0, b);
     setBytes(index, b, srcIndex, length);
     return this;
@@ -149,9 +176,12 @@ public abstract class AbstractByteBuffer extends AbstractMemory<ByteBuffer> {
 
   @Override
   public Memory setBytes(long index, byte[] src, long srcIndexL, long lengthL) {
-    int currentIndex = baseIndex + (int) index & 0x7FFFFFFF;
-    int srcIndex = (int) srcIndexL & 0x7FFFFFFF;
-    int length = (int) lengthL & 0x7FFFFFFF;
+    validateSize(index);
+    validateSize(srcIndexL);
+    validateSize(lengthL);
+    int currentIndex = baseIndex + (int) index & Integer.MAX_VALUE;
+    int srcIndex = (int) srcIndexL & Integer.MAX_VALUE;
+    int length = (int) lengthL & Integer.MAX_VALUE;
     for (int i = srcIndex; i < (length + srcIndex); i++) {
       buffer.put(currentIndex++, src[i]);
     }

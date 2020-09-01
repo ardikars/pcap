@@ -6,6 +6,7 @@ import pcap.common.annotation.Inclubating;
 import pcap.common.memory.AbstractMemoryAllocator;
 import pcap.common.memory.Memory;
 import pcap.common.memory.internal.nio.HeapByteBuffer;
+import pcap.common.util.Validate;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -28,13 +29,32 @@ public final class HeapMemoryAllocator extends AbstractMemoryAllocator {
 
   @Override
   public Memory allocate(long capacity, long maxCapacity, long readerIndex, long writerIndex) {
-    ByteBuffer buffer = ByteBuffer.allocate((int) capacity & 0x7FFFFFFF);
+    Validate.notIllegalArgument(
+        capacity <= Integer.MAX_VALUE,
+        String.format(
+            "capacity: {} (excepted: capacity({}) <= {})", capacity, capacity, Integer.MAX_VALUE));
+    Validate.notIllegalArgument(
+        maxCapacity <= Integer.MAX_VALUE,
+        String.format(
+            "maxCapacity: {} (excepted: maxCapacity({}) <= {})",
+            maxCapacity,
+            maxCapacity,
+            Integer.MAX_VALUE));
+    Validate.notIllegalArgument(
+        capacity <= maxCapacity,
+        String.format(
+            "capacity: {}, maxCapacity: {} (excepted: capacity({}) <= maxCapacity({}))",
+            capacity,
+            maxCapacity,
+            capacity,
+            maxCapacity));
+    ByteBuffer buffer = ByteBuffer.allocate((int) capacity & Integer.MAX_VALUE);
     return new HeapByteBuffer(
         0,
         buffer,
-        (int) capacity & 0x7FFFFFFF,
-        (int) maxCapacity & 0x7FFFFFFF,
-        (int) readerIndex & 0x7FFFFFFF,
-        (int) writerIndex & 0x7FFFFFFF);
+        (int) capacity & Integer.MAX_VALUE,
+        (int) maxCapacity & Integer.MAX_VALUE,
+        (int) readerIndex & Integer.MAX_VALUE,
+        (int) writerIndex & Integer.MAX_VALUE);
   }
 }
