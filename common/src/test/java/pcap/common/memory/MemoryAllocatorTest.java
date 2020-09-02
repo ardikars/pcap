@@ -83,4 +83,44 @@ public class MemoryAllocatorTest {
     pooledDirectBuf.release();
     assemble.release();
   }
+
+  @Test
+  public void nioPooledDirectMemoryAllocatorTest() {
+    MemoryAllocator pooladAllocator =
+        MemoryAllocator.create("NioPooledDirectMemoryAllocator", 1, 2, 4);
+    MemoryAllocator pooladAllocator2 =
+        MemoryAllocator.create("NioPooledDirectMemoryAllocator", 1, 2, 4);
+
+    Memory first = pooladAllocator.allocate(4);
+    Memory first2 = pooladAllocator2.allocate(4);
+
+    first.release();
+    Assertions.assertThrows(
+        IllegalStateException.class,
+        () ->
+            ((AbstractMemoryAllocator.AbstractPooledMemoryAllocator) pooladAllocator)
+                .offer((Memory.Pooled) first));
+    Assertions.assertThrows(IllegalStateException.class, () -> ((Memory.Pooled) first).retain());
+
+    Memory second = pooladAllocator.allocate(4);
+    Memory third = pooladAllocator.allocate(4);
+
+    Assertions.assertThrows(IllegalStateException.class, () -> pooladAllocator.allocate(4));
+    second.release();
+    third.release();
+    Assertions.assertThrows(
+        IllegalStateException.class,
+        () ->
+            ((AbstractMemoryAllocator.AbstractPooledMemoryAllocator) pooladAllocator)
+                .offer((Memory.Pooled) first2));
+    Assertions.assertThrows(
+        IllegalStateException.class,
+        () ->
+            ((AbstractMemoryAllocator.AbstractPooledMemoryAllocator) pooladAllocator)
+                .retainBuffer(
+                    (Memory.Pooled) first2,
+                    first2.capacity(),
+                    first2.writerIndex(),
+                    first2.readerIndex()));
+  }
 }

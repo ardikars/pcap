@@ -1,8 +1,8 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.memory;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import pcap.common.annotation.Inclubating;
 import pcap.common.util.Strings;
 
@@ -10,13 +10,17 @@ import pcap.common.util.Strings;
 @Inclubating
 public abstract class AbstractMemory<B> implements Memory {
 
+  protected static final AtomicIntegerFieldUpdater<AbstractMemory> REF_CNT_UPDATER =
+      AtomicIntegerFieldUpdater.newUpdater(AbstractMemory.class, "refCnt");
+
+  protected volatile int refCnt; // for pooled buffer
+
   protected B buffer;
 
   protected long capacity;
   protected long maxCapacity;
 
-  protected long writtenBytes = 0L;
-  protected boolean freed;
+  private long writtenBytes = 0L; // for setCharSequence and writeCharSequence
   private long readerIndex;
   private long writerIndex;
   private long markedReaderIndex;
@@ -689,12 +693,10 @@ public abstract class AbstractMemory<B> implements Memory {
     return Strings.toStringBuilder(this)
         .add("capacity", capacity)
         .add("maxCapacity", maxCapacity)
-        .add("writtenBytes", writtenBytes)
         .add("readerIndex", readerIndex)
         .add("writerIndex", writerIndex)
         .add("markedReaderIndex", markedReaderIndex)
         .add("markedWriterIndex", markedWriterIndex)
-        .add("freed", freed)
         .toString();
   }
 }

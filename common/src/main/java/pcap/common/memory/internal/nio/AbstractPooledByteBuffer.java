@@ -1,19 +1,14 @@
 package pcap.common.memory.internal.nio;
 
 import java.nio.ByteBuffer;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import pcap.common.memory.AbstractMemoryAllocator;
 import pcap.common.memory.Memory;
 import pcap.common.util.Validate;
 
 public abstract class AbstractPooledByteBuffer extends AbstractByteBuffer implements Memory.Pooled {
 
-  private static final AtomicIntegerFieldUpdater<AbstractPooledByteBuffer> REF_CNT_UPDATER =
-      AtomicIntegerFieldUpdater.newUpdater(AbstractPooledByteBuffer.class, "refCnt");
-
   final int id;
   AbstractMemoryAllocator.AbstractPooledMemoryAllocator allocator;
-  volatile int refCnt;
 
   AbstractPooledByteBuffer(
       int id,
@@ -169,7 +164,9 @@ public abstract class AbstractPooledByteBuffer extends AbstractByteBuffer implem
     }
     buffer.clear();
     boolean offer = allocator.offer(this);
-    REF_CNT_UPDATER.decrementAndGet(this);
+    if (offer) {
+      REF_CNT_UPDATER.decrementAndGet(this);
+    }
     return offer;
   }
 
@@ -185,6 +182,7 @@ public abstract class AbstractPooledByteBuffer extends AbstractByteBuffer implem
 
   @Override
   public int refCnt(int cnt) {
+    ensureNotInPool();
     REF_CNT_UPDATER.set(this, refCnt - cnt);
     return refCnt;
   }
@@ -196,6 +194,7 @@ public abstract class AbstractPooledByteBuffer extends AbstractByteBuffer implem
 
   @Override
   public int retain(int delta) {
+    ensureNotInPool();
     return REF_CNT_UPDATER.addAndGet(this, delta);
   }
 

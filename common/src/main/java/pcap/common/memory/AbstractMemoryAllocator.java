@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
-import pcap.common.memory.internal.nio.AbstractPooledByteBuffer;
 import pcap.common.util.Validate;
 
 public abstract class AbstractMemoryAllocator implements MemoryAllocator {
@@ -113,13 +112,8 @@ public abstract class AbstractMemoryAllocator implements MemoryAllocator {
       if (reference != null) {
         Memory.Pooled poll = reference.get();
         if (poll != null) {
-          AbstractPooledByteBuffer memory = (AbstractPooledByteBuffer) poll;
-          retainBuffer(memory, capacity, writerIndex, readerIndex);
-          if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(
-                "Allocate buffer with id {} (refCnt: {}) from pool.", memory.id(), memory.refCnt());
-          }
-          return memory;
+          retainBuffer(poll, capacity, writerIndex, readerIndex);
+          return (Memory) poll;
         }
       }
       if (id == maxPoolSize) {
@@ -129,30 +123,26 @@ public abstract class AbstractMemoryAllocator implements MemoryAllocator {
           allocatePooledMemory(capacity, readerIndex, writerIndex);
       final Memory.Pooled pooled = weakReference.get();
       retainBuffer(pooled, capacity, writerIndex, readerIndex);
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Allocate buffer with id {} (refCnt: {}).", pooled.id(), pooled.refCnt());
-      }
       return (Memory) pooled;
     }
 
     public boolean offer(Memory.Pooled buffer) {
-      try {
-        if (pool.size() > maxPoolSize) {
-          throw new IllegalStateException(
-              String.format(
-                  "size: %d (expected: %d < poolSize(%d))", pool.size(), pool.size(), poolSize));
-        }
-        ((Memory) buffer).setIndex(0, 0);
-        pool.offer(new WeakReference<>(buffer));
-        return true;
-      } catch (IllegalStateException e) {
-        return false;
+      if (buffer.refCnt() == 0) {
+        throw new IllegalStateException("buffer is already in pool.");
       }
+      if (pool.size() >= maxPoolSize) {
+        throw new IllegalStateException(
+            String.format(
+                "size: %d (expected: %d < poolSize(%d))", pool.size(), pool.size(), poolSize));
+      }
+      ((Memory) buffer).setIndex(0, 0);
+      pool.offer(new WeakReference<>(buffer));
+      return true;
     }
 
     void retainBuffer(Memory.Pooled buffer, long capacity, long writerIndex, long readerIndex) {
       if (buffer.refCnt() == 0) {
-        buffer.retain();
+        AbstractMemory.REF_CNT_UPDATER.addAndGet((AbstractMemory) buffer, 1);
         ((Memory) buffer).capacity(capacity);
         ((Memory) buffer).setIndex(writerIndex, readerIndex);
       } else {

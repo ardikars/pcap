@@ -1257,7 +1257,7 @@ public interface Memory {
     @Inclubating
     int retain();
 
-    /** Increment reference counter by spesific delte. */
+    /** Increment reference counter by spesific delta. */
     @Inclubating
     int retain(int retain);
   }
