@@ -6,7 +6,7 @@
     <parent>
         <artifactId>pcap</artifactId>
         <groupId>com.ardikars.pcap</groupId>
-        <version>0.1.7</version>
+        <version>0.1.8</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -71,6 +71,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
 
@@ -85,7 +89,30 @@
                         <configuration>
                             <source>${jdk.version}</source>
                             <target>${jdk.version}</target>
+                            <excludes>
+                                <exclude>module-info.java</exclude>
+                            </excludes>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-jar</id>
+                                <configuration>
+                                    <archive>
+                                        <manifest>
+                                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                        </manifest>
+                                        <manifestEntries>
+                                            <Automatic-Module-Name>pcap.codec</Automatic-Module-Name>
+                                        </manifestEntries>
+                                        <index>true</index>
+                                    </archive>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

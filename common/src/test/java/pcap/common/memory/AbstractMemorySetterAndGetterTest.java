@@ -3,16 +3,16 @@ package pcap.common.memory;
 
 import org.junit.jupiter.api.Assertions;
 
-abstract class AbstractMemorySetterAndGetterTest extends BaseTest {
+public abstract class AbstractMemorySetterAndGetterTest extends BaseTest {
 
   private final boolean pooled;
   protected Memory memory;
 
-  AbstractMemorySetterAndGetterTest() {
+  protected AbstractMemorySetterAndGetterTest() {
     this.pooled = false;
   }
 
-  AbstractMemorySetterAndGetterTest(boolean pooled) {
+  protected AbstractMemorySetterAndGetterTest(boolean pooled) {
     this.pooled = pooled;
   }
 

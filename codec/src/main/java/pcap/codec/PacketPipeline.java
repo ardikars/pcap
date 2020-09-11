@@ -113,22 +113,31 @@ public interface PacketPipeline extends Iterable<PacketPipeline.PacketHandler> {
     @Override
     public Iterator<PacketHandler> iterator() {
       final AtomicReference<PacketHandlerContext> ctx = new AtomicReference<>(head);
-      return new Iterator<>() {
-        @Override
-        public boolean hasNext() {
-          return ctx.get() != null;
-        }
+      return new PacketHandlerIterator(ctx);
+    }
 
-        @Override
-        public PacketHandler next() {
-          if (!hasNext()) {
-            throw new NoSuchElementException("No more packet handler.");
-          }
-          PacketHandlerContext current = ctx.get();
-          ctx.set(ctx.get().next);
-          return current.handler;
+    private static class PacketHandlerIterator implements Iterator<PacketHandler> {
+
+      private final AtomicReference<PacketHandlerContext> ctx;
+
+      private PacketHandlerIterator(AtomicReference<PacketHandlerContext> ctx) {
+        this.ctx = ctx;
+      }
+
+      @Override
+      public boolean hasNext() {
+        return ctx.get() != null;
+      }
+
+      @Override
+      public PacketHandler next() {
+        if (!hasNext()) {
+          throw new NoSuchElementException("No more packet handler.");
         }
-      };
+        PacketHandlerContext current = ctx.get();
+        ctx.set(ctx.get().next);
+        return current.handler;
+      }
     }
 
     private static final class PacketHandlerContext {

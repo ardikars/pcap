@@ -1,16 +1,17 @@
-package pcap.common.memory;
+package pcap.common.memory.nio;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import pcap.common.memory.AbstractMemorySetterAndGetterTest;
+import pcap.common.memory.MemoryAllocator;
 
 @RunWith(JUnitPlatform.class)
-public class PooledDirectByteBufferSetterAndGetterTest extends AbstractMemorySetterAndGetterTest {
+public class HeapByteBufferSetterAndGetterTest extends AbstractMemorySetterAndGetterTest {
 
-  private final MemoryAllocator MEMORY_ALLOCATOR =
-      MemoryAllocator.create("NioPooledDirectMemoryAllocator", 1, 10, 50);
+  private final MemoryAllocator MEMORY_ALLOCATOR = MemoryAllocator.create("NioHeapMemoryAllocator");
 
   @Override
   protected MemoryAllocator memoryAllocator() {

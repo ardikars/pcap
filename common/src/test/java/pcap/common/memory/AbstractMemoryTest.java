@@ -5,16 +5,16 @@ import java.nio.ByteBuffer;
 import org.junit.jupiter.api.Assertions;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
-abstract class AbstractMemoryTest extends BaseTest {
+public abstract class AbstractMemoryTest extends BaseTest {
 
   private final boolean pooled;
   protected Memory memory;
 
-  AbstractMemoryTest() {
+  protected AbstractMemoryTest() {
     pooled = false;
   }
 
-  AbstractMemoryTest(boolean pooled) {
+  protected AbstractMemoryTest(boolean pooled) {
     this.pooled = pooled;
   }
 

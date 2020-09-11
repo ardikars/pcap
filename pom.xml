@@ -7,7 +7,7 @@
     <groupId>com.ardikars.pcap</groupId>
     <artifactId>pcap</artifactId>
     <packaging>pom</packaging>
-    <version>0.1.7</version>
+    <version>0.1.8</version>
 
     <modules>
         <module>spi</module>
@@ -53,10 +53,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>14</java.version>
-        <java.legacy.version>9</java.legacy.version>
+        <java.legacy.version>8</java.legacy.version>
         <jdk.version>${java.version}</jdk.version>
         <slf4j.version>1.7.30</slf4j.version>
         <log4j2.version>2.13.3</log4j2.version>
+        <jmh.version>1.25.2</jmh.version>
 
         <junit.jupiter.api.version>5.6.2</junit.jupiter.api.version>
         <junit.jupiter.engine.version>5.6.1</junit.jupiter.engine.version>
@@ -165,6 +166,18 @@
                 <version>${mockito.junit.jupiter.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-core</artifactId>
+                <version>${jmh.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-generator-annprocess</artifactId>
+                <version>${jmh.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -195,8 +208,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven.compiler.plugin.version}</version>
                     <configuration>
-                        <source>${jdk.version}</source>
-                        <target>${jdk.version}</target>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
                         <showDeprecation>true</showDeprecation>
                         <showWarnings>true</showWarnings>
                     </configuration>

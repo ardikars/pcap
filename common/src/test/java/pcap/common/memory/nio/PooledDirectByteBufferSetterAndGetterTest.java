@@ -1,16 +1,18 @@
-package pcap.common.memory;
+package pcap.common.memory.nio;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import pcap.common.memory.AbstractMemorySetterAndGetterTest;
+import pcap.common.memory.MemoryAllocator;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @RunWith(JUnitPlatform.class)
-public class HeapByteBufferWriterAndReaderTest extends AbstractMemoryWriterAndReaderTest {
+public class PooledDirectByteBufferSetterAndGetterTest extends AbstractMemorySetterAndGetterTest {
 
-  private final MemoryAllocator MEMORY_ALLOCATOR = MemoryAllocator.create("NioHeapMemoryAllocator");
+  private final MemoryAllocator MEMORY_ALLOCATOR =
+      MemoryAllocator.create("NioPooledDirectMemoryAllocator", 1, 10, 50);
 
   @Override
   protected MemoryAllocator memoryAllocator() {
@@ -55,7 +57,7 @@ public class HeapByteBufferWriterAndReaderTest extends AbstractMemoryWriterAndRe
 
   @Test
   @Override
-  public void shortLETest() {
+  public void shotLETest() {
     doShortLETest();
   }
 
@@ -133,19 +135,13 @@ public class HeapByteBufferWriterAndReaderTest extends AbstractMemoryWriterAndRe
 
   @Test
   @Override
-  public void writeBytesTest() {
-    doWriteBytesTest();
+  public void setBytesTest() {
+    doSetBytesTest();
   }
 
   @Test
   @Override
-  public void readBytesTest() {
-    doReadBytesTest();
-  }
-
-  @Test
-  @Override
-  public void writeReadCharSequaceTest() {
-    doWriteReadCharSequaceTest();
+  public void getBytesTest() {
+    doGetBytesTest();
   }
 }

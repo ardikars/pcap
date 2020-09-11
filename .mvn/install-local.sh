@@ -10,7 +10,7 @@ case "${unameOut}" in
 esac
 
 if [ "$machine" == "Linux" ]; then
-  export JAVA_HOME_LEGACY="/usr/lib/jvm/jdk-9"
+  export JAVA_HOME_LEGACY="/usr/lib/jvm/java-8-openjdk-amd64"
   export JAVA_HOME="/usr/lib/jvm/jdk-14"
 
   sudo setcap cap_net_raw,cap_net_admin=eip $JAVA_HOME_LEGACY/jre/bin/java

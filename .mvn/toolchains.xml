@@ -12,8 +12,8 @@
     <toolchain>
         <type>jdk</type>
         <provides>
-            <id>Java9</id>
-            <version>9</version>
+            <id>Java8</id>
+            <version>8</version>
         </provides>
         <configuration>
             <jdkHome>${env.JAVA_HOME_LEGACY}</jdkHome>

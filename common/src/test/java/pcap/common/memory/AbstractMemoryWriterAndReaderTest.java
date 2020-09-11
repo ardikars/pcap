@@ -4,16 +4,16 @@ package pcap.common.memory;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Assertions;
 
-abstract class AbstractMemoryWriterAndReaderTest extends BaseTest {
+public abstract class AbstractMemoryWriterAndReaderTest extends BaseTest {
 
   private final boolean pooled;
   protected Memory memory;
 
-  AbstractMemoryWriterAndReaderTest() {
+  protected AbstractMemoryWriterAndReaderTest() {
     this.pooled = false;
   }
 
-  AbstractMemoryWriterAndReaderTest(boolean pooled) {
+  protected AbstractMemoryWriterAndReaderTest(boolean pooled) {
     this.pooled = pooled;
   }
 
