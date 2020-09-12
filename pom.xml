@@ -71,6 +71,7 @@
         <nexus.staging.maven.plugin.version>1.6.8</nexus.staging.maven.plugin.version>
         <sonar.maven.plugin.version>3.7.0.1746</sonar.maven.plugin.version>
         <modulemaker-maven-plugin.version>1.7</modulemaker-maven-plugin.version>
+        <asm.version>8.0.1</asm.version>
 
         <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
         <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
@@ -223,7 +224,7 @@
                         <dependency>
                             <groupId>org.ow2.asm</groupId>
                             <artifactId>asm</artifactId>
-                            <version>8.0.1</version>
+                            <version>${asm.version}</version>
                         </dependency>
                     </dependencies>
                     <executions>

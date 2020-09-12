@@ -84,6 +84,7 @@
                 <groupId>codes.rafael.modulemaker</groupId>
                 <artifactId>modulemaker-maven-plugin</artifactId>
                 <configuration>
+                    <java-version>${jdk.version}</java-version>
                     <name>pcap.spi</name>
                     <multirelease>true</multirelease>
                     <packages>

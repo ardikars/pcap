@@ -16,6 +16,6 @@ image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap
 
 == About this project
 
-Provides high level JVM network packet processing library for rapid development.
+Provides JVM network packet processing library for rapid development.
 
 https://pcap.ardikars.com[*Documentation*]
