@@ -3,6 +3,7 @@ package pcap.codec;
 import java.util.Iterator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.codec.ethernet.Ethernet;
@@ -17,7 +18,7 @@ public class PacketPipelineTest {
 
   @Test
   public void addHandlerTest() {
-    PacketPipeline pipeline = PacketPipeline.pipeline();
+    PacketPipeline pipeline = PacketPipeline.Creator.create();
     pipeline.addLast(new Ip4Handler());
     pipeline.addFirst(new EthernetHandler());
     pipeline.addLast(new TcpHandler());
@@ -31,10 +32,16 @@ public class PacketPipelineTest {
 
   @Test
   public void addNonShareadbleHandlerTest() {
-    PacketPipeline pipeline = PacketPipeline.pipeline();
+    final PacketPipeline pipeline = PacketPipeline.Creator.create();
     pipeline.addFirst(new EthernetHandler());
     Assertions.assertThrows(
-        UnsupportedOperationException.class, () -> pipeline.addFirst(new EthernetHandler()));
+        UnsupportedOperationException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            pipeline.addFirst(new EthernetHandler());
+          }
+        });
   }
 
   @Test
@@ -42,14 +49,15 @@ public class PacketPipelineTest {
     final byte[] data =
         Hexs.parseHex(
             "8c8590c30b33ce9f7a7bd74e08004500002827194000fd0636a70378304dc0a82ba201bbdb948a599b5fe9edcc3350105290840a0000");
-    Memory memory = MemoryAllocator.create("NioDirectMemoryAllocator").allocate(data.length);
+    Memory memory =
+        MemoryAllocator.Creator.create("NioDirectMemoryAllocator").allocate(data.length);
     memory.writeBytes(data);
 
     DataLinkLayer.register(DataLinkLayer.EN10MB, new Ethernet.Builder());
     NetworkLayer.register(NetworkLayer.IPV4, new Ip4.Builder());
     TransportLayer.register(TransportLayer.TCP, new Tcp.Builder());
 
-    PacketPipeline pipeline = PacketPipeline.pipeline();
+    PacketPipeline pipeline = PacketPipeline.Creator.create();
     pipeline.addLast(new Ip4Handler());
     pipeline.addFirst(new EthernetHandler());
     pipeline.addLast(new TcpHandler());
@@ -58,7 +66,7 @@ public class PacketPipelineTest {
     pipeline.start(DataLinkLayer.EN10MB, memory);
   }
 
-  static class EthernetHandler implements PacketPipeline.PacketHandler<Ethernet> {
+  static class EthernetHandler extends PacketPipeline.AbstractPacketHandler<Ethernet> {
 
     @Override
     public void handle(Ethernet packet) {
@@ -71,7 +79,7 @@ public class PacketPipelineTest {
     }
   }
 
-  static class Ip4Handler implements PacketPipeline.PacketHandler<Ip4> {
+  static class Ip4Handler extends PacketPipeline.AbstractPacketHandler<Ip4> {
 
     @Override
     public void handle(Ip4 packet) {
@@ -85,7 +93,7 @@ public class PacketPipelineTest {
   }
 
   @PacketPipeline.PacketHandler.Sharable
-  static class TcpHandler implements PacketPipeline.PacketHandler<Tcp> {
+  static class TcpHandler extends PacketPipeline.AbstractPacketHandler<Tcp> {
 
     @Override
     public void handle(Tcp packet) {

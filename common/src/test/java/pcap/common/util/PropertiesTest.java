@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
@@ -28,8 +29,22 @@ public class PropertiesTest {
   @Test
   public void getPropertyTest() {
     Assertions.assertTrue(Properties.getProperty("jxnet").equals("jmalloc"));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> Properties.getProperty(null, ""));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> Properties.getProperty("", ""));
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Properties.getProperty(null, "");
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Properties.getProperty("", "");
+          }
+        });
   }
 
   @Test

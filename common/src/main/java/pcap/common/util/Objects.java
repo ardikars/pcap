@@ -11,6 +11,6 @@ public final class Objects {
   }
 
   public static boolean nonNull(Object object) {
-    return java.util.Objects.nonNull(object);
+    return object != null;
   }
 }

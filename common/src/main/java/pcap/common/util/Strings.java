@@ -46,9 +46,14 @@ public final class Strings {
     if (empty(charSequence)) {
       return true;
     }
-    return charSequence
-        .chars()
-        .allMatch(ch -> ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' || ch == '\0');
+    int length = charSequence.length();
+    for (int i = 0; i < length; i++) {
+      char ch = charSequence.charAt(i);
+      if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' || ch == '\0') {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

@@ -6,7 +6,7 @@
     <parent>
         <artifactId>pcap</artifactId>
         <groupId>com.ardikars.pcap</groupId>
-        <version>0.1.8</version>
+        <version>0.1.9</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -95,24 +95,44 @@
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>default-jar</id>
-                                <configuration>
-                                    <archive>
-                                        <manifest>
-                                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                        </manifest>
-                                        <manifestEntries>
-                                            <Automatic-Module-Name>pcap.codec</Automatic-Module-Name>
-                                        </manifestEntries>
-                                        <index>true</index>
-                                    </archive>
-                                </configuration>
-                            </execution>
-                        </executions>
+                        <groupId>codes.rafael.modulemaker</groupId>
+                        <artifactId>modulemaker-maven-plugin</artifactId>
+                        <configuration>
+                            <name>pcap.codec</name>
+                            <multirelease>true</multirelease>
+                            <packages>
+                                pcap.codec;
+                                pcap.codec.arp,
+                                pcap.codec.ethernet,
+                                pcap.codec.icmp,
+                                pcap.codec.icmp.icmp4,
+                                pcap.codec.icmp.icmp6,
+                                pcap.codec.ip,
+                                pcap.codec.ip.ip6,
+                                pcap.codec.ndp,
+                                pcap.codec.tcp,
+                                pcap.codec.udp
+                            </packages>
+                            <exports>
+                                pcap.codec,
+                                pcap.codec.arp,
+                                pcap.codec.ethernet,
+                                pcap.codec.icmp,
+                                pcap.codec.icmp.icmp4,
+                                pcap.codec.icmp.icmp6,
+                                pcap.codec.ip,
+                                pcap.codec.ip.ip6,
+                                pcap.codec.ndp,
+                                pcap.codec.tcp,
+                                pcap.codec.udp
+                            </exports>
+                            <requires>
+                                pcap.common
+                            </requires>
+                            <opens>
+                                pcap.codec.ip
+                            </opens>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

@@ -12,7 +12,7 @@ import pcap.common.memory.MemoryAllocator;
 public class DirectByteBufferSetterAndGetterTest extends AbstractMemorySetterAndGetterTest {
 
   private final MemoryAllocator MEMORY_ALLOCATOR =
-      MemoryAllocator.create("NioDirectMemoryAllocator");
+      MemoryAllocator.Creator.create("NioDirectMemoryAllocator");
 
   @Override
   protected MemoryAllocator memoryAllocator() {

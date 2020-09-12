@@ -3,6 +3,7 @@ package pcap.common.memory;
 
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.function.Executable;
 
 public abstract class AbstractMemoryWriterAndReaderTest extends BaseTest {
 
@@ -285,12 +286,23 @@ public abstract class AbstractMemoryWriterAndReaderTest extends BaseTest {
       assert dstMem.getByte(i) == DUMMY[i - 1];
     }
 
-    Memory finalDstMem = dstMem;
+    final Memory finalDstMem = dstMem;
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> memory.readBytes(finalDstMem, 1, -1));
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            memory.readBytes(finalDstMem, 1, -1);
+          }
+        });
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
-        () -> memory.readBytes(finalDstMem, 1, finalDstMem.capacity() - 1));
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            memory.readBytes(finalDstMem, 1, finalDstMem.capacity() - 1);
+          }
+        });
     doRelease(dstMem);
   }
 
@@ -299,12 +311,24 @@ public abstract class AbstractMemoryWriterAndReaderTest extends BaseTest {
   protected void doWriteReadCharSequaceTest() {
     String msg = "Need $?";
     int length = msg.length();
-    Memory.Charset charset = () -> StandardCharsets.UTF_8.name();
+    Memory.Charset charset =
+        new Memory.Charset() {
+          @Override
+          public String name() {
+            return StandardCharsets.UTF_8.name();
+          }
+        };
     memory.writeCharSequence(msg, charset);
     assert msg.equals(memory.readCharSequence(length, charset));
 
     memory.setIndex(0, 0);
-    charset = () -> StandardCharsets.US_ASCII.name();
+    charset =
+        new Memory.Charset() {
+          @Override
+          public String name() {
+            return StandardCharsets.US_ASCII.name();
+          }
+        };
     memory.writeCharSequence(msg, charset);
     assert msg.equals(memory.readCharSequence(length, charset));
   }

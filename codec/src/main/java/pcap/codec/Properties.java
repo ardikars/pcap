@@ -21,7 +21,7 @@ final class Properties {
 
   static {
     DIRECT_ALLOCATOR =
-        MemoryAllocator.create(
+        MemoryAllocator.Creator.create(
             "NioPooledDirectMemoryAllocator",
             DEFAULT_POOL_SIZE,
             DEFAULT_MAX_POOL_SIZE,

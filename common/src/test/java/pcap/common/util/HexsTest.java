@@ -3,6 +3,7 @@ package pcap.common.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
@@ -17,7 +18,14 @@ public class HexsTest extends BaseTest {
   public void parseHexToByteArray() {
     Assertions.assertArrayEquals(byteData, Hexs.parseHex("0a2b2d02ff"));
     Assertions.assertArrayEquals(byteData, Hexs.parseHex("0x0a2b2d02ff"));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> Hexs.parseHex("@"));
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Hexs.parseHex("@");
+          }
+        });
   }
 
   @Test

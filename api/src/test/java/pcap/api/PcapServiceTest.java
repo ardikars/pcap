@@ -22,35 +22,35 @@ public class PcapServiceTest {
 
   @Test
   public void loadServiceTest() throws ErrorException {
-    Service pcaps = Service.create(NAME);
+    Service pcaps = Service.Creator.create(NAME);
     Assertions.assertNotNull(pcaps);
-    Assertions.assertThrows(ErrorException.class, () -> Service.create("UnknownService"));
+    Assertions.assertThrows(ErrorException.class, () -> Service.Creator.create("UnknownService"));
   }
 
   @Test
   public void nameTest() throws ErrorException {
-    Service pcaps = Service.create(NAME);
+    Service pcaps = Service.Creator.create(NAME);
     Assertions.assertNotNull(pcaps);
     Assertions.assertEquals(NAME, pcaps.name());
   }
 
   @Test
   public void versionTest() throws ErrorException {
-    Service pcaps = Service.create(NAME);
+    Service pcaps = Service.Creator.create(NAME);
     Assertions.assertNotNull(pcaps);
     Assertions.assertNotNull(pcaps.version());
   }
 
   @Test
   public void lookupInterfacesTest() throws ErrorException {
-    Service pcaps = Service.create(NAME);
+    Service pcaps = Service.Creator.create(NAME);
     Assertions.assertNotNull(pcaps);
     Assertions.assertNotNull(pcaps.lookupInterfaces());
   }
 
   @Test
   public void lookupInterfaceByPredicate() throws ErrorException {
-    Service pcaps = Service.create(NAME);
+    Service pcaps = Service.Creator.create(NAME);
     Assertions.assertNotNull(pcaps);
     // non loopback
     Interface nonLoopback =
@@ -63,7 +63,7 @@ public class PcapServiceTest {
 
   @Test
   public void lookupInet4AddressTest() throws ErrorException {
-    Service pcaps = Service.create(NAME);
+    Service pcaps = Service.Creator.create(NAME);
     Assertions.assertNotNull(pcaps);
     try {
       Interface source = pcaps.lookupInterfaces();
@@ -80,7 +80,7 @@ public class PcapServiceTest {
 
   @Test
   public void lookupInet6AddressTest() throws ErrorException {
-    Service pcaps = Service.create(NAME);
+    Service pcaps = Service.Creator.create(NAME);
     Assertions.assertNotNull(pcaps);
     try {
       Interface source = pcaps.lookupInterfaces();
@@ -97,7 +97,7 @@ public class PcapServiceTest {
 
   @Test
   public void offlineTest() throws ErrorException {
-    Service pcaps = Service.create(NAME);
+    Service pcaps = Service.Creator.create(NAME);
     Assertions.assertNotNull(pcaps);
     PcapOfflineOptions options = new PcapOfflineOptions();
     Pcap pcap = pcaps.offline(FILE, options);
@@ -111,7 +111,7 @@ public class PcapServiceTest {
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
-    Service pcaps = Service.create(NAME);
+    Service pcaps = Service.Creator.create(NAME);
     Assertions.assertNotNull(pcaps);
     Interface source = loopbackInterface(pcaps);
     PcapLiveOptions options = new PcapLiveOptions();

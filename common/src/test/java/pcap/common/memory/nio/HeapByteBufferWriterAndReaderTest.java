@@ -12,7 +12,8 @@ import pcap.common.memory.MemoryAllocator;
 @RunWith(JUnitPlatform.class)
 public class HeapByteBufferWriterAndReaderTest extends AbstractMemoryWriterAndReaderTest {
 
-  private final MemoryAllocator MEMORY_ALLOCATOR = MemoryAllocator.create("NioHeapMemoryAllocator");
+  private final MemoryAllocator MEMORY_ALLOCATOR =
+      MemoryAllocator.Creator.create("NioHeapMemoryAllocator");
 
   @Override
   protected MemoryAllocator memoryAllocator() {

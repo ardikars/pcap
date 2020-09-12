@@ -3,6 +3,7 @@ package pcap.common.net;
 import java.net.UnknownHostException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
@@ -15,8 +16,21 @@ public class Inet6AddressTest {
     Assertions.assertNotNull(Inet6Address.valueOf("929e:c5c9:8487:978d:4fb3::"));
     Assertions.assertNotNull(Inet6Address.valueOf("64:ff9b::192.0.2.128"));
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> Inet6Address.valueOf("afjksdflssfdsfsdf"));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> Inet6Address.valueOf("1"));
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Inet6Address.valueOf("afjksdflssfdsfsdf");
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Inet6Address.valueOf("1");
+          }
+        });
   }
 
   @Test

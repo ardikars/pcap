@@ -9,8 +9,11 @@ import pcap.common.memory.Memory;
 
 public interface PacketPipeline extends Iterable<PacketPipeline.PacketHandler> {
 
-  static PacketPipeline pipeline() {
-    return new DefaultPacketPipeline();
+  class Creator {
+
+    public static PacketPipeline create() {
+      return new DefaultPacketPipeline();
+    }
   }
 
   PacketPipeline addFirst(PacketHandler handler);
@@ -19,16 +22,24 @@ public interface PacketPipeline extends Iterable<PacketPipeline.PacketHandler> {
 
   void start(DataLinkLayer type, Memory buffer);
 
+  abstract class AbstractPacketHandler<T extends Packet> implements PacketHandler<T> {
+
+    @Override
+    public void doHandle(T packet) {
+      final List<T> packets = packet.get(type());
+      if (packets != null && !packets.isEmpty()) {
+        for (int i = 0; i < packets.size(); i++) {
+          handle(packets.get(i));
+        }
+      }
+    }
+  }
+
   interface PacketHandler<T extends Packet> {
 
     void handle(T packet);
 
-    default void doHandle(T packet) {
-      final List<T> packets = packet.get(type());
-      if (packets != null && !packets.isEmpty()) {
-        packets.forEach(pkt -> handle(pkt));
-      }
-    }
+    void doHandle(T packet);
 
     Class<T> type();
 

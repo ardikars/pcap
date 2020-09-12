@@ -17,14 +17,14 @@ public class ByteOrderTest {
 
   @Test
   public void defaultByteOrderTest() {
-    Memory memory = MemoryAllocator.create("NioDirectMemoryAllocator").allocate(4);
+    Memory memory = MemoryAllocator.Creator.create("NioDirectMemoryAllocator").allocate(4);
     Assertions.assertEquals(Memory.ByteOrder.BIG_ENDIAN, memory.byteOrder());
     memory.release();
   }
 
   @Test
   public void changeByteOrderTest() {
-    Memory memory = MemoryAllocator.create("NioDirectMemoryAllocator").allocate(4);
+    Memory memory = MemoryAllocator.Creator.create("NioDirectMemoryAllocator").allocate(4);
     Assertions.assertEquals(Memory.ByteOrder.BIG_ENDIAN, memory.byteOrder());
     memory.byteOrder(Memory.ByteOrder.LITTLE_ENDIAN);
     Assertions.assertEquals(Memory.ByteOrder.LITTLE_ENDIAN, memory.byteOrder());

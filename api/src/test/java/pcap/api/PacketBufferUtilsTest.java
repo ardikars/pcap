@@ -29,7 +29,7 @@ public class PacketBufferUtilsTest {
   @Test
   public void fromMemoryTest() {
     ByteBuffer buffer = ByteBuffer.allocateDirect(8);
-    Memory memory = MemoryAllocator.create("NioDirectMemoryAllocator").wrap(buffer);
+    Memory memory = MemoryAllocator.Creator.create("NioDirectMemoryAllocator").wrap(buffer);
     PacketBuffer packetBuffer = PacketBufferUtils.fromMemory(memory);
     Assertions.assertNotNull(packetBuffer);
     memory.release();
@@ -38,7 +38,7 @@ public class PacketBufferUtilsTest {
   @Test
   public void fromMemoryNegativeTest() {
     ByteBuffer buffer = ByteBuffer.allocate(8);
-    Memory memory = MemoryAllocator.create("NioHeapMemoryAllocator").wrap(buffer);
+    Memory memory = MemoryAllocator.Creator.create("NioHeapMemoryAllocator").wrap(buffer);
     Assertions.assertThrows(
         IllegalArgumentException.class, () -> PacketBufferUtils.fromMemory(memory));
   }

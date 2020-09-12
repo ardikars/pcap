@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
@@ -51,9 +52,22 @@ public class MessageFormatterTest {
 
   @Test
   public void trimmedCopyTest() {
-    Assertions.assertThrows(IllegalStateException.class, () -> MessageFormatter.trimmedCopy(null));
     Assertions.assertThrows(
-        IllegalStateException.class, () -> MessageFormatter.trimmedCopy(new Object[0]));
+        IllegalStateException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            MessageFormatter.trimmedCopy(null);
+          }
+        });
+    Assertions.assertThrows(
+        IllegalStateException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            MessageFormatter.trimmedCopy(new Object[0]);
+          }
+        });
     Assertions.assertNotNull(MessageFormatter.trimmedCopy(new Object[] {new RuntimeException()}));
   }
 

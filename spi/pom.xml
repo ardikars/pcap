@@ -6,7 +6,7 @@
     <parent>
         <artifactId>pcap</artifactId>
         <groupId>com.ardikars.pcap</groupId>
-        <version>0.1.8</version>
+        <version>0.1.9</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -90,24 +90,37 @@
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>default-jar</id>
-                                <configuration>
-                                    <archive>
-                                        <manifest>
-                                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                        </manifest>
-                                        <manifestEntries>
-                                            <Automatic-Module-Name>pcap.spi</Automatic-Module-Name>
-                                        </manifestEntries>
-                                        <index>true</index>
-                                    </archive>
-                                </configuration>
-                            </execution>
-                        </executions>
+                        <groupId>codes.rafael.modulemaker</groupId>
+                        <artifactId>modulemaker-maven-plugin</artifactId>
+                        <configuration>
+                            <name>pcap.spi</name>
+                            <multirelease>true</multirelease>
+                            <packages>
+                                pcap.spi,
+                                pcap.spi.exception,
+                                pcap.spi.exception.warn,
+                                pcap.spi.exception.error
+                            </packages>
+                            <exports>
+                                pcap.spi,
+                                pcap.spi.exception,
+                                pcap.spi.exception.warn,
+                                pcap.spi.exception.error
+                            </exports>
+                            <uses>
+                                pcap.spi.Service
+                            </uses>
+                            <provides>
+                                <provide>
+                                    <services>
+                                        pcap.spi.Service
+                                    </services>
+                                    <providers>
+                                        pcap.spi.Service.NoService
+                                    </providers>
+                                </provide>
+                            </provides>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

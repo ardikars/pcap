@@ -6,7 +6,7 @@
     <parent>
         <artifactId>pcap</artifactId>
         <groupId>com.ardikars.pcap</groupId>
-        <version>0.1.8</version>
+        <version>0.1.9</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -103,24 +103,50 @@
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>default-jar</id>
-                                <configuration>
-                                    <archive>
-                                        <manifest>
-                                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                        </manifest>
-                                        <manifestEntries>
-                                            <Automatic-Module-Name>pcap.common</Automatic-Module-Name>
-                                        </manifestEntries>
-                                        <index>true</index>
-                                    </archive>
-                                </configuration>
-                            </execution>
-                        </executions>
+                        <groupId>codes.rafael.modulemaker</groupId>
+                        <artifactId>modulemaker-maven-plugin</artifactId>
+                        <configuration>
+                            <name>pcap.common</name>
+                            <multirelease>true</multirelease>
+                            <packages>
+                                pcap.common;
+                                pcap.common.annotation,
+                                pcap.common.logging,
+                                pcap.common.memory,
+                                pcap.common.memory.internal,
+                                pcap.common.memory.internal.nio,
+                                pcap.common.net,
+                                pcap.common.util
+                            </packages>
+                            <exports>
+                                pcap.common,
+                                pcap.common.annotation,
+                                pcap.common.logging,
+                                pcap.common.memory,
+                                pcap.common.net,
+                                pcap.common.util
+                            </exports>
+                            <static-requires>
+                                org.apache.logging.log4j,
+                                org.slf4j
+                            </static-requires>
+                            <uses>
+                                pcap.common.memory.MemoryAllocator
+                            </uses>
+                            <provides>
+                                <provide>
+                                    <services>
+                                        pcap.common.memory.MemoryAllocator
+                                    </services>
+                                    <providers>
+                                        pcap.common.memory.internal.nio.allocator.DirectMemoryAllocator,
+                                        pcap.common.memory.internal.nio.allocator.HeapMemoryAllocator,
+                                        pcap.common.memory.internal.nio.allocator.PooledDirectByteBufferAllocator,
+                                        pcap.common.memory.internal.nio.allocator.PooledHeapByteBufferAllocator;
+                                    </providers>
+                                </provide>
+                            </provides>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

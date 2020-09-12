@@ -3,6 +3,7 @@ package pcap.codec.ip;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.codec.BaseTest;
@@ -61,12 +62,19 @@ class Ip6Test extends BaseTest {
     Assertions.assertEquals(header, headerFromBuffer);
 
     buffer.release(); // don't forget to release the buffer to the pool
-    Memory noCopyBuffer =
+    final Memory noCopyBuffer =
         headerFromBuffer
             .buffer(); // this buffer is unuseabale because it's already released to the pool.
     Assertions.assertEquals(buffer.capacity(), noCopyBuffer.capacity());
     Assertions.assertEquals(buffer.maxCapacity(), noCopyBuffer.maxCapacity());
-    Assertions.assertThrows(IllegalStateException.class, () -> noCopyBuffer.release());
+    Assertions.assertThrows(
+        IllegalStateException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            noCopyBuffer.release();
+          }
+        });
   }
 
   @Test
@@ -94,7 +102,14 @@ class Ip6Test extends BaseTest {
     Assertions.assertTrue(buffer.release()); // release buffer to the pool
     Assertions.assertEquals(mutate.buffer().capacity(), mutated.buffer().capacity());
     Assertions.assertEquals(mutate.buffer().maxCapacity(), mutated.buffer().maxCapacity());
-    Assertions.assertThrows(IllegalStateException.class, () -> mutate.buffer().release());
+    Assertions.assertThrows(
+        IllegalStateException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            mutate.buffer().release();
+          }
+        });
   }
 
   @AfterEach

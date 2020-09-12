@@ -10,32 +10,36 @@ import pcap.common.annotation.Inclubating;
 @Inclubating
 public interface MemoryAllocator {
 
-  static MemoryAllocator create(String name) {
-    ServiceLoader<MemoryAllocator> loader = ServiceLoader.load(MemoryAllocator.class);
-    Iterator<MemoryAllocator> iterator = loader.iterator();
-    while (iterator.hasNext()) {
-      MemoryAllocator service = iterator.next();
-      if (service.name().equals(name)
-          && !(service instanceof AbstractMemoryAllocator.AbstractPooledMemoryAllocator)) {
-        return service;
-      }
-    }
-    throw new IllegalArgumentException("No memory allocator implementation for (" + name + ").");
-  }
+  class Creator {
 
-  static MemoryAllocator create(String name, int poolSize, int maxPoolSize, long maxCapacity) {
-    ServiceLoader<MemoryAllocator> loader = ServiceLoader.load(MemoryAllocator.class);
-    Iterator<MemoryAllocator> iterator = loader.iterator();
-    while (iterator.hasNext()) {
-      MemoryAllocator service = iterator.next();
-      if (service.name().equals(name)
-          && service instanceof AbstractMemoryAllocator.AbstractPooledMemoryAllocator) {
-        ((AbstractMemoryAllocator.AbstractPooledMemoryAllocator) service)
-            .create(poolSize, maxPoolSize, maxCapacity);
-        return service;
+    public static MemoryAllocator create(String name) {
+      ServiceLoader<MemoryAllocator> loader = ServiceLoader.load(MemoryAllocator.class);
+      Iterator<MemoryAllocator> iterator = loader.iterator();
+      while (iterator.hasNext()) {
+        MemoryAllocator service = iterator.next();
+        if (service.name().equals(name)
+            && !(service instanceof AbstractMemoryAllocator.AbstractPooledMemoryAllocator)) {
+          return service;
+        }
       }
+      throw new IllegalArgumentException("No memory allocator implementation for (" + name + ").");
     }
-    throw new IllegalArgumentException("No memory allocator implementation for (" + name + ").");
+
+    public static MemoryAllocator create(
+        String name, int poolSize, int maxPoolSize, long maxCapacity) {
+      ServiceLoader<MemoryAllocator> loader = ServiceLoader.load(MemoryAllocator.class);
+      Iterator<MemoryAllocator> iterator = loader.iterator();
+      while (iterator.hasNext()) {
+        MemoryAllocator service = iterator.next();
+        if (service.name().equals(name)
+            && service instanceof AbstractMemoryAllocator.AbstractPooledMemoryAllocator) {
+          ((AbstractMemoryAllocator.AbstractPooledMemoryAllocator) service)
+              .create(poolSize, maxPoolSize, maxCapacity);
+          return service;
+        }
+      }
+      throw new IllegalArgumentException("No memory allocator implementation for (" + name + ").");
+    }
   }
 
   String name();

@@ -3,6 +3,7 @@ package pcap.common.memory;
 
 import java.nio.ByteBuffer;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.function.Executable;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 public abstract class AbstractMemoryTest extends BaseTest {
@@ -27,23 +28,39 @@ public abstract class AbstractMemoryTest extends BaseTest {
   public abstract void checkIndexTest();
 
   protected void doCheckIndexTest() {
-    AbstractMemory abstractMemory = (AbstractMemory) memory;
+    final AbstractMemory abstractMemory = (AbstractMemory) memory;
     abstractMemory.checkIndex(0, 1);
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
-        () -> abstractMemory.checkIndex(0, abstractMemory.capacity() + BYTE_SIZE));
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            abstractMemory.checkIndex(0, abstractMemory.capacity() + BYTE_SIZE);
+          }
+        });
   }
 
   public abstract void checkNewCapacityTest();
 
   protected void doCheckNewCapacityTest() {
-    AbstractMemory abstractMemory = (AbstractMemory) memory;
+    final AbstractMemory abstractMemory = (AbstractMemory) memory;
     abstractMemory.checkNewCapacity(1);
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> abstractMemory.checkNewCapacity(-1));
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            abstractMemory.checkNewCapacity(-1);
+          }
+        });
     Assertions.assertThrows(
         IllegalArgumentException.class,
-        () -> abstractMemory.checkNewCapacity(abstractMemory.maxCapacity + BYTE_SIZE));
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            abstractMemory.checkNewCapacity(abstractMemory.maxCapacity + BYTE_SIZE);
+          }
+        });
   }
 
   public abstract void capacityAndMaxCapacityTest();
@@ -66,15 +83,40 @@ public abstract class AbstractMemoryTest extends BaseTest {
     Assertions.assertEquals(BYTE_SIZE / BIT_SIZE, memory.writerIndex());
     Assertions.assertEquals(BYTE_SIZE / BIT_SIZE, memory.readerIndex());
 
-    Assertions.assertThrows(IndexOutOfBoundsException.class, () -> memory.readerIndex(-1));
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            memory.readerIndex(-1);
+          }
+        });
     memory.writerIndex(BYTE_SIZE);
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
-        () -> memory.readerIndex(memory.writerIndex() + BYTE_SIZE));
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            memory.readerIndex(memory.writerIndex() + BYTE_SIZE);
+          }
+        });
 
-    Assertions.assertThrows(IndexOutOfBoundsException.class, () -> memory.writerIndex(-1));
     Assertions.assertThrows(
-        IndexOutOfBoundsException.class, () -> memory.writerIndex(memory.capacity() + BYTE_SIZE));
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            memory.writerIndex(-1);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            memory.writerIndex(memory.capacity() + BYTE_SIZE);
+          }
+        });
   }
 
   public abstract void setIndexTest();
@@ -83,12 +125,30 @@ public abstract class AbstractMemoryTest extends BaseTest {
     memory.setIndex(0, 0);
     Assertions.assertEquals(0, memory.writerIndex());
     Assertions.assertEquals(0, memory.readerIndex());
-    Assertions.assertThrows(IndexOutOfBoundsException.class, () -> memory.setIndex(-1, 0));
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class, () -> memory.setIndex(BYTE_SIZE + BYTE_SIZE, BYTE_SIZE));
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
-        () -> memory.setIndex(BYTE_SIZE, memory.capacity() + BYTE_SIZE));
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            memory.setIndex(-1, 0);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            memory.setIndex(BYTE_SIZE + BYTE_SIZE, BYTE_SIZE);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            memory.setIndex(BYTE_SIZE, memory.capacity() + BYTE_SIZE);
+          }
+        });
   }
 
   public abstract void isReadableTest();
@@ -155,10 +215,23 @@ public abstract class AbstractMemoryTest extends BaseTest {
 
   protected void doEnsureWritableTest() {
     Assertions.assertNotNull(memory.ensureWritable(1L));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> memory.ensureWritable(-1));
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            memory.ensureWritable(-1);
+          }
+        });
     memory.writeByte(1);
     Assertions.assertThrows(
-        IndexOutOfBoundsException.class, () -> memory.ensureWritable(memory.capacity()));
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            memory.ensureWritable(memory.capacity());
+          }
+        });
   }
 
   public abstract void skipBytesTest();

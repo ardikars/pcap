@@ -468,7 +468,7 @@ public class ByteBufBenchmark {
 
     @Setup(Level.Invocation)
     public void setUp() {
-      memory = MemoryAllocator.create("NioDirectMemoryAllocator").allocate(iterations);
+      memory = MemoryAllocator.Creator.create("NioDirectMemoryAllocator").allocate(iterations);
     }
   }
 }

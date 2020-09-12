@@ -43,7 +43,8 @@ public final class PooledDirectByteBufferAllocator
             writerIndex,
             Integer.MAX_VALUE));
     ByteBuffer buffer = ByteBuffer.allocateDirect((int) maxMemoryCapacity & Integer.MAX_VALUE);
-    return new WeakReference<>(
+
+    Memory.Pooled pooled =
         new PooledDirectByteBuffer(
             ID_GERERATOR_UPDATER.incrementAndGet(this),
             this,
@@ -52,6 +53,7 @@ public final class PooledDirectByteBufferAllocator
             (int) capacity & Integer.MAX_VALUE,
             (int) maxMemoryCapacity & Integer.MAX_VALUE,
             (int) readerIndex & Integer.MAX_VALUE,
-            (int) writerIndex & Integer.MAX_VALUE));
+            (int) writerIndex & Integer.MAX_VALUE);
+    return new WeakReference<>(pooled);
   }
 }

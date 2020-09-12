@@ -2,6 +2,7 @@ package pcap.common.net;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
@@ -10,19 +11,51 @@ public class Inet4AddressTest {
 
   @Test
   public void valueOfStringTest() {
-    String valid = "10.14.204.25";
-    String inValidLength = "10.14.204";
-    String inValidNumber = "10.14.204.03";
-    String inValidTooLargeNumber = "10.14.204.257";
+    final String valid = "10.14.204.25";
+    final String inValidLength = "10.14.204";
+    final String inValidNumber = "10.14.204.03";
+    final String inValidTooLargeNumber = "10.14.204.257";
     Assertions.assertNotNull(Inet4Address.valueOf(valid));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> Inet4Address.valueOf(""));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> Inet4Address.valueOf("19216811"));
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> Inet4Address.valueOf(inValidLength));
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Inet4Address.valueOf("");
+          }
+        });
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> Inet4Address.valueOf(inValidNumber));
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Inet4Address.valueOf("19216811");
+          }
+        });
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> Inet4Address.valueOf(inValidTooLargeNumber));
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Inet4Address.valueOf(inValidLength);
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Inet4Address.valueOf(inValidNumber);
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Inet4Address.valueOf(inValidTooLargeNumber);
+          }
+        });
   }
 
   @Test
@@ -31,7 +64,13 @@ public class Inet4AddressTest {
         Inet4Address.LOCALHOST, Inet4Address.valueOf(new byte[] {127, 0, 0, 1}));
     Assertions.assertEquals(Inet4Address.ZERO, Inet4Address.valueOf(new byte[] {0, 0, 0, 0}));
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> Inet4Address.valueOf(new byte[] {127, 0, 1}));
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Inet4Address.valueOf(new byte[] {127, 0, 1});
+          }
+        });
   }
 
   @Test

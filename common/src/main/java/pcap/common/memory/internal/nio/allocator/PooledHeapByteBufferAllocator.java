@@ -43,7 +43,8 @@ public final class PooledHeapByteBufferAllocator
             writerIndex,
             Integer.MAX_VALUE));
     ByteBuffer buffer = ByteBuffer.allocate((int) maxMemoryCapacity & Integer.MAX_VALUE);
-    return new WeakReference<>(
+
+    Memory.Pooled pooled =
         new PooledHeapByteBuffer(
             ID_GERERATOR_UPDATER.incrementAndGet(this),
             this,
@@ -52,6 +53,7 @@ public final class PooledHeapByteBufferAllocator
             (int) capacity & Integer.MAX_VALUE,
             (int) maxMemoryCapacity & Integer.MAX_VALUE,
             (int) readerIndex & Integer.MAX_VALUE,
-            (int) writerIndex & Integer.MAX_VALUE));
+            (int) writerIndex & Integer.MAX_VALUE);
+    return new WeakReference<>(pooled);
   }
 }

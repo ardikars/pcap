@@ -12,7 +12,7 @@ import pcap.common.memory.MemoryAllocator;
 public class PooledDirectByteBufferSetterAndGetterTest extends AbstractMemorySetterAndGetterTest {
 
   private final MemoryAllocator MEMORY_ALLOCATOR =
-      MemoryAllocator.create("NioPooledDirectMemoryAllocator", 1, 10, 50);
+      MemoryAllocator.Creator.create("NioPooledDirectMemoryAllocator", 1, 10, 50);
 
   @Override
   protected MemoryAllocator memoryAllocator() {

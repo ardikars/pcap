@@ -3,6 +3,7 @@ package pcap.codec.udp;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.codec.BaseTest;
@@ -36,7 +37,7 @@ public class UdpTest extends BaseTest {
   public void checksumTest() {
     Ethernet ethernet =
         Ethernet.newPacket(
-            MemoryAllocator.create("NioHeapMemoryAllocator")
+            MemoryAllocator.Creator.create("NioHeapMemoryAllocator")
                 .wrap(
                     Hexs.parseHex(
                         "00090f090014e86f38393dbf080045000051349800004011ce2a0a0e4c730a0e174b97d30035003d807a8c710120000100000000000108617264696b61727303636f6d0000010001000029100000000000000c000a0008e1113ba1c6eb7772")));
@@ -55,7 +56,7 @@ public class UdpTest extends BaseTest {
             .payload(
                 new UnknownPacket.Builder()
                     .build(
-                        MemoryAllocator.create("NioHeapMemoryAllocator")
+                        MemoryAllocator.Creator.create("NioHeapMemoryAllocator")
                             .wrap(
                                 Hexs.parseHex(
                                     "8c710120000100000000000108617264696b61727303636f6d0000010001000029100000000000000c000a0008e1113ba1c6eb7772"))))
@@ -97,12 +98,19 @@ public class UdpTest extends BaseTest {
     Assertions.assertEquals(header, headerFromBuffer);
 
     buffer.release(); // don't forget to release the buffer to the pool
-    Memory noCopyBuffer =
+    final Memory noCopyBuffer =
         headerFromBuffer
             .buffer(); // this buffer is unuseabale because it's already released to the pool.
     Assertions.assertEquals(buffer.capacity(), noCopyBuffer.capacity());
     Assertions.assertEquals(buffer.maxCapacity(), noCopyBuffer.maxCapacity());
-    Assertions.assertThrows(IllegalStateException.class, () -> noCopyBuffer.release());
+    Assertions.assertThrows(
+        IllegalStateException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            noCopyBuffer.release();
+          }
+        });
   }
 
   @Test
@@ -110,7 +118,7 @@ public class UdpTest extends BaseTest {
     final Udp pkt = build();
     final Memory buffer = pkt.buffer();
 
-    Udp mutate =
+    final Udp mutate =
         Udp.newPacket(buffer)
             .builder()
             .calculateChecksum(
@@ -129,7 +137,14 @@ public class UdpTest extends BaseTest {
     Assertions.assertTrue(buffer.release()); // release buffer to the pool
     Assertions.assertEquals(mutate.buffer().capacity(), mutated.buffer().capacity());
     Assertions.assertEquals(mutate.buffer().maxCapacity(), mutated.buffer().maxCapacity());
-    Assertions.assertThrows(IllegalStateException.class, () -> mutate.buffer().release());
+    Assertions.assertThrows(
+        IllegalStateException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            mutate.buffer().release();
+          }
+        });
   }
 
   @Test

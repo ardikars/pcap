@@ -21,7 +21,15 @@ public class LoggerFactoryTest {
   // @Test
   public void sl4jLoggerTest() {
     try (MockedStatic<Slf4jLoggerFactory> theMock = Mockito.mockStatic(Slf4jLoggerFactory.class)) {
-      theMock.when(Slf4jLoggerFactory::hasSlf4j).thenReturn(true);
+      theMock
+          .when(
+              new MockedStatic.Verification() {
+                @Override
+                public void apply() throws Throwable {
+                  Slf4jLoggerFactory.hasSlf4j();
+                }
+              })
+          .thenReturn(true);
       Assertions.assertTrue(Slf4jLoggerFactory.hasSlf4j());
       Assertions.assertTrue(
           LoggerFactory.getLogger(LoggerFactory.class.getSimpleName()) instanceof Slf4jLogger);
@@ -33,7 +41,15 @@ public class LoggerFactoryTest {
   // @Test
   public void log4j2LoggerTest() {
     try (MockedStatic<Slf4jLoggerFactory> theMock = Mockito.mockStatic(Slf4jLoggerFactory.class)) {
-      theMock.when(Slf4jLoggerFactory::hasSlf4j).thenReturn(false);
+      theMock
+          .when(
+              new MockedStatic.Verification() {
+                @Override
+                public void apply() throws Throwable {
+                  Slf4jLoggerFactory.hasSlf4j();
+                }
+              })
+          .thenReturn(false);
       Assertions.assertFalse(Slf4jLoggerFactory.hasSlf4j());
       Assertions.assertTrue(
           LoggerFactory.getLogger(LoggerFactory.class.getSimpleName()) instanceof Log4j2Logger);
@@ -48,8 +64,24 @@ public class LoggerFactoryTest {
         Mockito.mockStatic(Slf4jLoggerFactory.class)) {
       try (MockedStatic<Log4j2LoggerFactory> log4j2Mock =
           Mockito.mockStatic(Log4j2LoggerFactory.class)) {
-        slf4jMock.when(Slf4jLoggerFactory::hasSlf4j).thenReturn(false);
-        log4j2Mock.when(Log4j2LoggerFactory::hasLog4j2).thenReturn(false);
+        slf4jMock
+            .when(
+                new MockedStatic.Verification() {
+                  @Override
+                  public void apply() throws Throwable {
+                    Slf4jLoggerFactory.hasSlf4j();
+                  }
+                })
+            .thenReturn(false);
+        log4j2Mock
+            .when(
+                new MockedStatic.Verification() {
+                  @Override
+                  public void apply() throws Throwable {
+                    Log4j2LoggerFactory.hasLog4j2();
+                  }
+                })
+            .thenReturn(false);
         Assertions.assertFalse(Slf4jLoggerFactory.hasSlf4j());
         Assertions.assertFalse(Log4j2LoggerFactory.hasLog4j2());
         Assertions.assertTrue(

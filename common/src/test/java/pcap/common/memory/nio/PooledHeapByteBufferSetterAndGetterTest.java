@@ -12,7 +12,7 @@ import pcap.common.memory.MemoryAllocator;
 public class PooledHeapByteBufferSetterAndGetterTest extends AbstractMemorySetterAndGetterTest {
 
   private final MemoryAllocator MEMORY_ALLOCATOR =
-      MemoryAllocator.create("NioPooledHeapMemoryAllocator", 1, 10, 50);
+      MemoryAllocator.Creator.create("NioPooledHeapMemoryAllocator", 1, 10, 50);
 
   @Override
   protected MemoryAllocator memoryAllocator() {

@@ -3,6 +3,7 @@ package pcap.spi.exception.error;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
@@ -19,8 +20,11 @@ public class PermissionDeniedExceptionTest {
   public void throwExceptionTest() {
     Assertions.assertThrows(
         PermissionDeniedException.class,
-        () -> {
-          throw new PermissionDeniedException("throwing exception.");
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            throw new PermissionDeniedException("throwing exception.");
+          }
         });
   }
 }

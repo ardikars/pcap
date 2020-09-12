@@ -2,6 +2,7 @@
 package pcap.common.memory;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.function.Executable;
 
 public abstract class AbstractMemorySetterAndGetterTest extends BaseTest {
 
@@ -212,7 +213,7 @@ public abstract class AbstractMemorySetterAndGetterTest extends BaseTest {
     for (int i = 1; i < DUMMY.length - 2; i++) {
       assert memory.getByte(i) == DUMMY[i];
     }
-    Memory srcMem = memoryAllocator().allocate(DUMMY.length);
+    final Memory srcMem = memoryAllocator().allocate(DUMMY.length);
     srcMem.setBytes(0, DUMMY);
     memory.setBytes(0, srcMem);
     for (int i = 0; i < DUMMY.length; i++) {
@@ -228,10 +229,21 @@ public abstract class AbstractMemorySetterAndGetterTest extends BaseTest {
       assert memory.getByte(i) == srcMem.getByte(i);
     }
     Assertions.assertThrows(
-        NullPointerException.class, () -> memory.setBytes(1, null, DUMMY.length - 1));
+        NullPointerException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            memory.setBytes(1, null, DUMMY.length - 1);
+          }
+        });
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
-        () -> memory.setBytes(1, srcMem, srcMem.readableBytes() + BYTE_SIZE));
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            memory.setBytes(1, srcMem, srcMem.readableBytes() + BYTE_SIZE);
+          }
+        });
   }
 
   public abstract void getBytesTest();

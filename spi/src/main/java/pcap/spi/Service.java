@@ -17,23 +17,26 @@ import pcap.spi.exception.error.*;
  */
 public interface Service {
 
-  /**
-   * Create {@link Service} provider inctance.
-   *
-   * @param name service name.
-   * @return returns new {@link Service} instance.
-   * @throws ErrorException service provider is not found for given type.
-   */
-  static Service create(String name) throws ErrorException {
-    ServiceLoader<Service> loader = ServiceLoader.load(Service.class);
-    Iterator<Service> iterator = loader.iterator();
-    while (iterator.hasNext()) {
-      Service service = iterator.next();
-      if (service.name().equals(name)) {
-        return service;
+  class Creator {
+
+    /**
+     * Create {@link Service} provider inctance.
+     *
+     * @param name service name.
+     * @return returns new {@link Service} instance.
+     * @throws ErrorException service provider is not found for given type.
+     */
+    public static Service create(String name) throws ErrorException {
+      ServiceLoader<Service> loader = ServiceLoader.load(Service.class);
+      Iterator<Service> iterator = loader.iterator();
+      while (iterator.hasNext()) {
+        Service service = iterator.next();
+        if (service.name().equals(name)) {
+          return service;
+        }
       }
+      throw new ErrorException("No service provider implementation for (" + name + ").");
     }
-    throw new ErrorException("No service provider implementation for (" + name + ").");
   }
 
   /**

@@ -3,6 +3,7 @@ package pcap.codec.tcp;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.codec.BaseTest;
@@ -36,7 +37,7 @@ public class TcpTest extends BaseTest {
   public void checksumTest() {
     Ethernet ethernet =
         Ethernet.newPacket(
-            MemoryAllocator.create("NioHeapMemoryAllocator")
+            MemoryAllocator.Creator.create("NioHeapMemoryAllocator")
                 .wrap(
                     Hexs.parseHex(
                         "8c8590c30b33d80d17269cee08004500005baa7f00007406c82c4a7dc85ec0a8006d01bbc82f394d0f5bf373184d80180108991a00000101080ad9dec62025cbc8a917030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8")));
@@ -61,7 +62,7 @@ public class TcpTest extends BaseTest {
             .payload(
                 new UnknownPacket.Builder()
                     .build(
-                        MemoryAllocator.create("NioHeapMemoryAllocator")
+                        MemoryAllocator.Creator.create("NioHeapMemoryAllocator")
                             .wrap(
                                 Hexs.parseHex(
                                     "17030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8"))))
@@ -86,7 +87,7 @@ public class TcpTest extends BaseTest {
             .payload(
                 new UnknownPacket.Builder()
                     .build(
-                        MemoryAllocator.create("NioHeapMemoryAllocator")
+                        MemoryAllocator.Creator.create("NioHeapMemoryAllocator")
                             .wrap(
                                 Hexs.parseHex(
                                     "17030300220bfb2d3a2359d8377ec9e3a76cf063d4c1dbd4fdbbe8df9327b448f0f64b22e48af8"))))
@@ -110,12 +111,19 @@ public class TcpTest extends BaseTest {
     Assertions.assertEquals(header, headerFromBuffer);
 
     buffer.release(); // don't forget to release the buffer to the pool
-    Memory noCopyBuffer =
+    final Memory noCopyBuffer =
         headerFromBuffer
             .buffer(); // this buffer is unuseabale because it's already released to the pool.
     Assertions.assertEquals(buffer.capacity(), noCopyBuffer.capacity());
     Assertions.assertEquals(buffer.maxCapacity(), noCopyBuffer.maxCapacity());
-    Assertions.assertThrows(IllegalStateException.class, () -> noCopyBuffer.release());
+    Assertions.assertThrows(
+        IllegalStateException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            noCopyBuffer.release();
+          }
+        });
   }
 
   @Test
@@ -123,7 +131,7 @@ public class TcpTest extends BaseTest {
     final Tcp pkt = build();
     final Memory buffer = pkt.buffer();
 
-    Tcp mutate =
+    final Tcp mutate =
         Tcp.newPacket(buffer)
             .builder()
             .windowsSize(349)
@@ -144,7 +152,14 @@ public class TcpTest extends BaseTest {
     Assertions.assertTrue(buffer.release()); // release buffer to the pool
     Assertions.assertEquals(mutate.buffer().capacity(), mutated.buffer().capacity());
     Assertions.assertEquals(mutate.buffer().maxCapacity(), mutated.buffer().maxCapacity());
-    Assertions.assertThrows(IllegalStateException.class, () -> mutate.buffer().release());
+    Assertions.assertThrows(
+        IllegalStateException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            mutate.buffer().release();
+          }
+        });
   }
 
   @Test

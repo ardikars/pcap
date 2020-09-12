@@ -14,7 +14,7 @@ public class InterfaceUtilsTest {
 
   @Test
   public void lookupHardwareAddressTest() throws ErrorException {
-    Service pcaps = Service.create("PcapService");
+    Service pcaps = Service.Creator.create("PcapService");
     Assertions.assertNotNull(pcaps);
     try {
       // non loopback

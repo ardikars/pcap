@@ -40,7 +40,7 @@ public abstract class AbstractPacket implements Packet {
     Iterator<Packet> iterator = this.iterator();
     while (iterator.hasNext()) {
       Packet packet = iterator.next();
-      if (clazz.isInstance(packet)) {
+      if (clazz.isInstance(packet) && clazz.isAssignableFrom(packet.getClass())) {
         packets.add(packet);
       }
     }
@@ -52,7 +52,7 @@ public abstract class AbstractPacket implements Packet {
     final PacketIterator iterator = this.iterator();
     while (iterator.hasNext()) {
       Packet packet = iterator.next();
-      if (packet.getClass().isAssignableFrom(clazz)) {
+      if (clazz.isInstance(packet) && packet.getClass().isAssignableFrom(clazz)) {
         return (T) packet;
       }
     }
@@ -65,7 +65,7 @@ public abstract class AbstractPacket implements Packet {
     Packet packet = null;
     while (iterator.hasNext()) {
       packet = iterator.next();
-      if (packet.getClass().isAssignableFrom(clazz)) {
+      if (clazz.isInstance(packet) && packet.getClass().isAssignableFrom(clazz)) {
         return (T) packet;
       }
     }

@@ -4,6 +4,7 @@ package pcap.common.util;
 import java.nio.charset.Charset;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
@@ -153,17 +154,50 @@ public class StringsTest extends BaseTest {
 
   @Test
   public void stringToHexString() {
-    String NULL = null;
+    final String NULL = null;
     Assertions.assertEquals("526f636b2054686520506172747921", Strings.hex(stringData));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> Strings.hex(""));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> Strings.hex(NULL));
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Strings.hex("");
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Strings.hex(NULL);
+          }
+        });
     Assertions.assertEquals(
         "526f636b2054686520506172747921", Strings.hex(stringData, Charset.defaultCharset()));
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> Strings.hex("", Charset.defaultCharset()));
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Strings.hex("", Charset.defaultCharset());
+          }
+        });
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> Strings.hex(NULL, Charset.defaultCharset()));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> Strings.hex(stringData, null));
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Strings.hex(NULL, Charset.defaultCharset());
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Strings.hex(stringData, null);
+          }
+        });
   }
 
   @Test
@@ -197,8 +231,19 @@ public class StringsTest extends BaseTest {
     Assertions.assertEquals("{\"a\":1}", Strings.toStringJsonBuilder().add("a", 1).toString());
     Assertions.assertThrows(
         IllegalArgumentException.class,
-        () -> Strings.toStringBuilder(this).add(null, "").toString());
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Strings.toStringBuilder(StringsTest.this).add(null, "").toString();
+          }
+        });
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> Strings.toStringBuilder(this).add("", "").toString());
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Strings.toStringBuilder(StringsTest.this).add("", "").toString();
+          }
+        });
   }
 }

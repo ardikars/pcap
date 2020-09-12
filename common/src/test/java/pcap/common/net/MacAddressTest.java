@@ -3,6 +3,7 @@ package pcap.common.net;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
@@ -39,12 +40,46 @@ public class MacAddressTest {
 
   @Test
   public void invalidMacAddressTest() {
-    Assertions.assertThrows(IllegalArgumentException.class, () -> MacAddress.valueOf(new byte[0]));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> MacAddress.valueOf(-1));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> MacAddress.valueOf(""));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> MacAddress.valueOf("23423d.."));
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> MacAddress.valueOf("de:ad:be:ef:c0"));
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            MacAddress.valueOf(new byte[0]);
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            MacAddress.valueOf(-1);
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            MacAddress.valueOf("");
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            MacAddress.valueOf("23423d..");
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            MacAddress.valueOf("de:ad:be:ef:c0");
+          }
+        });
     Assertions.assertFalse(MacAddress.isValidAddress("##%DF234"));
   }
 
@@ -67,14 +102,34 @@ public class MacAddressTest {
 
   @Test
   public void buildNegativeTest() {
-    Assertions.assertThrows(IllegalArgumentException.class, () -> MacAddress.valueOf("zzz"));
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> MacAddress.valueOf("00:01:01:01:01:01:01"));
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            MacAddress.valueOf("zzz");
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            MacAddress.valueOf("00:01:01:01:01:01:01");
+          }
+        });
   }
 
   @Test
   public void validAddressNegativeTest() {
-    Assertions.assertThrows(IllegalArgumentException.class, () -> MacAddress.isValidAddress(""));
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            MacAddress.isValidAddress("");
+          }
+        });
   }
 
   @Test
@@ -87,7 +142,13 @@ public class MacAddressTest {
     MacAddress.Oui.register(oui);
     Assertions.assertNotNull(oui);
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> new MacAddress.Oui(16777216, "Random"));
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            new MacAddress.Oui(16777216, "Random");
+          }
+        });
   }
 
   @Test
