@@ -3,6 +3,7 @@ package pcap.codec;
 
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.MemoryAllocator;
+import pcap.common.memory.exception.NoSuchMemoryAllocatorException;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -20,12 +21,16 @@ final class Properties {
   static final MemoryAllocator DIRECT_ALLOCATOR;
 
   static {
-    DIRECT_ALLOCATOR =
-        MemoryAllocator.Creator.create(
-            "NioPooledDirectMemoryAllocator",
-            DEFAULT_POOL_SIZE,
-            DEFAULT_MAX_POOL_SIZE,
-            DEFAULT_MEMORY_POOL_CAPACITY);
+    try {
+      DIRECT_ALLOCATOR =
+          MemoryAllocator.Creator.create(
+              "NioPooledDirectMemoryAllocator",
+              DEFAULT_POOL_SIZE,
+              DEFAULT_MAX_POOL_SIZE,
+              DEFAULT_MEMORY_POOL_CAPACITY);
+    } catch (NoSuchMemoryAllocatorException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private Properties() {}

@@ -7,12 +7,20 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.common.memory.AbstractMemorySetterAndGetterTest;
 import pcap.common.memory.MemoryAllocator;
+import pcap.common.memory.exception.NoSuchMemoryAllocatorException;
 
 @RunWith(JUnitPlatform.class)
 public class HeapByteBufferSetterAndGetterTest extends AbstractMemorySetterAndGetterTest {
 
-  private final MemoryAllocator MEMORY_ALLOCATOR =
-      MemoryAllocator.Creator.create("NioHeapMemoryAllocator");
+  private final MemoryAllocator MEMORY_ALLOCATOR;
+
+  {
+    try {
+      MEMORY_ALLOCATOR = MemoryAllocator.Creator.create("NioHeapMemoryAllocator");
+    } catch (NoSuchMemoryAllocatorException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   @Override
   protected MemoryAllocator memoryAllocator() {

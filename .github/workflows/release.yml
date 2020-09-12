@@ -55,4 +55,4 @@ jobs:
           export JAVA_HOME=/usr/local/jvm/panama
           echo "JAVA_HOME_LEGACY = $JAVA_HOME_LEGACY"
           echo "JAVA_HOME = $JAVA_HOME"
-          ./mvnw -B -t .mvn/toolchains.xml -s .mvn/release-settings.xml deploy -Prelease -Plegacy-support -DskipTests
+          ./mvnw -B -t .mvn/toolchains.xml -s .mvn/release-settings.xml deploy -Pformat -Pjavadoc -Plegacy-support -Prelease -DskipTests

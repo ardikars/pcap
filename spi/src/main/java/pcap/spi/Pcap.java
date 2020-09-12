@@ -135,6 +135,7 @@ public interface Pcap extends AutoCloseable {
    * @param size the number of bytes in the packet.
    * @throws ErrorException generic error.
    */
+  @Deprecated
   void send(PacketBuffer directBuffer, int size) throws ErrorException;
 
   /**

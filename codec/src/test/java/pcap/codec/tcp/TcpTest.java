@@ -12,6 +12,7 @@ import pcap.codec.ethernet.Ethernet;
 import pcap.codec.ip.Ip4;
 import pcap.common.memory.Memory;
 import pcap.common.memory.MemoryAllocator;
+import pcap.common.memory.exception.NoSuchMemoryAllocatorException;
 import pcap.common.memory.internal.nio.PooledDirectByteBuffer;
 import pcap.common.net.Inet4Address;
 import pcap.common.util.Hexs;
@@ -34,7 +35,7 @@ public class TcpTest extends BaseTest {
   }
 
   @Test
-  public void checksumTest() {
+  public void checksumTest() throws NoSuchMemoryAllocatorException {
     Ethernet ethernet =
         Ethernet.newPacket(
             MemoryAllocator.Creator.create("NioHeapMemoryAllocator")
@@ -72,7 +73,7 @@ public class TcpTest extends BaseTest {
     Assertions.assertEquals(tcp.header().checksum(), newTcp.header().checksum());
   }
 
-  private Tcp build() {
+  private Tcp build() throws NoSuchMemoryAllocatorException {
     final Tcp.Builder builder =
         new Tcp.Builder()
             .sourcePort(399)
@@ -97,7 +98,7 @@ public class TcpTest extends BaseTest {
   }
 
   @Test
-  public void buildTest() {
+  public void buildTest() throws NoSuchMemoryAllocatorException {
     final Tcp pkt = build();
     final Memory buffer = pkt.buffer();
 
@@ -127,7 +128,7 @@ public class TcpTest extends BaseTest {
   }
 
   @Test
-  public void mutateBuffer() {
+  public void mutateBuffer() throws NoSuchMemoryAllocatorException {
     final Tcp pkt = build();
     final Memory buffer = pkt.buffer();
 
@@ -163,7 +164,7 @@ public class TcpTest extends BaseTest {
   }
 
   @Test
-  public void toStringTest() {
+  public void toStringTest() throws NoSuchMemoryAllocatorException {
     Assertions.assertNotNull(build().toString());
   }
 

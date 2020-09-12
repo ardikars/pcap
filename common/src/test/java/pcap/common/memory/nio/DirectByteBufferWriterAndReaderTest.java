@@ -7,13 +7,21 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.common.memory.AbstractMemoryWriterAndReaderTest;
 import pcap.common.memory.MemoryAllocator;
+import pcap.common.memory.exception.NoSuchMemoryAllocatorException;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @RunWith(JUnitPlatform.class)
 public class DirectByteBufferWriterAndReaderTest extends AbstractMemoryWriterAndReaderTest {
 
-  private final MemoryAllocator MEMORY_ALLOCATOR =
-      MemoryAllocator.Creator.create("NioDirectMemoryAllocator");
+  private final MemoryAllocator MEMORY_ALLOCATOR;
+
+  {
+    try {
+      MEMORY_ALLOCATOR = MemoryAllocator.Creator.create("NioDirectMemoryAllocator");
+    } catch (NoSuchMemoryAllocatorException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   @Override
   protected MemoryAllocator memoryAllocator() {

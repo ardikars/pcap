@@ -11,6 +11,7 @@ import pcap.codec.ip.Ip4;
 import pcap.codec.tcp.Tcp;
 import pcap.common.memory.Memory;
 import pcap.common.memory.MemoryAllocator;
+import pcap.common.memory.exception.NoSuchMemoryAllocatorException;
 import pcap.common.util.Hexs;
 
 @RunWith(JUnitPlatform.class)
@@ -45,7 +46,7 @@ public class PacketPipelineTest {
   }
 
   @Test
-  public void startPipelineTest() {
+  public void startPipelineTest() throws NoSuchMemoryAllocatorException {
     final byte[] data =
         Hexs.parseHex(
             "8c8590c30b33ce9f7a7bd74e08004500002827194000fd0636a70378304dc0a82ba201bbdb948a599b5fe9edcc3350105290840a0000");

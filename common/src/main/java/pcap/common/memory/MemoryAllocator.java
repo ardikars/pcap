@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 import pcap.common.annotation.Inclubating;
+import pcap.common.memory.exception.NoSuchMemoryAllocatorException;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
 @Inclubating
@@ -12,7 +13,7 @@ public interface MemoryAllocator {
 
   class Creator {
 
-    public static MemoryAllocator create(String name) {
+    public static MemoryAllocator create(String name) throws NoSuchMemoryAllocatorException {
       ServiceLoader<MemoryAllocator> loader = ServiceLoader.load(MemoryAllocator.class);
       Iterator<MemoryAllocator> iterator = loader.iterator();
       while (iterator.hasNext()) {
@@ -22,11 +23,13 @@ public interface MemoryAllocator {
           return service;
         }
       }
-      throw new IllegalArgumentException("No memory allocator implementation for (" + name + ").");
+      throw new NoSuchMemoryAllocatorException(
+          "No memory allocator implementation for (" + name + ").");
     }
 
     public static MemoryAllocator create(
-        String name, int poolSize, int maxPoolSize, long maxCapacity) {
+        String name, int poolSize, int maxPoolSize, long maxCapacity)
+        throws NoSuchMemoryAllocatorException {
       ServiceLoader<MemoryAllocator> loader = ServiceLoader.load(MemoryAllocator.class);
       Iterator<MemoryAllocator> iterator = loader.iterator();
       while (iterator.hasNext()) {
@@ -38,7 +41,8 @@ public interface MemoryAllocator {
           return service;
         }
       }
-      throw new IllegalArgumentException("No memory allocator implementation for (" + name + ").");
+      throw new NoSuchMemoryAllocatorException(
+          "No memory allocator implementation for (" + name + ").");
     }
   }
 

@@ -187,16 +187,16 @@ public interface Service {
     LiveOptions rfmon(boolean rfmon);
 
     /**
-     * Get timeout options.
+     * Get read timeout options in millisecond.
      *
-     * @return returns timeout options.
+     * @return returns read timeout in millisecond.
      */
     int timeout();
 
     /**
-     * Set timeout options.
+     * Set read timeout options in millisecond.
      *
-     * @param timeout timeout options.
+     * @param timeout read timeout in millisecond .
      * @return returns this instance.
      */
     LiveOptions timeout(int timeout);

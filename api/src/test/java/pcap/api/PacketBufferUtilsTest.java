@@ -7,6 +7,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.common.memory.Memory;
 import pcap.common.memory.MemoryAllocator;
+import pcap.common.memory.exception.NoSuchMemoryAllocatorException;
 import pcap.spi.PacketBuffer;
 
 @RunWith(JUnitPlatform.class)
@@ -27,7 +28,7 @@ public class PacketBufferUtilsTest {
   }
 
   @Test
-  public void fromMemoryTest() {
+  public void fromMemoryTest() throws NoSuchMemoryAllocatorException {
     ByteBuffer buffer = ByteBuffer.allocateDirect(8);
     Memory memory = MemoryAllocator.Creator.create("NioDirectMemoryAllocator").wrap(buffer);
     PacketBuffer packetBuffer = PacketBufferUtils.fromMemory(memory);
@@ -36,7 +37,7 @@ public class PacketBufferUtilsTest {
   }
 
   @Test
-  public void fromMemoryNegativeTest() {
+  public void fromMemoryNegativeTest() throws NoSuchMemoryAllocatorException {
     ByteBuffer buffer = ByteBuffer.allocate(8);
     Memory memory = MemoryAllocator.Creator.create("NioHeapMemoryAllocator").wrap(buffer);
     Assertions.assertThrows(

@@ -7,7 +7,7 @@
     <groupId>com.ardikars.pcap</groupId>
     <artifactId>pcap</artifactId>
     <packaging>pom</packaging>
-    <version>0.1.9</version>
+    <version>0.1.10</version>
 
     <modules>
         <module>spi</module>
@@ -405,6 +405,9 @@
     <profiles>
         <profile>
             <id>format</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -440,9 +443,6 @@
 
         <profile>
             <id>sonar</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <sonar.host.url>https://sonarcloud.io/</sonar.host.url>
                 <sonar.organization>ardikars</sonar.organization>
@@ -451,6 +451,9 @@
 
         <profile>
             <id>javadoc</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <plugins>
                     <plugin>

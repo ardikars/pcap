@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import pcap.common.memory.exception.NoSuchMemoryAllocatorException;
 
 @RunWith(JUnitPlatform.class)
 public class MemoryAllocatorTest {
@@ -13,7 +14,7 @@ public class MemoryAllocatorTest {
   @Test
   public void noMemoryAllocatorTest() {
     Assertions.assertThrows(
-        IllegalArgumentException.class,
+        NoSuchMemoryAllocatorException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
@@ -21,7 +22,7 @@ public class MemoryAllocatorTest {
           }
         });
     Assertions.assertThrows(
-        IllegalArgumentException.class,
+        NoSuchMemoryAllocatorException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
@@ -31,14 +32,14 @@ public class MemoryAllocatorTest {
   }
 
   @Test
-  public void nioDirectMemoryAllocatorTest() {
+  public void nioDirectMemoryAllocatorTest() throws NoSuchMemoryAllocatorException {
     final byte[] value = new byte[] {0, 1, 2, 4};
     final MemoryAllocator allocator = MemoryAllocator.Creator.create("NioDirectMemoryAllocator");
     final MemoryAllocator pooladAllocator =
         MemoryAllocator.Creator.create("NioPooledDirectMemoryAllocator", 5, 10, 8);
 
     Assertions.assertThrows(
-        IllegalArgumentException.class,
+        NoSuchMemoryAllocatorException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
@@ -46,7 +47,7 @@ public class MemoryAllocatorTest {
           }
         });
     Assertions.assertThrows(
-        IllegalArgumentException.class,
+        NoSuchMemoryAllocatorException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
@@ -196,7 +197,7 @@ public class MemoryAllocatorTest {
   }
 
   @Test
-  public void nioPooledDirectMemoryAllocatorTest() {
+  public void nioPooledDirectMemoryAllocatorTest() throws NoSuchMemoryAllocatorException {
     final MemoryAllocator pooladAllocator =
         MemoryAllocator.Creator.create("NioPooledDirectMemoryAllocator", 1, 2, 4);
     final MemoryAllocator pooladAllocator2 =

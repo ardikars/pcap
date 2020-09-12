@@ -3,6 +3,7 @@ package pcap.tests;
 import org.openjdk.jmh.annotations.*;
 import pcap.common.memory.Memory;
 import pcap.common.memory.MemoryAllocator;
+import pcap.common.memory.exception.NoSuchMemoryAllocatorException;
 
 public class ByteBufBenchmark {
 
@@ -467,7 +468,7 @@ public class ByteBufBenchmark {
     public Memory memory;
 
     @Setup(Level.Invocation)
-    public void setUp() {
+    public void setUp() throws NoSuchMemoryAllocatorException {
       memory = MemoryAllocator.Creator.create("NioDirectMemoryAllocator").allocate(iterations);
     }
   }
