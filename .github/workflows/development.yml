@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ['macos-10.15', 'ubuntu-16.04']
-        java: [7]
+        java: [8]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/cache@v2
@@ -97,7 +97,7 @@ jobs:
           echo "JAVA_HOME = $JAVA_HOME"
           ping 127.0.0.1 &
           PID=$!
-          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat -Pjavadoc -Plegacy-support
+          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat -Plegacy-support
           kill $PID
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

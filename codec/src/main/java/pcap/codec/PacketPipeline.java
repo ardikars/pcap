@@ -149,6 +149,11 @@ public interface PacketPipeline extends Iterable<PacketPipeline.PacketHandler> {
         ctx.set(ctx.get().next);
         return current.handler;
       }
+
+      @Override
+      public void remove() {
+        throw new UnsupportedOperationException();
+      }
     }
 
     private static final class PacketHandlerContext {

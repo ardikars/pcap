@@ -5,7 +5,6 @@ import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.util.Iterator;
 import java.util.ServiceLoader;
-import java.util.function.Predicate;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 
@@ -60,15 +59,6 @@ public interface Service {
    * @throws ErrorException generic error.
    */
   Interface lookupInterfaces() throws ErrorException;
-
-  /**
-   * Find interface by flags.
-   *
-   * @param preicate filter.
-   * @return returns {@link Interface}.
-   * @throws ErrorException interface not found.
-   */
-  Interface lookupInterfaces(Predicate<Interface> preicate) throws ErrorException;
 
   /**
    * Lookup {@link Inet4Address} from {@link Interface}.
@@ -276,11 +266,6 @@ public interface Service {
 
     @Override
     public Interface lookupInterfaces() throws ErrorException {
-      throw new ErrorException("No API implementation.");
-    }
-
-    @Override
-    public Interface lookupInterfaces(Predicate<Interface> preicate) throws ErrorException {
       throw new ErrorException("No API implementation.");
     }
 

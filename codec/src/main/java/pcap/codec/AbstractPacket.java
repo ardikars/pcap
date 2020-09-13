@@ -3,8 +3,6 @@ package pcap.codec;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import pcap.common.annotation.Inclubating;
 import pcap.common.memory.Memory;
 import pcap.common.memory.MemoryAllocator;
@@ -77,25 +75,9 @@ public abstract class AbstractPacket implements Packet {
     return new PacketIterator(this);
   }
 
-  @Override
-  public void forEach(Consumer<? super Packet> action) throws NullPointerException {
-    PacketIterator iterator = iterator();
-    while (iterator.hasNext()) {
-      try {
-        action.accept(iterator.next());
-      } catch (Exception e) {
-        // do nothing
-      }
-    }
-  }
-
   public abstract Builder builder();
 
   public abstract Memory buffer();
-
-  public <T extends Packet, R extends Packet> R map(Function<T, R> function) {
-    return function.apply((T) this);
-  }
 
   public <T extends Packet> List<T> collectList() {
     List<T> list = new ArrayList<>();

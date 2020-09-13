@@ -29,4 +29,9 @@ class PacketIterator implements Iterator<Packet> {
     next = next.payload();
     return previous;
   }
+
+  @Override
+  public void remove() {
+    throw new UnsupportedOperationException();
+  }
 }

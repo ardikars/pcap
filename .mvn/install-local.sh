@@ -22,4 +22,4 @@ fi
 
 export PATH=$JAVA_HOME/bin:$PATH
 
-./mvnw -t .mvn/toolchains.xml clean install jacoco:report-aggregate -Pcoverage -Pformat -Pjavadoc -Plegacy-support
+./mvnw -t .mvn/toolchains.xml clean install jacoco:report-aggregate -Pcoverage -Pformat -Plegacy-support

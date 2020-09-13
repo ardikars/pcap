@@ -7,9 +7,6 @@ import java.foreign.memory.Pointer;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.Predicate;
 import pcap.api.internal.foreign.mapping.PcapMapping;
 import pcap.api.internal.foreign.pcap_header;
 import pcap.api.internal.util.Platforms;
@@ -62,32 +59,6 @@ public class PcapService implements Service {
         return devices;
       }
     }
-  }
-
-  @Override
-  public Interface lookupInterfaces(Predicate<Interface> predicate) throws ErrorException {
-    List<Interface> collections = new LinkedList<>();
-    Interface interfaces = lookupInterfaces();
-    Iterator<Interface> interfaceIterator = interfaces.iterator();
-    while (interfaceIterator.hasNext()) {
-      Interface next = interfaceIterator.next();
-      if (predicate.test(next)) {
-        collections.add(next);
-      }
-    }
-    if (collections.isEmpty()) {
-      throw new ErrorException("Interface not found");
-    }
-    PcapInterface pcapInterface;
-    Iterator<Interface> iterator = collections.iterator();
-    pcapInterface = (PcapInterface) iterator.next();
-    pcapInterface.next = null;
-    while (iterator.hasNext()) {
-      PcapInterface next = (PcapInterface) iterator.next();
-      next.next = null;
-      pcapInterface.next = next;
-    }
-    return pcapInterface;
   }
 
   @Override
