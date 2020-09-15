@@ -67,7 +67,7 @@
         <mockito.junit.jupiter.version>3.5.10</mockito.junit.jupiter.version>
 
         <fmt.maven.plugin.version>2.9</fmt.maven.plugin.version>
-        <jacoco.maven.plugin.version>0.8.5</jacoco.maven.plugin.version>
+        <jacoco.maven.plugin.version>0.8.6</jacoco.maven.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.8</nexus.staging.maven.plugin.version>
         <sonar.maven.plugin.version>3.7.0.1746</sonar.maven.plugin.version>
         <modulemaker-maven-plugin.version>1.7</modulemaker-maven-plugin.version>
