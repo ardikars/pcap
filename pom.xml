@@ -14,6 +14,7 @@
         <module>common</module>
         <module>codec</module>
         <module>api</module>
+        <module>api-jdk7</module>
         <module>tests</module>
     </modules>
 
@@ -52,8 +53,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>14</java.version>
-        <java.legacy.version>1.7</java.legacy.version>
+        <java.version>1.8</java.version>
+        <java.legacy.version>1.8</java.legacy.version>
         <jdk.version>${java.version}</jdk.version>
         <slf4j.version>1.7.30</slf4j.version>
         <log4j2.version>2.13.3</log4j2.version>
@@ -157,6 +158,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>pcap-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>pcap-api-jdk7</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -62,6 +62,8 @@ public interface Pcap extends AutoCloseable {
   /**
    * Reads the next packet and returns a success/failure indication.
    *
+   * <p>Deprecated: use {@link Pcap#nextEx(PacketHeader, PacketBuffer)} instead.
+   *
    * @param packetBuffer packet buffer.
    * @param packetHeader packet header.
    * @throws BreakException there are no more packets to read from `savefile`.
@@ -74,7 +76,21 @@ public interface Pcap extends AutoCloseable {
       throws BreakException, TimeoutException, ErrorException;
 
   /**
-   * processes packets from a live capture or {@code PcapLive} until cnt packets are processed, the
+   * Reads the next packet and returns a success/failure indication.
+   *
+   * @param packetHeader packet header.
+   * @param packetBuffer packet buffer.
+   * @throws BreakException there are no more packets to read from `savefile`.
+   * @throws TimeoutException if packets are being read from a `live capture` and the packet buffer
+   *     timeout expired.
+   * @throws ErrorException generic exception.
+   * @since 1.0.0
+   */
+  void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
+      throws BreakException, TimeoutException, ErrorException;
+
+  /**
+   * Processes packets from a live capture or {@code PcapLive} until cnt packets are processed, the
    * end of the current bufferful of packets is reached when doing a live capture, the end of the
    * {@code 'savefile'} is reached when reading from a {@code 'savefile'}, {@code Pcap#breakLoop()}
    * is called, or an error occurs. Thus, when doing a live capture, cnt is the maximum number of
@@ -113,11 +129,27 @@ public interface Pcap extends AutoCloseable {
    * <p>Supported only on live captures, not on {@code PcapOffline}; no statistics are stored in
    * {@code PcapOffline} so no statistics are available when reading from a {@code PcapOffline}
    *
-   * @return returns {@link Status} on success.
+   * @return returns {@link Statistics} on success.
    * @throws ErrorException There is an error or if this {@link Pcap} doesn't support packet
    *     statistics.
    * @since 1.0.0
    */
+  Statistics stats() throws ErrorException;
+
+  /**
+   * Represent packet statistics from the start of the run to the time of the call.
+   *
+   * <p>Supported only on live captures, not on {@code PcapOffline}; no statistics are stored in
+   * {@code PcapOffline} so no statistics are available when reading from a {@code PcapOffline}
+   *
+   * <p>Deprecated: Use {@link Pcap#stats()} instead.
+   *
+   * @return returns {@link Statistics} on success.
+   * @throws ErrorException There is an error or if this {@link Pcap} doesn't support packet
+   *     statistics.
+   * @since 1.0.0
+   */
+  @Deprecated
   Status status() throws ErrorException;
 
   /**
@@ -136,7 +168,26 @@ public interface Pcap extends AutoCloseable {
    * @throws ErrorException generic error.
    */
   @Deprecated
+  void sendPacket(PacketBuffer directBuffer, int size) throws ErrorException;
+
+  /**
+   * Deprecated: Use {@link Pcap#sendPacket(PacketBuffer)} instead.
+   *
+   * @param directBuffer direct buffer.
+   * @param size size.
+   * @throws ErrorException error exception.
+   */
+  @Deprecated
   void send(PacketBuffer directBuffer, int size) throws ErrorException;
+
+  /**
+   * Deprecated: Use {@link Pcap#sendPacket(PacketBuffer)} instead.
+   *
+   * @param directBuffer direct buffer.
+   * @throws ErrorException error exception.
+   */
+  @Deprecated
+  void send(PacketBuffer directBuffer) throws ErrorException;
 
   /**
    * Send a raw packet through the network interface.
@@ -145,7 +196,7 @@ public interface Pcap extends AutoCloseable {
    *     PacketBuffer#writerIndex()}.
    * @throws ErrorException generic error.
    */
-  void send(PacketBuffer directBuffer) throws ErrorException;
+  void sendPacket(PacketBuffer directBuffer) throws ErrorException;
 
   /**
    * Used to specify a direction that packets will be captured. This method isn't necessarily fully
@@ -193,6 +244,13 @@ public interface Pcap extends AutoCloseable {
    * @return returns minor version of a 'savefile'.
    */
   int minorVersion();
+
+  /**
+   * Get snapshot length.
+   *
+   * @return returns snapshot length.
+   */
+  int snapshot();
 
   /**
    * Returns blocking mode. Always returns false if a {@link Pcap} handle in offline handle

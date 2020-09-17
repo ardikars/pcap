@@ -37,8 +37,12 @@ public class StringsTest extends BaseTest {
 
   @Test
   public void blankTest() {
+    Assertions.assertTrue(Strings.blank(" "));
     Assertions.assertTrue(Strings.blank(null));
-    Assertions.assertTrue(Strings.blank("\t\r\n\0 "));
+    Assertions.assertTrue(Strings.blank("\t "));
+    Assertions.assertTrue(Strings.blank("\r "));
+    Assertions.assertTrue(Strings.blank("\n "));
+    Assertions.assertTrue(Strings.blank("\0 "));
     Assertions.assertEquals("OK", Strings.blank(null, "OK"));
     Assertions.assertEquals("OK", Strings.blank("\t\r\n\0 ", "OK"));
     Assertions.assertEquals("YES", Strings.blank("YES", "OK"));

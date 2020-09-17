@@ -36,23 +36,6 @@ jobs:
           java-version: ${{ matrix.java }}
           architecture: x64
 
-      - name: actions/setup-panama
-        run: |
-          sudo mkdir -p /usr/local/jvm
-          sudo chown -R $(whoami) /usr/local/jvm
-          ./.github/scripts/install-jdk.sh -f panama -w /tmp -t /usr/local/jvm/panama -v
-        if: matrix.os == 'macos-10.15'
-
-      - name: actions/setup-panama
-        run: |
-          sudo mkdir -p /usr/local/jvm
-          sudo chown -R $(whoami) /usr/local/jvm
-          ./.github/scripts/install-jdk.sh -f panama -w /tmp -t /usr/local/jvm/panama -v
-          sudo find /usr/local/jvm/panama/lib/ -iname "libjli*"
-          sudo cp /usr/local/jvm/panama/lib/libjli*.so /usr/lib
-        if: matrix.os == 'ubuntu-16.04'
-
-
       - name: actions/setup-pcap
         run: |
           sudo find /usr/lib/ -iname "libpcap*"
@@ -64,8 +47,10 @@ jobs:
       - name: actions/setup-pcap
         run: |
           sudo apt-get update && sudo apt-get -y install libpcap0.8 libcap2-bin
-          sudo setcap cap_net_raw,cap_net_admin=eip /usr/local/jvm/panama/bin/java
-          sudo find /usr/lib/ -iname "libpcap*"
+          sudo setcap cap_net_raw,cap_net_admin=eip $JAVA_HOME/bin/java
+          find /usr/lib/ -iname "libpcap*"
+          find $JAVA_HOME/ -iname "libjli*"
+          sudo cp $JAVA_HOME/lib/amd64/jli/libjli*.so /usr/lib
           sudo ln -s /usr/lib/x86_64-linux-gnu/libpcap.so.0.8 /usr/lib/libpcap.so
         if: matrix.os == 'ubuntu-16.04'
 
@@ -77,13 +62,13 @@ jobs:
 
       - name: Build (Mac OS)
         run: |
+          export JAVA_HOME=${JAVA_HOME}
           export JAVA_HOME_LEGACY=${JAVA_HOME}
-          export JAVA_HOME=/usr/local/jvm/panama
-          echo "JAVA_HOME_LEGACY = $JAVA_HOME_LEGACY"
           echo "JAVA_HOME = $JAVA_HOME"
+          echo "JAVA_HOME_LEGACY = $JAVA_HOME_LEGACY"
           ping 127.0.0.1 &
           PID=$!
-          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Pformat -Psonar -Pjavadoc -Plegacy-support -Dsonar.login="${{ secrets.sonar_token }}"
+          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Pformat -Psonar -Plegacy-support -Dsonar.login="${{ secrets.sonar_token }}"
           kill $PID
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -91,10 +76,10 @@ jobs:
 
       - name: Build (Ubuntu)
         run: |
+          export JAVA_HOME=${JAVA_HOME}
           export JAVA_HOME_LEGACY=${JAVA_HOME}
-          export JAVA_HOME=/usr/local/jvm/panama
-          echo "JAVA_HOME_LEGACY = $JAVA_HOME_LEGACY"
           echo "JAVA_HOME = $JAVA_HOME"
+          echo "JAVA_HOME_LEGACY = $JAVA_HOME_LEGACY"
           ping 127.0.0.1 &
           PID=$!
           ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat -Plegacy-support

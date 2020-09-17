@@ -18,6 +18,8 @@ public interface Service {
 
   class Creator {
 
+    private Creator() {}
+
     /**
      * Create {@link Service} provider inctance.
      *
@@ -61,12 +63,21 @@ public interface Service {
   Interface lookupInterfaces() throws ErrorException;
 
   /**
+   * Find all interfaces on your system.
+   *
+   * @return returns iterable {@link Interface}'s.
+   * @throws ErrorException generic error.
+   */
+  Interface interfaces() throws ErrorException;
+
+  /**
    * Lookup {@link Inet4Address} from {@link Interface}.
    *
    * @param source {@link Interface}.
    * @return returns {@link Inet4Address}.
    * @throws ErrorException address not found.
    */
+  @Deprecated
   Inet4Address lookupInet4Address(Interface source) throws ErrorException;
 
   /**
@@ -76,6 +87,7 @@ public interface Service {
    * @return returns {@link Inet6Address}.
    * @throws ErrorException address not found.
    */
+  @Deprecated
   Inet6Address lookupInet6Address(Interface source) throws ErrorException;
 
   /**
@@ -266,6 +278,11 @@ public interface Service {
 
     @Override
     public Interface lookupInterfaces() throws ErrorException {
+      throw new ErrorException("No API implementation.");
+    }
+
+    @Override
+    public Interface interfaces() throws ErrorException {
       throw new ErrorException("No API implementation.");
     }
 

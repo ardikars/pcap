@@ -42,6 +42,14 @@ public class ServiceTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
+            service.interfaces();
+          }
+        });
+    Assertions.assertThrows(
+        ErrorException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
             service.lookupInet4Address(null);
           }
         });

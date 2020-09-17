@@ -13,5 +13,6 @@ public class ObjectsTest {
   @Test
   public void nonNullTest() {
     Assertions.assertTrue(Objects.nonNull(""));
+    Assertions.assertFalse(Objects.nonNull(null));
   }
 }
