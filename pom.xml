@@ -64,7 +64,7 @@
         <junit.platform.runner.version>1.6.2</junit.platform.runner.version>
         <mockito.version>3.5.10</mockito.version>
         <mockito.inline.version>3.5.10</mockito.inline.version>
-        <mockito.junit.jupiter.version>3.5.10</mockito.junit.jupiter.version>
+        <mockito.junit.jupiter.version>3.5.11</mockito.junit.jupiter.version>
 
         <fmt.maven.plugin.version>2.9</fmt.maven.plugin.version>
         <jacoco.maven.plugin.version>0.8.5</jacoco.maven.plugin.version>
