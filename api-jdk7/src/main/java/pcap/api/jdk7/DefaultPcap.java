@@ -1,5 +1,6 @@
 package pcap.api.jdk7;
 
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -18,10 +19,13 @@ public class DefaultPcap implements Pcap {
   final int netmask;
 
   final DefaultStatistics statistics = new DefaultStatistics();
+  final NativeEvent selector;
 
   DefaultPcap(Pointer pointer, int netmask) {
     this.pointer = pointer;
     this.netmask = netmask;
+    this.selector = selector(Platform.getOSType());
+    this.selector.init();
   }
 
   @Override
@@ -291,6 +295,11 @@ public class DefaultPcap implements Pcap {
   }
 
   @Override
+  public void listen(int count, Event listener, Event.Options option) {
+    selector.listen(count, listener, option);
+  }
+
+  @Override
   public void close() {
     readLock.lock();
     try {
@@ -308,6 +317,14 @@ public class DefaultPcap implements Pcap {
       return (T) new DefaultPacketBuffer();
     }
     throw new IllegalArgumentException("Class: " + cls + " is unsupported.");
+  }
+
+  NativeEvent selector(int os) {
+    if (os == Platform.WINDOWS || os == Platform.WINDOWSCE) {
+      return new NativeWaitForSingleObject(this);
+    } else {
+      return new NativePoll(this);
+    }
   }
 
   void nullCheck(Pointer newPointer) throws ErrorException {

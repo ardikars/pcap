@@ -15,12 +15,12 @@ class NativeMappings {
   public static final int TRUE = 1;
   static final short AF_INET;
   static final short AF_INET6;
-  private static final String LIB_NAME = "pcap";
   private static final Map<String, Object> NATIVE_LOAD_LIBRARY_OPTIONS =
       new HashMap<String, Object>();
 
   static {
-    com.sun.jna.Native.register(NativeMappings.class, NativeLibrary.getInstance(LIB_NAME));
+    com.sun.jna.Native.register(
+        NativeMappings.class, NativeLibrary.getInstance(libName(Platform.isWindows())));
 
     // for interface mapping
     final Map<String, String> funcMap = new HashMap<String, String>();
@@ -29,6 +29,9 @@ class NativeMappings {
         "pcap_open_offline_with_tstamp_precision", "pcap_open_offline_with_tstamp_precision");
     funcMap.put("pcap_set_tstamp_precision", "pcap_set_tstamp_precision");
     funcMap.put("pcap_set_immediate_mode", "pcap_set_immediate_mode");
+    funcMap.put("pcap_get_selectable_fd", "pcap_get_selectable_fd");
+    funcMap.put("pcap_get_required_select_timeout", "pcap_get_required_select_timeout");
+    funcMap.put("pcap_getevent", "pcap_getevent");
 
     NATIVE_LOAD_LIBRARY_OPTIONS.put(
         Library.OPTION_FUNCTION_MAPPER,
@@ -41,6 +44,14 @@ class NativeMappings {
 
     AF_INET = 2;
     AF_INET6 = defaultAfInet6();
+  }
+
+  static String libName(boolean isWindows) {
+    if (isWindows) {
+      return "wpcap";
+    } else {
+      return "pcap";
+    }
   }
 
   private NativeMappings() {}
@@ -170,7 +181,8 @@ class NativeMappings {
   interface PlatformDependent extends Library {
 
     PlatformDependent INSTANCE =
-        com.sun.jna.Native.load(LIB_NAME, PlatformDependent.class, NATIVE_LOAD_LIBRARY_OPTIONS);
+        com.sun.jna.Native.load(
+            libName(Platform.isWindows()), PlatformDependent.class, NATIVE_LOAD_LIBRARY_OPTIONS);
 
     int pcap_set_rfmon(Pointer p, int rfmon);
 
@@ -180,6 +192,12 @@ class NativeMappings {
     int pcap_set_tstamp_precision(Pointer p, int tstamp_precision);
 
     int pcap_set_immediate_mode(Pointer p, int immediate_mode);
+
+    int pcap_get_selectable_fd(Pointer p);
+
+    DefaultTimestamp pcap_get_required_select_timeout(Pointer p);
+
+    long pcap_getevent(Pointer p);
   }
 
   public static final class ErrorBuffer extends Structure {

@@ -1,5 +1,6 @@
 package pcap.api.jdk7;
 
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -17,6 +18,7 @@ import pcap.api.BaseTest;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
+import pcap.spi.option.DefaultEventOptions;
 import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.option.DefaultOfflineOptions;
 
@@ -922,6 +924,67 @@ public class DefaultPcapTest extends BaseTest {
       DefaultPcap pcap = (DefaultPcap) offline;
       Assertions.assertTrue(pcap.swappedCheck(1));
       Assertions.assertFalse(pcap.swappedCheck(0));
+    }
+  }
+
+  @Test
+  public void selector()
+      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException {
+    Interface lo = loopbackInterface(service);
+    try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
+      DefaultPcap pcap = (DefaultPcap) live;
+      Assertions.assertEquals(
+          NativeWaitForSingleObject.class, pcap.selector(Platform.WINDOWS).getClass());
+      Assertions.assertEquals(
+          NativeWaitForSingleObject.class, pcap.selector(Platform.WINDOWSCE).getClass());
+      Assertions.assertEquals(NativePoll.class, pcap.selector(Platform.LINUX).getClass());
+    }
+  }
+
+  @Test
+  public void listen()
+      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException {
+    Interface lo = loopbackInterface(service);
+    try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
+      live.setNonBlock(true);
+      live.listen(
+          1,
+          new Pcap.Event() {
+
+            @Override
+            public void onReady(Options option, Pcap pcap, Operation operation) {
+              try {
+                pcap.dispatch(
+                    1,
+                    new PacketHandler<String>() {
+                      @Override
+                      public void gotPacket(String args, PacketHeader header, PacketBuffer buffer) {
+                        System.out.println(header);
+                      }
+                    },
+                    "");
+              } catch (BreakException e) {
+              } catch (ErrorException e) {
+              }
+            }
+
+            @Override
+            public void onError(Pcap pcap, Options option, Throwable e) {
+              System.out.println("ERROR");
+            }
+
+            @Override
+            public void onTimeout(Pcap pcap, Options option) {
+              System.out.println("TIMEOUT");
+            }
+          },
+          new DefaultEventOptions());
     }
   }
 }

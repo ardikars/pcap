@@ -19,6 +19,12 @@ public class NativeMappingsTest {
   }
 
   @Test
+  public void libName() {
+    Assertions.assertEquals("wpcap", NativeMappings.libName(true));
+    Assertions.assertEquals("pcap", NativeMappings.libName(false));
+  }
+
+  @Test
   public void inetAddress() {
     Assertions.assertNull(NativeMappings.inetAddress(null));
 

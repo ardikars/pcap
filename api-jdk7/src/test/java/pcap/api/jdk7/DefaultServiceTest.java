@@ -2,6 +2,7 @@ package pcap.api.jdk7;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
+import java.util.Iterator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,8 +16,6 @@ import pcap.spi.exception.error.*;
 import pcap.spi.exception.warn.PromiscuousModeNotSupported;
 import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.option.DefaultOfflineOptions;
-
-import java.util.Iterator;
 
 @RunWith(JUnitPlatform.class)
 public class DefaultServiceTest extends BaseTest {
