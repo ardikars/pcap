@@ -35,7 +35,11 @@ public class StructureReferenceTest extends BaseTest {
     DefaultPacketBuffer packetBuffer = new DefaultPacketBuffer();
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
       for (int i = 0; i < 2; i++) {
-        live.nextEx(packetHeader, packetBuffer);
+        try {
+          live.nextEx(packetHeader, packetBuffer);
+        } catch (TimeoutException e) {
+          //
+        }
       }
     }
     DefaultPacketBuffer newDefaultPacketBuffer = new DefaultPacketBuffer();

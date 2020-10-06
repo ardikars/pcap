@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['macos-10.15', 'ubuntu-16.04']
+        os: ['macos-10.15', 'ubuntu-16.04', 'windows-2016']
         java: [8]
     runs-on: ${{ matrix.os }}
     steps:
@@ -46,18 +46,22 @@ jobs:
 
       - name: actions/setup-pcap
         run: |
-          sudo apt-get update && sudo apt-get -y install libpcap0.8 libcap2-bin
+          sudo apt-get update && sudo apt-get -y install build-essential bison flex autoconf make
           sudo setcap cap_net_raw,cap_net_admin=eip $JAVA_HOME/bin/java
-          find /usr/lib/ -iname "libpcap*"
+          git clone https://github.com/the-tcpdump-group/libpcap.git
+          cd libpcap/
+          ./configure --prefix=/usr
+          sudo make install
+          cd ..
           find $JAVA_HOME/ -iname "libjli*"
           sudo cp $JAVA_HOME/lib/amd64/jli/libjli*.so /usr/lib
-          sudo ln -s /usr/lib/x86_64-linux-gnu/libpcap.so.0.8 /usr/lib/libpcap.so
         if: matrix.os == 'ubuntu-16.04'
 
       - name: actions/setup-pcap
+        shell: powershell
         run: |
-          choco install nmap
-        if: matrix.os == 'windows-latest'
+          .github\scripts\InstallNpcap.ps1
+        if: matrix.os == 'windows-2016'
 
 
       - name: Build (Mac OS)
@@ -87,3 +91,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: matrix.os == 'ubuntu-16.04'
+
+      - name: Build (Windows)
+        shell: cmd
+        run: |
+          set JAVA_HOME_LEGACY=%JAVA_HOME%
+          mvnw.cmd -B -t .mvn\toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat -Plegacy-support
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: matrix.os == 'windows-2016'
