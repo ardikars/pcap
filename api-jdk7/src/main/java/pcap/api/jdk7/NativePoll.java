@@ -22,6 +22,7 @@ class NativePoll implements NativeEvent {
   static {
     final Map<String, String> funcMap = new HashMap<String, String>();
     funcMap.put("poll", "poll");
+    funcMap.put("free", "free");
     NATIVE_LOAD_LIBRARY_OPTIONS.put(
         Library.OPTION_FUNCTION_MAPPER,
         new FunctionMapper() {
@@ -49,34 +50,39 @@ class NativePoll implements NativeEvent {
 
   @Override
   public void listen(int count, Pcap.Event event, Pcap.Event.Options options) {
-    DefaultEventOptions opts = (DefaultEventOptions) options;
-    int inc = count < 0 ? -1 : 1;
-    int cnt = count < 0 ? count - 1 : count;
-    while (cnt <= count) {
-      DefaultTimestamp req =
-          NativeMappings.PlatformDependent.INSTANCE.pcap_get_required_select_timeout(pcap.pointer);
-      int timeout = opts.timeout();
-      if (timeout <= 0 && req != null) {
-        timeout = (int) (req.tv_usec.longValue() / 1000L);
-      }
-      int rc;
-      do {
-        rc = LibC.INSTANCE.poll(pfds, 1, timeout);
-      } while (rc < 0 && EINTR == com.sun.jna.Native.getLastError());
-      cnt += inc;
-      if (rc < 0) {
-        event.onError(pcap, options, new ErrorException(""));
-      } else if (rc > 0) {
-        int revents = pfds.getShort(REVENTS_OFFSET);
-        if ((revents & POLLIN) != 0) {
-          event.onReady(options, pcap, Pcap.Event.Operation.READ);
+    try {
+      DefaultEventOptions opts = (DefaultEventOptions) options;
+      int inc = count < 0 ? -1 : 1;
+      int cnt = count < 0 ? count - 1 : count;
+      while (cnt <= count) {
+        DefaultTimestamp req =
+            NativeMappings.PlatformDependent.INSTANCE.pcap_get_required_select_timeout(
+                pcap.pointer);
+        int timeout = opts.timeout();
+        if (timeout <= 0 && req != null) {
+          timeout = (int) (req.tv_usec.longValue() / 1000L);
         }
-        if ((revents & POLLOUT) != 0) {
-          event.onReady(options, pcap, Pcap.Event.Operation.WRITE);
+        int rc;
+        do {
+          rc = LibC.INSTANCE.poll(pfds, 1, timeout);
+        } while (rc < 0 && EINTR == com.sun.jna.Native.getLastError());
+        cnt += inc;
+        if (rc < 0) {
+          event.onError(pcap, options, new ErrorException(""));
+        } else if (rc > 0) {
+          int revents = pfds.getShort(REVENTS_OFFSET);
+          if ((revents & POLLIN) != 0) {
+            event.onReady(options, pcap, Pcap.Event.Operation.READ);
+          }
+          if ((revents & POLLOUT) != 0) {
+            event.onReady(options, pcap, Pcap.Event.Operation.WRITE);
+          }
+        } else {
+          event.onTimeout(pcap, options);
         }
-      } else {
-        event.onTimeout(pcap, options);
       }
+    } finally {
+      LibC.INSTANCE.free(pfds);
     }
   }
 
@@ -85,5 +91,7 @@ class NativePoll implements NativeEvent {
     LibC INSTANCE = com.sun.jna.Native.load("c", LibC.class, NATIVE_LOAD_LIBRARY_OPTIONS);
 
     int poll(Pointer fds, long nfds, int timeout);
+
+    void free(Pointer ptr);
   }
 }

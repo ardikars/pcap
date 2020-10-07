@@ -16,7 +16,7 @@ if [ "$machine" == "Linux" ]; then
   sudo setcap cap_net_raw,cap_net_admin=eip $JAVA_HOME_LEGACY/jre/bin/java
   sudo setcap cap_net_raw,cap_net_admin=eip $JAVA_HOME/bin/java
 elif [ "$machine" == "Mac" ]; then
-  export JAVA_HOME_LEGACY="/Library/Java/JavaVirtualMachines/jdk-9.jdk/Contents/Home/"
+  export JAVA_HOME_LEGACY="/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home"
   export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home"
 fi
 
