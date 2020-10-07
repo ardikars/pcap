@@ -1,6 +1,5 @@
 package pcap.api.jdk7;
 
-import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 import java.util.Arrays;
@@ -68,16 +67,5 @@ public class DefaultAddressIteratorTest {
             });
       }
     }
-  }
-
-  @Test
-  public void useMemoryFromReferece() {
-    PointerByReference pointerByReference = new PointerByReference();
-    pointerByReference.setPointer(new Memory(1));
-    DefaultPacketBuffer structureReference = new DefaultPacketBuffer();
-    structureReference.useMemoryFromReferece();
-    structureReference.useMemoryFromReferece();
-    pointerByReference.setPointer(null);
-    structureReference.useMemoryFromReferece();
   }
 }

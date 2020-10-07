@@ -1,11 +1,10 @@
 package pcap.api.jdk7;
 
-import com.sun.jna.Pointer;
 import java.util.ArrayList;
 import java.util.List;
 import pcap.spi.PacketHeader;
 
-public class DefaultPacketHeader extends StructureReference implements PacketHeader {
+public class DefaultPacketHeader extends com.sun.jna.Structure implements PacketHeader {
 
   static final int TS_OFFSET;
   static final int CAPLEN_OFFSET;
@@ -21,16 +20,23 @@ public class DefaultPacketHeader extends StructureReference implements PacketHea
   public DefaultTimestamp ts;
   public int caplen;
   public int len;
+  com.sun.jna.ptr.PointerByReference reference;
 
   public DefaultPacketHeader() {
-    super();
-    this.ts = new DefaultTimestamp();
+    this.reference = new com.sun.jna.ptr.PointerByReference();
   }
 
-  public DefaultPacketHeader(Pointer pointer) {
+  public DefaultPacketHeader(com.sun.jna.Pointer pointer) {
     super(pointer);
+    this.reference = new com.sun.jna.ptr.PointerByReference(pointer);
     read();
-    this.ts = new DefaultTimestamp(pointer.share(TS_OFFSET));
+  }
+
+  void useReferece() {
+    if (reference.getValue() != null) {
+      useMemory(reference.getValue());
+      read();
+    }
   }
 
   @Override
@@ -46,6 +52,16 @@ public class DefaultPacketHeader extends StructureReference implements PacketHea
   @Override
   public int length() {
     return getPointer().getInt(LEN_OFFSET);
+  }
+
+  @Override
+  public <T> T cast(Class<T> clazz) {
+    if (clazz.isAssignableFrom(com.sun.jna.Pointer.class)) {
+      return (T) getPointer();
+    } else if (clazz.isAssignableFrom(com.sun.jna.ptr.PointerByReference.class)) {
+      return (T) reference;
+    }
+    throw new IllegalArgumentException("Unsupported type.");
   }
 
   @Override

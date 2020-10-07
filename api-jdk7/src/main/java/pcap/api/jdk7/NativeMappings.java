@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
-import java.nio.ByteBuffer;
 import java.util.*;
 
 class NativeMappings {
@@ -111,7 +110,7 @@ class NativeMappings {
 
   static native int pcap_dispatch(Pointer p, int cnt, pcap_handler callback, Pointer user);
 
-  static native int pcap_sendpacket(Pointer p, ByteBuffer buf, int size);
+  static native int pcap_sendpacket(Pointer p, Pointer buf, int size);
 
   static native int pcap_compile(Pointer p, bpf_program fp, String str, int optimize, int netmask);
 
@@ -228,9 +227,7 @@ class NativeMappings {
     public int bf_len;
     public bpf_insn.ByReference bf_insns;
 
-    public bpf_program() {
-      setAutoSynch(false);
-    }
+    public bpf_program() {}
 
     @Override
     protected List<String> getFieldOrder() {
@@ -248,9 +245,7 @@ class NativeMappings {
     public byte jf;
     public int k;
 
-    public bpf_insn() {
-      setAutoSynch(false);
-    }
+    public bpf_insn() {}
 
     @Override
     protected List<String> getFieldOrder() {

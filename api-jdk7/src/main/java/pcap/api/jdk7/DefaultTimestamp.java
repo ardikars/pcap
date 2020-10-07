@@ -1,12 +1,12 @@
 package pcap.api.jdk7;
 
 import com.sun.jna.NativeLong;
-import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 import java.util.ArrayList;
 import java.util.List;
 import pcap.spi.Timestamp;
 
-public class DefaultTimestamp extends StructureReference implements Timestamp {
+public class DefaultTimestamp extends Structure implements Timestamp {
 
   static final int TV_SEC_OFFSET;
   static final int TV_USEC_OFFSET;
@@ -21,11 +21,6 @@ public class DefaultTimestamp extends StructureReference implements Timestamp {
   public NativeLong tv_usec;
 
   public DefaultTimestamp() {}
-
-  public DefaultTimestamp(Pointer pointer) {
-    super(pointer);
-    read();
-  }
 
   @Override
   protected List<String> getFieldOrder() {

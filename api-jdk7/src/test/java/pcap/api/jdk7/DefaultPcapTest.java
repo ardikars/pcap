@@ -3,11 +3,11 @@ package pcap.api.jdk7;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -190,10 +190,10 @@ public class DefaultPcapTest extends BaseTest {
 
   @Test
   public void nextEx()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+          throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException, TimeoutException, BreakException {
+          InterfaceNotSupportTimestampTypeException, ReadPacketTimeoutException, BreakException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
       PacketHeader header = live.allocate(PacketHeader.class);
@@ -208,7 +208,7 @@ public class DefaultPcapTest extends BaseTest {
           Assertions.assertTrue(buffer.capacity() > 0);
           live.nextEx(buffer, header);
         } catch (Throwable e) {
-          Assertions.assertTrue(e instanceof TimeoutException);
+          Assertions.assertTrue(e instanceof ReadPacketTimeoutException);
         }
       }
     }
@@ -267,7 +267,7 @@ public class DefaultPcapTest extends BaseTest {
         Assertions.assertTrue(droppedByInterface >= 0);
         Assertions.assertTrue(received >= 0);
       } catch (Throwable e) {
-        Assertions.assertTrue(e instanceof TimeoutException);
+        Assertions.assertTrue(e instanceof ReadPacketTimeoutException);
       }
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
@@ -387,12 +387,9 @@ public class DefaultPcapTest extends BaseTest {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
       DefaultPacketBuffer buffer = new DefaultPacketBuffer(14);
-      ByteBuffer byteBuffer = buffer.getPointer().getByteBuffer(0, 14);
-      byteBuffer.put(new byte[] {0, 0, 0, 0, 0, 1});
-      byteBuffer.put(new byte[] {0, 0, 0, 0, 0, 2});
-      byteBuffer.putShort(Short.reverseBytes((short) 0x0806));
-      buffer.readerIndex(0);
-      buffer.writerIndex(14);
+      buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 1});
+      buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 2});
+      buffer.writeShortRE(0x0806);
       live.sendPacket(buffer);
       live.sendPacket(buffer, (int) buffer.writerIndex());
       live.send(buffer, (int) buffer.writerIndex());
@@ -400,12 +397,9 @@ public class DefaultPcapTest extends BaseTest {
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
       DefaultPacketBuffer buffer = new DefaultPacketBuffer(14);
-      ByteBuffer byteBuffer = buffer.getPointer().getByteBuffer(0, 14);
-      byteBuffer.put(new byte[] {0, 0, 0, 0, 0, 1});
-      byteBuffer.put(new byte[] {0, 0, 0, 0, 0, 2});
-      byteBuffer.putShort(Short.reverseBytes((short) 0x0806));
-      buffer.readerIndex(0);
-      buffer.writerIndex(14);
+      buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 1});
+      buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 2});
+      buffer.writeShortRE(0x0806);
       Assertions.assertThrows(
           ErrorException.class,
           new Executable() {
@@ -776,7 +770,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void nextExCheck() throws ErrorException, TimeoutException, BreakException {
+  public void nextExCheck() throws ErrorException, ReadPacketTimeoutException, BreakException {
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
       DefaultPcap pcap = (DefaultPcap) offline;
       DefaultPacketHeader header = new DefaultPacketHeader();
@@ -786,7 +780,7 @@ public class DefaultPcapTest extends BaseTest {
         pcap.nextExCheck(rc, header, buffer);
       }
       Assertions.assertThrows(
-          TimeoutException.class,
+          ReadPacketTimeoutException.class,
           new Executable() {
             @Override
             public void execute() throws Throwable {

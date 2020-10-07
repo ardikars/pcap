@@ -1,10 +1,10 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.spi;
 
-import java.util.concurrent.TimeoutException;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
 import pcap.spi.exception.error.NotActivatedException;
+import pcap.spi.exception.error.ReadPacketTimeoutException;
 
 /**
  * A handle for {@code pcap} api.
@@ -67,13 +67,13 @@ public interface Pcap extends AutoCloseable {
    * @param packetBuffer packet buffer.
    * @param packetHeader packet header.
    * @throws BreakException there are no more packets to read from `savefile`.
-   * @throws TimeoutException if packets are being read from a `live capture` and the packet buffer
+   * @throws ReadPacketTimeoutException if packets are being read from a `live capture` and the packet buffer
    *     timeout expired.
    * @throws ErrorException generic exception.
    * @since 1.0.0
    */
   void nextEx(PacketBuffer packetBuffer, PacketHeader packetHeader)
-      throws BreakException, TimeoutException, ErrorException;
+      throws BreakException, ReadPacketTimeoutException, ErrorException;
 
   /**
    * Reads the next packet and returns a success/failure indication.
@@ -81,13 +81,13 @@ public interface Pcap extends AutoCloseable {
    * @param packetHeader packet header.
    * @param packetBuffer packet buffer.
    * @throws BreakException there are no more packets to read from `savefile`.
-   * @throws TimeoutException if packets are being read from a `live capture` and the packet buffer
+   * @throws ReadPacketTimeoutException if packets are being read from a `live capture` and the packet buffer
    *     timeout expired.
    * @throws ErrorException generic exception.
    * @since 1.0.0
    */
   void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
-      throws BreakException, TimeoutException, ErrorException;
+      throws BreakException, ReadPacketTimeoutException, ErrorException;
 
   /**
    * Processes packets from a live capture or {@code PcapLive} until cnt packets are processed, the

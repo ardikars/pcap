@@ -2,12 +2,12 @@ package pcap.api.jdk7;
 
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
 import pcap.spi.exception.error.NotActivatedException;
+import pcap.spi.exception.error.ReadPacketTimeoutException;
 
 public class DefaultPcap implements Pcap {
 
@@ -88,7 +88,6 @@ public class DefaultPcap implements Pcap {
                 @Override
                 public void got_packet(
                     Pointer user, DefaultPacketHeader header, DefaultPacketBuffer packet) {
-                  packet.setBuffer(header.captureLength());
                   handler.gotPacket(args, header, packet);
                 }
               },
@@ -101,13 +100,13 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public void nextEx(PacketBuffer packetBuffer, PacketHeader packetHeader)
-      throws BreakException, TimeoutException, ErrorException {
+      throws BreakException, ErrorException {
     nextEx(packetHeader, packetBuffer);
   }
 
   @Override
   public void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
-      throws BreakException, TimeoutException, ErrorException {
+      throws BreakException, ErrorException {
     DefaultPacketHeader header = (DefaultPacketHeader) packetHeader;
     DefaultPacketBuffer buffer = (DefaultPacketBuffer) packetBuffer;
     readLock.lock();
@@ -133,7 +132,6 @@ public class DefaultPcap implements Pcap {
                 @Override
                 public void got_packet(
                     Pointer user, DefaultPacketHeader header, DefaultPacketBuffer packet) {
-                  packet.setBuffer(header.captureLength());
                   handler.gotPacket(args, header, packet);
                 }
               },
@@ -225,6 +223,9 @@ public class DefaultPcap implements Pcap {
     readLock.lock();
     try {
       rc = NativeMappings.pcap_is_swapped(pointer);
+      if (rc == -3) {
+        throw new NotActivatedException("");
+      }
     } finally {
       readLock.unlock();
     }
@@ -370,14 +371,12 @@ public class DefaultPcap implements Pcap {
   }
 
   void nextExCheck(int rc, DefaultPacketHeader header, DefaultPacketBuffer buffer)
-      throws TimeoutException, BreakException, ErrorException {
+      throws BreakException, ErrorException {
     if (rc == 0) {
-      throw new TimeoutException("");
+      throw new ReadPacketTimeoutException("");
     } else if (rc == 1) {
-      header.useMemoryFromReferece();
-      header.ts.useMemoryFromReferece(header.reference);
-      buffer.useMemoryFromReferece();
-      buffer.setBuffer(header.captureLength());
+      header.useReferece();
+      buffer.userReference(header);
     } else {
       if (rc == -2) {
         throw new BreakException("");

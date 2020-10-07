@@ -40,4 +40,6 @@ public interface PacketHeader {
    * @since 1.0.0
    */
   int length();
+
+  <T> T cast(Class<T> clazz);
 }
