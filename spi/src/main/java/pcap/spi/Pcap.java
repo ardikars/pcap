@@ -67,8 +67,8 @@ public interface Pcap extends AutoCloseable {
    * @param packetBuffer packet buffer.
    * @param packetHeader packet header.
    * @throws BreakException there are no more packets to read from `savefile`.
-   * @throws ReadPacketTimeoutException if packets are being read from a `live capture` and the packet buffer
-   *     timeout expired.
+   * @throws ReadPacketTimeoutException if packets are being read from a `live capture` and the
+   *     packet buffer timeout expired.
    * @throws ErrorException generic exception.
    * @since 1.0.0
    */
@@ -81,8 +81,8 @@ public interface Pcap extends AutoCloseable {
    * @param packetHeader packet header.
    * @param packetBuffer packet buffer.
    * @throws BreakException there are no more packets to read from `savefile`.
-   * @throws ReadPacketTimeoutException if packets are being read from a `live capture` and the packet buffer
-   *     timeout expired.
+   * @throws ReadPacketTimeoutException if packets are being read from a `live capture` and the
+   *     packet buffer timeout expired.
    * @throws ErrorException generic exception.
    * @since 1.0.0
    */

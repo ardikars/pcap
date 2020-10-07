@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
-import java.util.concurrent.TimeoutException;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -190,7 +188,7 @@ public class DefaultPcapTest extends BaseTest {
 
   @Test
   public void nextEx()
-          throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException, ReadPacketTimeoutException, BreakException {

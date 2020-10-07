@@ -1,24 +1,22 @@
 package pcap.api.jdk7;
 
+import pcap.spi.PacketBuffer;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import pcap.spi.PacketBuffer;
 
 public class DefaultPacketBuffer extends com.sun.jna.Structure implements PacketBuffer {
 
   public com.sun.jna.Pointer buffer;
-  com.sun.jna.ptr.PointerByReference reference;
-
   protected ByteOrder byteOrder;
-
   protected long capacity;
-
   protected long writtenBytes = 0L; // for setCharSequence and writeCharSequence
   protected long readerIndex;
   protected long writerIndex;
   protected long markedReaderIndex;
   protected long markedWriterIndex;
+  com.sun.jna.ptr.PointerByReference reference;
 
   public DefaultPacketBuffer() {
     this.reference = new com.sun.jna.ptr.PointerByReference();
@@ -98,8 +96,8 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
     if (writerIndex < readerIndex || writerIndex > capacity) {
       throw new IndexOutOfBoundsException(
           String.format(
-              "writerIndex: %d (expected: readerIndex(%d) <= writerIndex <= capacity(%d))",
-              writerIndex, readerIndex, capacity));
+              "writerIndex: %d (expected: readerIndex(%d) <= writerIndex(%d) <= capacity(%d))",
+              writerIndex, readerIndex, writerIndex, capacity));
     }
     this.writerIndex = writerIndex;
     return this;
@@ -135,7 +133,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
 
   @Override
   public boolean isReadable(long numBytes) {
-    return writerIndex - readerIndex >= numBytes;
+    return numBytes > 0 && writerIndex - readerIndex >= numBytes;
   }
 
   @Override
@@ -145,7 +143,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
 
   @Override
   public boolean isWritable(long numBytes) {
-    return capacity - writerIndex >= numBytes;
+    return numBytes > 0 && capacity - writerIndex >= numBytes;
   }
 
   //    @Override
@@ -210,7 +208,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
 
   @Override
   public int getUnsignedShortRE(long index) {
-    return getShortRE(index) & 0xFFFF;
+    return Short.reverseBytes((short) getUnsignedShort(index));
   }
 
   @Override
@@ -225,7 +223,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
 
   @Override
   public long getUnsignedIntRE(long index) {
-    return getIntRE(index) & 0xFFFFFFFFL;
+    return Integer.reverseBytes((int) getUnsignedInt(index));
   }
 
   @Override
@@ -240,7 +238,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
 
   @Override
   public float getFloatRE(long index) {
-    return Float.intBitsToFloat(this.getIntRE(index));
+    return Float.intBitsToFloat(getIntRE(index));
   }
 
   @Override
@@ -250,7 +248,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
 
   @Override
   public double getDoubleRE(long index) {
-    return Double.longBitsToDouble(this.getLongRE(index));
+    return Double.longBitsToDouble(getLongRE(index));
   }
 
   @Override
@@ -268,13 +266,6 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
   @Override
   public PacketBuffer getBytes(long index, byte[] dst) {
     return getBytes(index, dst, 0, dst.length);
-  }
-
-  @Override
-  public CharSequence getCharSequence(long index, long length, Charset charset) {
-    byte[] bytes = new byte[(int) length & 0x7FFFFFFF];
-    this.getBytes(index, bytes);
-    return new String(bytes, java.nio.charset.Charset.forName(charset.name()));
   }
 
   @Override
@@ -482,7 +473,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
 
   @Override
   public float readFloatRE() {
-    return Float.intBitsToFloat(this.readIntRE());
+    return Float.intBitsToFloat(readIntRE());
   }
 
   @Override
@@ -492,7 +483,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
 
   @Override
   public double readDoubleRE() {
-    return Double.longBitsToDouble(this.readLongRE());
+    return Double.longBitsToDouble(readLongRE());
   }
 
   @Override
@@ -552,7 +543,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
 
   @Override
   public CharSequence readCharSequence(long length, Charset charset) {
-    CharSequence sequence = this.getCharSequence(readerIndex, length, charset);
+    CharSequence sequence = getCharSequence(readerIndex, length, charset);
     readerIndex += length;
     return sequence;
   }
@@ -669,7 +660,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
 
   @Override
   public PacketBuffer writeCharSequence(CharSequence sequence, Charset charset) {
-    this.setCharSequence(writerIndex, sequence, charset);
+    setCharSequence(writerIndex, sequence, charset);
     writerIndex += writtenBytes;
     return this;
   }
@@ -741,30 +732,41 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
   @Override
   public byte getByte(long index) {
     // check buffer overflow
+    checkIndex(index, Byte.BYTES);
     return buffer.getByte(index);
   }
 
   @Override
   public short getShort(long index) {
     // check buffer overflow
+    checkIndex(index, Short.BYTES);
     return buffer.getShort(index);
   }
 
   @Override
   public int getInt(long index) {
     // check buffer overflow
+    checkIndex(index, Integer.BYTES);
     return buffer.getInt(index);
   }
 
   @Override
   public long getLong(long index) {
     // check buffer overflow
+    checkIndex(index, Long.BYTES);
     return buffer.getLong(index);
   }
 
   @Override
   public PacketBuffer getBytes(long index, PacketBuffer dst, long dstIndex, long length) {
     // check buffer overflow
+    checkIndex(index, length);
+    if (isOutOfBounds(dstIndex, length, dst.capacity())) {
+      throw new IndexOutOfBoundsException(
+          String.format(
+              "dstIdx: %d, length: %d (expected: dstIdx(%d) <= length(%d)))",
+              dstIndex, length, dstIndex, length));
+    }
     com.sun.jna.Pointer dstPtr = dst.cast(com.sun.jna.Pointer.class).share(dstIndex, length);
     DefaultPacketBuffer.Unsafe.memcpy(dstPtr, buffer.share(index, length), length);
     return this;
@@ -773,13 +775,39 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
   @Override
   public PacketBuffer getBytes(long index, byte[] dst, long dstIndex, long length) {
     // check buffer overflow
+    checkIndex(index, length);
+    if (isOutOfBounds(dstIndex, length, dst.length)) {
+      throw new IndexOutOfBoundsException(
+          String.format(
+              "dstIdx: %d, length: %d (expected: dstIdx(%d) <= length(%d)))",
+              dstIndex, length, dstIndex, length));
+    }
     buffer.read(index, dst, (int) dstIndex, (int) length);
     return this;
   }
 
   @Override
+  public CharSequence getCharSequence(long index, long length, Charset charset) {
+    byte[] bytes = new byte[(int) length & 0x7FFFFFFF];
+    getBytes(index, bytes);
+    return new String(bytes, java.nio.charset.Charset.forName(charset.name()));
+  }
+
+  @Override
+  public CharSequence getCharSequence(long index, Charset charset) {
+    checkIndex(index, capacity - index);
+    for (long i = index; i < capacity; i++) {
+      if (buffer.getByte(i) == '\0') {
+        return getCharSequence(index, i, charset);
+      }
+    }
+    return getCharSequence(index, capacity - index, charset);
+  }
+
+  @Override
   public PacketBuffer setByte(long index, int value) {
     // check buffer overflow
+    checkIndex(index, Byte.BYTES);
     buffer.setByte(index, (byte) value);
     return this;
   }
@@ -787,6 +815,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
   @Override
   public PacketBuffer setShort(long index, int value) {
     // check buffer overflow
+    checkIndex(index, Short.BYTES);
     buffer.setShort(index, (short) value);
     return this;
   }
@@ -794,6 +823,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
   @Override
   public PacketBuffer setInt(long index, int value) {
     // check buffer overflow
+    checkIndex(index, Integer.BYTES);
     buffer.setInt(index, value);
     return this;
   }
@@ -801,6 +831,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
   @Override
   public PacketBuffer setLong(long index, long value) {
     // check buffer overflow
+    checkIndex(index, Long.BYTES);
     buffer.setLong(index, value);
     return this;
   }
@@ -808,6 +839,13 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
   @Override
   public PacketBuffer setBytes(long index, PacketBuffer src, long srcIndex, long length) {
     // check buffer overflow
+    checkIndex(index, length);
+    if (isOutOfBounds(srcIndex, length, src.capacity())) {
+      throw new IndexOutOfBoundsException(
+          String.format(
+              "srcIdx: %d, length: %d (expected: srcIdx(%d) <= length(%d)))",
+              srcIndex, length, srcIndex, length));
+    }
     com.sun.jna.Pointer srcPtr = src.cast(com.sun.jna.Pointer.class).share(srcIndex, length);
     DefaultPacketBuffer.Unsafe.memcpy(buffer.share(index, length), srcPtr, length);
     return this;
@@ -816,6 +854,13 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
   @Override
   public PacketBuffer setBytes(long index, byte[] src, long srcIndex, long length) {
     // check buffer overflow
+    checkIndex(index, length);
+    if (isOutOfBounds(srcIndex, length, src.length)) {
+      throw new IndexOutOfBoundsException(
+          String.format(
+              "srcIdx: %d, length: %d (expected: srcIdx(%d) <= length(%d)))",
+              srcIndex, length, srcIndex, length));
+    }
     buffer.write(index, src, (int) srcIndex, (int) length);
     return this;
   }
@@ -823,6 +868,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
   @Override
   public PacketBuffer copy(long index, long length) {
     // check buffer overflow
+    checkIndex(index, length);
     com.sun.jna.Pointer newBuf = new com.sun.jna.Pointer(com.sun.jna.Native.malloc(length));
     DefaultPacketBuffer.Unsafe.memcpy(newBuf, buffer.share(index, length), length);
     return new DefaultPacketBuffer(newBuf, byteOrder, length, 0L, 0L);
@@ -831,26 +877,27 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
   @Override
   public PacketBuffer slice(long index, long length) {
     // check buffer overflow
+    checkIndex(index, length);
     return new Sliced(this, index, length);
   }
 
   @Override
   public PacketBuffer duplicate() {
-    // check buffer overflow
     return new DefaultPacketBuffer(buffer, byteOrder, capacity, readerIndex, writerIndex);
   }
 
   @Override
   public PacketBuffer byteOrder(ByteOrder byteOrder) {
-    // check buffer overflow
     throw new UnsupportedOperationException();
   }
 
   @Override
   public boolean release() {
-    // check buffer overflow
-    DefaultPacketBuffer.Unsafe.free(buffer);
-    return true;
+    if (buffer != null) {
+      DefaultPacketBuffer.Unsafe.free(buffer);
+      return true;
+    }
+    return false;
   }
 
   @Override
