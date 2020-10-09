@@ -13,7 +13,7 @@ import pcap.spi.annotation.Incubating;
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  */
 @Incubating
-public interface PacketBuffer {
+public interface PacketBuffer extends AutoCloseable {
 
   /** @return returns the number of bytes (octets) this buffer can contain. */
   long capacity();

@@ -29,11 +29,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>pcap-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>pcap-api-jdk7</artifactId>
+            <artifactId>pcap-jdk7</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

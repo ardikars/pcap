@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <artifactId>pcap</artifactId>
+        <groupId>com.ardikars.pcap</groupId>
+        <version>0.1.10</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>pcap-jdk7</artifactId>
+
+    <name>Pcap JDK 7</name>
+    <description>Wrap native libpcap api</description>
+    <url>https://pcap.ardikars.com</url>
+
+    <properties>
+        <jdk.version>${java.legacy.version}</jdk.version>
+        <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>pcap-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.6.0</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>legacy-support</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>codes.rafael.modulemaker</groupId>
+                        <artifactId>modulemaker-maven-plugin</artifactId>
+                        <configuration>
+                            <name>pcap.jdk7.internal</name>
+                            <multirelease>true</multirelease>
+                            <packages>
+                            </packages>
+                            <exports>
+                                pcap.jdk7.internal
+                            </exports>
+                            <uses>
+                                pcap.jdk7.Service
+                            </uses>
+                            <provides>
+                                <provide>
+                                    <services>
+                                        pcap.spi.Service
+                                    </services>
+                                    <providers>
+                                        pcap.jdk7.internal.DefaultService
+                                    </providers>
+                                </provide>
+                            </provides>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
