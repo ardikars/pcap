@@ -12,6 +12,7 @@ class NativeMappings {
 
   public static final int OK = 0;
   public static final int TRUE = 1;
+  public static final int FALSE = 0;
   static final short AF_INET;
   static final short AF_INET6;
   private static final Map<String, Object> NATIVE_LOAD_LIBRARY_OPTIONS =

@@ -1,12 +1,16 @@
 package pcap.api.jdk7;
 
-import pcap.spi.PacketBuffer;
-
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import pcap.spi.PacketBuffer;
 
 public class DefaultPacketBuffer extends com.sun.jna.Structure implements PacketBuffer {
+
+  static {
+    com.sun.jna.Native.register(
+        DefaultPacketBuffer.class,
+        com.sun.jna.NativeLibrary.getInstance(com.sun.jna.Platform.C_LIBRARY_NAME));
+  }
 
   public com.sun.jna.Pointer buffer;
   protected ByteOrder byteOrder;
@@ -44,6 +48,11 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
     this.readerIndex = readerIndex;
     this.writerIndex = writerIndex;
   }
+
+  static native com.sun.jna.Pointer memcpy(
+      com.sun.jna.Pointer dst, com.sun.jna.Pointer src, long n);
+
+  static native void free(com.sun.jna.Pointer p);
 
   void userReference(DefaultPacketHeader header) {
     if (reference.getValue() != null) {
@@ -131,6 +140,12 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
     return writerIndex > readerIndex;
   }
 
+  //    @Override
+  //    public PacketBuffer clear() {
+  //      readerIndex = writerIndex = 0;
+  //      return this;
+  //    }
+
   @Override
   public boolean isReadable(long numBytes) {
     return numBytes > 0 && writerIndex - readerIndex >= numBytes;
@@ -145,12 +160,6 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
   public boolean isWritable(long numBytes) {
     return numBytes > 0 && capacity - writerIndex >= numBytes;
   }
-
-  //    @Override
-  //    public PacketBuffer clear() {
-  //      readerIndex = writerIndex = 0;
-  //      return this;
-  //    }
 
   @Override
   public PacketBuffer markReaderIndex() {
@@ -317,7 +326,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
   public PacketBuffer setBytes(long index, PacketBuffer src, long length) {
     checkIndex(index, length);
     if (src == null) {
-      throw new NullPointerException("src");
+      throw new IllegalArgumentException("src must be not null.");
     }
     if (length > src.readableBytes()) {
       throw new IndexOutOfBoundsException(
@@ -338,60 +347,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
 
   @Override
   public PacketBuffer setCharSequence(long index, CharSequence seq, Charset charset) {
-    // see netty-buffer code
-    final byte WRITE_UTF_UNKNOWN = (byte) '?';
-    final char MAX_CHAR_VALUE = 255;
-    if (charset.name().equals(StandardCharsets.UTF_8.name())) {
-      int len = seq.length();
-
-      long oldIndex = index;
-
-      for (int i = 0; i < len; i++) {
-        char c = seq.charAt(i);
-        if (c < 0x80) {
-          this.setByte(index++, (byte) c);
-        } else if (c < 0x800) {
-          this.setByte(index++, (byte) (0xc0 | (c >> 6)));
-          this.setByte(index++, (byte) (0x80 | (c & 0x3f)));
-        } else if (c >= '\uD800' && c <= '\uDFFF') {
-          if (!Character.isHighSurrogate(c)) {
-            this.setByte(index++, WRITE_UTF_UNKNOWN);
-            continue;
-          }
-          final char c2;
-          try {
-            c2 = seq.charAt(++i);
-          } catch (IndexOutOfBoundsException ignored) {
-            this.setByte(index++, WRITE_UTF_UNKNOWN);
-            break;
-          }
-          if (!Character.isLowSurrogate(c2)) {
-            this.setByte(index++, WRITE_UTF_UNKNOWN);
-            this.setByte(index++, Character.isHighSurrogate(c2) ? WRITE_UTF_UNKNOWN : c2);
-          } else {
-            int codePoint = Character.toCodePoint(c, c2);
-            this.setByte(index++, (byte) (0xf0 | (codePoint >> 18)));
-            this.setByte(index++, (byte) (0x80 | ((codePoint >> 12) & 0x3f)));
-            this.setByte(index++, (byte) (0x80 | ((codePoint >> 6) & 0x3f)));
-            this.setByte(index++, (byte) (0x80 | (codePoint & 0x3f)));
-          }
-        } else {
-          this.setByte(index++, (byte) (0xe0 | (c >> 12)));
-          this.setByte(index++, (byte) (0x80 | ((c >> 6) & 0x3f)));
-          this.setByte(index++, (byte) (0x80 | (c & 0x3f)));
-        }
-      }
-      writtenBytes = index - oldIndex;
-    } else if (charset.name().equals(StandardCharsets.US_ASCII.name())) {
-      for (int i = 0; i < seq.length(); i++) {
-        this.setByte(index++, (byte) (seq.charAt(i) > MAX_CHAR_VALUE ? '?' : seq.charAt(i)));
-      }
-      writtenBytes = seq.length();
-    } else {
-      byte[] chars = seq.toString().getBytes(java.nio.charset.Charset.forName(charset.name()));
-      this.setBytes(index, chars);
-      writtenBytes = chars.length;
-    }
+    this.writtenBytes = StringUtils.setCharSequence(this, index, seq, charset);
     return this;
   }
 
@@ -767,8 +723,8 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
               "dstIdx: %d, length: %d (expected: dstIdx(%d) <= length(%d)))",
               dstIndex, length, dstIndex, length));
     }
-    com.sun.jna.Pointer dstPtr = dst.cast(com.sun.jna.Pointer.class).share(dstIndex, length);
-    DefaultPacketBuffer.Unsafe.memcpy(dstPtr, buffer.share(index, length), length);
+    com.sun.jna.Pointer dstPtr = ((DefaultPacketBuffer) dst).buffer.share(dstIndex, length);
+    memcpy(dstPtr, buffer.share(index, length), length);
     return this;
   }
 
@@ -791,17 +747,6 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
     byte[] bytes = new byte[(int) length & 0x7FFFFFFF];
     getBytes(index, bytes);
     return new String(bytes, java.nio.charset.Charset.forName(charset.name()));
-  }
-
-  @Override
-  public CharSequence getCharSequence(long index, Charset charset) {
-    checkIndex(index, capacity - index);
-    for (long i = index; i < capacity; i++) {
-      if (buffer.getByte(i) == '\0') {
-        return getCharSequence(index, i, charset);
-      }
-    }
-    return getCharSequence(index, capacity - index, charset);
   }
 
   @Override
@@ -846,8 +791,8 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
               "srcIdx: %d, length: %d (expected: srcIdx(%d) <= length(%d)))",
               srcIndex, length, srcIndex, length));
     }
-    com.sun.jna.Pointer srcPtr = src.cast(com.sun.jna.Pointer.class).share(srcIndex, length);
-    DefaultPacketBuffer.Unsafe.memcpy(buffer.share(index, length), srcPtr, length);
+    com.sun.jna.Pointer srcPtr = ((DefaultPacketBuffer) src).buffer.share(srcIndex, length);
+    memcpy(buffer.share(index, length), srcPtr, length);
     return this;
   }
 
@@ -870,7 +815,7 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
     // check buffer overflow
     checkIndex(index, length);
     com.sun.jna.Pointer newBuf = new com.sun.jna.Pointer(com.sun.jna.Native.malloc(length));
-    DefaultPacketBuffer.Unsafe.memcpy(newBuf, buffer.share(index, length), length);
+    memcpy(newBuf, buffer.share(index, length), length);
     return new DefaultPacketBuffer(newBuf, byteOrder, length, 0L, 0L);
   }
 
@@ -894,20 +839,10 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
   @Override
   public boolean release() {
     if (buffer != null) {
-      DefaultPacketBuffer.Unsafe.free(buffer);
+      free(buffer);
       return true;
     }
     return false;
-  }
-
-  @Override
-  public <T> T cast(Class<T> clazz) {
-    if (clazz.isAssignableFrom(com.sun.jna.Pointer.class)) {
-      return (T) buffer;
-    } else if (clazz.isAssignableFrom(com.sun.jna.ptr.PointerByReference.class)) {
-      return (T) reference;
-    }
-    throw new IllegalArgumentException("Unsupported buffer type.");
   }
 
   static class Sliced extends DefaultPacketBuffer implements PacketBuffer.Sliced {
@@ -928,18 +863,5 @@ public class DefaultPacketBuffer extends com.sun.jna.Structure implements Packet
     public DefaultPacketBuffer unSlice() {
       return prev;
     }
-  }
-
-  static class Unsafe {
-
-    static {
-      com.sun.jna.Native.register(
-          Unsafe.class, com.sun.jna.NativeLibrary.getInstance(com.sun.jna.Platform.C_LIBRARY_NAME));
-    }
-
-    static native com.sun.jna.Pointer memcpy(
-        com.sun.jna.Pointer dst, com.sun.jna.Pointer src, long n);
-
-    static native void free(com.sun.jna.Pointer p);
   }
 }

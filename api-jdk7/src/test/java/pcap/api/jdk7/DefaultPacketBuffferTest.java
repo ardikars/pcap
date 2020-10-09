@@ -24,6 +24,15 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
+  public void useMemory() {
+    DefaultPacketHeader header = new DefaultPacketHeader();
+    DefaultPacketBuffer buffer = new DefaultPacketBuffer();
+    buffer.userReference(header);
+    buffer.reference.setValue(((DefaultPacketBuffer) smallBuffer).buffer);
+    buffer.userReference(header);
+  }
+
+  @Test
   public void capacity() {
     Assertions.assertEquals(Short.BYTES, smallBuffer.capacity());
     Assertions.assertEquals(Integer.BYTES, mediumBuffer.capacity());
@@ -331,17 +340,23 @@ public class DefaultPacketBuffferTest {
     Assertions.assertFalse(smallBuffer.isReadable());
     Assertions.assertTrue(smallBuffer.writerIndex(Short.BYTES).isReadable());
     Assertions.assertFalse(smallBuffer.isReadable(Short.BYTES + Byte.BYTES));
+    Assertions.assertTrue(smallBuffer.setIndex(Byte.BYTES, Short.BYTES).isReadable(Byte.BYTES));
     Assertions.assertFalse(smallBuffer.isReadable(-Byte.BYTES));
+    Assertions.assertFalse(smallBuffer.writerIndex(Short.BYTES).isReadable(-Byte.BYTES));
 
     Assertions.assertFalse(mediumBuffer.isReadable());
     Assertions.assertTrue(mediumBuffer.writerIndex(Integer.BYTES).isReadable());
     Assertions.assertFalse(mediumBuffer.isReadable(Integer.BYTES + Byte.BYTES));
+    Assertions.assertTrue(mediumBuffer.setIndex(Byte.BYTES, Integer.BYTES).isReadable(Byte.BYTES));
     Assertions.assertFalse(mediumBuffer.isReadable(-Byte.BYTES));
+    Assertions.assertFalse(mediumBuffer.writerIndex(Integer.BYTES).isReadable(-Byte.BYTES));
 
     Assertions.assertFalse(largeBuffer.isReadable());
     Assertions.assertTrue(largeBuffer.writerIndex(Long.BYTES).isReadable());
     Assertions.assertFalse(largeBuffer.isReadable(Long.BYTES + Byte.BYTES));
+    Assertions.assertTrue(largeBuffer.setByte(Byte.BYTES, Long.BYTES).isReadable(Byte.BYTES));
     Assertions.assertFalse(largeBuffer.isReadable(-Byte.BYTES));
+    Assertions.assertFalse(largeBuffer.writerIndex(Long.BYTES).isReadable(-Byte.BYTES));
   }
 
   @Test
@@ -349,17 +364,23 @@ public class DefaultPacketBuffferTest {
     Assertions.assertTrue(smallBuffer.isWritable());
     Assertions.assertFalse(smallBuffer.setIndex(Short.BYTES, Short.BYTES).isWritable());
     Assertions.assertFalse(smallBuffer.setIndex(0, 0).isWritable(Short.BYTES + Byte.BYTES));
+    Assertions.assertTrue(smallBuffer.setIndex(Byte.BYTES, Byte.BYTES).isWritable(Byte.BYTES));
     Assertions.assertFalse(smallBuffer.setIndex(0, 0).isWritable(-Byte.BYTES));
+    Assertions.assertFalse(smallBuffer.setIndex(0, Short.BYTES).isWritable(-Byte.BYTES));
 
     Assertions.assertTrue(mediumBuffer.isWritable());
     Assertions.assertFalse(mediumBuffer.setIndex(Integer.BYTES, Integer.BYTES).isWritable());
     Assertions.assertFalse(mediumBuffer.setIndex(0, 0).isWritable(Integer.BYTES + Byte.BYTES));
+    Assertions.assertTrue(mediumBuffer.setIndex(Byte.BYTES, Byte.BYTES).isWritable(Byte.BYTES));
     Assertions.assertFalse(mediumBuffer.setIndex(0, 0).isWritable(-Byte.BYTES));
+    Assertions.assertFalse(mediumBuffer.setIndex(0, Integer.BYTES).isWritable(-Byte.BYTES));
 
     Assertions.assertTrue(largeBuffer.isWritable());
     Assertions.assertFalse(largeBuffer.setIndex(Long.BYTES, Long.BYTES).isWritable());
     Assertions.assertFalse(largeBuffer.setIndex(0, 0).isWritable(Long.BYTES + Byte.BYTES));
+    Assertions.assertTrue(largeBuffer.setIndex(Byte.BYTES, Byte.BYTES).isWritable(Byte.BYTES));
     Assertions.assertFalse(largeBuffer.setIndex(0, 0).isWritable(-Byte.BYTES));
+    Assertions.assertFalse(largeBuffer.setIndex(0, Long.BYTES).isWritable(-Byte.BYTES));
   }
 
   @Test
@@ -727,6 +748,29 @@ public class DefaultPacketBuffferTest {
     byte[] bufBytes = new byte[Long.BYTES];
     largeBuffer.getBytes(0, bufBytes);
     Assertions.assertArrayEquals(largeBytes, bufBytes);
+
+    PacketBuffer newBuf = new DefaultPacketBuffer((int) largeBuffer.capacity());
+    largeBuffer.getBytes(0, newBuf);
+    for (int i = 0; i < newBuf.capacity(); i++) {
+      Assertions.assertEquals(newBuf.getByte(i), largeBuffer.getByte(i));
+    }
+
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.getBytes(0, smallBuffer.writerIndex(Short.BYTES), 0, Long.BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.getBytes(0, new byte[] {0, 0}, 0, Long.BYTES);
+          }
+        });
   }
 
   @Test
@@ -742,11 +786,8 @@ public class DefaultPacketBuffferTest {
     mediumBuffer.setCharSequence(0, "Hi", charset);
     largeBuffer.setCharSequence(0, "Hi", charset);
     Assertions.assertEquals("Hi", smallBuffer.getCharSequence(0, Short.BYTES, charset));
-    Assertions.assertEquals("Hi", smallBuffer.getCharSequence(0, charset));
     Assertions.assertEquals("Hi", mediumBuffer.getCharSequence(0, Short.BYTES, charset));
-    Assertions.assertEquals("Hi", mediumBuffer.getCharSequence(0, charset));
     Assertions.assertEquals("Hi", largeBuffer.getCharSequence(0, Short.BYTES, charset));
-    Assertions.assertEquals("Hi", largeBuffer.getCharSequence(0, charset));
   }
 
   @Test
@@ -892,6 +933,40 @@ public class DefaultPacketBuffferTest {
     for (int i = 0; i < Byte.BYTES; i++) {
       Assertions.assertEquals(i, largeBuffer.getByte(0));
     }
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setBytes(0, null, Short.BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setBytes(0, null, Integer.BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            smallBuffer.setIndex(Byte.BYTES, Short.BYTES);
+            largeBuffer.setBytes(0, smallBuffer, Short.BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            smallBuffer.setIndex(Short.BYTES, Integer.BYTES);
+            largeBuffer.setBytes(0, smallBuffer, Integer.BYTES);
+          }
+        });
   }
 
   @Test
@@ -907,15 +982,476 @@ public class DefaultPacketBuffferTest {
     mediumBuffer.setCharSequence(0, "Hi", charset);
     largeBuffer.setCharSequence(0, "Hi", charset);
     Assertions.assertEquals("Hi", smallBuffer.getCharSequence(0, Short.BYTES, charset));
-    Assertions.assertEquals("Hi", smallBuffer.getCharSequence(0, charset));
     Assertions.assertEquals("Hi", mediumBuffer.getCharSequence(0, Short.BYTES, charset));
-    Assertions.assertEquals("Hi", mediumBuffer.getCharSequence(0, charset));
     Assertions.assertEquals("Hi", largeBuffer.getCharSequence(0, Short.BYTES, charset));
-    Assertions.assertEquals("Hi", largeBuffer.getCharSequence(0, charset));
   }
 
   @Test
   public void readBoolean() {
+    smallBuffer.writeBoolean(true);
+    smallBuffer.writeBoolean(false);
+    Assertions.assertTrue(smallBuffer.readBoolean());
+    Assertions.assertFalse(smallBuffer.readBoolean());
+    mediumBuffer.writeBoolean(true);
+    mediumBuffer.writeBoolean(false);
+    mediumBuffer.writeBoolean(true);
+    mediumBuffer.writeBoolean(false);
+    Assertions.assertTrue(mediumBuffer.readBoolean());
+    Assertions.assertFalse(mediumBuffer.readBoolean());
+    Assertions.assertTrue(mediumBuffer.readBoolean());
+    Assertions.assertFalse(mediumBuffer.readBoolean());
+    largeBuffer.writeBoolean(true);
+    largeBuffer.writeBoolean(true);
+    largeBuffer.writeBoolean(true);
+    largeBuffer.writeBoolean(true);
+    largeBuffer.writeBoolean(false);
+    largeBuffer.writeBoolean(false);
+    largeBuffer.writeBoolean(false);
+    largeBuffer.writeBoolean(false);
+    Assertions.assertTrue(largeBuffer.readBoolean());
+    Assertions.assertTrue(largeBuffer.readBoolean());
+    Assertions.assertTrue(largeBuffer.readBoolean());
+    Assertions.assertTrue(largeBuffer.readBoolean());
+    Assertions.assertFalse(largeBuffer.readBoolean());
+    Assertions.assertFalse(largeBuffer.readBoolean());
+    Assertions.assertFalse(largeBuffer.readBoolean());
+    Assertions.assertFalse(largeBuffer.readBoolean());
+  }
+
+  @Test
+  public void readByte() {
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            smallBuffer.readByte();
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            mediumBuffer.readByte();
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.readByte();
+          }
+        });
+    for (int i = 0; i < Short.BYTES; i++) {
+      smallBuffer.writeByte(i);
+      Assertions.assertEquals(i, smallBuffer.readByte());
+    }
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            smallBuffer.readByte();
+          }
+        });
+    for (int i = 0; i < Integer.BYTES; i++) {
+      mediumBuffer.writeByte(i);
+      Assertions.assertEquals(i, mediumBuffer.readByte());
+    }
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            mediumBuffer.readByte();
+          }
+        });
+    for (int i = 0; i < Long.BYTES; i++) {
+      largeBuffer.writeByte(i);
+      Assertions.assertEquals(i, largeBuffer.readByte());
+    }
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.readByte();
+          }
+        });
+  }
+
+  @Test
+  public void readUnsignedByte() {
+    for (int i = 0; i < Short.BYTES; i++) {
+      smallBuffer.writeByte(i);
+      Assertions.assertEquals(i, smallBuffer.readUnsignedByte());
+    }
+    for (int i = 0; i < Integer.BYTES; i++) {
+      mediumBuffer.writeByte(i);
+      Assertions.assertEquals(i, mediumBuffer.readUnsignedByte());
+    }
+    for (int i = 0; i < Long.BYTES; i++) {
+      largeBuffer.writeByte(i);
+      Assertions.assertEquals(i, largeBuffer.readUnsignedByte());
+    }
+  }
+
+  @Test
+  public void readShort() {
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            smallBuffer.readShort();
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            mediumBuffer.readShort();
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.readShort();
+          }
+        });
+    for (int i = 0; i < Short.BYTES / Short.BYTES; i++) {
+      smallBuffer.writeShort(i);
+      Assertions.assertEquals(i, smallBuffer.readShort());
+    }
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            smallBuffer.readShort();
+          }
+        });
+    for (int i = 0; i < Integer.BYTES / Short.BYTES; i++) {
+      mediumBuffer.writeShort(i);
+      Assertions.assertEquals(i, mediumBuffer.readShort());
+    }
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            mediumBuffer.readShort();
+          }
+        });
+    for (int i = 0; i < Long.BYTES / Short.BYTES; i++) {
+      largeBuffer.writeShort(i);
+      Assertions.assertEquals(i, largeBuffer.readShort());
+    }
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.readShort();
+          }
+        });
+  }
+
+  @Test
+  public void readShortRE() {
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            smallBuffer.readShortRE();
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            mediumBuffer.readShortRE();
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.readShortRE();
+          }
+        });
+    for (int i = 0; i < Short.BYTES / Short.BYTES; i++) {
+      smallBuffer.writeShortRE(i);
+      Assertions.assertEquals(i, smallBuffer.readShortRE());
+    }
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            smallBuffer.readShortRE();
+          }
+        });
+    for (int i = 0; i < Integer.BYTES / Short.BYTES; i++) {
+      mediumBuffer.writeShortRE(i);
+      Assertions.assertEquals(i, mediumBuffer.readShortRE());
+    }
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            mediumBuffer.readShortRE();
+          }
+        });
+    for (int i = 0; i < Long.BYTES / Short.BYTES; i++) {
+      largeBuffer.writeShortRE(i);
+      Assertions.assertEquals(i, largeBuffer.readShortRE());
+    }
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.readShortRE();
+          }
+        });
+  }
+
+  @Test
+  public void readUnsignedShort() {
+    for (int i = 0; i < Short.BYTES / Short.BYTES; i++) {
+      smallBuffer.writeShort(0xFFFF);
+      Assertions.assertEquals(0xFFFF, smallBuffer.readUnsignedShort());
+    }
+    for (int i = 0; i < Integer.BYTES / Short.BYTES; i++) {
+      mediumBuffer.writeShort(0xFFFF);
+      Assertions.assertEquals(0xFFFF, mediumBuffer.readUnsignedShort());
+    }
+    for (int i = 0; i < Long.BYTES / Short.BYTES; i++) {
+      largeBuffer.writeShort(0xFFFF);
+      Assertions.assertEquals(0xFFFF, largeBuffer.readUnsignedShort());
+    }
+  }
+
+  @Test
+  public void readUnsignedShortRE() {
+    for (int i = 0; i < Short.BYTES / Short.BYTES; i++) {
+      smallBuffer.writeShortRE(0xFFFF);
+      Assertions.assertEquals(0xFFFF, smallBuffer.readUnsignedShortRE());
+    }
+    for (int i = 0; i < Integer.BYTES / Short.BYTES; i++) {
+      mediumBuffer.writeShortRE(0xFFFF);
+      Assertions.assertEquals(0xFFFF, mediumBuffer.readUnsignedShortRE());
+    }
+    for (int i = 0; i < Long.BYTES / Short.BYTES; i++) {
+      largeBuffer.writeShortRE(0xFFFF);
+      Assertions.assertEquals(0xFFFF, largeBuffer.readUnsignedShortRE());
+    }
+  }
+
+  @Test
+  public void readInt() {
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            mediumBuffer.readInt();
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.readInt();
+          }
+        });
+    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+      mediumBuffer.writeInt(i);
+      Assertions.assertEquals(i, mediumBuffer.readInt());
+    }
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            mediumBuffer.readInt();
+          }
+        });
+    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+      largeBuffer.writeInt(i);
+      Assertions.assertEquals(i, largeBuffer.readInt());
+    }
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.readInt();
+          }
+        });
+  }
+
+  @Test
+  public void readIntRE() {
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            mediumBuffer.readIntRE();
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.readIntRE();
+          }
+        });
+    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+      mediumBuffer.writeIntRE(i);
+      Assertions.assertEquals(i, mediumBuffer.readIntRE());
+    }
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            mediumBuffer.readIntRE();
+          }
+        });
+    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+      largeBuffer.writeIntRE(i);
+      Assertions.assertEquals(i, largeBuffer.readIntRE());
+    }
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.readIntRE();
+          }
+        });
+  }
+
+  @Test
+  public void readUnsignedInt() {
+    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+      mediumBuffer.writeInt(0xFFFFFFFF);
+      Assertions.assertEquals(0xFFFFFFFFL, mediumBuffer.readUnsignedInt());
+    }
+    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+      largeBuffer.writeInt(0xFFFFFFFF);
+      Assertions.assertEquals(0xFFFFFFFFL, largeBuffer.readUnsignedInt());
+    }
+  }
+
+  @Test
+  public void readUnsignedIntRE() {
+    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+      mediumBuffer.writeIntRE(0xFFFFFFFF);
+      Assertions.assertEquals(0xFFFFFFFFL, mediumBuffer.readUnsignedIntRE());
+    }
+    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+      largeBuffer.writeIntRE(0xFFFFFFFF);
+      Assertions.assertEquals(0xFFFFFFFFL, largeBuffer.readUnsignedIntRE());
+    }
+  }
+
+  @Test
+  public void readFloat() {
+    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+      mediumBuffer.writeFloat(i + 0.5F);
+      Assertions.assertEquals(i + 0.5F, mediumBuffer.readFloat());
+    }
+    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+      largeBuffer.writeFloat(i + 0.5F);
+      Assertions.assertEquals(i + 0.5F, largeBuffer.readFloat());
+    }
+  }
+
+  @Test
+  public void readFloatRE() {
+    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+      mediumBuffer.writeFloatRE(i + 0.5F);
+      Assertions.assertEquals(i + 0.5F, mediumBuffer.readFloatRE());
+    }
+    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+      largeBuffer.writeFloatRE(i + 0.5F);
+      Assertions.assertEquals(i + 0.5F, largeBuffer.readFloatRE());
+    }
+  }
+
+  @Test
+  public void readDouble() {
+    for (int i = 0; i < Long.BYTES / Long.BYTES; i++) {
+      largeBuffer.writeDouble(i + 0.5D);
+      Assertions.assertEquals(i + 0.5D, largeBuffer.readDouble());
+    }
+  }
+
+  @Test
+  public void readDoubleRE() {
+    for (int i = 0; i < Long.BYTES / Long.BYTES; i++) {
+      largeBuffer.writeDoubleRE(i + 0.5D);
+      Assertions.assertEquals(i + 0.5D, largeBuffer.readDoubleRE());
+    }
+  }
+
+  @Test
+  public void readLong() {
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.readLong();
+          }
+        });
+    largeBuffer.writeLong(Long.MAX_VALUE);
+    Assertions.assertEquals(Long.MAX_VALUE, largeBuffer.readLong());
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.readLong();
+          }
+        });
+  }
+
+  @Test
+  public void readLongRE() {
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.readLongRE();
+          }
+        });
+    largeBuffer.writeLongRE(Long.MAX_VALUE);
+    Assertions.assertEquals(Long.MAX_VALUE, largeBuffer.readLongRE());
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.readLongRE();
+          }
+        });
   }
 
   @AfterEach

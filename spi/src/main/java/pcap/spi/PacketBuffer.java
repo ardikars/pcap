@@ -409,16 +409,6 @@ public interface PacketBuffer {
   PacketBuffer getBytes(long index, byte[] dst, long dstIndex, long length);
 
   /**
-   * Gets a {@link CharSequence} with given index.
-   *
-   * @throws IndexOutOfBoundsException if {@code length} is greater than {@code this.readableBytes}
-   * @param charset that should be used
-   * @return the sequence
-   * @return a string from buffer.
-   */
-  CharSequence getCharSequence(long index, Charset charset);
-
-  /**
    * Gets a {@link CharSequence} with the given length at the given index.
    *
    * @throws IndexOutOfBoundsException if {@code length} is greater than {@code this.readableBytes}
@@ -1181,9 +1171,6 @@ public interface PacketBuffer {
   /** Release this {@link PacketBuffer} buffer */
   @Incubating
   boolean release();
-
-  @Incubating
-  <T> T cast(Class<T> clazz);
 
   /** Byte order. */
   @Incubating

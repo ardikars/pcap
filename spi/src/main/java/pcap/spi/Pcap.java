@@ -62,22 +62,6 @@ public interface Pcap extends AutoCloseable {
   /**
    * Reads the next packet and returns a success/failure indication.
    *
-   * <p>Deprecated: use {@link Pcap#nextEx(PacketHeader, PacketBuffer)} instead.
-   *
-   * @param packetBuffer packet buffer.
-   * @param packetHeader packet header.
-   * @throws BreakException there are no more packets to read from `savefile`.
-   * @throws ReadPacketTimeoutException if packets are being read from a `live capture` and the
-   *     packet buffer timeout expired.
-   * @throws ErrorException generic exception.
-   * @since 1.0.0
-   */
-  void nextEx(PacketBuffer packetBuffer, PacketHeader packetHeader)
-      throws BreakException, ReadPacketTimeoutException, ErrorException;
-
-  /**
-   * Reads the next packet and returns a success/failure indication.
-   *
    * @param packetHeader packet header.
    * @param packetBuffer packet buffer.
    * @throws BreakException there are no more packets to read from `savefile`.
@@ -137,57 +121,12 @@ public interface Pcap extends AutoCloseable {
   Statistics stats() throws ErrorException;
 
   /**
-   * Represent packet statistics from the start of the run to the time of the call.
-   *
-   * <p>Supported only on live captures, not on {@code PcapOffline}; no statistics are stored in
-   * {@code PcapOffline} so no statistics are available when reading from a {@code PcapOffline}
-   *
-   * <p>Deprecated: Use {@link Pcap#stats()} instead.
-   *
-   * @return returns {@link Statistics} on success.
-   * @throws ErrorException There is an error or if this {@link Pcap} doesn't support packet
-   *     statistics.
-   * @since 1.0.0
-   */
-  @Deprecated
-  Status status() throws ErrorException;
-
-  /**
    * Force a {@link Pcap#loop(int, PacketHandler, Object)} call to return And throw {@link
    * BreakException} on {@link Pcap#loop(int, PacketHandler, Object)}.
    *
    * @since 1.0.0
    */
   void breakLoop();
-
-  /**
-   * Sends a raw packet through the network interface.
-   *
-   * @param directBuffer the data of the packet, including the link-layer header.
-   * @param size the number of bytes in the packet.
-   * @throws ErrorException generic error.
-   */
-  @Deprecated
-  void sendPacket(PacketBuffer directBuffer, int size) throws ErrorException;
-
-  /**
-   * Deprecated: Use {@link Pcap#sendPacket(PacketBuffer)} instead.
-   *
-   * @param directBuffer direct buffer.
-   * @param size size.
-   * @throws ErrorException error exception.
-   */
-  @Deprecated
-  void send(PacketBuffer directBuffer, int size) throws ErrorException;
-
-  /**
-   * Deprecated: Use {@link Pcap#sendPacket(PacketBuffer)} instead.
-   *
-   * @param directBuffer direct buffer.
-   * @throws ErrorException error exception.
-   */
-  @Deprecated
-  void send(PacketBuffer directBuffer) throws ErrorException;
 
   /**
    * Send a raw packet through the network interface.
@@ -277,15 +216,6 @@ public interface Pcap extends AutoCloseable {
   void setNonBlock(boolean blocking) throws ErrorException;
 
   /**
-   * Wait this pcap file descriptor to become ready to perform I/O.
-   *
-   * @param count maximum number of loop, -1 for infinite loop.
-   * @param listener event listener.
-   * @param option event listener options.
-   */
-  void listen(int count, Event listener, Event.Options option);
-
-  /**
    * Close {@code PcapLive} or {@code PcapOffline}. <br>
    * Note: BPF handle will closed automaticly.
    *
@@ -325,45 +255,6 @@ public interface Pcap extends AutoCloseable {
         }
       }
       return PCAP_D_INOUT;
-    }
-  }
-
-  /** Event listener */
-  interface Event {
-
-    /**
-     * Ready to perform I/O operation.
-     *
-     * @param pcap pcap handle.
-     * @param option options.
-     * @param operation event operation.
-     */
-    void onReady(Options option, Pcap pcap, Operation operation);
-
-    /**
-     * Error.
-     *
-     * @param pcap pcap handle.
-     * @param option options.
-     * @param e exception.
-     */
-    void onError(Pcap pcap, Options option, Throwable e);
-
-    /**
-     * Timeout handler.
-     *
-     * @param pcap pcap handle.
-     * @param option options.
-     */
-    void onTimeout(Pcap pcap, Options option);
-
-    /** Event handler options. */
-    interface Options {}
-
-    /** IO Operation type. */
-    enum Operation {
-      READ,
-      WRITE
     }
   }
 }

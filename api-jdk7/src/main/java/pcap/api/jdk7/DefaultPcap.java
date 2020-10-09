@@ -1,6 +1,5 @@
 package pcap.api.jdk7;
 
-import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import pcap.spi.*;
@@ -19,13 +18,10 @@ public class DefaultPcap implements Pcap {
   final int netmask;
 
   final DefaultStatistics statistics = new DefaultStatistics();
-  final NativeEvent selector;
 
   DefaultPcap(Pointer pointer, int netmask) {
     this.pointer = pointer;
     this.netmask = netmask;
-    this.selector = selector(Platform.getOSType());
-    this.selector.init();
   }
 
   @Override
@@ -88,6 +84,7 @@ public class DefaultPcap implements Pcap {
                 @Override
                 public void got_packet(
                     Pointer user, DefaultPacketHeader header, DefaultPacketBuffer packet) {
+                  packet.capacity = header.caplen;
                   handler.gotPacket(args, header, packet);
                 }
               },
@@ -96,12 +93,6 @@ public class DefaultPcap implements Pcap {
     } finally {
       readLock.unlock();
     }
-  }
-
-  @Override
-  public void nextEx(PacketBuffer packetBuffer, PacketHeader packetHeader)
-      throws BreakException, ErrorException {
-    nextEx(packetHeader, packetBuffer);
   }
 
   @Override
@@ -132,6 +123,7 @@ public class DefaultPcap implements Pcap {
                 @Override
                 public void got_packet(
                     Pointer user, DefaultPacketHeader header, DefaultPacketBuffer packet) {
+                  packet.capacity = header.caplen;
                   handler.gotPacket(args, header, packet);
                 }
               },
@@ -156,11 +148,6 @@ public class DefaultPcap implements Pcap {
   }
 
   @Override
-  public Status status() throws ErrorException {
-    return stats();
-  }
-
-  @Override
   public void breakLoop() {
     readLock.lock();
     try {
@@ -168,22 +155,6 @@ public class DefaultPcap implements Pcap {
     } finally {
       readLock.unlock();
     }
-  }
-
-  @Override
-  public void sendPacket(PacketBuffer directBuffer, int size) throws ErrorException {
-    directBuffer.writerIndex(size);
-    sendPacket(directBuffer);
-  }
-
-  @Override
-  public void send(PacketBuffer directBuffer, int size) throws ErrorException {
-    sendPacket(directBuffer, size);
-  }
-
-  @Override
-  public void send(PacketBuffer directBuffer) throws ErrorException {
-    sendPacket(directBuffer);
   }
 
   @Override
@@ -223,9 +194,6 @@ public class DefaultPcap implements Pcap {
     readLock.lock();
     try {
       rc = NativeMappings.pcap_is_swapped(pointer);
-      if (rc == -3) {
-        throw new NotActivatedException("");
-      }
     } finally {
       readLock.unlock();
     }
@@ -296,11 +264,6 @@ public class DefaultPcap implements Pcap {
   }
 
   @Override
-  public void listen(int count, Event listener, Event.Options option) {
-    selector.listen(count, listener, option);
-  }
-
-  @Override
   public void close() {
     readLock.lock();
     try {
@@ -318,14 +281,6 @@ public class DefaultPcap implements Pcap {
       return (T) new DefaultPacketBuffer();
     }
     throw new IllegalArgumentException("Class: " + cls + " is unsupported.");
-  }
-
-  NativeEvent selector(int os) {
-    if (os == Platform.WINDOWS || os == Platform.WINDOWSCE) {
-      return new NativeWaitForSingleObject(this);
-    } else {
-      return new NativePoll(this);
-    }
   }
 
   void nullCheck(Pointer newPointer) throws ErrorException {
@@ -416,7 +371,17 @@ public class DefaultPcap implements Pcap {
     }
   }
 
-  boolean swappedCheck(int swapped) {
-    return swapped == NativeMappings.TRUE;
+  boolean swappedCheck(int swapped) throws NotActivatedException {
+    if (swapped == NativeMappings.TRUE) {
+      return true;
+    } else if (swapped == NativeMappings.FALSE) {
+      return false;
+    } else {
+      if (swapped == -3) {
+        throw new NotActivatedException("");
+      } else {
+        return false;
+      }
+    }
   }
 }

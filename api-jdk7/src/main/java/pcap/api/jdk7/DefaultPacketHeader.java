@@ -55,16 +55,6 @@ public class DefaultPacketHeader extends com.sun.jna.Structure implements Packet
   }
 
   @Override
-  public <T> T cast(Class<T> clazz) {
-    if (clazz.isAssignableFrom(com.sun.jna.Pointer.class)) {
-      return (T) getPointer();
-    } else if (clazz.isAssignableFrom(com.sun.jna.ptr.PointerByReference.class)) {
-      return (T) reference;
-    }
-    throw new IllegalArgumentException("Unsupported type.");
-  }
-
-  @Override
   protected List<String> getFieldOrder() {
     List<String> list = new ArrayList<String>();
     list.add("ts");
