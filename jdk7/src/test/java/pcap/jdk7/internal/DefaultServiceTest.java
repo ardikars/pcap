@@ -33,32 +33,6 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void lookupInet4Address() throws ErrorException {
-    Interface lo = service.lookupInterfaces();
-    Assertions.assertThrows(
-        UnsupportedOperationException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            service.lookupInet4Address(lo);
-          }
-        });
-  }
-
-  @Test
-  public void lookupInet6Address() throws ErrorException {
-    Interface lo = service.lookupInterfaces();
-    Assertions.assertThrows(
-        UnsupportedOperationException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            service.lookupInet6Address(lo);
-          }
-        });
-  }
-
-  @Test
   public void interfaces() throws ErrorException {
     DefaultService defaultService = (DefaultService) service;
     Iterator<Interface> sources = defaultService.interfaces().iterator();

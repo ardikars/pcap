@@ -16,7 +16,7 @@ public abstract class BaseTest {
   protected static final String SAMPLE_PCAPNG = "src/test/resources/sample.pcapng";
 
   public Interface loopbackInterface(Service service) throws ErrorException {
-    Iterator<Interface> iterator = service.lookupInterfaces().iterator();
+    Iterator<Interface> iterator = service.interfaces().iterator();
     if (iterator != null) {
       while (iterator.hasNext()) {
         Interface source = iterator.next();

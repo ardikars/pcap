@@ -3,7 +3,6 @@ package pcap.jdk7.internal;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 import java.net.Inet4Address;
-import java.net.Inet6Address;
 import java.util.Objects;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import pcap.spi.Address;
@@ -32,11 +31,6 @@ public class DefaultService implements Service {
   }
 
   @Override
-  public DefaultInterface lookupInterfaces() throws ErrorException {
-    return interfaces();
-  }
-
-  @Override
   public DefaultInterface interfaces() throws ErrorException {
     DefaultInterface pcapIf;
     PointerByReference alldevsPP = new PointerByReference();
@@ -50,16 +44,6 @@ public class DefaultService implements Service {
       lock.unlock();
     }
     return pcapIf;
-  }
-
-  @Override
-  public Inet4Address lookupInet4Address(Interface source) throws ErrorException {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public Inet6Address lookupInet6Address(Interface source) throws ErrorException {
-    throw new UnsupportedOperationException();
   }
 
   @Override

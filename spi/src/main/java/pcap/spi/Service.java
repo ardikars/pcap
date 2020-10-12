@@ -1,8 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.spi;
 
-import java.net.Inet4Address;
-import java.net.Inet6Address;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 import pcap.spi.exception.ErrorException;
@@ -15,30 +13,6 @@ import pcap.spi.exception.error.*;
  * @since 1.0.0
  */
 public interface Service {
-
-  class Creator {
-
-    private Creator() {}
-
-    /**
-     * Create {@link Service} provider inctance.
-     *
-     * @param name service name.
-     * @return returns new {@link Service} instance.
-     * @throws ErrorException service provider is not found for given type.
-     */
-    public static Service create(String name) throws ErrorException {
-      ServiceLoader<Service> loader = ServiceLoader.load(Service.class);
-      Iterator<Service> iterator = loader.iterator();
-      while (iterator.hasNext()) {
-        Service service = iterator.next();
-        if (service.name().equals(name)) {
-          return service;
-        }
-      }
-      throw new ErrorException("No service provider implementation for (" + name + ").");
-    }
-  }
 
   /**
    * Get unique service name.
@@ -60,35 +34,7 @@ public interface Service {
    * @return returns iterable {@link Interface}'s.
    * @throws ErrorException generic error.
    */
-  Interface lookupInterfaces() throws ErrorException;
-
-  /**
-   * Find all interfaces on your system.
-   *
-   * @return returns iterable {@link Interface}'s.
-   * @throws ErrorException generic error.
-   */
   Interface interfaces() throws ErrorException;
-
-  /**
-   * Lookup {@link Inet4Address} from {@link Interface}.
-   *
-   * @param source {@link Interface}.
-   * @return returns {@link Inet4Address}.
-   * @throws ErrorException address not found.
-   */
-  @Deprecated
-  Inet4Address lookupInet4Address(Interface source) throws ErrorException;
-
-  /**
-   * Lookup {@link Inet6Address} from {@link Interface}.
-   *
-   * @param source {@link Interface}.
-   * @return returns {@link Inet6Address}.
-   * @throws ErrorException address not found.
-   */
-  @Deprecated
-  Inet6Address lookupInet6Address(Interface source) throws ErrorException;
 
   /**
    * Open offline handle.
@@ -264,6 +210,30 @@ public interface Service {
     LiveOptions timestampPrecision(Timestamp.Precision timestampPrecision);
   }
 
+  class Creator {
+
+    private Creator() {}
+
+    /**
+     * Create {@link Service} provider inctance.
+     *
+     * @param name service name.
+     * @return returns new {@link Service} instance.
+     * @throws ErrorException service provider is not found for given type.
+     */
+    public static Service create(String name) throws ErrorException {
+      ServiceLoader<Service> loader = ServiceLoader.load(Service.class);
+      Iterator<Service> iterator = loader.iterator();
+      while (iterator.hasNext()) {
+        Service service = iterator.next();
+        if (service.name().equals(name)) {
+          return service;
+        }
+      }
+      throw new ErrorException("No service provider implementation for (" + name + ").");
+    }
+  }
+
   class NoService implements Service {
 
     @Override
@@ -277,22 +247,7 @@ public interface Service {
     }
 
     @Override
-    public Interface lookupInterfaces() throws ErrorException {
-      throw new ErrorException("No API implementation.");
-    }
-
-    @Override
     public Interface interfaces() throws ErrorException {
-      throw new ErrorException("No API implementation.");
-    }
-
-    @Override
-    public Inet4Address lookupInet4Address(Interface source) throws ErrorException {
-      throw new ErrorException("No API implementation.");
-    }
-
-    @Override
-    public Inet6Address lookupInet6Address(Interface source) throws ErrorException {
       throw new ErrorException("No API implementation.");
     }
 

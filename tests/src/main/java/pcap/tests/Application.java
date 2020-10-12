@@ -15,7 +15,7 @@ public class Application {
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException, BreakException {
     Service service = Service.Creator.create("PcapService");
-    Interface devices = service.lookupInterfaces();
+    Interface devices = service.interfaces();
     for (Interface device : devices) {
       System.out.println(
           "[*] Device name   : " + device.name() + " (" + device.description() + ")");
