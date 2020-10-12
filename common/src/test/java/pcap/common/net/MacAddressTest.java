@@ -170,4 +170,12 @@ public class MacAddressTest {
     Assertions.assertTrue(ibm.compareTo(cisco) > 0);
     Assertions.assertTrue(ibm.compareTo(ibm) == 0);
   }
+
+  @Test
+  public void toStringTest() {
+    String first = "de:00:be:ef:c0:fe";
+    String second = "de:ad:be:ef:c0:fe";
+    Assertions.assertEquals(first, MacAddress.valueOf(first).toString());
+    Assertions.assertEquals(second, MacAddress.valueOf(second).toString());
+  }
 }

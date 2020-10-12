@@ -1,4 +1,0 @@
-pcap.common.memory.internal.nio.allocator.PooledDirectByteBufferAllocator
-pcap.common.memory.internal.nio.allocator.PooledHeapByteBufferAllocator
-pcap.common.memory.internal.nio.allocator.DirectMemoryAllocator
-pcap.common.memory.internal.nio.allocator.HeapMemoryAllocator

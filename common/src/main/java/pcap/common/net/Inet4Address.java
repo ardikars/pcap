@@ -2,11 +2,9 @@
 package pcap.common.net;
 
 import java.util.Arrays;
-import pcap.common.annotation.Inclubating;
 import pcap.common.util.Validate;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
-@Inclubating
 public final class Inet4Address extends InetAddress {
 
   /** IPv4 Any local address (0.0.0.0). */

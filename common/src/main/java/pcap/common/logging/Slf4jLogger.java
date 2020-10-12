@@ -2,10 +2,8 @@
 package pcap.common.logging;
 
 import org.slf4j.Logger;
-import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
-@Inclubating
 class Slf4jLogger extends AbstractLogger {
 
   private final Logger logger;

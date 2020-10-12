@@ -35,10 +35,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>pcap-common</artifactId>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>pcap-codec</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.openjdk.jmh</groupId>

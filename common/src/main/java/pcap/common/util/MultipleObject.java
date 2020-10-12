@@ -6,10 +6,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
-@Inclubating
 public class MultipleObject<K> implements Serializable {
 
   private static final long serialVersionUID = -7486266343955776290L;

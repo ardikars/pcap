@@ -3,12 +3,10 @@ package pcap.common.net;
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import pcap.common.annotation.Inclubating;
 import pcap.common.util.Longs;
 import pcap.common.util.Validate;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
-@Inclubating
 public final class Inet6Address extends InetAddress {
 
   /** Zero IPv6 Address. */

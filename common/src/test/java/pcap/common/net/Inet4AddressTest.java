@@ -138,5 +138,17 @@ public class Inet4AddressTest {
     Assertions.assertFalse(address.equals(""));
     Assertions.assertTrue(address.equals(Inet4Address.LOCALHOST));
     Assertions.assertTrue(address.equals(Inet4Address.valueOf("127.0.0.1")));
+    Assertions.assertEquals(address.hashCode(), Inet4Address.valueOf("127.0.0.1").hashCode());
+  }
+
+  @Test
+  public void addressTest() {
+    Assertions.assertArrayEquals(
+        Inet4Address.LOCALHOST.address(), Inet4Address.valueOf("127.0.0.1").address());
+  }
+
+  @Test
+  public void toStringTest() {
+    Assertions.assertEquals("127.0.0.1", Inet4Address.LOCALHOST.toString());
   }
 }

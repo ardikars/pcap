@@ -2,10 +2,8 @@
 package pcap.common.util;
 
 import java.util.Objects;
-import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
-@Inclubating
 public abstract class NamedMultipleObject<T extends MultipleObject> implements ObjectName {
 
   private final T value;

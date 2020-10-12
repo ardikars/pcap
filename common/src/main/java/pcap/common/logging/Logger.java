@@ -1,15 +1,12 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.logging;
 
-import pcap.common.annotation.Inclubating;
-
 /**
  * Logger api specification.
  *
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
-@Inclubating
 public interface Logger {
 
   /**

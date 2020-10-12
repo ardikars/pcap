@@ -1,7 +1,6 @@
 /** This code is licenced under the GPL version 2. */
 package pcap.common.logging;
 
-import pcap.common.annotation.Inclubating;
 import pcap.common.util.Properties;
 
 /**
@@ -10,7 +9,6 @@ import pcap.common.util.Properties;
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
-@Inclubating
 abstract class AbstractLogger implements Logger {
 
   static final String UNKNOWN_LOG_LEVEL;

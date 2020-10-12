@@ -2,10 +2,8 @@
 package pcap.common.util;
 
 import java.util.regex.Pattern;
-import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
-@Inclubating
 public final class Hexs {
 
   private static final Pattern NO_SEPARATOR_HEX_STRING_PATTERN =

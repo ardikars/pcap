@@ -2,10 +2,8 @@
 package pcap.common.logging;
 
 import org.apache.logging.log4j.LogManager;
-import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
-@Inclubating
 class Log4j2LoggerFactory extends LoggerFactory {
 
   private static final LoggerFactory INSTANCE = new Log4j2LoggerFactory();

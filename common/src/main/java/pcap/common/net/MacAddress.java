@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-import pcap.common.annotation.Inclubating;
 import pcap.common.util.NamedNumber;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
@@ -16,7 +15,6 @@ import pcap.common.util.Validate;
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
-@Inclubating
 public final class MacAddress implements Address {
 
   /** MAC Address Length. */
@@ -206,7 +204,11 @@ public final class MacAddress implements Address {
         sb.append(':');
       }
       String hex = Integer.toHexString(b & 0xff);
-      sb.append(hex.length() == 1 ? '0' + hex : hex);
+      if (hex.length() == 1) {
+        sb.append('0' + hex);
+      } else {
+        sb.append(hex);
+      }
     }
     return sb.toString();
   }

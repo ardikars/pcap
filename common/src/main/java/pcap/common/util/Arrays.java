@@ -4,10 +4,8 @@ package pcap.common.util;
 import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.List;
-import pcap.common.annotation.Inclubating;
 
 /** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
-@Inclubating
 public final class Arrays {
 
   private Arrays() {}
