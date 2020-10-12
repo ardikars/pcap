@@ -1,6 +1,5 @@
 package pcap.tests;
 
-import pcap.common.net.MacAddress;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
@@ -25,12 +24,28 @@ public class Application {
       PacketBuffer packetBuffer = live.allocate(PacketBuffer.class);
       PacketHeader packetHeader = live.allocate(PacketHeader.class);
       live.nextEx(packetHeader, packetBuffer);
-      byte[] dstBuf = new byte[MacAddress.MAC_ADDRESS_LENGTH];
+      byte[] dstBuf = new byte[14];
       packetBuffer.readBytes(dstBuf);
-      System.out.println("Destination : " + MacAddress.valueOf(dstBuf));
+      System.out.println("Destination : " + toStringMacAddress(dstBuf));
       packetBuffer.readBytes(dstBuf);
-      System.out.println("Source      : " + MacAddress.valueOf(dstBuf));
+      System.out.println("Source      : " + toStringMacAddress(dstBuf));
       System.out.println("Type        : " + packetBuffer.readShort());
     }
+  }
+
+  private static String toStringMacAddress(byte[] address) {
+    final StringBuilder sb = new StringBuilder();
+    for (final byte b : address) {
+      if (sb.length() > 0) {
+        sb.append(':');
+      }
+      String hex = Integer.toHexString(b & 0xff);
+      if (hex.length() == 1) {
+        sb.append('0' + hex);
+      } else {
+        sb.append(hex);
+      }
+    }
+    return sb.toString();
   }
 }
