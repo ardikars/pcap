@@ -2,6 +2,7 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.NativeLibrary;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import pcap.spi.Pcap;
@@ -57,15 +58,23 @@ class DefaultWaitForSingleObjectEventService implements EventService, Invocation
         do {
           events = WaitForSingleObjectEx(handle, async.timeout(), 1);
         } while (events < 0 && EINTR == com.sun.jna.Native.getLastError());
-        if (events == 0L) {
-          return m.invoke(pcap, args);
-        } else if (events == 0x00000102L) {
+        if (events == 0x00000102L) {
+          if (method.getName().equals("next")) {
+            return null;
+          }
           throw new ReadPacketTimeoutException("");
-        } else {
+        } else if (events != 0L) {
+          if (method.getName().equals("next")) {
+            return null;
+          }
           throw new ErrorException("");
         }
       }
     }
-    return m.invoke(pcap, args);
+    try {
+      return m.invoke(pcap, args);
+    } catch (InvocationTargetException e) {
+      throw new ErrorException(e.getMessage());
+    }
   }
 }

@@ -1,8 +1,8 @@
 package pcap.jdk7.internal;
 
 import com.sun.jna.*;
-
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import pcap.spi.Pcap;
@@ -41,8 +41,6 @@ class DefaultPollEventService implements EventService, InvocationHandler {
 
   static native int poll(Pointer fds, long nfds, int timeout);
 
-  static native DefaultTimestamp pcap_get_required_select_timeout(Pointer p);
-
   @Override
   public <T extends Pcap> T open(Pcap pcap, Class<T> target) {
     DefaultPcap defaultPcap = (DefaultPcap) pcap;
@@ -66,7 +64,7 @@ class DefaultPollEventService implements EventService, InvocationHandler {
       Async async = method.getAnnotation(Async.class);
       if (async != null) {
         int timeout = async.timeout();
-        DefaultTimestamp req = pcap_get_required_select_timeout(pcap.pointer);
+        DefaultTimestamp req = UnixMapping.pcap_get_required_select_timeout(pcap.pointer);
         if (timeout <= 0 && req != null) {
           timeout = (int) (req.tv_usec.longValue() / 1000L);
         }
@@ -77,16 +75,40 @@ class DefaultPollEventService implements EventService, InvocationHandler {
 
         if (rc > 0) {
           int revents = pfds.getShort(REVENTS_OFFSET);
-          if ((revents & POLLIN) != 0) {
-            return m.invoke(pcap, args);
+          if ((revents & POLLIN) != POLLIN) {
+            if (method.getName().equals("next")) {
+              return null;
+            }
+            throw new ErrorException("");
           }
         } else if (rc < 0) {
+          if (method.getName().equals("next")) {
+            return null;
+          }
           throw new ErrorException("");
         } else {
+          if (method.getName().equals("next")) {
+            return null;
+          }
           throw new ReadPacketTimeoutException("");
         }
       }
     }
-    return m.invoke(pcap, args);
+    try {
+      return m.invoke(pcap, args);
+    } catch (InvocationTargetException e) {
+      throw new ErrorException(e.getMessage());
+    }
+  }
+
+  static class UnixMapping {
+
+    static {
+      com.sun.jna.Native.register(
+          UnixMapping.class,
+          NativeLibrary.getInstance(NativeMappings.libName(Platform.isWindows())));
+    }
+
+    static native DefaultTimestamp pcap_get_required_select_timeout(Pointer p);
   }
 }

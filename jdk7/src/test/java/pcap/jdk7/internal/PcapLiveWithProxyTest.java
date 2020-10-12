@@ -57,7 +57,7 @@ public class PcapLiveWithProxyTest extends BaseTest {
     @Async
     @Override
     <T> void dispatch(int count, PacketHandler<T> handler, T args)
-        throws BreakException, ErrorException;
+        throws BreakException, ReadPacketTimeoutException, ErrorException;
 
     @Async(timeout = 1000)
     @Override
@@ -66,6 +66,6 @@ public class PcapLiveWithProxyTest extends BaseTest {
     @Async(timeout = 0)
     @Override
     void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
-        throws BreakException, ErrorException;
+        throws BreakException, ReadPacketTimeoutException, ErrorException;
   }
 }

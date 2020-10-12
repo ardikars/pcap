@@ -118,7 +118,7 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
-      throws BreakException, ErrorException {
+      throws BreakException, ReadPacketTimeoutException, ErrorException {
     if (packetHeader == null) {
       throw new IllegalArgumentException("header: null (expected: header != null)");
     }
@@ -138,7 +138,7 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public <T> void dispatch(int count, PacketHandler<T> handler, T args)
-      throws BreakException, ErrorException {
+      throws BreakException, ReadPacketTimeoutException, ErrorException {
     int rc;
     readLock.lock();
     try {
