@@ -98,8 +98,33 @@ public class DefaultPcap implements Pcap {
   }
 
   @Override
+  public PacketBuffer next(PacketHeader header) {
+    if (header == null) {
+      throw new IllegalArgumentException("header: null (expected: header != null)");
+    }
+    DefaultPacketHeader hdr = (DefaultPacketHeader) header;
+    readLock.lock();
+    try {
+      Pointer buf = NativeMappings.pcap_next(pointer, hdr);
+      if (buf == null) {
+        return null;
+      }
+    } finally {
+      readLock.unlock();
+    }
+    return new DefaultPacketBuffer(
+        pointer, PacketBuffer.ByteOrder.NATIVE, hdr.caplen, 0, hdr.caplen);
+  }
+
+  @Override
   public void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
       throws BreakException, ErrorException {
+    if (packetHeader == null) {
+      throw new IllegalArgumentException("header: null (expected: header != null)");
+    }
+    if (packetBuffer == null) {
+      throw new IllegalArgumentException("buffer: null (expected: buffer != null)");
+    }
     DefaultPacketHeader header = (DefaultPacketHeader) packetHeader;
     DefaultPacketBuffer buffer = (DefaultPacketBuffer) packetBuffer;
     readLock.lock();
@@ -202,6 +227,16 @@ public class DefaultPcap implements Pcap {
       readLock.unlock();
     }
     return swappedCheck(rc);
+  }
+
+  @Override
+  public Timestamp.Precision getTimestampPrecision() {
+    int rc = NativeMappings.pcap_get_tstamp_precision(pointer);
+    if (Timestamp.Precision.NANO.value() == rc) {
+      return Timestamp.Precision.NANO;
+    } else {
+      return Timestamp.Precision.MICRO;
+    }
   }
 
   @Override

@@ -123,6 +123,8 @@ class NativeMappings {
 
   static native void pcap_breakloop(Pointer p);
 
+  static native Pointer pcap_next(Pointer p, DefaultPacketHeader h);
+
   static native int pcap_next_ex(Pointer p, PointerByReference h, PointerByReference data);
 
   static native Pointer pcap_dump_open(Pointer p, String fname);
@@ -144,6 +146,8 @@ class NativeMappings {
   static native int pcap_setnonblock(Pointer p, int nonblock, ErrorBuffer errbuf);
 
   static native int pcap_getnonblock(Pointer p, ErrorBuffer errbuf);
+
+  static native int pcap_get_tstamp_precision(Pointer p);
 
   static native int pcap_minor_version(Pointer p);
 

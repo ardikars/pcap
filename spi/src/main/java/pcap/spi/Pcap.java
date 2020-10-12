@@ -59,6 +59,8 @@ public interface Pcap extends AutoCloseable {
    */
   <T> void loop(int count, PacketHandler<T> handler, T args) throws BreakException, ErrorException;
 
+  PacketBuffer next(PacketHeader header);
+
   /**
    * Reads the next packet and returns a success/failure indication.
    *
@@ -167,6 +169,15 @@ public interface Pcap extends AutoCloseable {
    *     but not activated.
    */
   boolean isSwapped() throws NotActivatedException;
+
+  /**
+   * Get the time stamp precision returned in captures.
+   *
+   * @return returns {@link Timestamp.Precision#MICRO} or {@link Timestamp.Precision#NANO}, which
+   *     indicates that pcap captures contains time stamps in microseconds or nanoseconds
+   *     respectively.
+   */
+  Timestamp.Precision getTimestampPrecision();
 
   /**
    * Get major version number of a 'savefile'. If {@link Pcap} handle is in live mode, this method
