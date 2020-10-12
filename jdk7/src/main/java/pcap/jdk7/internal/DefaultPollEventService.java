@@ -1,19 +1,16 @@
 package pcap.jdk7.internal;
 
-import com.sun.jna.NativeLibrary;
-import com.sun.jna.Platform;
-import com.sun.jna.Pointer;
+import com.sun.jna.*;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.nio.ByteBuffer;
-import pcap.spi.EventService;
 import pcap.spi.Pcap;
 import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.ReadPacketTimeoutException;
 
-public class DefaultPollEventService implements EventService, InvocationHandler {
+class DefaultPollEventService implements EventService, InvocationHandler {
 
   private static final int EINTR = 4;
 
@@ -30,35 +27,30 @@ public class DefaultPollEventService implements EventService, InvocationHandler 
   }
 
   final DefaultPcap pcap;
-  final ByteBuffer pfds;
+  final Pointer pfds;
 
   public DefaultPollEventService() {
     this.pcap = null;
     this.pfds = null;
   }
 
-  public DefaultPollEventService(DefaultPcap pcap, ByteBuffer pfds) {
+  public DefaultPollEventService(DefaultPcap pcap, Pointer pfds) {
     this.pcap = pcap;
     this.pfds = pfds;
   }
 
-  static native int poll(ByteBuffer fds, long nfds, int timeout);
+  static native int poll(Pointer fds, long nfds, int timeout);
 
   static native DefaultTimestamp pcap_get_required_select_timeout(Pointer p);
 
   @Override
-  public String name() {
-    return "PcapPollEventService";
-  }
-
-  @Override
   public <T extends Pcap> T open(Pcap pcap, Class<T> target) {
     DefaultPcap defaultPcap = (DefaultPcap) pcap;
-    ByteBuffer pfds = ByteBuffer.allocate(8);
-    pfds.putInt(
+    Pointer pfds = new Memory(8);
+    pfds.setInt(
         FD_OFFSET,
         NativeMappings.PlatformDependent.INSTANCE.pcap_get_selectable_fd(defaultPcap.pointer));
-    pfds.putShort(EVENTS_OFFSET, POLLIN);
+    pfds.setShort(EVENTS_OFFSET, POLLIN);
     return (T)
         Proxy.newProxyInstance(
             target.getClassLoader(),

@@ -14,21 +14,10 @@ public class Main {
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException, BreakException {
     Service service = Service.Creator.create("PcapService");
-    Iterator<Interface> iterator = service.interfaces().iterator();
-    Interface source = null;
-    while (iterator.hasNext()) {
-      source = iterator.next();
-      if (source.name().contains("Loopback")) {
-        break;
-      } else {
-        source = source.next();
-      }
-    }
-    try (Pcap live = service.live(source, new DefaultLiveOptions())) {
-      EventService eventService =
-          EventService.Creator.create("PcapWaitForSingleObjectEventService");
-      MyIface myIface = eventService.open(live, MyIface.class);
-      myIface.dispatch(
+    Interface source = loopbackInterface(service);
+    try (Pcap live = service.live(source, new DefaultLiveOptions().proxy(MyIface.class))) {
+      live.setNonBlock(true);
+      live.dispatch(
           2,
           new PacketHandler<String>() {
             @Override
@@ -38,5 +27,18 @@ public class Main {
           },
           "");
     }
+  }
+
+  public static Interface loopbackInterface(Service service) throws ErrorException {
+    Iterator<Interface> iterator = service.interfaces().iterator();
+    if (iterator != null) {
+      while (iterator.hasNext()) {
+        Interface source = iterator.next();
+        if (source.name().equals("lo")) {
+          return source;
+        }
+      }
+    }
+    throw new ErrorException("Loopback interface is not found.");
   }
 }

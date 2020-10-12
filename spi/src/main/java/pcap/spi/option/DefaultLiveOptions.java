@@ -1,7 +1,9 @@
 package pcap.spi.option;
 
+import pcap.spi.Pcap;
 import pcap.spi.Service;
 import pcap.spi.Timestamp;
+import pcap.spi.annotation.Incubating;
 
 public class DefaultLiveOptions implements Service.LiveOptions {
 
@@ -13,6 +15,7 @@ public class DefaultLiveOptions implements Service.LiveOptions {
   private boolean immediate;
   private int bufferSize;
   private Timestamp.Precision timestampPrecision;
+  private Class<? extends Pcap> proxy;
 
   public DefaultLiveOptions() {
     this.snapshotLength = 0xFFFF;
@@ -111,5 +114,16 @@ public class DefaultLiveOptions implements Service.LiveOptions {
   public Service.LiveOptions timestampPrecision(Timestamp.Precision timestampPrecision) {
     this.timestampPrecision = timestampPrecision;
     return this;
+  }
+
+  @Incubating
+  public Service.LiveOptions proxy(Class<? extends Pcap> target) {
+    this.proxy = target;
+    return this;
+  }
+
+  @Incubating
+  public Class<? extends Pcap> proxy() {
+    return proxy;
   }
 }

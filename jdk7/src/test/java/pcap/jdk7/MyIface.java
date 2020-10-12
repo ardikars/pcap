@@ -8,7 +8,7 @@ import pcap.spi.exception.error.BreakException;
 
 public interface MyIface extends Pcap {
 
-  @Async
+  @Async(timeout = 1000)
   @Override
   <T> void dispatch(int count, PacketHandler<T> handler, T args)
       throws BreakException, ErrorException;

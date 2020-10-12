@@ -12,6 +12,7 @@ import pcap.spi.Service;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 import pcap.spi.exception.warn.PromiscuousModeNotSupported;
+import pcap.spi.option.DefaultLiveOptions;
 
 public class DefaultService implements Service {
 
@@ -96,7 +97,15 @@ public class DefaultService implements Service {
     } finally {
       lock.unlock();
     }
-    return new DefaultPcap(pointer, netmask(source));
+    DefaultPcap pcap = new DefaultPcap(pointer, netmask(source));
+    if (options instanceof DefaultLiveOptions) {
+      DefaultLiveOptions opt = (DefaultLiveOptions) options;
+      Class<? extends Pcap> proxy = opt.proxy();
+      if (proxy != null) {
+        return EventService.Creator.create().open(pcap, proxy);
+      }
+    }
+    return pcap;
   }
 
   Pointer setOfflineWithTimestampPrecisionIfPossible(String source, OfflineOptions options) {

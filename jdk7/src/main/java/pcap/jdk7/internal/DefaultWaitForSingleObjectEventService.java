@@ -4,13 +4,12 @@ import com.sun.jna.NativeLibrary;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import pcap.spi.EventService;
 import pcap.spi.Pcap;
 import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.ReadPacketTimeoutException;
 
-public class DefaultWaitForSingleObjectEventService implements EventService, InvocationHandler {
+class DefaultWaitForSingleObjectEventService implements EventService, InvocationHandler {
 
   private static final int EINTR = 4;
 
@@ -35,11 +34,6 @@ public class DefaultWaitForSingleObjectEventService implements EventService, Inv
   }
 
   static native int WaitForSingleObjectEx(long handle, long dwMilliseconds, int bAlertable);
-
-  @Override
-  public String name() {
-    return "PcapWaitForSingleObjectEventService";
-  }
 
   @Override
   public <T extends Pcap> T open(Pcap pcap, Class<T> target) {
