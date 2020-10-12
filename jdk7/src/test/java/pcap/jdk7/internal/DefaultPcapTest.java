@@ -983,13 +983,18 @@ public class DefaultPcapTest extends BaseTest {
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
-    try (Pcap live =
-        service.live(lo, new DefaultLiveOptions().timestampPrecision(Timestamp.Precision.MICRO))) {
-      Assertions.assertEquals(Timestamp.Precision.MICRO, live.getTimestampPrecision());
-    }
-    try (Pcap live =
-        service.live(lo, new DefaultLiveOptions().timestampPrecision(Timestamp.Precision.NANO))) {
-      Assertions.assertEquals(Timestamp.Precision.NANO, live.getTimestampPrecision());
+    try {
+      try (Pcap live =
+          service.live(
+              lo, new DefaultLiveOptions().timestampPrecision(Timestamp.Precision.MICRO))) {
+        Assertions.assertEquals(Timestamp.Precision.MICRO, live.getTimestampPrecision());
+      }
+      try (Pcap live =
+          service.live(lo, new DefaultLiveOptions().timestampPrecision(Timestamp.Precision.NANO))) {
+        Assertions.assertEquals(Timestamp.Precision.NANO, live.getTimestampPrecision());
+      }
+    } catch (Throwable e) {
+      Assertions.assertTrue(e instanceof TimestampPrecisionNotSupportedException);
     }
   }
 }

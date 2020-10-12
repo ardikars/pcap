@@ -1,5 +1,7 @@
 package pcap.jdk7.internal;
 
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import pcap.spi.PacketBuffer;
 
 public class DefaultPacketBuffer implements PacketBuffer {
@@ -49,8 +51,6 @@ public class DefaultPacketBuffer implements PacketBuffer {
 
   static native com.sun.jna.Pointer memcpy(
       com.sun.jna.Pointer dst, com.sun.jna.Pointer src, long n);
-
-  static native void free(com.sun.jna.Pointer p);
 
   void userReference(DefaultPacketHeader header) {
     if (reference.getValue() != null) {
@@ -828,7 +828,7 @@ public class DefaultPacketBuffer implements PacketBuffer {
   @Override
   public boolean release() {
     if (buffer != null && !(this instanceof PacketBuffer.Sliced)) {
-      free(buffer);
+      Native.free(Pointer.nativeValue(buffer));
       return true;
     }
     return false;
