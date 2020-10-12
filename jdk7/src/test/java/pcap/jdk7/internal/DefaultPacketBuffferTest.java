@@ -2736,6 +2736,22 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
+  public void clear() {
+      smallBuffer.setIndex(Byte.BYTES, Byte.BYTES);
+      mediumBuffer.setIndex(Byte.BYTES, Byte.BYTES);
+      largeBuffer.setIndex(Byte.BYTES, Byte.BYTES);
+      smallBuffer.clear();
+      mediumBuffer.clear();
+      largeBuffer.clear();
+      Assertions.assertEquals(0, smallBuffer.readerIndex());
+      Assertions.assertEquals(0, smallBuffer.writerIndex());
+      Assertions.assertEquals(0, mediumBuffer.readerIndex());
+      Assertions.assertEquals(0, mediumBuffer.writerIndex());
+      Assertions.assertEquals(0, largeBuffer.readerIndex());
+      Assertions.assertEquals(0, largeBuffer.writerIndex());
+  }
+
+  @Test
   public void release() {
     Assertions.assertFalse(smallBuffer.slice().release());
     Assertions.assertFalse(mediumBuffer.slice().release());

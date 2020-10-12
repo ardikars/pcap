@@ -130,12 +130,6 @@ public class DefaultPacketBuffer implements PacketBuffer {
     return writerIndex > readerIndex;
   }
 
-  //    @Override
-  //    public PacketBuffer clear() {
-  //      readerIndex = writerIndex = 0;
-  //      return this;
-  //    }
-
   @Override
   public boolean isReadable(long numBytes) {
     return numBytes > 0 && writerIndex - readerIndex >= numBytes;
@@ -152,6 +146,12 @@ public class DefaultPacketBuffer implements PacketBuffer {
   }
 
   @Override
+  public PacketBuffer clear() {
+    writerIndex = readerIndex = 0;
+    return this;
+  }
+
+  @Override
   public PacketBuffer markReaderIndex() {
     markedReaderIndex = readerIndex;
     return this;
@@ -159,7 +159,7 @@ public class DefaultPacketBuffer implements PacketBuffer {
 
   @Override
   public PacketBuffer resetReaderIndex() {
-    readerIndex(markedReaderIndex);
+    readerIndex = markedReaderIndex;
     return this;
   }
 
@@ -171,7 +171,7 @@ public class DefaultPacketBuffer implements PacketBuffer {
 
   @Override
   public PacketBuffer resetWriterIndex() {
-    writerIndex(markedWriterIndex);
+    writerIndex = markedWriterIndex;
     return this;
   }
 

@@ -95,7 +95,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @return this {@link PacketBuffer}.
    */
-  //   PacketBuffer clear();
+   PacketBuffer clear();
 
   /**
    * Marks the current {@code readerIndex} in this buffer. You can reposition the current {@code
