@@ -1,8 +1,7 @@
 package pcap.tests;
 
-import pcap.spi.Interface;
-import pcap.spi.Pcap;
-import pcap.spi.Service;
+import pcap.common.net.MacAddress;
+import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
@@ -23,12 +22,15 @@ public class Application {
     System.out.println();
     System.out.println("[v] Chosen device : " + devices.name());
     try (Pcap live = service.live(devices, new DefaultLiveOptions())) {
-      live.loop(
-          10,
-          (args1, header, buffer) -> {
-            System.out.println("Header  : " + header);
-          },
-          "Hello Pcap!");
+      PacketBuffer packetBuffer = live.allocate(PacketBuffer.class);
+      PacketHeader packetHeader = live.allocate(PacketHeader.class);
+      live.nextEx(packetHeader, packetBuffer);
+      byte[] dstBuf = new byte[MacAddress.MAC_ADDRESS_LENGTH];
+      packetBuffer.readBytes(dstBuf);
+      System.out.println("Destination : " + MacAddress.valueOf(dstBuf));
+      packetBuffer.readBytes(dstBuf);
+      System.out.println("Source      : " + MacAddress.valueOf(dstBuf));
+      System.out.println("Type        : " + packetBuffer.readShort());
     }
   }
 }
