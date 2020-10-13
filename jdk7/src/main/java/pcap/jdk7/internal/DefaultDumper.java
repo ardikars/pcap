@@ -21,14 +21,14 @@ public class DefaultDumper implements Dumper {
     if (buffer == null) {
       throw new IllegalArgumentException("buffer: null (expected: buffer != null)");
     }
-    DefaultPacketHeader packetHeader = (DefaultPacketHeader) header;
-    DefaultPacketBuffer packetBuffer = (DefaultPacketBuffer) buffer;
-    if (packetBuffer.capacity() <= 0) {
+    if (buffer.capacity() <= 0) {
       throw new IllegalArgumentException(
           String.format(
               "buffer.capacity: %d (expected: buffer.capacity(%d) > 0)",
-              packetBuffer.capacity, packetBuffer.capacity));
+              buffer.capacity(), buffer.capacity()));
     }
+    DefaultPacketHeader packetHeader = (DefaultPacketHeader) header;
+    DefaultPacketBuffer packetBuffer = (DefaultPacketBuffer) buffer;
     NativeMappings.pcap_dump(pointer, packetHeader, packetBuffer.buffer);
   }
 

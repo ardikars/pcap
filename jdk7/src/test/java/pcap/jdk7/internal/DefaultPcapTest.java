@@ -47,12 +47,28 @@ public class DefaultPcapTest extends BaseTest {
       Dumper dumper = live.dumpOpen(newFile);
       // Assertions.assertTrue(Files.exists(Paths.get(newFile)));
       Assertions.assertNotNull(dumper);
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              live.dumpOpen(null);
+            }
+          });
     }
     newFile = file.concat(UUID.randomUUID().toString());
     try (Pcap offline = service.offline(SAMPLE_NANOSECOND_PCAP, new DefaultOfflineOptions())) {
       Dumper dumper = offline.dumpOpen(newFile);
       // Assertions.assertTrue(Files.exists(Paths.get(newFile)));
       Assertions.assertNotNull(dumper);
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              offline.dumpOpen(null);
+            }
+          });
     }
   }
 
@@ -79,6 +95,14 @@ public class DefaultPcapTest extends BaseTest {
               live.dumpOpenAppend(SAMPLE_NANOSECOND_PCAP);
             }
           });
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              live.dumpOpenAppend(null);
+            }
+          });
     }
     try (Pcap offline = service.offline(SAMPLE_NANOSECOND_PCAP, new DefaultOfflineOptions())) {
       try (Dumper dumper = offline.dumpOpenAppend(SAMPLE_MICROSECOND_PCAP)) {
@@ -94,6 +118,14 @@ public class DefaultPcapTest extends BaseTest {
               offline.dumpOpenAppend(SAMPLE_NANOSECOND_PCAP);
             }
           });
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              offline.dumpOpenAppend(null);
+            }
+          });
     }
   }
 
@@ -107,10 +139,26 @@ public class DefaultPcapTest extends BaseTest {
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
       live.setFilter("icmp", true);
       live.setFilter("icmp", false);
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              live.setFilter(null, true);
+            }
+          });
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
       offline.setFilter("icmp", true);
       offline.setFilter("icmp", false);
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              offline.setFilter(null, true);
+            }
+          });
     }
   }
 
@@ -133,6 +181,14 @@ public class DefaultPcapTest extends BaseTest {
             }
           },
           "Hello!");
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              live.loop(MAX_PKT, null, "Hello!");
+            }
+          });
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
       offline.loop(
@@ -146,6 +202,14 @@ public class DefaultPcapTest extends BaseTest {
             }
           },
           "Hello!");
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              offline.loop(MAX_PKT, null, "Hello!");
+            }
+          });
     }
   }
 
@@ -168,6 +232,14 @@ public class DefaultPcapTest extends BaseTest {
             }
           },
           "Hello!");
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              live.dispatch(MAX_PKT, null, "Hello!");
+            }
+          });
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
       offline.dispatch(
@@ -181,6 +253,14 @@ public class DefaultPcapTest extends BaseTest {
             }
           },
           "Hello!");
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              offline.dispatch(MAX_PKT, null, "Hello!");
+            }
+          });
     }
   }
 
@@ -463,6 +543,22 @@ public class DefaultPcapTest extends BaseTest {
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 2});
       buffer.writeShortRE(0x0806);
       live.sendPacket(buffer);
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              live.sendPacket(null);
+            }
+          });
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              live.sendPacket(new DefaultPacketBuffer());
+            }
+          });
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
       DefaultPacketBuffer buffer = new DefaultPacketBuffer(14);
@@ -495,6 +591,14 @@ public class DefaultPcapTest extends BaseTest {
       } catch (ErrorException e) {
 
       }
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              live.setDirection(null);
+            }
+          });
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
       Assertions.assertThrows(
@@ -657,6 +761,14 @@ public class DefaultPcapTest extends BaseTest {
               live.allocate(Pcap.class);
             }
           });
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              live.allocate(null);
+            }
+          });
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
       PacketBuffer buffer = offline.allocate(PacketBuffer.class);
@@ -669,6 +781,14 @@ public class DefaultPcapTest extends BaseTest {
             @Override
             public void execute() throws Throwable {
               offline.allocate(Pcap.class);
+            }
+          });
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              offline.allocate(null);
             }
           });
     }

@@ -26,6 +26,9 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public DefaultDumper dumpOpen(String file) throws ErrorException {
+    if (StringUtils.blank(file)) {
+      throw new IllegalArgumentException("file: null (expected: file != null && notBlank(file))");
+    }
     Pointer dumper;
     readLock.lock();
     try {
@@ -39,6 +42,9 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public DefaultDumper dumpOpenAppend(String file) throws ErrorException {
+    if (StringUtils.blank(file)) {
+      throw new IllegalArgumentException("file: null (expected: file != null && notBlank(file))");
+    }
     Pointer dumper;
     readLock.lock();
     try {
@@ -52,6 +58,10 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public void setFilter(String filter, boolean optimize) throws ErrorException {
+    if (StringUtils.blank(filter)) {
+      throw new IllegalArgumentException(
+          "filter: null (expected: filter != null && notBlank(filter))");
+    }
     int rc;
     NativeMappings.bpf_program fp = new NativeMappings.bpf_program();
     writeLock.lock();
@@ -74,6 +84,9 @@ public class DefaultPcap implements Pcap {
   @Override
   public <T> void loop(int count, PacketHandler<T> handler, T args)
       throws BreakException, ErrorException {
+    if (handler == null) {
+      throw new IllegalArgumentException("handler: null (expected: handler != null)");
+    }
     readLock.lock();
     try {
       int rc =
@@ -118,7 +131,7 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
-      throws BreakException, ReadPacketTimeoutException, ErrorException {
+      throws BreakException, ErrorException {
     if (packetHeader == null) {
       throw new IllegalArgumentException("header: null (expected: header != null)");
     }
@@ -138,7 +151,10 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public <T> void dispatch(int count, PacketHandler<T> handler, T args)
-      throws BreakException, ReadPacketTimeoutException, ErrorException {
+      throws BreakException, ErrorException {
+    if (handler == null) {
+      throw new IllegalArgumentException("handler: null (expected: handler != null)");
+    }
     int rc;
     readLock.lock();
     try {
@@ -188,6 +204,15 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public void sendPacket(PacketBuffer directBuffer) throws ErrorException {
+    if (directBuffer == null) {
+      throw new IllegalArgumentException("buffer: null (expected: buffer != null)");
+    }
+    if (directBuffer.capacity() <= 0) {
+      throw new IllegalArgumentException(
+          String.format(
+              "buffer.capacity: %d (expected: buffer.capacity(%d) > 0)",
+              directBuffer.capacity(), directBuffer.capacity()));
+    }
     DefaultPacketBuffer buffer = (DefaultPacketBuffer) directBuffer;
     readLock.lock();
     try {
@@ -201,6 +226,9 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public void setDirection(Direction direction) throws ErrorException {
+    if (direction == null) {
+      throw new IllegalArgumentException("direction: null (expected: direction != null)");
+    }
     int result = 0;
     readLock.lock();
     try {
@@ -314,6 +342,10 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public <T> T allocate(Class<T> cls) throws IllegalArgumentException {
+    if (cls == null) {
+      throw new IllegalArgumentException(
+          "type: null (expected: type is PacketHeader.class or PacketBuffer.class)");
+    }
     if (cls.isAssignableFrom(PacketHeader.class)) {
       return (T) new DefaultPacketHeader();
     } else if (cls.isAssignableFrom(PacketBuffer.class)) {

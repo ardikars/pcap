@@ -37,6 +37,47 @@ public class DefaultPacketBuffferTest {
     Assertions.assertEquals(Short.BYTES, smallBuffer.capacity());
     Assertions.assertEquals(Integer.BYTES, mediumBuffer.capacity());
     Assertions.assertEquals(Long.BYTES, largeBuffer.capacity());
+
+    largeBuffer
+        .setIndex(largeBuffer.capacity(), largeBuffer.capacity())
+        .markReaderIndex()
+        .markWriterIndex()
+        .capacity(largeBuffer.capacity() * Short.BYTES);
+    Assertions.assertEquals(Long.BYTES * Short.BYTES, largeBuffer.capacity());
+    Assertions.assertEquals(Long.BYTES, largeBuffer.readerIndex());
+    Assertions.assertEquals(Long.BYTES, largeBuffer.writerIndex());
+    largeBuffer
+        .setIndex(largeBuffer.capacity(), largeBuffer.capacity())
+        .markReaderIndex()
+        .markWriterIndex()
+        .capacity(Long.BYTES);
+    Assertions.assertEquals(Long.BYTES, largeBuffer.capacity());
+    Assertions.assertEquals(Long.BYTES, largeBuffer.readerIndex());
+    Assertions.assertEquals(Long.BYTES, largeBuffer.writerIndex());
+
+    largeBuffer
+        .capacity(largeBuffer.capacity() * Short.BYTES)
+        .setIndex(Byte.BYTES, Short.BYTES)
+        .capacity(Long.BYTES);
+    Assertions.assertEquals(Long.BYTES, largeBuffer.capacity());
+    Assertions.assertEquals(Byte.BYTES, largeBuffer.readerIndex());
+    Assertions.assertEquals(Short.BYTES, largeBuffer.writerIndex());
+
+    DefaultPacketBuffer buffer = new DefaultPacketBuffer();
+    Assertions.assertNull(buffer.buffer);
+    buffer.capacity(Long.BYTES);
+    Assertions.assertNotNull(buffer.buffer);
+    Assertions.assertEquals(Long.BYTES, buffer.capacity());
+
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            buffer.capacity(0);
+          }
+        });
+    Assertions.assertTrue(buffer.release());
   }
 
   @Test

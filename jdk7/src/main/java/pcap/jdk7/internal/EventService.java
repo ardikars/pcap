@@ -5,15 +5,21 @@ import pcap.spi.Pcap;
 import pcap.spi.annotation.Incubating;
 
 @Incubating
-interface EventService {
+interface EventService extends AutoCloseable {
 
   @Incubating
   <T extends Pcap> T open(Pcap pcap, Class<T> target);
 
   class Creator {
 
+    private Creator() {}
+
     public static EventService create() {
-      if (Platform.isWindows()) {
+      return newInstance(Platform.isWindows());
+    }
+
+    static EventService newInstance(boolean isWindows) {
+      if (isWindows) {
         return new DefaultWaitForSingleObjectEventService();
       } else {
         return new DefaultPollEventService();

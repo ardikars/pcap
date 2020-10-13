@@ -56,6 +56,15 @@ public class DefaultPcapDumperTest extends BaseTest {
                 dumper.dump(header, buffer);
                 dumper.flush();
                 Assertions.assertTrue(dumper.position() > 0);
+
+                Assertions.assertThrows(
+                    IllegalArgumentException.class,
+                    new Executable() {
+                      @Override
+                      public void execute() throws Throwable {
+                        dumper.dump(header, new DefaultPacketBuffer());
+                      }
+                    });
               }
             },
             null);

@@ -40,6 +40,8 @@ public class PcapLiveWithProxyTest extends BaseTest {
             "");
       } catch (ReadPacketTimeoutException e) {
         //
+      } catch (ErrorException e) {
+
       }
       PacketHeader header = pcap.allocate(PacketHeader.class);
       PacketBuffer buffer = pcap.allocate(PacketBuffer.class);
@@ -47,6 +49,8 @@ public class PcapLiveWithProxyTest extends BaseTest {
         pcap.nextEx(header, buffer);
       } catch (ReadPacketTimeoutException e) {
         //
+      } catch (ErrorException e) {
+
       }
       pcap.next(header);
     }

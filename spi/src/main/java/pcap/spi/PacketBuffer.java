@@ -18,6 +18,14 @@ public interface PacketBuffer extends AutoCloseable {
   /** @return returns the number of bytes (octets) this buffer can contain. */
   long capacity();
 
+  /**
+   * Reallocate buffer.
+   *
+   * @param newCapacity new capacity.
+   * @return returns new {@link PacketBuffer}.
+   */
+  PacketBuffer capacity(long newCapacity);
+
   /** @return returns the {@code readerIndex} of this buffer. */
   long readerIndex();
 

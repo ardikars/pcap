@@ -64,4 +64,22 @@ class StringUtils {
     }
     return writtenBytes;
   }
+
+  static boolean empty(CharSequence charSequence) {
+    return charSequence == null || charSequence.length() == 0;
+  }
+
+  static boolean blank(CharSequence charSequence) {
+    if (empty(charSequence)) {
+      return true;
+    }
+    int length = charSequence.length();
+    for (int i = 0; i < length; i++) {
+      char ch = charSequence.charAt(i);
+      if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' || ch == '\0') {
+        return true;
+      }
+    }
+    return false;
+  }
 }

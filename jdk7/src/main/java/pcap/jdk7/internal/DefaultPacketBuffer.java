@@ -47,6 +47,8 @@ public class DefaultPacketBuffer implements PacketBuffer {
     this.capacity = capacity;
     this.readerIndex = readerIndex;
     this.writerIndex = writerIndex;
+    this.markedReaderIndex = 0L;
+    this.markedWriterIndex = 0L;
   }
 
   static native com.sun.jna.Pointer memcpy(
@@ -66,6 +68,40 @@ public class DefaultPacketBuffer implements PacketBuffer {
   @Override
   public long capacity() {
     return capacity;
+  }
+
+  @Override
+  public PacketBuffer capacity(long newCapacity) {
+    if (newCapacity <= 0) {
+      throw new IllegalArgumentException(
+          String.format(
+              "newCapacity: %d (expected: newCapacity(%d) > 0)", newCapacity, newCapacity));
+    }
+    if (buffer == null) {
+      this.buffer = new Pointer(Native.malloc(newCapacity));
+      this.capacity = newCapacity;
+      this.reference.setValue(buffer);
+      return this;
+    } else {
+      if (newCapacity <= capacity) {
+        this.capacity = newCapacity;
+        this.readerIndex = readerIndex > newCapacity ? newCapacity : readerIndex;
+        this.writerIndex = writerIndex > newCapacity ? newCapacity : writerIndex;
+        this.markedReaderIndex = 0L;
+        this.markedWriterIndex = 0L;
+        return this;
+      } else {
+        Pointer newBuf = new Pointer(Native.malloc(newCapacity));
+        memcpy(newBuf, buffer, newCapacity);
+        release();
+        this.buffer = newBuf;
+        this.reference.setValue(newBuf);
+        this.capacity = newCapacity;
+        this.markedReaderIndex = 0L;
+        this.markedWriterIndex = 0L;
+        return this;
+      }
+    }
   }
 
   @Override

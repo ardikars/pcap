@@ -2,17 +2,11 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.*;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import pcap.spi.Pcap;
 import pcap.spi.annotation.Async;
-import pcap.spi.exception.ErrorException;
-import pcap.spi.exception.error.ReadPacketTimeoutException;
 
-class DefaultPollEventService implements EventService, InvocationHandler {
-
-  private static final int EINTR = 4;
+class DefaultPollEventService extends AbstractEventService implements InvocationHandler {
 
   private static final short POLLIN = 0x1;
   private static final int FD_OFFSET = 0;
@@ -20,26 +14,53 @@ class DefaultPollEventService implements EventService, InvocationHandler {
   private static final int REVENTS_OFFSET = EVENTS_OFFSET + 2;
 
   static {
-    if (!Platform.isWindows()) {
+    register(Platform.isWindows());
+  }
+
+  final Pointer pfds;
+
+  public DefaultPollEventService() {
+    super(null);
+    this.pfds = null;
+  }
+
+  public DefaultPollEventService(DefaultPcap pcap, Pointer pfds) {
+    super(pcap);
+    this.pfds = pfds;
+  }
+
+  static void register(boolean isWindows) {
+    if (!isWindows) {
       com.sun.jna.Native.register(
           DefaultPollEventService.class, NativeLibrary.getInstance(Platform.C_LIBRARY_NAME));
     }
   }
 
-  final DefaultPcap pcap;
-  final Pointer pfds;
-
-  public DefaultPollEventService() {
-    this.pcap = null;
-    this.pfds = null;
-  }
-
-  public DefaultPollEventService(DefaultPcap pcap, Pointer pfds) {
-    this.pcap = pcap;
-    this.pfds = pfds;
-  }
-
   static native int poll(Pointer fds, long nfds, int timeout);
+
+  static int normalizeTimeout(int timeout, DefaultTimestamp timestamp) {
+    if (timeout <= 0 && timestamp != null) {
+      timeout = (int) (timestamp.tv_usec.longValue() / 1000L);
+    }
+    return timeout;
+  }
+
+  static int normalizeREvents(int rc, Pointer pfds) {
+    int status;
+    if (rc > 0) {
+      int revents = pfds.getShort(REVENTS_OFFSET);
+      if ((revents & POLLIN) != POLLIN) {
+        status = -1;
+      } else {
+        status = 0;
+      }
+    } else if (rc < 0) {
+      status = -1;
+    } else {
+      status = 1;
+    }
+    return status;
+  }
 
   @Override
   public <T extends Pcap> T open(Pcap pcap, Class<T> target) {
@@ -49,59 +70,35 @@ class DefaultPollEventService implements EventService, InvocationHandler {
         FD_OFFSET,
         NativeMappings.PlatformDependent.INSTANCE.pcap_get_selectable_fd(defaultPcap.pointer));
     pfds.setShort(EVENTS_OFFSET, POLLIN);
-    return (T)
-        Proxy.newProxyInstance(
-            target.getClassLoader(),
-            new Class[] {target},
-            new DefaultPollEventService(defaultPcap, pfds));
+    return newProxy(target, new DefaultPollEventService(defaultPcap, pfds));
   }
 
   @Override
-  public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-    Method m = pcap.getClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
-    String methodName = method.getName();
-    if (methodName.equals("dispatch") || methodName.equals("next") || methodName.equals("nextEx")) {
-      Async async = method.getAnnotation(Async.class);
-      if (async != null) {
-        int timeout = async.timeout();
-        DefaultTimestamp req = UnixMapping.pcap_get_required_select_timeout(pcap.pointer);
-        if (timeout <= 0 && req != null) {
-          timeout = (int) (req.tv_usec.longValue() / 1000L);
-        }
-        int rc;
-        do {
-          rc = poll(pfds, 1, timeout);
-        } while (rc < 0 && EINTR == com.sun.jna.Native.getLastError());
+  public void close() {
+    Native.free(Pointer.nativeValue(pfds));
+  }
 
-        if (rc > 0) {
-          int revents = pfds.getShort(REVENTS_OFFSET);
-          if ((revents & POLLIN) != POLLIN) {
-            if (method.getName().equals("next")) {
-              return null;
-            }
-            throw new ErrorException("");
-          }
-        } else if (rc < 0) {
-          if (method.getName().equals("next")) {
-            return null;
-          }
-          throw new ErrorException("");
-        } else {
-          if (method.getName().equals("next")) {
-            return null;
-          }
-          throw new ReadPacketTimeoutException("");
-        }
-      }
+  @Override
+  public Object invoke(Object proxy, Method proxyMethod, Object[] args) throws Throwable {
+    Method pcapMethod =
+        pcap.getClass().getDeclaredMethod(proxyMethod.getName(), proxyMethod.getParameterTypes());
+    Async async = getAsync(proxyMethod);
+    if (async == null) {
+      return invoke(pcapMethod, args);
     }
-    try {
-      return m.invoke(pcap, args);
-    } catch (InvocationTargetException e) {
-      throw new ErrorException(e.getMessage());
-    }
+    int timeout =
+        normalizeTimeout(
+            async.timeout(), UnixMapping.pcap_get_required_select_timeout(pcap.pointer));
+    int rc;
+    do {
+      rc = poll(pfds, 1, timeout);
+    } while (rc < 0 && EINTR == com.sun.jna.Native.getLastError());
+    return invokeOnReady(normalizeREvents(rc, pfds), 0, 1, pcapMethod, args);
   }
 
   static class UnixMapping {
+
+    private UnixMapping() {}
 
     static {
       com.sun.jna.Native.register(
