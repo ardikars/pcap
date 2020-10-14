@@ -46,6 +46,8 @@ jobs:
       - name: Deploy modules
         run: |
           export JAVA_HOME_JDK7=${JAVA_HOME}
+          ./.github/scripts/install-jdk.sh -f 11 -t .mvn/toolchains
+          export JAVA_HOME=$(pwd)/.mvn/toolchains
           echo "JAVA_HOME = $JAVA_HOME"
           echo "JAVA_HOME_JDK7 = $JAVA_HOME_JDK7"
-          ./mvnw -B -t .mvn/toolchains.xml -s .mvn/release-settings.xml deploy -Plegacy-support -Prelease
+          ./mvnw -B -t .mvn/toolchains.xml -s .mvn/release-settings.xml deploy -Plegacy-support -Prelease -DskipTests=true
