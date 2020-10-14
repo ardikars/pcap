@@ -16,15 +16,20 @@ public class DefaultPacketBuffferTest {
   private PacketBuffer mediumBuffer;
   private PacketBuffer largeBuffer;
 
+  private static final int BYTE_BYTES = 1;
+  private static final int SHORT_BYTES = 2;
+  private static final int INTEGER_BYTES = 4;
+  private static final int LONG_BYTES = 8;
+
   @BeforeEach
-  public void setUp() {
-    smallBuffer = new DefaultPacketBuffer(Short.BYTES);
-    mediumBuffer = new DefaultPacketBuffer(Integer.BYTES);
-    largeBuffer = new DefaultPacketBuffer(Long.BYTES);
+  void setUp() {
+    smallBuffer = new DefaultPacketBuffer(SHORT_BYTES);
+    mediumBuffer = new DefaultPacketBuffer(INTEGER_BYTES);
+    largeBuffer = new DefaultPacketBuffer(LONG_BYTES);
   }
 
   @Test
-  public void useMemory() {
+  void useMemory() {
     DefaultPacketHeader header = new DefaultPacketHeader();
     DefaultPacketBuffer buffer = new DefaultPacketBuffer();
     buffer.userReference(header);
@@ -33,41 +38,41 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void capacity() {
-    Assertions.assertEquals(Short.BYTES, smallBuffer.capacity());
-    Assertions.assertEquals(Integer.BYTES, mediumBuffer.capacity());
-    Assertions.assertEquals(Long.BYTES, largeBuffer.capacity());
+  void capacity() {
+    Assertions.assertEquals(SHORT_BYTES, smallBuffer.capacity());
+    Assertions.assertEquals(INTEGER_BYTES, mediumBuffer.capacity());
+    Assertions.assertEquals(LONG_BYTES, largeBuffer.capacity());
 
     largeBuffer
         .setIndex(largeBuffer.capacity(), largeBuffer.capacity())
         .markReaderIndex()
         .markWriterIndex()
-        .capacity(largeBuffer.capacity() * Short.BYTES);
-    Assertions.assertEquals(Long.BYTES * Short.BYTES, largeBuffer.capacity());
-    Assertions.assertEquals(Long.BYTES, largeBuffer.readerIndex());
-    Assertions.assertEquals(Long.BYTES, largeBuffer.writerIndex());
+        .capacity(largeBuffer.capacity() * SHORT_BYTES);
+    Assertions.assertEquals(LONG_BYTES * SHORT_BYTES, largeBuffer.capacity());
+    Assertions.assertEquals(LONG_BYTES, largeBuffer.readerIndex());
+    Assertions.assertEquals(LONG_BYTES, largeBuffer.writerIndex());
     largeBuffer
         .setIndex(largeBuffer.capacity(), largeBuffer.capacity())
         .markReaderIndex()
         .markWriterIndex()
-        .capacity(Long.BYTES);
-    Assertions.assertEquals(Long.BYTES, largeBuffer.capacity());
-    Assertions.assertEquals(Long.BYTES, largeBuffer.readerIndex());
-    Assertions.assertEquals(Long.BYTES, largeBuffer.writerIndex());
+        .capacity(LONG_BYTES);
+    Assertions.assertEquals(LONG_BYTES, largeBuffer.capacity());
+    Assertions.assertEquals(LONG_BYTES, largeBuffer.readerIndex());
+    Assertions.assertEquals(LONG_BYTES, largeBuffer.writerIndex());
 
     largeBuffer
-        .capacity(largeBuffer.capacity() * Short.BYTES)
-        .setIndex(Byte.BYTES, Short.BYTES)
-        .capacity(Long.BYTES);
-    Assertions.assertEquals(Long.BYTES, largeBuffer.capacity());
-    Assertions.assertEquals(Byte.BYTES, largeBuffer.readerIndex());
-    Assertions.assertEquals(Short.BYTES, largeBuffer.writerIndex());
+        .capacity(largeBuffer.capacity() * SHORT_BYTES)
+        .setIndex(BYTE_BYTES, SHORT_BYTES)
+        .capacity(LONG_BYTES);
+    Assertions.assertEquals(LONG_BYTES, largeBuffer.capacity());
+    Assertions.assertEquals(BYTE_BYTES, largeBuffer.readerIndex());
+    Assertions.assertEquals(SHORT_BYTES, largeBuffer.writerIndex());
 
-    DefaultPacketBuffer buffer = new DefaultPacketBuffer();
+    final DefaultPacketBuffer buffer = new DefaultPacketBuffer();
     Assertions.assertNull(buffer.buffer);
-    buffer.capacity(Long.BYTES);
+    buffer.capacity(LONG_BYTES);
     Assertions.assertNotNull(buffer.buffer);
-    Assertions.assertEquals(Long.BYTES, buffer.capacity());
+    Assertions.assertEquals(LONG_BYTES, buffer.capacity());
 
     Assertions.assertThrows(
         IllegalArgumentException.class,
@@ -81,7 +86,7 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void readerIndex() {
+  void readerIndex() {
     Assertions.assertEquals(0, smallBuffer.readerIndex());
     Assertions.assertEquals(0, mediumBuffer.readerIndex());
     Assertions.assertEquals(0, largeBuffer.readerIndex());
@@ -90,7 +95,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.readerIndex(Short.BYTES);
+            smallBuffer.readerIndex(SHORT_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -98,7 +103,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.readerIndex(Integer.BYTES);
+            mediumBuffer.readerIndex(INTEGER_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -106,29 +111,21 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.readerIndex(Long.BYTES);
+            largeBuffer.readerIndex(LONG_BYTES);
           }
         });
-    smallBuffer.writerIndex(Short.BYTES);
-    mediumBuffer.writerIndex(Integer.BYTES);
-    largeBuffer.writerIndex(Long.BYTES);
-    Assertions.assertEquals(Short.BYTES, smallBuffer.readerIndex(Short.BYTES).readerIndex());
-    Assertions.assertEquals(Integer.BYTES, mediumBuffer.readerIndex(Integer.BYTES).readerIndex());
-    Assertions.assertEquals(Long.BYTES, largeBuffer.readerIndex(Long.BYTES).readerIndex());
+    smallBuffer.writerIndex(SHORT_BYTES);
+    mediumBuffer.writerIndex(INTEGER_BYTES);
+    largeBuffer.writerIndex(LONG_BYTES);
+    Assertions.assertEquals(SHORT_BYTES, smallBuffer.readerIndex(SHORT_BYTES).readerIndex());
+    Assertions.assertEquals(INTEGER_BYTES, mediumBuffer.readerIndex(INTEGER_BYTES).readerIndex());
+    Assertions.assertEquals(LONG_BYTES, largeBuffer.readerIndex(LONG_BYTES).readerIndex());
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.readerIndex(-Byte.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.readerIndex(-Byte.BYTES);
+            smallBuffer.readerIndex(-BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -136,25 +133,33 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.readerIndex(-Byte.BYTES);
+            mediumBuffer.readerIndex(-BYTE_BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.readerIndex(-BYTE_BYTES);
           }
         });
   }
 
   @Test
-  public void writerIndex() {
+  void writerIndex() {
     Assertions.assertEquals(0, smallBuffer.writerIndex());
     Assertions.assertEquals(0, mediumBuffer.writerIndex());
     Assertions.assertEquals(0, largeBuffer.writerIndex());
-    Assertions.assertEquals(Short.BYTES, smallBuffer.writerIndex(Short.BYTES).writerIndex());
-    Assertions.assertEquals(Integer.BYTES, mediumBuffer.writerIndex(Integer.BYTES).writerIndex());
-    Assertions.assertEquals(Long.BYTES, largeBuffer.writerIndex(Long.BYTES).writerIndex());
+    Assertions.assertEquals(SHORT_BYTES, smallBuffer.writerIndex(SHORT_BYTES).writerIndex());
+    Assertions.assertEquals(INTEGER_BYTES, mediumBuffer.writerIndex(INTEGER_BYTES).writerIndex());
+    Assertions.assertEquals(LONG_BYTES, largeBuffer.writerIndex(LONG_BYTES).writerIndex());
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.writerIndex(-Byte.BYTES);
+            smallBuffer.writerIndex(-BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -162,7 +167,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.writerIndex(-Byte.BYTES);
+            mediumBuffer.writerIndex(-BYTE_BYTES);
           }
         });
 
@@ -171,7 +176,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.writerIndex(-Byte.BYTES);
+            largeBuffer.writerIndex(-BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -179,7 +184,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.writerIndex(Short.BYTES + Byte.BYTES);
+            smallBuffer.writerIndex(SHORT_BYTES + BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -187,7 +192,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.writerIndex(Integer.BYTES + Byte.BYTES);
+            smallBuffer.writerIndex(INTEGER_BYTES + BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -195,26 +200,18 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.writerIndex(Long.BYTES + Byte.BYTES);
+            smallBuffer.writerIndex(LONG_BYTES + BYTE_BYTES);
           }
         });
-    smallBuffer.readerIndex(Short.BYTES);
-    mediumBuffer.readerIndex(Integer.BYTES);
-    largeBuffer.readerIndex(Long.BYTES);
+    smallBuffer.readerIndex(SHORT_BYTES);
+    mediumBuffer.readerIndex(INTEGER_BYTES);
+    largeBuffer.readerIndex(LONG_BYTES);
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.writerIndex(Short.BYTES - Byte.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            smallBuffer.writerIndex(Integer.BYTES - Byte.BYTES);
+            smallBuffer.writerIndex(SHORT_BYTES - BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -222,20 +219,28 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.writerIndex(Long.BYTES - Byte.BYTES);
+            smallBuffer.writerIndex(INTEGER_BYTES - BYTE_BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            smallBuffer.writerIndex(LONG_BYTES - BYTE_BYTES);
           }
         });
   }
 
   @Test
-  public void setIndex() {
-    smallBuffer.setIndex(Short.BYTES, Short.BYTES);
+  void setIndex() {
+    smallBuffer.setIndex(SHORT_BYTES, SHORT_BYTES);
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.setIndex(Short.BYTES, Short.BYTES - Byte.BYTES);
+            smallBuffer.setIndex(SHORT_BYTES, SHORT_BYTES - BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -243,7 +248,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.setIndex(Short.BYTES, Short.BYTES + Byte.BYTES);
+            smallBuffer.setIndex(SHORT_BYTES, SHORT_BYTES + BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -251,7 +256,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.setIndex(Short.BYTES, -Byte.BYTES);
+            smallBuffer.setIndex(SHORT_BYTES, -BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -259,7 +264,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.setIndex(Short.BYTES, Byte.BYTES);
+            smallBuffer.setIndex(SHORT_BYTES, BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -267,59 +272,17 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.setIndex(-Byte.BYTES, Short.BYTES);
-          }
-        });
-    //
-    mediumBuffer.setIndex(Integer.BYTES, Integer.BYTES);
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.setIndex(Integer.BYTES, Integer.BYTES - Byte.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.setIndex(Integer.BYTES, Integer.BYTES + Byte.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.setIndex(Integer.BYTES, -Byte.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.setIndex(Integer.BYTES, Byte.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.setIndex(-Byte.BYTES, Integer.BYTES);
+            smallBuffer.setIndex(-BYTE_BYTES, SHORT_BYTES);
           }
         });
     //
-    largeBuffer.setIndex(Long.BYTES, Long.BYTES);
+    mediumBuffer.setIndex(INTEGER_BYTES, INTEGER_BYTES);
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setIndex(Long.BYTES, Long.BYTES - Byte.BYTES);
+            mediumBuffer.setIndex(INTEGER_BYTES, INTEGER_BYTES - BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -327,7 +290,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setIndex(Long.BYTES, Long.BYTES + Byte.BYTES);
+            mediumBuffer.setIndex(INTEGER_BYTES, INTEGER_BYTES + BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -335,7 +298,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setIndex(Long.BYTES, -Byte.BYTES);
+            mediumBuffer.setIndex(INTEGER_BYTES, -BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -343,7 +306,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setIndex(Long.BYTES, Byte.BYTES);
+            mediumBuffer.setIndex(INTEGER_BYTES, BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -351,150 +314,192 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setIndex(-Byte.BYTES, Long.BYTES);
+            mediumBuffer.setIndex(-BYTE_BYTES, INTEGER_BYTES);
+          }
+        });
+    //
+    largeBuffer.setIndex(LONG_BYTES, LONG_BYTES);
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setIndex(LONG_BYTES, LONG_BYTES - BYTE_BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setIndex(LONG_BYTES, LONG_BYTES + BYTE_BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setIndex(LONG_BYTES, -BYTE_BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setIndex(LONG_BYTES, BYTE_BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setIndex(-BYTE_BYTES, LONG_BYTES);
           }
         });
   }
 
   @Test
-  public void readableBytes() {
+  void readableBytes() {
     Assertions.assertEquals(0, smallBuffer.readableBytes());
-    Assertions.assertEquals(Short.BYTES, smallBuffer.writerIndex(Short.BYTES).readableBytes());
+    Assertions.assertEquals(SHORT_BYTES, smallBuffer.writerIndex(SHORT_BYTES).readableBytes());
     Assertions.assertEquals(0, mediumBuffer.readableBytes());
-    Assertions.assertEquals(Integer.BYTES, mediumBuffer.writerIndex(Integer.BYTES).readableBytes());
+    Assertions.assertEquals(INTEGER_BYTES, mediumBuffer.writerIndex(INTEGER_BYTES).readableBytes());
     Assertions.assertEquals(0, largeBuffer.readableBytes());
-    Assertions.assertEquals(Long.BYTES, largeBuffer.writerIndex(Long.BYTES).readableBytes());
+    Assertions.assertEquals(LONG_BYTES, largeBuffer.writerIndex(LONG_BYTES).readableBytes());
   }
 
   @Test
-  public void writableBytes() {
-    Assertions.assertEquals(Short.BYTES, smallBuffer.writableBytes());
-    Assertions.assertEquals(0, smallBuffer.writerIndex(Short.BYTES).writableBytes());
-    Assertions.assertEquals(Integer.BYTES, mediumBuffer.writableBytes());
-    Assertions.assertEquals(0, mediumBuffer.writerIndex(Integer.BYTES).writableBytes());
-    Assertions.assertEquals(Long.BYTES, largeBuffer.writableBytes());
-    Assertions.assertEquals(0, largeBuffer.writerIndex(Long.BYTES).writableBytes());
+  void writableBytes() {
+    Assertions.assertEquals(SHORT_BYTES, smallBuffer.writableBytes());
+    Assertions.assertEquals(0, smallBuffer.writerIndex(SHORT_BYTES).writableBytes());
+    Assertions.assertEquals(INTEGER_BYTES, mediumBuffer.writableBytes());
+    Assertions.assertEquals(0, mediumBuffer.writerIndex(INTEGER_BYTES).writableBytes());
+    Assertions.assertEquals(LONG_BYTES, largeBuffer.writableBytes());
+    Assertions.assertEquals(0, largeBuffer.writerIndex(LONG_BYTES).writableBytes());
   }
 
   @Test
-  public void isReadable() {
+  void isReadable() {
     Assertions.assertFalse(smallBuffer.isReadable());
-    Assertions.assertTrue(smallBuffer.writerIndex(Short.BYTES).isReadable());
-    Assertions.assertFalse(smallBuffer.isReadable(Short.BYTES + Byte.BYTES));
-    Assertions.assertTrue(smallBuffer.setIndex(Byte.BYTES, Short.BYTES).isReadable(Byte.BYTES));
-    Assertions.assertFalse(smallBuffer.isReadable(-Byte.BYTES));
-    Assertions.assertFalse(smallBuffer.writerIndex(Short.BYTES).isReadable(-Byte.BYTES));
+    Assertions.assertTrue(smallBuffer.writerIndex(SHORT_BYTES).isReadable());
+    Assertions.assertFalse(smallBuffer.isReadable(SHORT_BYTES + BYTE_BYTES));
+    Assertions.assertTrue(smallBuffer.setIndex(BYTE_BYTES, SHORT_BYTES).isReadable(BYTE_BYTES));
+    Assertions.assertFalse(smallBuffer.isReadable(-BYTE_BYTES));
+    Assertions.assertFalse(smallBuffer.writerIndex(SHORT_BYTES).isReadable(-BYTE_BYTES));
 
     Assertions.assertFalse(mediumBuffer.isReadable());
-    Assertions.assertTrue(mediumBuffer.writerIndex(Integer.BYTES).isReadable());
-    Assertions.assertFalse(mediumBuffer.isReadable(Integer.BYTES + Byte.BYTES));
-    Assertions.assertTrue(mediumBuffer.setIndex(Byte.BYTES, Integer.BYTES).isReadable(Byte.BYTES));
-    Assertions.assertFalse(mediumBuffer.isReadable(-Byte.BYTES));
-    Assertions.assertFalse(mediumBuffer.writerIndex(Integer.BYTES).isReadable(-Byte.BYTES));
+    Assertions.assertTrue(mediumBuffer.writerIndex(INTEGER_BYTES).isReadable());
+    Assertions.assertFalse(mediumBuffer.isReadable(INTEGER_BYTES + BYTE_BYTES));
+    Assertions.assertTrue(mediumBuffer.setIndex(BYTE_BYTES, INTEGER_BYTES).isReadable(BYTE_BYTES));
+    Assertions.assertFalse(mediumBuffer.isReadable(-BYTE_BYTES));
+    Assertions.assertFalse(mediumBuffer.writerIndex(INTEGER_BYTES).isReadable(-BYTE_BYTES));
 
     Assertions.assertFalse(largeBuffer.isReadable());
-    Assertions.assertTrue(largeBuffer.writerIndex(Long.BYTES).isReadable());
-    Assertions.assertFalse(largeBuffer.isReadable(Long.BYTES + Byte.BYTES));
-    Assertions.assertTrue(largeBuffer.setByte(Byte.BYTES, Long.BYTES).isReadable(Byte.BYTES));
-    Assertions.assertFalse(largeBuffer.isReadable(-Byte.BYTES));
-    Assertions.assertFalse(largeBuffer.writerIndex(Long.BYTES).isReadable(-Byte.BYTES));
+    Assertions.assertTrue(largeBuffer.writerIndex(LONG_BYTES).isReadable());
+    Assertions.assertFalse(largeBuffer.isReadable(LONG_BYTES + BYTE_BYTES));
+    Assertions.assertTrue(largeBuffer.setByte(BYTE_BYTES, LONG_BYTES).isReadable(BYTE_BYTES));
+    Assertions.assertFalse(largeBuffer.isReadable(-BYTE_BYTES));
+    Assertions.assertFalse(largeBuffer.writerIndex(LONG_BYTES).isReadable(-BYTE_BYTES));
   }
 
   @Test
-  public void isWritable() {
+  void isWritable() {
     Assertions.assertTrue(smallBuffer.isWritable());
-    Assertions.assertFalse(smallBuffer.setIndex(Short.BYTES, Short.BYTES).isWritable());
-    Assertions.assertFalse(smallBuffer.setIndex(0, 0).isWritable(Short.BYTES + Byte.BYTES));
-    Assertions.assertTrue(smallBuffer.setIndex(Byte.BYTES, Byte.BYTES).isWritable(Byte.BYTES));
-    Assertions.assertFalse(smallBuffer.setIndex(0, 0).isWritable(-Byte.BYTES));
-    Assertions.assertFalse(smallBuffer.setIndex(0, Short.BYTES).isWritable(-Byte.BYTES));
+    Assertions.assertFalse(smallBuffer.setIndex(SHORT_BYTES, SHORT_BYTES).isWritable());
+    Assertions.assertFalse(smallBuffer.setIndex(0, 0).isWritable(SHORT_BYTES + BYTE_BYTES));
+    Assertions.assertTrue(smallBuffer.setIndex(BYTE_BYTES, BYTE_BYTES).isWritable(BYTE_BYTES));
+    Assertions.assertFalse(smallBuffer.setIndex(0, 0).isWritable(-BYTE_BYTES));
+    Assertions.assertFalse(smallBuffer.setIndex(0, SHORT_BYTES).isWritable(-BYTE_BYTES));
 
     Assertions.assertTrue(mediumBuffer.isWritable());
-    Assertions.assertFalse(mediumBuffer.setIndex(Integer.BYTES, Integer.BYTES).isWritable());
-    Assertions.assertFalse(mediumBuffer.setIndex(0, 0).isWritable(Integer.BYTES + Byte.BYTES));
-    Assertions.assertTrue(mediumBuffer.setIndex(Byte.BYTES, Byte.BYTES).isWritable(Byte.BYTES));
-    Assertions.assertFalse(mediumBuffer.setIndex(0, 0).isWritable(-Byte.BYTES));
-    Assertions.assertFalse(mediumBuffer.setIndex(0, Integer.BYTES).isWritable(-Byte.BYTES));
+    Assertions.assertFalse(mediumBuffer.setIndex(INTEGER_BYTES, INTEGER_BYTES).isWritable());
+    Assertions.assertFalse(mediumBuffer.setIndex(0, 0).isWritable(INTEGER_BYTES + BYTE_BYTES));
+    Assertions.assertTrue(mediumBuffer.setIndex(BYTE_BYTES, BYTE_BYTES).isWritable(BYTE_BYTES));
+    Assertions.assertFalse(mediumBuffer.setIndex(0, 0).isWritable(-BYTE_BYTES));
+    Assertions.assertFalse(mediumBuffer.setIndex(0, INTEGER_BYTES).isWritable(-BYTE_BYTES));
 
     Assertions.assertTrue(largeBuffer.isWritable());
-    Assertions.assertFalse(largeBuffer.setIndex(Long.BYTES, Long.BYTES).isWritable());
-    Assertions.assertFalse(largeBuffer.setIndex(0, 0).isWritable(Long.BYTES + Byte.BYTES));
-    Assertions.assertTrue(largeBuffer.setIndex(Byte.BYTES, Byte.BYTES).isWritable(Byte.BYTES));
-    Assertions.assertFalse(largeBuffer.setIndex(0, 0).isWritable(-Byte.BYTES));
-    Assertions.assertFalse(largeBuffer.setIndex(0, Long.BYTES).isWritable(-Byte.BYTES));
+    Assertions.assertFalse(largeBuffer.setIndex(LONG_BYTES, LONG_BYTES).isWritable());
+    Assertions.assertFalse(largeBuffer.setIndex(0, 0).isWritable(LONG_BYTES + BYTE_BYTES));
+    Assertions.assertTrue(largeBuffer.setIndex(BYTE_BYTES, BYTE_BYTES).isWritable(BYTE_BYTES));
+    Assertions.assertFalse(largeBuffer.setIndex(0, 0).isWritable(-BYTE_BYTES));
+    Assertions.assertFalse(largeBuffer.setIndex(0, LONG_BYTES).isWritable(-BYTE_BYTES));
   }
 
   @Test
-  public void markReader() {
+  void markReader() {
     Assertions.assertEquals(0, smallBuffer.markReaderIndex().resetReaderIndex().readerIndex());
     Assertions.assertEquals(
-        Byte.BYTES,
+        BYTE_BYTES,
         smallBuffer
-            .setIndex(Byte.BYTES, Short.BYTES)
+            .setIndex(BYTE_BYTES, SHORT_BYTES)
             .markReaderIndex()
-            .readerIndex(Short.BYTES)
+            .readerIndex(SHORT_BYTES)
             .resetReaderIndex()
             .readerIndex());
     Assertions.assertEquals(0, mediumBuffer.markReaderIndex().resetReaderIndex().readerIndex());
     Assertions.assertEquals(
-        Byte.BYTES,
+        BYTE_BYTES,
         mediumBuffer
-            .setIndex(Byte.BYTES, Integer.BYTES)
+            .setIndex(BYTE_BYTES, INTEGER_BYTES)
             .markReaderIndex()
-            .readerIndex(Integer.BYTES)
+            .readerIndex(INTEGER_BYTES)
             .resetReaderIndex()
             .readerIndex());
     Assertions.assertEquals(0, largeBuffer.markReaderIndex().resetReaderIndex().readerIndex());
     Assertions.assertEquals(
-        Byte.BYTES,
+        BYTE_BYTES,
         largeBuffer
-            .setIndex(Byte.BYTES, Long.BYTES)
+            .setIndex(BYTE_BYTES, LONG_BYTES)
             .markReaderIndex()
-            .readerIndex(Long.BYTES)
+            .readerIndex(LONG_BYTES)
             .resetReaderIndex()
             .readerIndex());
   }
 
   @Test
-  public void markWriter() {
+  void markWriter() {
     Assertions.assertEquals(0, smallBuffer.markReaderIndex().writerIndex());
     Assertions.assertEquals(
-        Byte.BYTES,
+        BYTE_BYTES,
         smallBuffer
-            .setIndex(Byte.BYTES, Byte.BYTES)
+            .setIndex(BYTE_BYTES, BYTE_BYTES)
             .markWriterIndex()
-            .writerIndex(Short.BYTES)
+            .writerIndex(SHORT_BYTES)
             .resetWriterIndex()
             .writerIndex());
     Assertions.assertEquals(0, mediumBuffer.markReaderIndex().writerIndex());
     Assertions.assertEquals(
-        Byte.BYTES,
+        BYTE_BYTES,
         mediumBuffer
-            .setIndex(Byte.BYTES, Byte.BYTES)
+            .setIndex(BYTE_BYTES, BYTE_BYTES)
             .markWriterIndex()
-            .writerIndex(Integer.BYTES)
+            .writerIndex(INTEGER_BYTES)
             .resetWriterIndex()
             .writerIndex());
     Assertions.assertEquals(0, largeBuffer.markReaderIndex().writerIndex());
     Assertions.assertEquals(
-        Byte.BYTES,
+        BYTE_BYTES,
         largeBuffer
-            .setIndex(Byte.BYTES, Byte.BYTES)
+            .setIndex(BYTE_BYTES, BYTE_BYTES)
             .markWriterIndex()
-            .writerIndex(Short.BYTES)
+            .writerIndex(SHORT_BYTES)
             .resetWriterIndex()
             .writerIndex());
   }
 
   @Test
-  public void ensureWritable() {
-    smallBuffer.ensureWritable(Byte.BYTES);
+  void ensureWritable() {
+    smallBuffer.ensureWritable(BYTE_BYTES);
     Assertions.assertThrows(
         IllegalArgumentException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.ensureWritable(-Byte.BYTES);
+            smallBuffer.ensureWritable(-BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -502,7 +507,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.setIndex(Short.BYTES, Short.BYTES).ensureWritable(Byte.BYTES);
+            smallBuffer.setIndex(SHORT_BYTES, SHORT_BYTES).ensureWritable(BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -510,17 +515,17 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.setIndex(0, 0).ensureWritable(Short.BYTES + Byte.BYTES);
+            smallBuffer.setIndex(0, 0).ensureWritable(SHORT_BYTES + BYTE_BYTES);
           }
         });
     //
-    mediumBuffer.ensureWritable(Byte.BYTES);
+    mediumBuffer.ensureWritable(BYTE_BYTES);
     Assertions.assertThrows(
         IllegalArgumentException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.ensureWritable(-Byte.BYTES);
+            mediumBuffer.ensureWritable(-BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -528,7 +533,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.setIndex(Integer.BYTES, Integer.BYTES).ensureWritable(Byte.BYTES);
+            mediumBuffer.setIndex(INTEGER_BYTES, INTEGER_BYTES).ensureWritable(BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -536,17 +541,17 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.setIndex(0, 0).ensureWritable(Integer.BYTES + Byte.BYTES);
+            mediumBuffer.setIndex(0, 0).ensureWritable(INTEGER_BYTES + BYTE_BYTES);
           }
         });
     //
-    largeBuffer.ensureWritable(Byte.BYTES);
+    largeBuffer.ensureWritable(BYTE_BYTES);
     Assertions.assertThrows(
         IllegalArgumentException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.ensureWritable(-Byte.BYTES);
+            largeBuffer.ensureWritable(-BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -554,7 +559,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setIndex(Long.BYTES, Long.BYTES).ensureWritable(Byte.BYTES);
+            largeBuffer.setIndex(LONG_BYTES, LONG_BYTES).ensureWritable(BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -562,32 +567,32 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setIndex(0, 0).ensureWritable(Long.BYTES + Byte.BYTES);
+            largeBuffer.setIndex(0, 0).ensureWritable(LONG_BYTES + BYTE_BYTES);
           }
         });
   }
 
   @Test
-  public void getBoolean() {
-    for (int i = 0; i < Short.BYTES; i++) {
+  void getBoolean() {
+    for (int i = 0; i < SHORT_BYTES; i++) {
       smallBuffer.setByte(i, i);
-      if (i < Byte.BYTES) {
+      if (i < BYTE_BYTES) {
         Assertions.assertFalse(smallBuffer.getBoolean(i));
       } else {
         Assertions.assertTrue(smallBuffer.getBoolean(i));
       }
     }
-    for (int i = 0; i < Integer.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       mediumBuffer.setByte(i, i);
-      if (i < Byte.BYTES) {
+      if (i < BYTE_BYTES) {
         Assertions.assertFalse(mediumBuffer.getBoolean(i));
       } else {
         Assertions.assertTrue(mediumBuffer.getBoolean(i));
       }
     }
-    for (int i = 0; i < Long.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES; i++) {
       largeBuffer.setByte(i, i);
-      if (i < Byte.BYTES) {
+      if (i < BYTE_BYTES) {
         Assertions.assertFalse(largeBuffer.getBoolean(i));
       } else {
         Assertions.assertTrue(largeBuffer.getBoolean(i));
@@ -596,66 +601,66 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void getUnsignedByte() {
-    for (int i = 0; i < Short.BYTES; i++) {
+  void getUnsignedByte() {
+    for (int i = 0; i < SHORT_BYTES; i++) {
       smallBuffer.setByte(i, 0xFF);
       Assertions.assertEquals(0xFF, smallBuffer.getUnsignedByte(i));
     }
-    for (int i = 0; i < Integer.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       mediumBuffer.setByte(i, 0xFF);
       Assertions.assertEquals(0xFF, mediumBuffer.getUnsignedByte(i));
     }
-    for (int i = 0; i < Long.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES; i++) {
       largeBuffer.setByte(i, 0xFF);
       Assertions.assertEquals(0xFF, largeBuffer.getUnsignedByte(i));
     }
   }
 
   @Test
-  public void getShortRE() {
-    for (int i = 0; i < Short.BYTES / Short.BYTES; i++) {
+  void getShortRE() {
+    for (int i = 0; i < SHORT_BYTES / SHORT_BYTES; i++) {
       smallBuffer.setShort(i, i);
       Assertions.assertEquals(Short.reverseBytes((short) i), smallBuffer.getShortRE(i));
     }
-    for (int i = 0; i < Integer.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES / SHORT_BYTES; i++) {
       mediumBuffer.setShort(i, i);
       Assertions.assertEquals(Short.reverseBytes((short) i), mediumBuffer.getShortRE(i));
     }
-    for (int i = 0; i < Long.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / SHORT_BYTES; i++) {
       largeBuffer.setShort(i, i);
       Assertions.assertEquals(Short.reverseBytes((short) i), largeBuffer.getShortRE(i));
     }
   }
 
   @Test
-  public void getUnsignedShort() {
-    for (int i = 0; i < Short.BYTES / Short.BYTES; i++) {
+  void getUnsignedShort() {
+    for (int i = 0; i < SHORT_BYTES / SHORT_BYTES; i++) {
       smallBuffer.setShort(i, 0xFFFF);
       Assertions.assertEquals(0xFFFF, smallBuffer.getUnsignedShort(i));
     }
-    for (int i = 0; i < Integer.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES / SHORT_BYTES; i++) {
       mediumBuffer.setShort(i, 0xFFFF);
       Assertions.assertEquals(0xFFFF, mediumBuffer.getUnsignedShort(i));
     }
-    for (int i = 0; i < Long.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / SHORT_BYTES; i++) {
       largeBuffer.setShort(i, 0xFFFF);
       Assertions.assertEquals(0xFFFF, largeBuffer.getUnsignedShort(i));
     }
   }
 
   @Test
-  public void getUnsignedShortRE() {
-    for (int i = 0; i < Short.BYTES / Short.BYTES; i++) {
+  void getUnsignedShortRE() {
+    for (int i = 0; i < SHORT_BYTES / SHORT_BYTES; i++) {
       smallBuffer.setShort(i, 0xFFFF);
       Assertions.assertEquals(
           Short.reverseBytes((short) 0xFFFF), smallBuffer.getUnsignedShortRE(i));
     }
-    for (int i = 0; i < Integer.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES / SHORT_BYTES; i++) {
       mediumBuffer.setShort(i, 0xFFFF);
       Assertions.assertEquals(
           Short.reverseBytes((short) 0xFFFF), mediumBuffer.getUnsignedShortRE(i));
     }
-    for (int i = 0; i < Long.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / SHORT_BYTES; i++) {
       largeBuffer.setShort(i, 0xFFFF);
       Assertions.assertEquals(
           Short.reverseBytes((short) 0xFFFF), largeBuffer.getUnsignedShortRE(i));
@@ -663,69 +668,69 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void getIntRE() {
-    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+  void getIntRE() {
+    for (int i = 0; i < INTEGER_BYTES / INTEGER_BYTES; i++) {
       mediumBuffer.setInt(i, i);
       Assertions.assertEquals(Integer.reverseBytes(i), mediumBuffer.getIntRE(i));
     }
-    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / INTEGER_BYTES; i++) {
       largeBuffer.setInt(i, i);
       Assertions.assertEquals(Integer.reverseBytes(i), largeBuffer.getIntRE(i));
     }
   }
 
   @Test
-  public void getUnsignedInt() {
-    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+  void getUnsignedInt() {
+    for (int i = 0; i < INTEGER_BYTES / INTEGER_BYTES; i++) {
       mediumBuffer.setInt(i, 0xFFFFFFFF);
       Assertions.assertEquals(0xFFFFFFFFL, mediumBuffer.getUnsignedInt(i));
     }
-    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / INTEGER_BYTES; i++) {
       largeBuffer.setInt(i, 0xFFFFFFFF);
       Assertions.assertEquals(0xFFFFFFFFL, largeBuffer.getUnsignedInt(i));
     }
   }
 
   @Test
-  public void getUnsignedIntRE() {
-    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+  void getUnsignedIntRE() {
+    for (int i = 0; i < INTEGER_BYTES / INTEGER_BYTES; i++) {
       mediumBuffer.setInt(i, 0xFFFFFFFF);
       Assertions.assertEquals(Integer.reverseBytes(0xFFFFFFFF), mediumBuffer.getUnsignedIntRE(i));
     }
-    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / INTEGER_BYTES; i++) {
       largeBuffer.setInt(i, 0xFFFFFFFF);
       Assertions.assertEquals(Integer.reverseBytes(0xFFFFFFFF), largeBuffer.getUnsignedIntRE(i));
     }
   }
 
   @Test
-  public void getLongRE() {
-    for (int i = 0; i < Long.BYTES / Long.BYTES; i++) {
+  void getLongRE() {
+    for (int i = 0; i < LONG_BYTES / LONG_BYTES; i++) {
       largeBuffer.setLong(i, 0xFFFFFFFFFFFFFFFFL);
       Assertions.assertEquals(Long.reverseBytes(0xFFFFFFFFFFFFFFFFL), largeBuffer.getLongRE(i));
     }
   }
 
   @Test
-  public void getFloat() {
-    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+  void getFloat() {
+    for (int i = 0; i < INTEGER_BYTES / INTEGER_BYTES; i++) {
       mediumBuffer.setFloat(i, i + 0.5F);
       Assertions.assertEquals(i + 0.5F, mediumBuffer.getFloat(i));
     }
-    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / INTEGER_BYTES; i++) {
       largeBuffer.setFloat(i, i + 0.5F);
       Assertions.assertEquals(i + 0.5F, largeBuffer.getFloat(i));
     }
   }
 
   @Test
-  public void getFloatRE() {
-    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+  void getFloatRE() {
+    for (int i = 0; i < INTEGER_BYTES / INTEGER_BYTES; i++) {
       mediumBuffer.setFloat(i, i + 0.5F);
       Assertions.assertEquals(
           Float.intBitsToFloat(mediumBuffer.getIntRE(i)), mediumBuffer.getFloatRE(i));
     }
-    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / INTEGER_BYTES; i++) {
       largeBuffer.setFloat(i, i + 0.5F);
       Assertions.assertEquals(
           Float.intBitsToFloat(largeBuffer.getIntRE(i)), largeBuffer.getFloatRE(i));
@@ -733,16 +738,16 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void getDouble() {
-    for (int i = 0; i < Long.BYTES / Long.BYTES; i++) {
+  void getDouble() {
+    for (int i = 0; i < LONG_BYTES / LONG_BYTES; i++) {
       largeBuffer.setDouble(i, i + 0.5D);
       Assertions.assertEquals(i + 0.5D, largeBuffer.getDouble(i));
     }
   }
 
   @Test
-  public void getDoubleRE() {
-    for (int i = 0; i < Long.BYTES / Long.BYTES; i++) {
+  void getDoubleRE() {
+    for (int i = 0; i < LONG_BYTES / LONG_BYTES; i++) {
       largeBuffer.setDouble(i, i + 0.5D);
       Assertions.assertEquals(
           Double.longBitsToDouble(largeBuffer.getLongRE(i)), largeBuffer.getDoubleRE(i));
@@ -750,19 +755,19 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void getBytes() {
-    for (int i = 0; i < Short.BYTES; i++) {
+  void getBytes() {
+    for (int i = 0; i < SHORT_BYTES; i++) {
       smallBuffer.setByte(i, i);
       Assertions.assertEquals(i, smallBuffer.getByte(i));
     }
-    for (int i = 0; i < Integer.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       mediumBuffer.setByte(i, i);
       Assertions.assertEquals(i, mediumBuffer.getByte(i));
     }
 
-    smallBuffer.getBytes(0, largeBuffer, Short.BYTES);
-    mediumBuffer.getBytes(0, largeBuffer, Integer.BYTES);
-    smallBuffer.getBytes(0, largeBuffer, Short.BYTES);
+    smallBuffer.getBytes(0, largeBuffer, SHORT_BYTES);
+    mediumBuffer.getBytes(0, largeBuffer, INTEGER_BYTES);
+    smallBuffer.getBytes(0, largeBuffer, SHORT_BYTES);
     Assertions.assertEquals(0, largeBuffer.getByte(0));
     Assertions.assertEquals(1, largeBuffer.getByte(1));
     Assertions.assertEquals(0, largeBuffer.getByte(2));
@@ -772,11 +777,11 @@ public class DefaultPacketBuffferTest {
     Assertions.assertEquals(0, largeBuffer.getByte(6));
     Assertions.assertEquals(1, largeBuffer.getByte(7));
 
-    byte[] largeBytes = new byte[Long.BYTES];
+    byte[] largeBytes = new byte[LONG_BYTES];
     largeBuffer.resetWriterIndex();
-    smallBuffer.getBytes(0, largeBytes, 0, Short.BYTES);
-    mediumBuffer.getBytes(0, largeBytes, Short.BYTES, Integer.BYTES);
-    smallBuffer.getBytes(0, largeBytes, Integer.BYTES + Short.BYTES, Short.BYTES);
+    smallBuffer.getBytes(0, largeBytes, 0, SHORT_BYTES);
+    mediumBuffer.getBytes(0, largeBytes, SHORT_BYTES, INTEGER_BYTES);
+    smallBuffer.getBytes(0, largeBytes, INTEGER_BYTES + SHORT_BYTES, SHORT_BYTES);
     Assertions.assertEquals(largeBytes[0], largeBuffer.getByte(0));
     Assertions.assertEquals(largeBytes[1], largeBuffer.getByte(1));
     Assertions.assertEquals(largeBytes[2], largeBuffer.getByte(2));
@@ -786,7 +791,7 @@ public class DefaultPacketBuffferTest {
     Assertions.assertEquals(largeBytes[6], largeBuffer.getByte(6));
     Assertions.assertEquals(largeBytes[7], largeBuffer.getByte(7));
 
-    byte[] bufBytes = new byte[Long.BYTES];
+    byte[] bufBytes = new byte[LONG_BYTES];
     largeBuffer.getBytes(0, bufBytes);
     Assertions.assertArrayEquals(largeBytes, bufBytes);
 
@@ -802,7 +807,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.getBytes(0, smallBuffer.writerIndex(Short.BYTES), 0, Long.BYTES);
+            largeBuffer.getBytes(0, smallBuffer.writerIndex(SHORT_BYTES), 0, LONG_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -810,13 +815,13 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.getBytes(0, new byte[] {0, 0}, 0, Long.BYTES);
+            largeBuffer.getBytes(0, new byte[] {0, 0}, 0, LONG_BYTES);
           }
         });
   }
 
   @Test
-  public void getCharSequace() {
+  void getCharSequace() {
     PacketBuffer.Charset charset =
         new PacketBuffer.Charset() {
           @Override
@@ -827,14 +832,14 @@ public class DefaultPacketBuffferTest {
     smallBuffer.setCharSequence(0, "Hi", charset);
     mediumBuffer.setCharSequence(0, "Hi", charset);
     largeBuffer.setCharSequence(0, "Hi", charset);
-    Assertions.assertEquals("Hi", smallBuffer.getCharSequence(0, Short.BYTES, charset));
-    Assertions.assertEquals("Hi", mediumBuffer.getCharSequence(0, Short.BYTES, charset));
-    Assertions.assertEquals("Hi", largeBuffer.getCharSequence(0, Short.BYTES, charset));
+    Assertions.assertEquals("Hi", smallBuffer.getCharSequence(0, SHORT_BYTES, charset));
+    Assertions.assertEquals("Hi", mediumBuffer.getCharSequence(0, SHORT_BYTES, charset));
+    Assertions.assertEquals("Hi", largeBuffer.getCharSequence(0, SHORT_BYTES, charset));
   }
 
   @Test
-  public void setBoolean() {
-    for (int i = 0; i < Short.BYTES; i++) {
+  void setBoolean() {
+    for (int i = 0; i < SHORT_BYTES; i++) {
       smallBuffer.setBoolean(i, i % 2 == 0);
       if (i % 2 == 0) {
         Assertions.assertTrue(smallBuffer.getByte(i) == 1);
@@ -842,7 +847,7 @@ public class DefaultPacketBuffferTest {
         Assertions.assertTrue(smallBuffer.getByte(i) == 0);
       }
     }
-    for (int i = 0; i < Integer.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       mediumBuffer.setBoolean(i, i % 2 == 0);
       if (i % 2 == 0) {
         Assertions.assertTrue(mediumBuffer.getByte(i) == 1);
@@ -850,7 +855,7 @@ public class DefaultPacketBuffferTest {
         Assertions.assertTrue(mediumBuffer.getByte(i) == 0);
       }
     }
-    for (int i = 0; i < Long.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES; i++) {
       largeBuffer.setBoolean(i, i % 2 == 0);
       if (i % 2 == 0) {
         Assertions.assertTrue(largeBuffer.getByte(i) == 1);
@@ -861,61 +866,61 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void setShortRE() {
-    for (int i = 0; i < Short.BYTES / Short.BYTES; i++) {
+  void setShortRE() {
+    for (int i = 0; i < SHORT_BYTES / SHORT_BYTES; i++) {
       smallBuffer.setShortRE(i, i);
       Assertions.assertEquals(Short.reverseBytes((short) i), smallBuffer.getShort(i));
     }
-    for (int i = 0; i < Integer.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES / SHORT_BYTES; i++) {
       mediumBuffer.setShortRE(i, i);
       Assertions.assertEquals(Short.reverseBytes((short) i), mediumBuffer.getShort(i));
     }
-    for (int i = 0; i < Long.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / SHORT_BYTES; i++) {
       largeBuffer.setShortRE(i, i);
       Assertions.assertEquals(Short.reverseBytes((short) i), largeBuffer.getShort(i));
     }
   }
 
   @Test
-  public void setIntRE() {
-    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+  void setIntRE() {
+    for (int i = 0; i < INTEGER_BYTES / INTEGER_BYTES; i++) {
       mediumBuffer.setIntRE(i, i);
       Assertions.assertEquals(Integer.reverseBytes(i), mediumBuffer.getInt(i));
     }
-    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / INTEGER_BYTES; i++) {
       largeBuffer.setIntRE(i, i);
       Assertions.assertEquals(Integer.reverseBytes(i), largeBuffer.getInt(i));
     }
   }
 
   @Test
-  public void setLongRE() {
-    for (int i = 0; i < Long.BYTES / Long.BYTES; i++) {
+  void setLongRE() {
+    for (int i = 0; i < LONG_BYTES / LONG_BYTES; i++) {
       largeBuffer.setLongRE(i, 0xFFFFFFFFFFFFFFFFL);
       Assertions.assertEquals(Long.reverseBytes(0xFFFFFFFFFFFFFFFFL), largeBuffer.getLong(i));
     }
   }
 
   @Test
-  public void setFloat() {
-    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+  void setFloat() {
+    for (int i = 0; i < INTEGER_BYTES / INTEGER_BYTES; i++) {
       mediumBuffer.setFloat(i, i + 0.5F);
       Assertions.assertEquals(i + 0.5F, mediumBuffer.getFloat(i));
     }
-    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / INTEGER_BYTES; i++) {
       largeBuffer.setFloat(i, i + 0.5F);
       Assertions.assertEquals(i + 0.5F, largeBuffer.getFloat(i));
     }
   }
 
   @Test
-  public void setFloatRE() {
-    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+  void setFloatRE() {
+    for (int i = 0; i < INTEGER_BYTES / INTEGER_BYTES; i++) {
       mediumBuffer.setFloatRE(i, i + 0.5F);
       Assertions.assertEquals(
           Float.intBitsToFloat(mediumBuffer.getIntRE(i)), mediumBuffer.getFloatRE(i));
     }
-    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / INTEGER_BYTES; i++) {
       largeBuffer.setFloatRE(i, i + 0.5F);
       Assertions.assertEquals(
           Float.intBitsToFloat(largeBuffer.getIntRE(i)), largeBuffer.getFloatRE(i));
@@ -923,16 +928,16 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void setDouble() {
-    for (int i = 0; i < Long.BYTES / Long.BYTES; i++) {
+  void setDouble() {
+    for (int i = 0; i < LONG_BYTES / LONG_BYTES; i++) {
       largeBuffer.setDouble(i, i + 0.5D);
       Assertions.assertEquals(i + 0.5D, largeBuffer.getDouble(i));
     }
   }
 
   @Test
-  public void setDoubleRE() {
-    for (int i = 0; i < Long.BYTES / Long.BYTES; i++) {
+  void setDoubleRE() {
+    for (int i = 0; i < LONG_BYTES / LONG_BYTES; i++) {
       largeBuffer.setDoubleRE(i, i + 0.5D);
       Assertions.assertEquals(
           Double.longBitsToDouble(largeBuffer.getLongRE(i)), largeBuffer.getDoubleRE(i));
@@ -940,22 +945,22 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void setBytes() {
-    for (int i = 0; i < Short.BYTES; i++) {
+  void setBytes() {
+    for (int i = 0; i < SHORT_BYTES; i++) {
       smallBuffer.setByte(i, i);
       Assertions.assertEquals(i, smallBuffer.getByte(i));
     }
-    for (int i = 0; i < Integer.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       mediumBuffer.setByte(i, i);
       Assertions.assertEquals(i, mediumBuffer.getByte(i));
     }
-    smallBuffer.setIndex(0, Short.BYTES);
-    mediumBuffer.setIndex(0, Integer.BYTES);
+    smallBuffer.setIndex(0, SHORT_BYTES);
+    mediumBuffer.setIndex(0, INTEGER_BYTES);
 
     largeBuffer.setBytes(0, smallBuffer);
-    largeBuffer.setBytes(Short.BYTES, mediumBuffer);
-    smallBuffer.setIndex(0, Short.BYTES);
-    largeBuffer.setBytes(Integer.BYTES + Short.BYTES, smallBuffer);
+    largeBuffer.setBytes(SHORT_BYTES, mediumBuffer);
+    smallBuffer.setIndex(0, SHORT_BYTES);
+    largeBuffer.setBytes(INTEGER_BYTES + SHORT_BYTES, smallBuffer);
 
     Assertions.assertEquals(0, largeBuffer.getByte(0));
     Assertions.assertEquals(1, largeBuffer.getByte(1));
@@ -966,18 +971,18 @@ public class DefaultPacketBuffferTest {
     Assertions.assertEquals(0, largeBuffer.getByte(6));
     Assertions.assertEquals(1, largeBuffer.getByte(7));
 
-    byte[] bytes = new byte[Long.BYTES];
+    final byte[] bytes = new byte[LONG_BYTES];
     for (int i = 0; i < bytes.length; i++) {
       bytes[i] = (byte) i;
     }
     largeBuffer.setIndex(0, 0);
     largeBuffer.setBytes(0, bytes, 0, bytes.length);
-    for (int i = 0; i < Byte.BYTES; i++) {
+    for (int i = 0; i < BYTE_BYTES; i++) {
       Assertions.assertEquals(i, largeBuffer.getByte(0));
     }
     largeBuffer.setIndex(0, 0);
     largeBuffer.setBytes(0, bytes);
-    for (int i = 0; i < Byte.BYTES; i++) {
+    for (int i = 0; i < BYTE_BYTES; i++) {
       Assertions.assertEquals(i, largeBuffer.getByte(0));
     }
     Assertions.assertThrows(
@@ -985,7 +990,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setBytes(0, null, Short.BYTES);
+            largeBuffer.setBytes(0, null, SHORT_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -993,7 +998,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setBytes(0, null, Integer.BYTES);
+            largeBuffer.setBytes(0, null, INTEGER_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -1001,8 +1006,8 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.setIndex(Byte.BYTES, Short.BYTES);
-            largeBuffer.setBytes(0, smallBuffer, Short.BYTES);
+            smallBuffer.setIndex(BYTE_BYTES, SHORT_BYTES);
+            largeBuffer.setBytes(0, smallBuffer, SHORT_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -1010,8 +1015,8 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.setIndex(Short.BYTES, Integer.BYTES);
-            largeBuffer.setBytes(0, smallBuffer, Integer.BYTES);
+            smallBuffer.setIndex(SHORT_BYTES, INTEGER_BYTES);
+            largeBuffer.setBytes(0, smallBuffer, INTEGER_BYTES);
           }
         });
 
@@ -1020,7 +1025,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setBytes(0, smallBuffer, 1, Short.BYTES);
+            largeBuffer.setBytes(0, smallBuffer, 1, SHORT_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -1028,7 +1033,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setBytes(0, mediumBuffer, 1, Integer.BYTES);
+            largeBuffer.setBytes(0, mediumBuffer, 1, INTEGER_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -1036,7 +1041,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setBytes(0, bytes, 1, Long.BYTES);
+            largeBuffer.setBytes(0, bytes, 1, LONG_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -1044,13 +1049,13 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setBytes(0, bytes, 1, Long.BYTES);
+            largeBuffer.setBytes(0, bytes, 1, LONG_BYTES);
           }
         });
   }
 
   @Test
-  public void setCharSequace() {
+  void setCharSequace() {
     PacketBuffer.Charset charset =
         new PacketBuffer.Charset() {
           @Override
@@ -1061,13 +1066,13 @@ public class DefaultPacketBuffferTest {
     smallBuffer.setCharSequence(0, "Hi", charset);
     mediumBuffer.setCharSequence(0, "Hi", charset);
     largeBuffer.setCharSequence(0, "Hi", charset);
-    Assertions.assertEquals("Hi", smallBuffer.getCharSequence(0, Short.BYTES, charset));
-    Assertions.assertEquals("Hi", mediumBuffer.getCharSequence(0, Short.BYTES, charset));
-    Assertions.assertEquals("Hi", largeBuffer.getCharSequence(0, Short.BYTES, charset));
+    Assertions.assertEquals("Hi", smallBuffer.getCharSequence(0, SHORT_BYTES, charset));
+    Assertions.assertEquals("Hi", mediumBuffer.getCharSequence(0, SHORT_BYTES, charset));
+    Assertions.assertEquals("Hi", largeBuffer.getCharSequence(0, SHORT_BYTES, charset));
   }
 
   @Test
-  public void readBoolean() {
+  void readBoolean() {
     smallBuffer.writeBoolean(true);
     smallBuffer.writeBoolean(false);
     Assertions.assertTrue(smallBuffer.readBoolean());
@@ -1099,7 +1104,7 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void readByte() {
+  void readByte() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
@@ -1124,7 +1129,7 @@ public class DefaultPacketBuffferTest {
             largeBuffer.readByte();
           }
         });
-    for (int i = 0; i < Short.BYTES; i++) {
+    for (int i = 0; i < SHORT_BYTES; i++) {
       smallBuffer.writeByte(i);
       Assertions.assertEquals(i, smallBuffer.readByte());
     }
@@ -1136,7 +1141,7 @@ public class DefaultPacketBuffferTest {
             smallBuffer.readByte();
           }
         });
-    for (int i = 0; i < Integer.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       mediumBuffer.writeByte(i);
       Assertions.assertEquals(i, mediumBuffer.readByte());
     }
@@ -1148,7 +1153,7 @@ public class DefaultPacketBuffferTest {
             mediumBuffer.readByte();
           }
         });
-    for (int i = 0; i < Long.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES; i++) {
       largeBuffer.writeByte(i);
       Assertions.assertEquals(i, largeBuffer.readByte());
     }
@@ -1163,23 +1168,23 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void readUnsignedByte() {
-    for (int i = 0; i < Short.BYTES; i++) {
+  void readUnsignedByte() {
+    for (int i = 0; i < SHORT_BYTES; i++) {
       smallBuffer.writeByte(i);
       Assertions.assertEquals(i, smallBuffer.readUnsignedByte());
     }
-    for (int i = 0; i < Integer.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       mediumBuffer.writeByte(i);
       Assertions.assertEquals(i, mediumBuffer.readUnsignedByte());
     }
-    for (int i = 0; i < Long.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES; i++) {
       largeBuffer.writeByte(i);
       Assertions.assertEquals(i, largeBuffer.readUnsignedByte());
     }
   }
 
   @Test
-  public void readShort() {
+  void readShort() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
@@ -1204,7 +1209,7 @@ public class DefaultPacketBuffferTest {
             largeBuffer.readShort();
           }
         });
-    for (int i = 0; i < Short.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < SHORT_BYTES / SHORT_BYTES; i++) {
       smallBuffer.writeShort(i);
       Assertions.assertEquals(i, smallBuffer.readShort());
     }
@@ -1216,7 +1221,7 @@ public class DefaultPacketBuffferTest {
             smallBuffer.readShort();
           }
         });
-    for (int i = 0; i < Integer.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES / SHORT_BYTES; i++) {
       mediumBuffer.writeShort(i);
       Assertions.assertEquals(i, mediumBuffer.readShort());
     }
@@ -1228,7 +1233,7 @@ public class DefaultPacketBuffferTest {
             mediumBuffer.readShort();
           }
         });
-    for (int i = 0; i < Long.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / SHORT_BYTES; i++) {
       largeBuffer.writeShort(i);
       Assertions.assertEquals(i, largeBuffer.readShort());
     }
@@ -1243,7 +1248,7 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void readShortRE() {
+  void readShortRE() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
@@ -1268,7 +1273,7 @@ public class DefaultPacketBuffferTest {
             largeBuffer.readShortRE();
           }
         });
-    for (int i = 0; i < Short.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < SHORT_BYTES / SHORT_BYTES; i++) {
       smallBuffer.writeShortRE(i);
       Assertions.assertEquals(i, smallBuffer.readShortRE());
     }
@@ -1280,7 +1285,7 @@ public class DefaultPacketBuffferTest {
             smallBuffer.readShortRE();
           }
         });
-    for (int i = 0; i < Integer.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES / SHORT_BYTES; i++) {
       mediumBuffer.writeShortRE(i);
       Assertions.assertEquals(i, mediumBuffer.readShortRE());
     }
@@ -1292,7 +1297,7 @@ public class DefaultPacketBuffferTest {
             mediumBuffer.readShortRE();
           }
         });
-    for (int i = 0; i < Long.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / SHORT_BYTES; i++) {
       largeBuffer.writeShortRE(i);
       Assertions.assertEquals(i, largeBuffer.readShortRE());
     }
@@ -1307,39 +1312,39 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void readUnsignedShort() {
-    for (int i = 0; i < Short.BYTES / Short.BYTES; i++) {
+  void readUnsignedShort() {
+    for (int i = 0; i < SHORT_BYTES / SHORT_BYTES; i++) {
       smallBuffer.writeShort(0xFFFF);
       Assertions.assertEquals(0xFFFF, smallBuffer.readUnsignedShort());
     }
-    for (int i = 0; i < Integer.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES / SHORT_BYTES; i++) {
       mediumBuffer.writeShort(0xFFFF);
       Assertions.assertEquals(0xFFFF, mediumBuffer.readUnsignedShort());
     }
-    for (int i = 0; i < Long.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / SHORT_BYTES; i++) {
       largeBuffer.writeShort(0xFFFF);
       Assertions.assertEquals(0xFFFF, largeBuffer.readUnsignedShort());
     }
   }
 
   @Test
-  public void readUnsignedShortRE() {
-    for (int i = 0; i < Short.BYTES / Short.BYTES; i++) {
+  void readUnsignedShortRE() {
+    for (int i = 0; i < SHORT_BYTES / SHORT_BYTES; i++) {
       smallBuffer.writeShortRE(0xFFFF);
       Assertions.assertEquals(0xFFFF, smallBuffer.readUnsignedShortRE());
     }
-    for (int i = 0; i < Integer.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES / SHORT_BYTES; i++) {
       mediumBuffer.writeShortRE(0xFFFF);
       Assertions.assertEquals(0xFFFF, mediumBuffer.readUnsignedShortRE());
     }
-    for (int i = 0; i < Long.BYTES / Short.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / SHORT_BYTES; i++) {
       largeBuffer.writeShortRE(0xFFFF);
       Assertions.assertEquals(0xFFFF, largeBuffer.readUnsignedShortRE());
     }
   }
 
   @Test
-  public void readInt() {
+  void readInt() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
@@ -1356,7 +1361,7 @@ public class DefaultPacketBuffferTest {
             largeBuffer.readInt();
           }
         });
-    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES / INTEGER_BYTES; i++) {
       mediumBuffer.writeInt(i);
       Assertions.assertEquals(i, mediumBuffer.readInt());
     }
@@ -1368,7 +1373,7 @@ public class DefaultPacketBuffferTest {
             mediumBuffer.readInt();
           }
         });
-    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / INTEGER_BYTES; i++) {
       largeBuffer.writeInt(i);
       Assertions.assertEquals(i, largeBuffer.readInt());
     }
@@ -1383,7 +1388,7 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void readIntRE() {
+  void readIntRE() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
@@ -1400,7 +1405,7 @@ public class DefaultPacketBuffferTest {
             largeBuffer.readIntRE();
           }
         });
-    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES / INTEGER_BYTES; i++) {
       mediumBuffer.writeIntRE(i);
       Assertions.assertEquals(i, mediumBuffer.readIntRE());
     }
@@ -1412,7 +1417,7 @@ public class DefaultPacketBuffferTest {
             mediumBuffer.readIntRE();
           }
         });
-    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / INTEGER_BYTES; i++) {
       largeBuffer.writeIntRE(i);
       Assertions.assertEquals(i, largeBuffer.readIntRE());
     }
@@ -1427,71 +1432,71 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void readUnsignedInt() {
-    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+  void readUnsignedInt() {
+    for (int i = 0; i < INTEGER_BYTES / INTEGER_BYTES; i++) {
       mediumBuffer.writeInt(0xFFFFFFFF);
       Assertions.assertEquals(0xFFFFFFFFL, mediumBuffer.readUnsignedInt());
     }
-    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / INTEGER_BYTES; i++) {
       largeBuffer.writeInt(0xFFFFFFFF);
       Assertions.assertEquals(0xFFFFFFFFL, largeBuffer.readUnsignedInt());
     }
   }
 
   @Test
-  public void readUnsignedIntRE() {
-    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+  void readUnsignedIntRE() {
+    for (int i = 0; i < INTEGER_BYTES / INTEGER_BYTES; i++) {
       mediumBuffer.writeIntRE(0xFFFFFFFF);
       Assertions.assertEquals(0xFFFFFFFFL, mediumBuffer.readUnsignedIntRE());
     }
-    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / INTEGER_BYTES; i++) {
       largeBuffer.writeIntRE(0xFFFFFFFF);
       Assertions.assertEquals(0xFFFFFFFFL, largeBuffer.readUnsignedIntRE());
     }
   }
 
   @Test
-  public void readFloat() {
-    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+  void readFloat() {
+    for (int i = 0; i < INTEGER_BYTES / INTEGER_BYTES; i++) {
       mediumBuffer.writeFloat(i + 0.5F);
       Assertions.assertEquals(i + 0.5F, mediumBuffer.readFloat());
     }
-    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / INTEGER_BYTES; i++) {
       largeBuffer.writeFloat(i + 0.5F);
       Assertions.assertEquals(i + 0.5F, largeBuffer.readFloat());
     }
   }
 
   @Test
-  public void readFloatRE() {
-    for (int i = 0; i < Integer.BYTES / Integer.BYTES; i++) {
+  void readFloatRE() {
+    for (int i = 0; i < INTEGER_BYTES / INTEGER_BYTES; i++) {
       mediumBuffer.writeFloatRE(i + 0.5F);
       Assertions.assertEquals(i + 0.5F, mediumBuffer.readFloatRE());
     }
-    for (int i = 0; i < Long.BYTES / Integer.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES / INTEGER_BYTES; i++) {
       largeBuffer.writeFloatRE(i + 0.5F);
       Assertions.assertEquals(i + 0.5F, largeBuffer.readFloatRE());
     }
   }
 
   @Test
-  public void readDouble() {
-    for (int i = 0; i < Long.BYTES / Long.BYTES; i++) {
+  void readDouble() {
+    for (int i = 0; i < LONG_BYTES / LONG_BYTES; i++) {
       largeBuffer.writeDouble(i + 0.5D);
       Assertions.assertEquals(i + 0.5D, largeBuffer.readDouble());
     }
   }
 
   @Test
-  public void readDoubleRE() {
-    for (int i = 0; i < Long.BYTES / Long.BYTES; i++) {
+  void readDoubleRE() {
+    for (int i = 0; i < LONG_BYTES / LONG_BYTES; i++) {
       largeBuffer.writeDoubleRE(i + 0.5D);
       Assertions.assertEquals(i + 0.5D, largeBuffer.readDoubleRE());
     }
   }
 
   @Test
-  public void readLong() {
+  void readLong() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
@@ -1513,7 +1518,7 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void readLongRE() {
+  void readLongRE() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
@@ -1535,82 +1540,82 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void readBytes() {
-    byte[] smallBytesDst = new byte[Short.BYTES];
-    DefaultPacketBuffer smallBufDst = new DefaultPacketBuffer(Short.BYTES);
-    byte[] mediumBytesDst = new byte[Integer.BYTES];
-    DefaultPacketBuffer mediumBufDst = new DefaultPacketBuffer(Integer.BYTES);
-    byte[] largeBytesDst = new byte[Long.BYTES];
-    DefaultPacketBuffer largeBufDst = new DefaultPacketBuffer(Long.BYTES);
+  void readBytes() {
+    final byte[] smallBytesDst = new byte[SHORT_BYTES];
+    final DefaultPacketBuffer smallBufDst = new DefaultPacketBuffer(SHORT_BYTES);
+    final byte[] mediumBytesDst = new byte[INTEGER_BYTES];
+    final DefaultPacketBuffer mediumBufDst = new DefaultPacketBuffer(INTEGER_BYTES);
+    final byte[] largeBytesDst = new byte[LONG_BYTES];
+    final DefaultPacketBuffer largeBufDst = new DefaultPacketBuffer(LONG_BYTES);
 
-    for (int i = 0; i < Short.BYTES; i++) {
+    for (int i = 0; i < SHORT_BYTES; i++) {
       smallBuffer.writeByte(i);
     }
-    for (int i = 0; i < Integer.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       mediumBuffer.writeByte(i);
     }
-    for (int i = 0; i < Long.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES; i++) {
       largeBuffer.writeByte(i);
     }
     // PacketBuffer readBytes(PacketBuffer dst)
-    Assertions.assertEquals(smallBuffer.writerIndex(), Short.BYTES);
+    Assertions.assertEquals(smallBuffer.writerIndex(), SHORT_BYTES);
     smallBuffer.readBytes(smallBufDst);
-    smallBuffer.setIndex(0, Short.BYTES);
-    smallBufDst.setIndex(0, Short.BYTES);
-    for (int i = 0; i < Short.BYTES; i++) {
+    smallBuffer.setIndex(0, SHORT_BYTES);
+    smallBufDst.setIndex(0, SHORT_BYTES);
+    for (int i = 0; i < SHORT_BYTES; i++) {
       Assertions.assertEquals(smallBuffer.readByte(), smallBufDst.readByte());
     }
-    Assertions.assertEquals(mediumBuffer.writerIndex(), Integer.BYTES);
+    Assertions.assertEquals(mediumBuffer.writerIndex(), INTEGER_BYTES);
     mediumBuffer.readBytes(mediumBufDst);
-    mediumBuffer.setIndex(0, Integer.BYTES);
-    mediumBufDst.setIndex(0, Integer.BYTES);
-    for (int i = 0; i < Integer.BYTES; i++) {
+    mediumBuffer.setIndex(0, INTEGER_BYTES);
+    mediumBufDst.setIndex(0, INTEGER_BYTES);
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       Assertions.assertEquals(mediumBuffer.readByte(), mediumBufDst.readByte());
     }
-    Assertions.assertEquals(largeBuffer.writerIndex(), Long.BYTES);
+    Assertions.assertEquals(largeBuffer.writerIndex(), LONG_BYTES);
     largeBuffer.readBytes(largeBufDst);
-    largeBuffer.setIndex(0, Long.BYTES);
-    largeBufDst.setIndex(0, Long.BYTES);
-    for (int i = 0; i < Long.BYTES; i++) {
+    largeBuffer.setIndex(0, LONG_BYTES);
+    largeBufDst.setIndex(0, LONG_BYTES);
+    for (int i = 0; i < LONG_BYTES; i++) {
       Assertions.assertEquals(largeBuffer.readByte(), largeBufDst.readByte());
     }
 
-    smallBuffer.setIndex(0, Short.BYTES);
+    smallBuffer.setIndex(0, SHORT_BYTES);
     smallBufDst.setIndex(0, 0);
-    mediumBuffer.setIndex(0, Integer.BYTES);
+    mediumBuffer.setIndex(0, INTEGER_BYTES);
     mediumBufDst.setIndex(0, 0);
-    largeBuffer.setIndex(0, Long.BYTES);
+    largeBuffer.setIndex(0, LONG_BYTES);
     largeBufDst.setIndex(0, 0);
 
     // PacketBuffer readBytes(PacketBuffer dst, long length)
-    Assertions.assertEquals(smallBuffer.writerIndex(), Short.BYTES);
-    smallBuffer.readBytes(smallBufDst, Short.BYTES);
-    smallBuffer.setIndex(0, Short.BYTES);
-    smallBufDst.setIndex(0, Short.BYTES);
-    for (int i = 0; i < Short.BYTES; i++) {
+    Assertions.assertEquals(smallBuffer.writerIndex(), SHORT_BYTES);
+    smallBuffer.readBytes(smallBufDst, SHORT_BYTES);
+    smallBuffer.setIndex(0, SHORT_BYTES);
+    smallBufDst.setIndex(0, SHORT_BYTES);
+    for (int i = 0; i < SHORT_BYTES; i++) {
       Assertions.assertEquals(smallBuffer.readByte(), smallBufDst.readByte());
     }
-    Assertions.assertEquals(mediumBuffer.writerIndex(), Integer.BYTES);
-    mediumBuffer.readBytes(mediumBufDst, Integer.BYTES);
-    mediumBuffer.setIndex(0, Integer.BYTES);
-    mediumBufDst.setIndex(0, Integer.BYTES);
-    for (int i = 0; i < Integer.BYTES; i++) {
+    Assertions.assertEquals(mediumBuffer.writerIndex(), INTEGER_BYTES);
+    mediumBuffer.readBytes(mediumBufDst, INTEGER_BYTES);
+    mediumBuffer.setIndex(0, INTEGER_BYTES);
+    mediumBufDst.setIndex(0, INTEGER_BYTES);
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       Assertions.assertEquals(mediumBuffer.readByte(), mediumBufDst.readByte());
     }
-    Assertions.assertEquals(largeBuffer.writerIndex(), Long.BYTES);
-    largeBuffer.readBytes(largeBufDst, Long.BYTES);
-    largeBuffer.setIndex(0, Long.BYTES);
-    largeBufDst.setIndex(0, Long.BYTES);
-    for (int i = 0; i < Long.BYTES; i++) {
+    Assertions.assertEquals(largeBuffer.writerIndex(), LONG_BYTES);
+    largeBuffer.readBytes(largeBufDst, LONG_BYTES);
+    largeBuffer.setIndex(0, LONG_BYTES);
+    largeBufDst.setIndex(0, LONG_BYTES);
+    for (int i = 0; i < LONG_BYTES; i++) {
       Assertions.assertEquals(largeBuffer.readByte(), largeBufDst.readByte());
     }
 
-    smallBuffer.setIndex(Byte.BYTES, Short.BYTES);
-    smallBufDst.setIndex(Byte.BYTES, Short.BYTES);
-    mediumBuffer.setIndex(Byte.BYTES, Integer.BYTES);
-    mediumBufDst.setIndex(Byte.BYTES, Integer.BYTES);
-    largeBuffer.setIndex(Byte.BYTES, Long.BYTES);
-    largeBufDst.setIndex(Byte.BYTES, Long.BYTES);
+    smallBuffer.setIndex(BYTE_BYTES, SHORT_BYTES);
+    smallBufDst.setIndex(BYTE_BYTES, SHORT_BYTES);
+    mediumBuffer.setIndex(BYTE_BYTES, INTEGER_BYTES);
+    mediumBufDst.setIndex(BYTE_BYTES, INTEGER_BYTES);
+    largeBuffer.setIndex(BYTE_BYTES, LONG_BYTES);
+    largeBufDst.setIndex(BYTE_BYTES, LONG_BYTES);
 
     // PacketBuffer readBytes(PacketBuffer dst, long dstIndex, long length)
     Assertions.assertThrows(
@@ -1626,7 +1631,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.readBytes(smallBufDst, Short.BYTES);
+            smallBuffer.readBytes(smallBufDst, SHORT_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -1642,7 +1647,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.readBytes(mediumBufDst, Integer.BYTES);
+            mediumBuffer.readBytes(mediumBufDst, INTEGER_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -1658,28 +1663,28 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.readBytes(largeBufDst, Long.BYTES);
+            largeBuffer.readBytes(largeBufDst, LONG_BYTES);
           }
         });
 
     // PacketBuffer readBytes(byte[] dst)
-    smallBuffer.setIndex(0, Short.BYTES);
+    smallBuffer.setIndex(0, SHORT_BYTES);
     smallBufDst.setIndex(0, 0);
-    mediumBuffer.setIndex(0, Integer.BYTES);
+    mediumBuffer.setIndex(0, INTEGER_BYTES);
     mediumBufDst.setIndex(0, 0);
-    largeBuffer.setIndex(0, Long.BYTES);
+    largeBuffer.setIndex(0, LONG_BYTES);
     largeBufDst.setIndex(0, 0);
 
     smallBuffer.readBytes(smallBytesDst);
-    for (int i = 0; i < Short.BYTES; i++) {
+    for (int i = 0; i < SHORT_BYTES; i++) {
       Assertions.assertEquals(smallBuffer.getByte(i), smallBytesDst[i]);
     }
     mediumBuffer.readBytes(mediumBytesDst);
-    for (int i = 0; i < Integer.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       Assertions.assertEquals(mediumBuffer.getByte(i), mediumBytesDst[i]);
     }
     largeBuffer.readBytes(largeBytesDst);
-    for (int i = 0; i < Long.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES; i++) {
       Assertions.assertEquals(largeBuffer.getByte(i), largeBytesDst[i]);
     }
 
@@ -1697,7 +1702,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.readBytes(smallBytesDst, Byte.BYTES, Short.BYTES);
+            smallBuffer.readBytes(smallBytesDst, BYTE_BYTES, SHORT_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -1713,7 +1718,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.readBytes(mediumBytesDst, Byte.BYTES, Integer.BYTES);
+            mediumBuffer.readBytes(mediumBytesDst, BYTE_BYTES, INTEGER_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -1729,7 +1734,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.readBytes(largeBytesDst, Byte.BYTES, Long.BYTES);
+            largeBuffer.readBytes(largeBytesDst, BYTE_BYTES, LONG_BYTES);
           }
         });
     Assertions.assertTrue(smallBufDst.release());
@@ -1738,8 +1743,8 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void skipBytes() {
-    for (int i = 0; i < Long.BYTES; i++) {
+  void skipBytes() {
+    for (int i = 0; i < LONG_BYTES; i++) {
       largeBuffer.writeByte(i);
     }
     largeBuffer.skipBytes(1);
@@ -1757,7 +1762,7 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void readCharSequence() {
+  void readCharSequence() {
     PacketBuffer.Charset charset =
         new PacketBuffer.Charset() {
           @Override
@@ -1768,13 +1773,13 @@ public class DefaultPacketBuffferTest {
     smallBuffer.writeCharSequence("Hi", charset);
     mediumBuffer.writeCharSequence("Hi", charset);
     largeBuffer.writeCharSequence("Hi", charset);
-    Assertions.assertEquals("Hi", smallBuffer.readCharSequence(Short.BYTES, charset));
-    Assertions.assertEquals("Hi", mediumBuffer.readCharSequence(Short.BYTES, charset));
-    Assertions.assertEquals("Hi", largeBuffer.readCharSequence(Short.BYTES, charset));
+    Assertions.assertEquals("Hi", smallBuffer.readCharSequence(SHORT_BYTES, charset));
+    Assertions.assertEquals("Hi", mediumBuffer.readCharSequence(SHORT_BYTES, charset));
+    Assertions.assertEquals("Hi", largeBuffer.readCharSequence(SHORT_BYTES, charset));
   }
 
   @Test
-  public void writeBoolean() {
+  void writeBoolean() {
     smallBuffer.writeBoolean(true);
     smallBuffer.writeBoolean(false);
     Assertions.assertTrue(smallBuffer.readBoolean());
@@ -1806,13 +1811,13 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void writeByte() {
+  void writeByte() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.setIndex(0, Short.BYTES).writeByte(Byte.BYTES);
+            smallBuffer.setIndex(0, SHORT_BYTES).writeByte(BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -1820,7 +1825,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.setIndex(0, Integer.BYTES).writeByte(Byte.BYTES);
+            mediumBuffer.setIndex(0, INTEGER_BYTES).writeByte(BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -1828,47 +1833,19 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setIndex(0, Long.BYTES).writeByte(Byte.BYTES);
-          }
-        });
-  }
-
-  @Test
-  public void writeShort() {
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            smallBuffer.setIndex(0, Short.BYTES).writeShort(Byte.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.setIndex(0, Integer.BYTES).writeShort(Byte.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            largeBuffer.setIndex(0, Long.BYTES).writeShort(Byte.BYTES);
+            largeBuffer.setIndex(0, LONG_BYTES).writeByte(BYTE_BYTES);
           }
         });
   }
 
   @Test
-  public void writeShortRE() {
+  void writeShort() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.setIndex(0, Short.BYTES).writeShortRE(Byte.BYTES);
+            smallBuffer.setIndex(0, SHORT_BYTES).writeShort(BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -1876,7 +1853,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.setIndex(0, Integer.BYTES).writeShortRE(Byte.BYTES);
+            mediumBuffer.setIndex(0, INTEGER_BYTES).writeShort(BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -1884,39 +1861,19 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setIndex(0, Long.BYTES).writeShortRE(Byte.BYTES);
-          }
-        });
-  }
-
-  @Test
-  public void writeInt() {
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.setIndex(0, Integer.BYTES).writeInt(Byte.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            largeBuffer.setIndex(0, Long.BYTES).writeInt(Byte.BYTES);
+            largeBuffer.setIndex(0, LONG_BYTES).writeShort(BYTE_BYTES);
           }
         });
   }
 
   @Test
-  public void writeIntRE() {
+  void writeShortRE() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.setIndex(0, Integer.BYTES).writeIntRE(Byte.BYTES);
+            smallBuffer.setIndex(0, SHORT_BYTES).writeShortRE(BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -1924,43 +1881,47 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setIndex(0, Long.BYTES).writeIntRE(Byte.BYTES);
+            mediumBuffer.setIndex(0, INTEGER_BYTES).writeShortRE(BYTE_BYTES);
           }
         });
-  }
-
-  @Test
-  public void writeLong() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setIndex(0, Long.BYTES).writeLong(Byte.BYTES);
+            largeBuffer.setIndex(0, LONG_BYTES).writeShortRE(BYTE_BYTES);
           }
         });
   }
 
   @Test
-  public void writeLongRE() {
+  void writeInt() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setIndex(0, Long.BYTES).writeLongRE(Byte.BYTES);
+            mediumBuffer.setIndex(0, INTEGER_BYTES).writeInt(BYTE_BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setIndex(0, LONG_BYTES).writeInt(BYTE_BYTES);
           }
         });
   }
 
   @Test
-  public void writeFloat() {
+  void writeIntRE() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.setIndex(0, Integer.BYTES).writeFloat(Byte.BYTES + 0.5F);
+            mediumBuffer.setIndex(0, INTEGER_BYTES).writeIntRE(BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -1968,132 +1929,176 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setIndex(0, Long.BYTES).writeFloat(Byte.BYTES + 0.5F);
-          }
-        });
-  }
-
-  @Test
-  public void writeFloatRE() {
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.setIndex(0, Integer.BYTES).writeFloatRE(Byte.BYTES + 0.5F);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            largeBuffer.setIndex(0, Long.BYTES).writeFloatRE(Byte.BYTES + 0.5F);
+            largeBuffer.setIndex(0, LONG_BYTES).writeIntRE(BYTE_BYTES);
           }
         });
   }
 
   @Test
-  public void writeDouble() {
+  void writeLong() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setIndex(0, Long.BYTES).writeDouble(Byte.BYTES + 0.5D);
+            largeBuffer.setIndex(0, LONG_BYTES).writeLong(BYTE_BYTES);
           }
         });
   }
 
   @Test
-  public void writeDoubleRE() {
+  void writeLongRE() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setIndex(0, Long.BYTES).writeDoubleRE(Byte.BYTES + 0.5D);
+            largeBuffer.setIndex(0, LONG_BYTES).writeLongRE(BYTE_BYTES);
           }
         });
   }
 
   @Test
-  public void writeBytes() {
-    byte[] smallBytesDst = new byte[Short.BYTES];
-    DefaultPacketBuffer smallBufSrc = new DefaultPacketBuffer(Short.BYTES);
-    byte[] mediumBytesDst = new byte[Integer.BYTES];
-    DefaultPacketBuffer mediumBufSrc = new DefaultPacketBuffer(Integer.BYTES);
-    byte[] largeBytesDst = new byte[Long.BYTES];
-    DefaultPacketBuffer largeBufSrc = new DefaultPacketBuffer(Long.BYTES);
+  void writeFloat() {
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            mediumBuffer.setIndex(0, INTEGER_BYTES).writeFloat(BYTE_BYTES + 0.5F);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setIndex(0, LONG_BYTES).writeFloat(BYTE_BYTES + 0.5F);
+          }
+        });
+  }
 
-    for (int i = 0; i < Short.BYTES; i++) {
+  @Test
+  void writeFloatRE() {
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            mediumBuffer.setIndex(0, INTEGER_BYTES).writeFloatRE(BYTE_BYTES + 0.5F);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setIndex(0, LONG_BYTES).writeFloatRE(BYTE_BYTES + 0.5F);
+          }
+        });
+  }
+
+  @Test
+  void writeDouble() {
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setIndex(0, LONG_BYTES).writeDouble(BYTE_BYTES + 0.5D);
+          }
+        });
+  }
+
+  @Test
+  void writeDoubleRE() {
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setIndex(0, LONG_BYTES).writeDoubleRE(BYTE_BYTES + 0.5D);
+          }
+        });
+  }
+
+  @Test
+  void writeBytes() {
+    final byte[] smallBytesDst = new byte[SHORT_BYTES];
+    final DefaultPacketBuffer smallBufSrc = new DefaultPacketBuffer(SHORT_BYTES);
+    final byte[] mediumBytesDst = new byte[INTEGER_BYTES];
+    final DefaultPacketBuffer mediumBufSrc = new DefaultPacketBuffer(INTEGER_BYTES);
+    final byte[] largeBytesDst = new byte[LONG_BYTES];
+    final DefaultPacketBuffer largeBufSrc = new DefaultPacketBuffer(LONG_BYTES);
+
+    for (int i = 0; i < SHORT_BYTES; i++) {
       smallBufSrc.writeByte(i);
     }
-    for (int i = 0; i < Integer.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       mediumBufSrc.writeByte(i);
     }
-    for (int i = 0; i < Long.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES; i++) {
       largeBufSrc.writeByte(i);
     }
     // PacketBuffer readBytes(PacketBuffer dst)
-    Assertions.assertEquals(smallBufSrc.writerIndex(), Short.BYTES);
+    Assertions.assertEquals(smallBufSrc.writerIndex(), SHORT_BYTES);
     smallBuffer.writeBytes(smallBufSrc);
-    smallBuffer.setIndex(0, Short.BYTES);
-    smallBufSrc.setIndex(0, Short.BYTES);
-    for (int i = 0; i < Short.BYTES; i++) {
+    smallBuffer.setIndex(0, SHORT_BYTES);
+    smallBufSrc.setIndex(0, SHORT_BYTES);
+    for (int i = 0; i < SHORT_BYTES; i++) {
       Assertions.assertEquals(smallBuffer.readByte(), smallBufSrc.readByte());
     }
-    Assertions.assertEquals(mediumBufSrc.writerIndex(), Integer.BYTES);
+    Assertions.assertEquals(mediumBufSrc.writerIndex(), INTEGER_BYTES);
     mediumBuffer.writeBytes(mediumBufSrc);
-    mediumBuffer.setIndex(0, Integer.BYTES);
-    mediumBufSrc.setIndex(0, Integer.BYTES);
-    for (int i = 0; i < Integer.BYTES; i++) {
+    mediumBuffer.setIndex(0, INTEGER_BYTES);
+    mediumBufSrc.setIndex(0, INTEGER_BYTES);
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       Assertions.assertEquals(mediumBuffer.readByte(), mediumBufSrc.readByte());
     }
-    Assertions.assertEquals(largeBufSrc.writerIndex(), Long.BYTES);
+    Assertions.assertEquals(largeBufSrc.writerIndex(), LONG_BYTES);
     largeBuffer.writeBytes(largeBufSrc);
-    largeBuffer.setIndex(0, Long.BYTES);
-    largeBufSrc.setIndex(0, Long.BYTES);
-    for (int i = 0; i < Long.BYTES; i++) {
+    largeBuffer.setIndex(0, LONG_BYTES);
+    largeBufSrc.setIndex(0, LONG_BYTES);
+    for (int i = 0; i < LONG_BYTES; i++) {
       Assertions.assertEquals(largeBuffer.readByte(), largeBufSrc.readByte());
     }
 
-    smallBufSrc.setIndex(0, Short.BYTES);
+    smallBufSrc.setIndex(0, SHORT_BYTES);
     smallBuffer.setIndex(0, 0);
-    mediumBufSrc.setIndex(0, Integer.BYTES);
+    mediumBufSrc.setIndex(0, INTEGER_BYTES);
     mediumBuffer.setIndex(0, 0);
-    largeBufSrc.setIndex(0, Long.BYTES);
+    largeBufSrc.setIndex(0, LONG_BYTES);
     largeBuffer.setIndex(0, 0);
 
     // PacketBuffer readBytes(PacketBuffer dst, long length)
-    Assertions.assertEquals(smallBufSrc.writerIndex(), Short.BYTES);
-    smallBuffer.writeBytes(smallBufSrc, Short.BYTES);
-    smallBuffer.setIndex(0, Short.BYTES);
-    smallBufSrc.setIndex(0, Short.BYTES);
-    for (int i = 0; i < Short.BYTES; i++) {
+    Assertions.assertEquals(smallBufSrc.writerIndex(), SHORT_BYTES);
+    smallBuffer.writeBytes(smallBufSrc, SHORT_BYTES);
+    smallBuffer.setIndex(0, SHORT_BYTES);
+    smallBufSrc.setIndex(0, SHORT_BYTES);
+    for (int i = 0; i < SHORT_BYTES; i++) {
       Assertions.assertEquals(smallBuffer.readByte(), smallBufSrc.readByte());
     }
-    Assertions.assertEquals(mediumBufSrc.writerIndex(), Integer.BYTES);
-    mediumBuffer.writeBytes(mediumBufSrc, Integer.BYTES);
-    mediumBuffer.setIndex(0, Integer.BYTES);
-    mediumBufSrc.setIndex(0, Integer.BYTES);
-    for (int i = 0; i < Integer.BYTES; i++) {
+    Assertions.assertEquals(mediumBufSrc.writerIndex(), INTEGER_BYTES);
+    mediumBuffer.writeBytes(mediumBufSrc, INTEGER_BYTES);
+    mediumBuffer.setIndex(0, INTEGER_BYTES);
+    mediumBufSrc.setIndex(0, INTEGER_BYTES);
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       Assertions.assertEquals(mediumBuffer.readByte(), mediumBufSrc.readByte());
     }
-    Assertions.assertEquals(largeBufSrc.writerIndex(), Long.BYTES);
-    largeBuffer.writeBytes(largeBufSrc, Long.BYTES);
-    largeBuffer.setIndex(0, Long.BYTES);
-    largeBufSrc.setIndex(0, Long.BYTES);
-    for (int i = 0; i < Long.BYTES; i++) {
+    Assertions.assertEquals(largeBufSrc.writerIndex(), LONG_BYTES);
+    largeBuffer.writeBytes(largeBufSrc, LONG_BYTES);
+    largeBuffer.setIndex(0, LONG_BYTES);
+    largeBufSrc.setIndex(0, LONG_BYTES);
+    for (int i = 0; i < LONG_BYTES; i++) {
       Assertions.assertEquals(largeBuffer.readByte(), largeBufSrc.readByte());
     }
 
-    smallBuffer.setIndex(Byte.BYTES, Short.BYTES);
-    smallBufSrc.setIndex(Byte.BYTES, Short.BYTES);
-    mediumBuffer.setIndex(Byte.BYTES, Integer.BYTES);
-    mediumBufSrc.setIndex(Byte.BYTES, Integer.BYTES);
-    largeBuffer.setIndex(Byte.BYTES, Long.BYTES);
-    largeBufSrc.setIndex(Byte.BYTES, Long.BYTES);
+    smallBuffer.setIndex(BYTE_BYTES, SHORT_BYTES);
+    smallBufSrc.setIndex(BYTE_BYTES, SHORT_BYTES);
+    mediumBuffer.setIndex(BYTE_BYTES, INTEGER_BYTES);
+    mediumBufSrc.setIndex(BYTE_BYTES, INTEGER_BYTES);
+    largeBuffer.setIndex(BYTE_BYTES, LONG_BYTES);
+    largeBufSrc.setIndex(BYTE_BYTES, LONG_BYTES);
 
     // PacketBuffer writeBytes(PacketBuffer dst, long dstIndex, long length)
     Assertions.assertThrows(
@@ -2109,7 +2114,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.writeBytes(smallBufSrc, Short.BYTES);
+            smallBuffer.writeBytes(smallBufSrc, SHORT_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2125,7 +2130,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.writeBytes(mediumBufSrc, Integer.BYTES);
+            mediumBuffer.writeBytes(mediumBufSrc, INTEGER_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2141,28 +2146,28 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.writeBytes(largeBufSrc, Long.BYTES);
+            largeBuffer.writeBytes(largeBufSrc, LONG_BYTES);
           }
         });
 
     // PacketBuffer writeBytes(byte[] dst)
-    smallBuffer.setIndex(0, Short.BYTES);
+    smallBuffer.setIndex(0, SHORT_BYTES);
     smallBufSrc.setIndex(0, 0);
-    mediumBuffer.setIndex(0, Integer.BYTES);
+    mediumBuffer.setIndex(0, INTEGER_BYTES);
     mediumBufSrc.setIndex(0, 0);
-    largeBuffer.setIndex(0, Long.BYTES);
+    largeBuffer.setIndex(0, LONG_BYTES);
     largeBufSrc.setIndex(0, 0);
 
     smallBuffer.readBytes(smallBytesDst);
-    for (int i = 0; i < Short.BYTES; i++) {
+    for (int i = 0; i < SHORT_BYTES; i++) {
       Assertions.assertEquals(smallBuffer.getByte(i), smallBytesDst[i]);
     }
     mediumBuffer.readBytes(mediumBytesDst);
-    for (int i = 0; i < Integer.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       Assertions.assertEquals(mediumBuffer.getByte(i), mediumBytesDst[i]);
     }
     largeBuffer.readBytes(largeBytesDst);
-    for (int i = 0; i < Long.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES; i++) {
       Assertions.assertEquals(largeBuffer.getByte(i), largeBytesDst[i]);
     }
 
@@ -2180,7 +2185,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.readBytes(smallBytesDst, Byte.BYTES, Short.BYTES);
+            smallBuffer.readBytes(smallBytesDst, BYTE_BYTES, SHORT_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2196,7 +2201,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.readBytes(mediumBytesDst, Byte.BYTES, Integer.BYTES);
+            mediumBuffer.readBytes(mediumBytesDst, BYTE_BYTES, INTEGER_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2212,7 +2217,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.readBytes(largeBytesDst, Byte.BYTES, Long.BYTES);
+            largeBuffer.readBytes(largeBytesDst, BYTE_BYTES, LONG_BYTES);
           }
         });
     Assertions.assertTrue(smallBufSrc.release());
@@ -2221,7 +2226,7 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void writeCharSequence() {
+  void writeCharSequence() {
     PacketBuffer.Charset charset =
         new PacketBuffer.Charset() {
           @Override
@@ -2232,13 +2237,13 @@ public class DefaultPacketBuffferTest {
     smallBuffer.writeCharSequence("Hi", charset);
     mediumBuffer.writeCharSequence("Hi", charset);
     largeBuffer.writeCharSequence("Hi", charset);
-    Assertions.assertEquals("Hi", smallBuffer.readCharSequence(Short.BYTES, charset));
-    Assertions.assertEquals("Hi", mediumBuffer.readCharSequence(Short.BYTES, charset));
-    Assertions.assertEquals("Hi", largeBuffer.readCharSequence(Short.BYTES, charset));
+    Assertions.assertEquals("Hi", smallBuffer.readCharSequence(SHORT_BYTES, charset));
+    Assertions.assertEquals("Hi", mediumBuffer.readCharSequence(SHORT_BYTES, charset));
+    Assertions.assertEquals("Hi", largeBuffer.readCharSequence(SHORT_BYTES, charset));
   }
 
   @Test
-  public void byteOrder() {
+  void byteOrder() {
     Assertions.assertEquals(PacketBuffer.ByteOrder.NATIVE, smallBuffer.byteOrder());
     Assertions.assertEquals(PacketBuffer.ByteOrder.NATIVE, mediumBuffer.byteOrder());
     Assertions.assertEquals(PacketBuffer.ByteOrder.NATIVE, largeBuffer.byteOrder());
@@ -2269,29 +2274,29 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void copy() {
-    for (int i = 0; i < Short.BYTES; i++) {
+  void copy() {
+    for (int i = 0; i < SHORT_BYTES; i++) {
       smallBuffer.writeByte(i);
     }
-    for (int i = 0; i < Integer.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       mediumBuffer.writeByte(i);
     }
-    for (int i = 0; i < Long.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES; i++) {
       largeBuffer.writeByte(i);
     }
     PacketBuffer smallCopy = smallBuffer.copy();
-    PacketBuffer smallCopySliced = smallBuffer.copy(Byte.BYTES, Byte.BYTES);
+    PacketBuffer smallCopySliced = smallBuffer.copy(BYTE_BYTES, BYTE_BYTES);
     PacketBuffer mediumCopy = mediumBuffer.copy();
-    PacketBuffer mediumCopySliced = mediumBuffer.copy(Short.BYTES, Short.BYTES);
+    PacketBuffer mediumCopySliced = mediumBuffer.copy(SHORT_BYTES, SHORT_BYTES);
     PacketBuffer largeCopy = largeBuffer.copy();
-    PacketBuffer largeCopySliced = largeBuffer.copy(Integer.BYTES, Integer.BYTES);
+    PacketBuffer largeCopySliced = largeBuffer.copy(INTEGER_BYTES, INTEGER_BYTES);
 
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.copy(-Byte.BYTES, Byte.BYTES);
+            smallBuffer.copy(-BYTE_BYTES, BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2299,7 +2304,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.copy(Byte.BYTES, Long.BYTES + Byte.BYTES);
+            smallBuffer.copy(BYTE_BYTES, LONG_BYTES + BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2307,7 +2312,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.copy(-Byte.BYTES, Byte.BYTES);
+            mediumBuffer.copy(-BYTE_BYTES, BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2315,7 +2320,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.copy(Byte.BYTES, Long.BYTES + Byte.BYTES);
+            mediumBuffer.copy(BYTE_BYTES, LONG_BYTES + BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2323,7 +2328,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.copy(-Byte.BYTES, Byte.BYTES);
+            largeBuffer.copy(-BYTE_BYTES, BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2331,27 +2336,27 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.copy(Byte.BYTES, Long.BYTES + Byte.BYTES);
+            largeBuffer.copy(BYTE_BYTES, LONG_BYTES + BYTE_BYTES);
           }
         });
 
-    for (int i = 0; i < Short.BYTES; i++) {
+    for (int i = 0; i < SHORT_BYTES; i++) {
       Assertions.assertEquals(smallCopy.getByte(i), smallBuffer.getByte(i));
     }
-    for (int i = Byte.BYTES; i < Byte.BYTES + Byte.BYTES; i++) {
-      Assertions.assertEquals(smallCopySliced.getByte(i - Byte.BYTES), smallBuffer.getByte(i));
+    for (int i = BYTE_BYTES; i < BYTE_BYTES + BYTE_BYTES; i++) {
+      Assertions.assertEquals(smallCopySliced.getByte(i - BYTE_BYTES), smallBuffer.getByte(i));
     }
-    for (int i = 0; i < Integer.BYTES; i++) {
+    for (int i = 0; i < INTEGER_BYTES; i++) {
       Assertions.assertEquals(mediumCopy.getByte(i), mediumBuffer.getByte(i));
     }
-    for (int i = Short.BYTES; i < Short.BYTES + Short.BYTES; i++) {
-      Assertions.assertEquals(mediumCopySliced.getByte(i - Short.BYTES), mediumBuffer.getByte(i));
+    for (int i = SHORT_BYTES; i < SHORT_BYTES + SHORT_BYTES; i++) {
+      Assertions.assertEquals(mediumCopySliced.getByte(i - SHORT_BYTES), mediumBuffer.getByte(i));
     }
-    for (int i = 0; i < Long.BYTES; i++) {
+    for (int i = 0; i < LONG_BYTES; i++) {
       Assertions.assertEquals(largeCopy.getByte(i), largeBuffer.getByte(i));
     }
-    for (int i = Integer.BYTES; i < Integer.BYTES + Integer.BYTES; i++) {
-      Assertions.assertEquals(largeCopySliced.getByte(i - Integer.BYTES), largeBuffer.getByte(i));
+    for (int i = INTEGER_BYTES; i < INTEGER_BYTES + INTEGER_BYTES; i++) {
+      Assertions.assertEquals(largeCopySliced.getByte(i - INTEGER_BYTES), largeBuffer.getByte(i));
     }
 
     Assertions.assertTrue(smallCopy.release());
@@ -2363,20 +2368,20 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void slice() {
+  void slice() {
     Assertions.assertEquals(0, smallBuffer.slice().capacity());
-    Assertions.assertEquals(1, smallBuffer.writerIndex(Byte.BYTES).slice().capacity());
+    Assertions.assertEquals(1, smallBuffer.writerIndex(BYTE_BYTES).slice().capacity());
     Assertions.assertEquals(0, mediumBuffer.slice().capacity());
-    Assertions.assertEquals(1, mediumBuffer.writerIndex(Byte.BYTES).slice().capacity());
+    Assertions.assertEquals(1, mediumBuffer.writerIndex(BYTE_BYTES).slice().capacity());
     Assertions.assertEquals(0, largeBuffer.slice().capacity());
-    Assertions.assertEquals(1, largeBuffer.writerIndex(Byte.BYTES).slice().capacity());
+    Assertions.assertEquals(1, largeBuffer.writerIndex(BYTE_BYTES).slice().capacity());
 
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.writerIndex(Short.BYTES).slice(-Byte.BYTES, Short.BYTES);
+            smallBuffer.writerIndex(SHORT_BYTES).slice(-BYTE_BYTES, SHORT_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2384,24 +2389,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.writerIndex(Short.BYTES).slice(0, Short.BYTES + Byte.BYTES);
-          }
-        });
-
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.writerIndex(Integer.BYTES).slice(-Byte.BYTES, Integer.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.writerIndex(Integer.BYTES).slice(0, Integer.BYTES + Byte.BYTES);
+            smallBuffer.writerIndex(SHORT_BYTES).slice(0, SHORT_BYTES + BYTE_BYTES);
           }
         });
 
@@ -2410,7 +2398,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.writerIndex(Long.BYTES).slice(-Byte.BYTES, Long.BYTES);
+            mediumBuffer.writerIndex(INTEGER_BYTES).slice(-BYTE_BYTES, INTEGER_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2418,19 +2406,36 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.writerIndex(Long.BYTES).slice(0, Long.BYTES + Byte.BYTES);
+            mediumBuffer.writerIndex(INTEGER_BYTES).slice(0, INTEGER_BYTES + BYTE_BYTES);
+          }
+        });
+
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.writerIndex(LONG_BYTES).slice(-BYTE_BYTES, LONG_BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.writerIndex(LONG_BYTES).slice(0, LONG_BYTES + BYTE_BYTES);
           }
         });
   }
 
   @Test
-  public void getByte() {
+  void getByte() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.getByte(-Byte.BYTES);
+            smallBuffer.getByte(-BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2438,24 +2443,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.getByte(Short.BYTES + Byte.BYTES);
-          }
-        });
-
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.getByte(-Byte.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.getByte(Integer.BYTES + Byte.BYTES);
+            smallBuffer.getByte(SHORT_BYTES + BYTE_BYTES);
           }
         });
 
@@ -2464,7 +2452,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.getByte(-Byte.BYTES);
+            mediumBuffer.getByte(-BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2472,19 +2460,36 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.getByte(Long.BYTES + Byte.BYTES);
+            mediumBuffer.getByte(INTEGER_BYTES + BYTE_BYTES);
+          }
+        });
+
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.getByte(-BYTE_BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.getByte(LONG_BYTES + BYTE_BYTES);
           }
         });
   }
 
   @Test
-  public void getShort() {
+  void getShort() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.getShort(-Byte.BYTES);
+            smallBuffer.getShort(-BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2492,24 +2497,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.getShort(Short.BYTES + Byte.BYTES);
-          }
-        });
-
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.getShort(-Byte.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.getShort(Integer.BYTES + Byte.BYTES);
+            smallBuffer.getShort(SHORT_BYTES + BYTE_BYTES);
           }
         });
 
@@ -2518,7 +2506,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.getShort(-Byte.BYTES);
+            mediumBuffer.getShort(-BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2526,19 +2514,36 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.getShort(Long.BYTES + Byte.BYTES);
+            mediumBuffer.getShort(INTEGER_BYTES + BYTE_BYTES);
+          }
+        });
+
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.getShort(-BYTE_BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.getShort(LONG_BYTES + BYTE_BYTES);
           }
         });
   }
 
   @Test
-  public void getInt() {
+  void getInt() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.getInt(-Byte.BYTES);
+            mediumBuffer.getInt(-BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2546,7 +2551,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.getInt(Integer.BYTES + Byte.BYTES);
+            mediumBuffer.getInt(INTEGER_BYTES + BYTE_BYTES);
           }
         });
 
@@ -2555,7 +2560,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.getInt(-Byte.BYTES);
+            largeBuffer.getInt(-BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2563,19 +2568,19 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.getInt(Long.BYTES + Byte.BYTES);
+            largeBuffer.getInt(LONG_BYTES + BYTE_BYTES);
           }
         });
   }
 
   @Test
-  public void getLong() {
+  void getLong() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.getLong(-Byte.BYTES);
+            largeBuffer.getLong(-BYTE_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2583,73 +2588,19 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.getLong(Long.BYTES + Byte.BYTES);
-          }
-        });
-  }
-
-  @Test
-  public void setByte() {
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            smallBuffer.setByte(-Byte.BYTES, Short.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            smallBuffer.setByte(Short.BYTES + Byte.BYTES, Short.BYTES);
-          }
-        });
-
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.setByte(-Byte.BYTES, Integer.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.setByte(Integer.BYTES + Byte.BYTES, Integer.BYTES);
-          }
-        });
-
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            largeBuffer.setByte(-Byte.BYTES, Long.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            largeBuffer.setByte(Long.BYTES + Byte.BYTES, Long.BYTES);
+            largeBuffer.getLong(LONG_BYTES + BYTE_BYTES);
           }
         });
   }
 
   @Test
-  public void setShort() {
+  void setByte() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.setShort(-Byte.BYTES, Short.BYTES);
+            smallBuffer.setByte(-BYTE_BYTES, SHORT_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2657,24 +2608,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            smallBuffer.setShort(Short.BYTES + Byte.BYTES, Short.BYTES);
-          }
-        });
-
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.setShort(-Byte.BYTES, Integer.BYTES);
-          }
-        });
-    Assertions.assertThrows(
-        IndexOutOfBoundsException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.setShort(Integer.BYTES + Byte.BYTES, Integer.BYTES);
+            smallBuffer.setByte(SHORT_BYTES + BYTE_BYTES, SHORT_BYTES);
           }
         });
 
@@ -2683,7 +2617,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setShort(-Byte.BYTES, Long.BYTES);
+            mediumBuffer.setByte(-BYTE_BYTES, INTEGER_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2691,19 +2625,36 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setShort(Long.BYTES + Byte.BYTES, Long.BYTES);
+            mediumBuffer.setByte(INTEGER_BYTES + BYTE_BYTES, INTEGER_BYTES);
+          }
+        });
+
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setByte(-BYTE_BYTES, LONG_BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setByte(LONG_BYTES + BYTE_BYTES, LONG_BYTES);
           }
         });
   }
 
   @Test
-  public void setInt() {
+  void setShort() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.setInt(-Byte.BYTES, Integer.BYTES);
+            smallBuffer.setShort(-BYTE_BYTES, SHORT_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2711,7 +2662,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            mediumBuffer.setInt(Integer.BYTES + Byte.BYTES, Integer.BYTES);
+            smallBuffer.setShort(SHORT_BYTES + BYTE_BYTES, SHORT_BYTES);
           }
         });
 
@@ -2720,7 +2671,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setInt(-Byte.BYTES, Long.BYTES);
+            mediumBuffer.setShort(-BYTE_BYTES, INTEGER_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2728,19 +2679,36 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setInt(Long.BYTES + Byte.BYTES, Long.BYTES);
+            mediumBuffer.setShort(INTEGER_BYTES + BYTE_BYTES, INTEGER_BYTES);
+          }
+        });
+
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setShort(-BYTE_BYTES, LONG_BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setShort(LONG_BYTES + BYTE_BYTES, LONG_BYTES);
           }
         });
   }
 
   @Test
-  public void setLong() {
+  void setInt() {
     Assertions.assertThrows(
         IndexOutOfBoundsException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setLong(-Byte.BYTES, Long.BYTES);
+            mediumBuffer.setInt(-BYTE_BYTES, INTEGER_BYTES);
           }
         });
     Assertions.assertThrows(
@@ -2748,13 +2716,50 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            largeBuffer.setLong(Long.BYTES + Byte.BYTES, Long.BYTES);
+            mediumBuffer.setInt(INTEGER_BYTES + BYTE_BYTES, INTEGER_BYTES);
+          }
+        });
+
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setInt(-BYTE_BYTES, LONG_BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setInt(LONG_BYTES + BYTE_BYTES, LONG_BYTES);
           }
         });
   }
 
   @Test
-  public void duplicate() {
+  void setLong() {
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setLong(-BYTE_BYTES, LONG_BYTES);
+          }
+        });
+    Assertions.assertThrows(
+        IndexOutOfBoundsException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            largeBuffer.setLong(LONG_BYTES + BYTE_BYTES, LONG_BYTES);
+          }
+        });
+  }
+
+  @Test
+  void duplicate() {
     Assertions.assertEquals(smallBuffer.capacity(), smallBuffer.duplicate().capacity());
     Assertions.assertEquals(mediumBuffer.capacity(), mediumBuffer.duplicate().capacity());
     Assertions.assertEquals(largeBuffer.capacity(), largeBuffer.duplicate().capacity());
@@ -2767,20 +2772,20 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void unSlice() {
-    PacketBuffer smallSlice = smallBuffer.slice(Byte.BYTES, Byte.BYTES);
-    PacketBuffer mediumSlice = mediumBuffer.slice(Byte.BYTES, Short.BYTES);
-    PacketBuffer largeSlice = largeBuffer.slice(Byte.BYTES, Integer.BYTES);
+  void unSlice() {
+    PacketBuffer smallSlice = smallBuffer.slice(BYTE_BYTES, BYTE_BYTES);
+    PacketBuffer mediumSlice = mediumBuffer.slice(BYTE_BYTES, SHORT_BYTES);
+    PacketBuffer largeSlice = largeBuffer.slice(BYTE_BYTES, INTEGER_BYTES);
     Assertions.assertEquals(smallBuffer, ((PacketBuffer.Sliced) smallSlice).unSlice());
     Assertions.assertEquals(mediumBuffer, ((PacketBuffer.Sliced) mediumSlice).unSlice());
     Assertions.assertEquals(largeBuffer, ((PacketBuffer.Sliced) largeSlice).unSlice());
   }
 
   @Test
-  public void clear() {
-    smallBuffer.setIndex(Byte.BYTES, Byte.BYTES);
-    mediumBuffer.setIndex(Byte.BYTES, Byte.BYTES);
-    largeBuffer.setIndex(Byte.BYTES, Byte.BYTES);
+  void clear() {
+    smallBuffer.setIndex(BYTE_BYTES, BYTE_BYTES);
+    mediumBuffer.setIndex(BYTE_BYTES, BYTE_BYTES);
+    largeBuffer.setIndex(BYTE_BYTES, BYTE_BYTES);
     smallBuffer.clear();
     mediumBuffer.clear();
     largeBuffer.clear();
@@ -2793,7 +2798,7 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void release() {
+  void release() {
     Assertions.assertFalse(smallBuffer.slice().release());
     Assertions.assertFalse(mediumBuffer.slice().release());
     Assertions.assertFalse(largeBuffer.slice().release());
@@ -2801,7 +2806,7 @@ public class DefaultPacketBuffferTest {
   }
 
   @Test
-  public void autoCloseable() throws Exception {
+  void autoCloseable() throws Exception {
     Assertions.assertThrows(
         IllegalStateException.class,
         new Executable() {
@@ -2826,13 +2831,13 @@ public class DefaultPacketBuffferTest {
             largeBuffer.slice().close();
           }
         });
-    try (PacketBuffer buf = new DefaultPacketBuffer(Byte.BYTES)) {
-      Assertions.assertEquals(Byte.BYTES, buf.capacity());
+    try (PacketBuffer buf = new DefaultPacketBuffer(BYTE_BYTES)) {
+      Assertions.assertEquals(BYTE_BYTES, buf.capacity());
     }
   }
 
   @AfterEach
-  public void close() {
+  void close() {
     Assertions.assertTrue(smallBuffer.release());
     Assertions.assertTrue(mediumBuffer.release());
     Assertions.assertTrue(largeBuffer.release());

@@ -6,6 +6,11 @@ import pcap.spi.PacketBuffer;
 
 public class DefaultPacketBuffer implements PacketBuffer {
 
+  private static final int BYTE_SIZE = 1;
+  private static final int SHORT_SIZE = 2;
+  private static final int INT_SIZE = 4;
+  private static final int LONG_SIZE = 8;
+
   static {
     com.sun.jna.Native.register(
         DefaultPacketBuffer.class,
@@ -92,8 +97,8 @@ public class DefaultPacketBuffer implements PacketBuffer {
         return this;
       } else {
         Pointer newBuf = new Pointer(Native.malloc(newCapacity));
-        memcpy(newBuf, buffer, newCapacity);
-        release();
+        memcpy(newBuf, buffer, capacity);
+        Native.free(Pointer.nativeValue(buffer));
         this.buffer = newBuf;
         this.reference.setValue(newBuf);
         this.capacity = newCapacity;
@@ -713,28 +718,28 @@ public class DefaultPacketBuffer implements PacketBuffer {
   @Override
   public byte getByte(long index) {
     // check buffer overflow
-    checkIndex(index, Byte.BYTES);
+    checkIndex(index, BYTE_SIZE);
     return buffer.getByte(index);
   }
 
   @Override
   public short getShort(long index) {
     // check buffer overflow
-    checkIndex(index, Short.BYTES);
+    checkIndex(index, SHORT_SIZE);
     return buffer.getShort(index);
   }
 
   @Override
   public int getInt(long index) {
     // check buffer overflow
-    checkIndex(index, Integer.BYTES);
+    checkIndex(index, INT_SIZE);
     return buffer.getInt(index);
   }
 
   @Override
   public long getLong(long index) {
     // check buffer overflow
-    checkIndex(index, Long.BYTES);
+    checkIndex(index, LONG_SIZE);
     return buffer.getLong(index);
   }
 
@@ -777,7 +782,7 @@ public class DefaultPacketBuffer implements PacketBuffer {
   @Override
   public PacketBuffer setByte(long index, int value) {
     // check buffer overflow
-    checkIndex(index, Byte.BYTES);
+    checkIndex(index, BYTE_SIZE);
     buffer.setByte(index, (byte) value);
     return this;
   }
@@ -785,7 +790,7 @@ public class DefaultPacketBuffer implements PacketBuffer {
   @Override
   public PacketBuffer setShort(long index, int value) {
     // check buffer overflow
-    checkIndex(index, Short.BYTES);
+    checkIndex(index, SHORT_SIZE);
     buffer.setShort(index, (short) value);
     return this;
   }
@@ -793,7 +798,7 @@ public class DefaultPacketBuffer implements PacketBuffer {
   @Override
   public PacketBuffer setInt(long index, int value) {
     // check buffer overflow
-    checkIndex(index, Integer.BYTES);
+    checkIndex(index, INT_SIZE);
     buffer.setInt(index, value);
     return this;
   }
@@ -801,7 +806,7 @@ public class DefaultPacketBuffer implements PacketBuffer {
   @Override
   public PacketBuffer setLong(long index, long value) {
     // check buffer overflow
-    checkIndex(index, Long.BYTES);
+    checkIndex(index, LONG_SIZE);
     buffer.setLong(index, value);
     return this;
   }

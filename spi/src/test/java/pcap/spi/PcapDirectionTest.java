@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 public class PcapDirectionTest {
 
   @Test
-  public void directionTest() {
+  void directionTest() {
     Assertions.assertEquals(Pcap.Direction.PCAP_D_INOUT, Pcap.Direction.fromString("PCAP_D_INOUT"));
     Assertions.assertEquals(Pcap.Direction.PCAP_D_IN, Pcap.Direction.fromString("PCAP_D_IN"));
     Assertions.assertEquals(Pcap.Direction.PCAP_D_OUT, Pcap.Direction.fromString("PCAP_D_OUT"));

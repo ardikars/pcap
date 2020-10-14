@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 public class PromiscuousModePermissionDeniedExceptionTest {
 
   @Test
-  public void throwExceptionTest() {
+  void throwExceptionTest() {
     Assertions.assertThrows(
         PromiscuousModePermissionDeniedException.class,
         new Executable() {

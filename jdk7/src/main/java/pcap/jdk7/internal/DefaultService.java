@@ -3,7 +3,6 @@ package pcap.jdk7.internal;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 import java.net.Inet4Address;
-import java.util.Objects;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import pcap.spi.Address;
 import pcap.spi.Interface;
@@ -78,7 +77,7 @@ public class DefaultService implements Service {
       checkSetSnaplen(NativeMappings.pcap_set_snaplen(pointer, options.snapshotLength()));
       checkSetPromisc(NativeMappings.pcap_set_promisc(pointer, options.isPromiscuous() ? 1 : 0));
       checkSetTimeout(NativeMappings.pcap_set_timeout(pointer, options.timeout()));
-      if (Objects.nonNull(options.timestampType())) {
+      if (options.timestampType() != null) {
         checkSetTimestampType(
             NativeMappings.pcap_set_tstamp_type(pointer, options.timestampType().value()));
       }

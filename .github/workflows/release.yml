@@ -35,12 +35,6 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
           architecture: x64
-      - name: actions/setup-panama
-        run: |
-          sudo mkdir -p /usr/local/jvm
-          sudo chown -R $(whoami) /usr/local/jvm
-          ./.github/scripts/install-jdk.sh -f panama -w /tmp -t /usr/local/jvm/panama -v
-
 
       - name: Setting up deployment
         run: |
@@ -51,8 +45,7 @@ jobs:
 
       - name: Deploy modules
         run: |
-          export JAVA_HOME_LEGACY=${JAVA_HOME}
-          export JAVA_HOME=/usr/local/jvm/panama
-          echo "JAVA_HOME_LEGACY = $JAVA_HOME_LEGACY"
+          export JAVA_HOME_JDK7=${JAVA_HOME}
           echo "JAVA_HOME = $JAVA_HOME"
+          echo "JAVA_HOME_JDK7 = $JAVA_HOME_JDK7"
           ./mvnw -B -t .mvn/toolchains.xml -s .mvn/release-settings.xml deploy -Plegacy-support -Prelease

@@ -11,7 +11,7 @@ import pcap.spi.Timestamp;
 public class PcapLiveOptionsTest {
 
   @Test
-  public void setAndGetOptionsTest() {
+  void setAndGetOptionsTest() {
     int snapshotLength = 2048;
     boolean promiscuous = true;
     boolean rfmon = false;

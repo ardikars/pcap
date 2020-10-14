@@ -14,8 +14,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['macos-10.15', 'ubuntu-16.04', 'windows-2016']
-        java: [8]
+        os: ['macos-10.15']
+#        os: ['macos-10.15', 'ubuntu-16.04', 'ubuntu-18.04', 'ubuntu-20.04', 'windows-2016', 'windows-2019']
+        java: [11]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/cache@v2
@@ -34,42 +35,45 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+          java-package: jdk
           architecture: x64
 
       - name: actions/setup-pcap
         run: |
-          sudo find /usr/lib/ -iname "libpcap*"
           sudo mkdir -p ~/Library/Java/Extensions
-          sudo cp -rf /usr/lib/libpcap.* ~/Library/Java/Extensions
+          git clone https://github.com/the-tcpdump-group/libpcap.git
+          cd libpcap/
+          ./configure --prefix=$HOME/Library/Java/Extensions
+          sudo make install
+          cd ..
           sudo chown $(whoami):admin /dev/bpf*
         if: matrix.os == 'macos-10.15'
 
       - name: actions/setup-pcap
         run: |
           sudo apt-get update && sudo apt-get -y install build-essential bison flex autoconf make
-          sudo setcap cap_net_raw,cap_net_admin=eip $JAVA_HOME/bin/java
           git clone https://github.com/the-tcpdump-group/libpcap.git
           cd libpcap/
           ./configure --prefix=/usr
           sudo make install
           cd ..
-          find $JAVA_HOME/ -iname "libjli*"
-          sudo cp $JAVA_HOME/lib/amd64/jli/libjli*.so /usr/lib
-        if: matrix.os == 'ubuntu-16.04'
+          sudo find $JAVA_HOME -type f -name "libjli*.so*" -exec cp {} /usr/lib \;
+        if: matrix.os == 'ubuntu-16.04' || matrix.os == 'ubuntu-18.04' || matrix.os == 'ubuntu-20.04'
 
       - name: actions/setup-pcap
         shell: powershell
         run: |
           .github\scripts\InstallNpcap.ps1
-        if: matrix.os == 'windows-2016'
+        if: matrix.os == 'windows-2016' || matrix.os == 'windows-2019'
 
 
       - name: Build (Mac OS)
         run: |
-          export JAVA_HOME=${JAVA_HOME}
-          export JAVA_HOME_LEGACY=${JAVA_HOME}
+          export JAVA_HOME_JDK7=$JAVA_HOME
           echo "JAVA_HOME = $JAVA_HOME"
-          echo "JAVA_HOME_LEGACY = $JAVA_HOME_LEGACY"
+          echo "JAVA_HOME_JDK7 = $JAVA_HOME_JDK7"
+          ls $JAVA_HOME
+          ls $JAVA_HOME_JDK7
           ping 127.0.0.1 &
           PID=$!
           ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Pformat -Psonar -Plegacy-support -Dsonar.login="${{ secrets.sonar_token }}"
@@ -80,23 +84,26 @@ jobs:
 
       - name: Build (Ubuntu)
         run: |
-          export JAVA_HOME=${JAVA_HOME}
-          export JAVA_HOME_LEGACY=${JAVA_HOME}
+          export JAVA_HOME_JDK7=$JAVA_HOME
           echo "JAVA_HOME = $JAVA_HOME"
-          echo "JAVA_HOME_LEGACY = $JAVA_HOME_LEGACY"
+          echo "JAVA_HOME_JDK7 = $JAVA_HOME_JDK7"
+          ls $JAVA_HOME
+          ls $JAVA_HOME_JDK7
           ping 127.0.0.1 &
           PID=$!
-          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat -Plegacy-support
+          sudo -E bash -c './mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat -Plegacy-support'
           kill $PID
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: matrix.os == 'ubuntu-16.04'
+        if: matrix.os == 'ubuntu-16.04' || matrix.os == 'ubuntu-18.04' || matrix.os == 'ubuntu-20.04'
 
       - name: Build (Windows)
         shell: cmd
         run: |
-          set JAVA_HOME_LEGACY=%JAVA_HOME%
+          set JAVA_HOME_JDK7=%JAVA_HOME%
+          echo "JAVA_HOME = %JAVA_HOME%"
+          echo "JAVA_HOME_JDK7 = %JAVA_HOME_JDK7%"
           mvnw.cmd -B -t .mvn\toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat -Plegacy-support
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: matrix.os == 'windows-2016'
+        if: matrix.os == 'windows-2016' || matrix.os == 'windows-2019'

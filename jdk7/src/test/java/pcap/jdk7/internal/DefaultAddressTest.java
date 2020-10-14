@@ -6,9 +6,11 @@ import com.sun.jna.ptr.PointerByReference;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
@@ -24,12 +26,12 @@ public class DefaultAddressTest {
   private Service service;
 
   @BeforeEach
-  public void setUp() throws ErrorException {
+  void setUp() throws ErrorException {
     service = Service.Creator.create("PcapService");
   }
 
   @Test
-  public void newInstance() throws ErrorException {
+  void newInstance() throws ErrorException {
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
     DefaultService defaultService = (DefaultService) service;
     DefaultInterface pcapIf;
@@ -39,7 +41,7 @@ public class DefaultAddressTest {
     pcapIf = new DefaultInterface(alldevsp);
     NativeMappings.pcap_freealldevs(pcapIf.getPointer());
 
-    Iterator<Interface> sources = pcapIf.iterator();
+    final Iterator<Interface> sources = pcapIf.iterator();
     while (sources.hasNext()) {
       Interface source = sources.next();
       Assertions.assertTrue(source.next() != null || source.next() == null);
@@ -47,7 +49,7 @@ public class DefaultAddressTest {
       Assertions.assertTrue(source.description() != null || source.description() == null);
       Assertions.assertTrue(source.flags() >= 0);
       if (source.addresses() != null) {
-        Iterator<Address> addresses = source.addresses().iterator();
+        final Iterator<Address> addresses = source.addresses().iterator();
         while (addresses.hasNext()) {
           Address address = addresses.next();
           DefaultAddress defaultAddress = (DefaultAddress) address;
@@ -58,13 +60,29 @@ public class DefaultAddressTest {
           Assertions.assertTrue(address.netmask() != null || address.netmask() == null);
           Assertions.assertTrue(address.broadcast() != null || address.broadcast() == null);
           Assertions.assertTrue(address.destination() != null || address.destination() == null);
+          Assertions.assertThrows(
+              UnsupportedOperationException.class,
+              new Executable() {
+                @Override
+                public void execute() throws Throwable {
+                  addresses.remove();
+                }
+              });
         }
       }
     }
+    Assertions.assertThrows(
+        NoSuchElementException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            sources.next();
+          }
+        });
   }
 
   @Test
-  public void sockaddr() {
+  void sockaddr() {
     try (MockedStatic<DefaultAddress.sockaddr> theMock =
         Mockito.mockStatic(DefaultAddress.sockaddr.class)) {
       short saFamily;
@@ -112,7 +130,7 @@ public class DefaultAddressTest {
   }
 
   @Test
-  public void isLinuxOrWindows() {
+  void isLinuxOrWindows() {
     try (MockedStatic<Platform> theMock = Mockito.mockStatic(Platform.class)) {
       theMock
           .when(

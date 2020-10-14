@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 public class RadioFrequencyModeNotSupportedExceptionTest {
 
   @Test
-  public void throwExceptionTest() {
+  void throwExceptionTest() {
     Assertions.assertThrows(
         RadioFrequencyModeNotSupportedException.class,
         new Executable() {

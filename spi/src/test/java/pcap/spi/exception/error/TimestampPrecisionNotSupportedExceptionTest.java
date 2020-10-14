@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 public class TimestampPrecisionNotSupportedExceptionTest {
 
   @Test
-  public void throwExceptionTest() {
+  void throwExceptionTest() {
     Assertions.assertThrows(
         TimestampPrecisionNotSupportedException.class,
         new Executable() {

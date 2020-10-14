@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import pcap.jdk7.BaseTest;
 import pcap.spi.*;
 import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
@@ -20,55 +19,58 @@ public class DefaultWaitForSingleObjectEventServiceTest extends BaseTest {
   private DefaultWaitForSingleObjectEventService eventService;
 
   @BeforeEach
-  public void setUp() throws ErrorException {
+  void setUp() throws ErrorException {
     this.service = Service.Creator.create("PcapService");
     this.eventService = new DefaultWaitForSingleObjectEventService();
   }
 
-  @Test
-  public void open()
+//  @Test
+  void open()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
-    Interface lo = loopbackInterface(service);
-    try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
-      if (Platform.isWindows()) {
-        DefaultPollEventServiceTest.MyProxy myProxy =
-            eventService.open(live, DefaultPollEventServiceTest.MyProxy.class);
-        Assertions.assertNotNull(myProxy);
+    if (Platform.isWindows()) {
+      Interface lo = loopbackInterface(service);
+      try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
+        live.setNonBlock(true);
+        if (Platform.isWindows()) {
+          DefaultPollEventServiceTest.MyProxy myProxy =
+              eventService.open(live, DefaultPollEventServiceTest.MyProxy.class);
+          Assertions.assertNotNull(myProxy);
 
-        try {
-          myProxy.dispatch(
-              1,
-              new PacketHandler<String>() {
-                @Override
-                public void gotPacket(String args, PacketHeader header, PacketBuffer buffer) {
-                  // ok
-                }
-              },
-              "");
-        } catch (BreakException e) {
-          //
-        } catch (ReadPacketTimeoutException e) {
-          //
+          try {
+            myProxy.dispatch(
+                1,
+                new PacketHandler<String>() {
+                  @Override
+                  public void gotPacket(String args, PacketHeader header, PacketBuffer buffer) {
+                    // ok
+                  }
+                },
+                "");
+          } catch (BreakException e) {
+            //
+          } catch (ReadPacketTimeoutException e) {
+            //
+          }
+          PacketHeader header = myProxy.allocate(PacketHeader.class);
+          PacketBuffer buffer = myProxy.allocate(PacketBuffer.class);
+          try {
+            myProxy.nextEx(header, buffer);
+          } catch (BreakException e) {
+            //
+          } catch (ReadPacketTimeoutException e) {
+            //
+          }
+          buffer = myProxy.next(header);
         }
-        PacketHeader header = myProxy.allocate(PacketHeader.class);
-        PacketBuffer buffer = myProxy.allocate(PacketBuffer.class);
-        try {
-          myProxy.nextEx(header, buffer);
-        } catch (BreakException e) {
-          //
-        } catch (ReadPacketTimeoutException e) {
-          //
-        }
-        buffer = myProxy.next(header);
       }
     }
   }
 
   @Test
-  public void register() {
+  void register() {
     try {
       DefaultWaitForSingleObjectEventService.register(false);
     } catch (UnsatisfiedLinkError e) {

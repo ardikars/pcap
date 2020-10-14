@@ -10,7 +10,7 @@ import pcap.spi.Timestamp;
 public class PcapOfflineOptionsTest {
 
   @Test
-  public void setAndGetOptionsTest() {
+  void setAndGetOptionsTest() {
     Timestamp.Precision tsPrecision = Timestamp.Precision.MICRO;
     DefaultOfflineOptions options = new DefaultOfflineOptions();
     options.timestampPrecision(tsPrecision);

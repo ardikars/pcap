@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 public class PromiscuousModeNotSupportedTest {
 
   @Test
-  public void throwExceptionTest() {
+  void throwExceptionTest() {
     Assertions.assertThrows(
         PromiscuousModeNotSupported.class,
         new Executable() {

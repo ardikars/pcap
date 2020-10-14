@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 public class DefaultPacketHeaderTest {
 
   @Test
-  public void newInstance() {
+  void newInstance() {
     DefaultPacketHeader packetHeader = new DefaultPacketHeader();
     packetHeader.ts = new DefaultTimestamp();
     packetHeader.ts.tv_sec = new NativeLong(1);
@@ -33,7 +33,7 @@ public class DefaultPacketHeaderTest {
   }
 
   @Test
-  public void useReference() {
+  void useReference() {
     DefaultPacketHeader header = new DefaultPacketHeader();
     long address = Native.malloc(header.size());
     Pointer ptr = new Pointer(address);

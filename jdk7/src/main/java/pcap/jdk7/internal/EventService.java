@@ -5,10 +5,12 @@ import pcap.spi.Pcap;
 import pcap.spi.annotation.Incubating;
 
 @Incubating
-interface EventService extends AutoCloseable {
+interface EventService {
 
   @Incubating
   <T extends Pcap> T open(Pcap pcap, Class<T> target);
+
+  void close();
 
   class Creator {
 

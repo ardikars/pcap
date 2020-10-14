@@ -1,5 +1,6 @@
 package pcap.jdk7.internal;
 
+import com.sun.jna.Platform;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -9,10 +10,13 @@ import org.junit.runner.RunWith;
 public class EventServiceTest {
 
   @Test
-  public void newInstance() {
-    Assertions.assertTrue(
-        EventService.Creator.newInstance(true) instanceof DefaultWaitForSingleObjectEventService);
-    Assertions.assertTrue(
-        EventService.Creator.newInstance(false) instanceof DefaultPollEventService);
+  void newInstance() {
+    if (Platform.isWindows()) {
+      Assertions.assertTrue(
+          EventService.Creator.newInstance(true) instanceof DefaultWaitForSingleObjectEventService);
+    } else {
+      Assertions.assertTrue(
+          EventService.Creator.newInstance(false) instanceof DefaultPollEventService);
+    }
   }
 }

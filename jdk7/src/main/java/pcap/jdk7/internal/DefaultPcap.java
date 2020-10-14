@@ -82,7 +82,7 @@ public class DefaultPcap implements Pcap {
   }
 
   @Override
-  public <T> void loop(int count, PacketHandler<T> handler, T args)
+  public <T> void loop(int count, final PacketHandler<T> handler, final T args)
       throws BreakException, ErrorException {
     if (handler == null) {
       throw new IllegalArgumentException("handler: null (expected: handler != null)");
@@ -150,7 +150,7 @@ public class DefaultPcap implements Pcap {
   }
 
   @Override
-  public <T> void dispatch(int count, PacketHandler<T> handler, T args)
+  public <T> void dispatch(int count, final PacketHandler<T> handler, final T args)
       throws BreakException, ErrorException {
     if (handler == null) {
       throw new IllegalArgumentException("handler: null (expected: handler != null)");
@@ -259,12 +259,7 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public Timestamp.Precision getTimestampPrecision() {
-    int rc = NativeMappings.pcap_get_tstamp_precision(pointer);
-    if (Timestamp.Precision.NANO.value() == rc) {
-      return Timestamp.Precision.NANO;
-    } else {
-      return Timestamp.Precision.MICRO;
-    }
+    return timestampPrecision(NativeMappings.pcap_get_tstamp_precision(pointer));
   }
 
   @Override
@@ -352,6 +347,14 @@ public class DefaultPcap implements Pcap {
       return (T) new DefaultPacketBuffer();
     }
     throw new IllegalArgumentException("Class: " + cls + " is unsupported.");
+  }
+
+  static Timestamp.Precision timestampPrecision(int rc) {
+    if (Timestamp.Precision.NANO.value() == rc) {
+      return Timestamp.Precision.NANO;
+    } else {
+      return Timestamp.Precision.MICRO;
+    }
   }
 
   void nullCheck(Pointer newPointer) throws ErrorException {

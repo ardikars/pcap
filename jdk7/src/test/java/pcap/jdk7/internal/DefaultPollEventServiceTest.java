@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import pcap.jdk7.BaseTest;
 import pcap.spi.*;
 import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
@@ -23,54 +22,57 @@ public class DefaultPollEventServiceTest extends BaseTest {
   private DefaultPollEventService eventService;
 
   @BeforeEach
-  public void setUp() throws ErrorException {
+  void setUp() throws ErrorException {
     this.service = Service.Creator.create("PcapService");
     this.eventService = new DefaultPollEventService();
   }
 
-  @Test
-  public void open()
+//  @Test
+  void open()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
-    Interface lo = loopbackInterface(service);
-    try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
-      if (!Platform.isWindows()) {
-        MyProxy myProxy = eventService.open(live, MyProxy.class);
-        Assertions.assertNotNull(myProxy);
+    if (!Platform.isWindows()) {
+      Interface lo = loopbackInterface(service);
+      try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
+        live.setNonBlock(true);
+        if (!Platform.isWindows()) {
+          MyProxy myProxy = eventService.open(live, MyProxy.class);
+          Assertions.assertNotNull(myProxy);
 
-        try {
-          myProxy.dispatch(
-              1,
-              new PacketHandler<String>() {
-                @Override
-                public void gotPacket(String args, PacketHeader header, PacketBuffer buffer) {
-                  // ok
-                }
-              },
-              "");
-        } catch (BreakException e) {
-          //
-        } catch (ReadPacketTimeoutException e) {
-          //
+          try {
+            myProxy.dispatch(
+                1,
+                new PacketHandler<String>() {
+                  @Override
+                  public void gotPacket(String args, PacketHeader header, PacketBuffer buffer) {
+                    // ok
+                  }
+                },
+                "");
+          } catch (BreakException e) {
+            //
+          } catch (ReadPacketTimeoutException e) {
+            //
+          }
+          PacketHeader header = myProxy.allocate(PacketHeader.class);
+          PacketBuffer buffer = myProxy.allocate(PacketBuffer.class);
+          try {
+            myProxy.nextEx(header, buffer);
+          } catch (BreakException e) {
+            //
+          } catch (ReadPacketTimeoutException e) {
+            //
+          }
+          buffer = myProxy.next(header);
         }
-        PacketHeader header = myProxy.allocate(PacketHeader.class);
-        PacketBuffer buffer = myProxy.allocate(PacketBuffer.class);
-        try {
-          myProxy.nextEx(header, buffer);
-        } catch (BreakException e) {
-          //
-        } catch (ReadPacketTimeoutException e) {
-          //
-        }
-        buffer = myProxy.next(header);
       }
     }
   }
 
   @Test
-  public void normalizeREvents() {
+  void normalizeREvents() {
     Pointer pfds = new Memory(8);
     pfds.setShort(6, (short) 1);
     Assertions.assertEquals(0, DefaultPollEventService.normalizeREvents(1, pfds));
@@ -82,7 +84,7 @@ public class DefaultPollEventServiceTest extends BaseTest {
   }
 
   @Test
-  public void normalizeTimeout() {
+  void normalizeTimeout() {
     DefaultTimestamp timestamp = new DefaultTimestamp();
     timestamp.tv_usec.setValue(1000L);
     Assertions.assertEquals(1, DefaultPollEventService.normalizeTimeout(1, timestamp));
@@ -91,7 +93,7 @@ public class DefaultPollEventServiceTest extends BaseTest {
   }
 
   @Test
-  public void resigter() {
+  void resigter() {
     try {
       DefaultPollEventService.register(false);
     } catch (UnsatisfiedLinkError e) {

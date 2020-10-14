@@ -26,4 +26,9 @@ public class DefaultAddressIterator implements Iterator<Address> {
     next = next.next();
     return previous;
   }
+
+  @Override
+  public void remove() {
+    throw new UnsupportedOperationException();
+  }
 }

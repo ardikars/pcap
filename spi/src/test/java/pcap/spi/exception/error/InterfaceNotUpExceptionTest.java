@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 public class InterfaceNotUpExceptionTest {
 
   @Test
-  public void throwExceptionTest() {
+  void throwExceptionTest() {
     Assertions.assertThrows(
         InterfaceNotUpException.class,
         new Executable() {

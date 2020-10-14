@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 public class DefaultStatisticsTest {
 
   @Test
-  public void newInstance() {
+  void newInstance() {
     DefaultStatistics statistics = new DefaultStatistics();
     statistics.ps_drop = 1;
     statistics.ps_ifdrop = 1;

@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 public class ActivatedExceptionTest {
 
   @Test
-  public void throwExceptionTest() {
+  void throwExceptionTest() {
     Assertions.assertThrows(
         ActivatedException.class,
         new Executable() {

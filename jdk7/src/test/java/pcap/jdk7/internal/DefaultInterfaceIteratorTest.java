@@ -20,12 +20,12 @@ public class DefaultInterfaceIteratorTest {
   private Service service;
 
   @BeforeEach
-  public void setUp() throws ErrorException {
+  void setUp() throws ErrorException {
     service = Service.Creator.create("PcapService");
   }
 
   @Test
-  public void iterate() throws ErrorException {
+  void iterate() throws ErrorException {
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
     DefaultService defaultService = (DefaultService) service;
     DefaultInterface pcapIf;
@@ -35,9 +35,17 @@ public class DefaultInterfaceIteratorTest {
     pcapIf = new DefaultInterface(alldevsp);
     NativeMappings.pcap_freealldevs(pcapIf.getPointer());
 
-    Iterator<Interface> iterator = pcapIf.iterator();
+    final Iterator<Interface> iterator = pcapIf.iterator();
     while (iterator.hasNext()) {
       Assertions.assertNotNull(iterator.next());
+      Assertions.assertThrows(
+          UnsupportedOperationException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              iterator.remove();
+            }
+          });
     }
     Assertions.assertThrows(
         NoSuchElementException.class,

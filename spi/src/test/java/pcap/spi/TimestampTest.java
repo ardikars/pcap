@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 public class TimestampTest {
 
   @Test
-  public void typeTest() {
+  void typeTest() {
     Assertions.assertEquals(0, Timestamp.Type.HOST.value());
     Assertions.assertEquals(1, Timestamp.Type.HOST_LOWPREC.value());
     Assertions.assertEquals(2, Timestamp.Type.HOST_HIPREC.value());
@@ -20,7 +20,7 @@ public class TimestampTest {
   }
 
   @Test
-  public void precisionTest() {
+  void precisionTest() {
     Assertions.assertEquals(0, Timestamp.Precision.MICRO.value());
     Assertions.assertEquals(1, Timestamp.Precision.NANO.value());
   }

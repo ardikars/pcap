@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import pcap.jdk7.BaseTest;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
@@ -22,7 +21,7 @@ public class DefaultPcapDumperTest extends BaseTest {
   private String file;
 
   @BeforeEach
-  public void setUp() throws ErrorException {
+  void setUp() throws ErrorException {
     service = Service.Creator.create("PcapService");
     try {
       file = Files.createTempFile("temporary", ".pcapng").toAbsolutePath().toString();
@@ -32,19 +31,20 @@ public class DefaultPcapDumperTest extends BaseTest {
   }
 
   @Test
-  public void dump()
+  void dump()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException, BreakException {
     Interface source = loopbackInterface(service);
     try (Pcap live = service.live(source, new DefaultLiveOptions())) {
-      try (Dumper dumper = live.dumpOpen(file.concat(UUID.randomUUID().toString()))) {
+      try (final Dumper dumper = live.dumpOpen(file.concat(UUID.randomUUID().toString()))) {
         live.loop(
             1,
             new PacketHandler<Dumper>() {
               @Override
-              public void gotPacket(Dumper args, PacketHeader header, PacketBuffer buffer) {
+              public void gotPacket(
+                  final Dumper args, final PacketHeader header, final PacketBuffer buffer) {
                 Assertions.assertNull(args);
                 Assertions.assertNotNull(header);
                 Assertions.assertNotNull(buffer);
@@ -73,19 +73,20 @@ public class DefaultPcapDumperTest extends BaseTest {
   }
 
   @Test
-  public void negativeDump()
+  void negativeDump()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException, BreakException {
     Interface source = loopbackInterface(service);
     try (Pcap live = service.live(source, new DefaultLiveOptions())) {
-      try (Dumper dumper = live.dumpOpen(file.concat(UUID.randomUUID().toString()))) {
+      try (final Dumper dumper = live.dumpOpen(file.concat(UUID.randomUUID().toString()))) {
         live.loop(
             1,
             new PacketHandler<Dumper>() {
               @Override
-              public void gotPacket(Dumper args, PacketHeader header, PacketBuffer buffer) {
+              public void gotPacket(
+                  final Dumper args, final PacketHeader header, final PacketBuffer buffer) {
                 Assertions.assertNull(args);
                 Assertions.assertNotNull(header);
                 Assertions.assertNotNull(buffer);

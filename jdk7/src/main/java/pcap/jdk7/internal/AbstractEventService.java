@@ -33,11 +33,7 @@ abstract class AbstractEventService implements EventService {
   protected Object invoke(Method method, Object... args) throws ErrorException {
     try {
       if (method.getName().equals("close")) {
-        try {
-          close();
-        } catch (Exception e) {
-          throw new ErrorException(e.getMessage());
-        }
+        close();
       }
       return method.invoke(pcap, args);
     } catch (IllegalAccessException e) {

@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 public class TimestampTypeNotSupportedExceptionTest {
 
   @Test
-  public void throwExceptionTest() {
+  void throwExceptionTest() {
     Assertions.assertThrows(
         TimestampTypeNotSupportedException.class,
         new Executable() {

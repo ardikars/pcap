@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 public class BreakExceptionTest {
 
   @Test
-  public void throwExceptionTest() {
+  void throwExceptionTest() {
     Assertions.assertThrows(
         BreakException.class,
         new Executable() {

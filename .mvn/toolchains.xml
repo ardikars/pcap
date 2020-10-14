@@ -2,8 +2,8 @@
     <toolchain>
         <type>jdk</type>
         <provides>
-            <id>Java14</id>
-            <version>14</version>
+            <id>Java11</id>
+            <version>11</version>
         </provides>
         <configuration>
             <jdkHome>${env.JAVA_HOME}</jdkHome>
@@ -13,10 +13,10 @@
         <type>jdk</type>
         <provides>
             <id>Java7</id>
-            <version>1.8</version>
+            <version>1.7</version>
         </provides>
         <configuration>
-            <jdkHome>${env.JAVA_HOME_LEGACY}</jdkHome>
+            <jdkHome>${env.JAVA_HOME_JDK7}</jdkHome>
         </configuration>
     </toolchain>
 </toolchains>

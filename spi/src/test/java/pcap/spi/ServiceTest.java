@@ -11,7 +11,7 @@ import pcap.spi.exception.ErrorException;
 public class ServiceTest {
 
   @Test
-  public void createTest() throws ErrorException {
+  void createTest() throws ErrorException {
     Assertions.assertThrows(
         ErrorException.class,
         new Executable() {
@@ -25,7 +25,7 @@ public class ServiceTest {
   }
 
   @Test
-  public void noServiceTest() throws ErrorException {
+  void noServiceTest() throws ErrorException {
     final Service service = Service.Creator.create("NoService");
     Assertions.assertEquals("NoService", service.name());
     Assertions.assertEquals("0.0.0", service.version());

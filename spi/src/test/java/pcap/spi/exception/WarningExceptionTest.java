@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 public class WarningExceptionTest {
 
   @Test
-  public void throwExceptionTest() {
+  void throwExceptionTest() {
     Assertions.assertThrows(
         WarningException.class,
         new Executable() {

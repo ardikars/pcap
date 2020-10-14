@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 public class InterfaceNotSupportTimestampTypeExceptionTest {
 
   @Test
-  public void throwExceptionTest() {
+  void throwExceptionTest() {
     Assertions.assertThrows(
         InterfaceNotSupportTimestampTypeException.class,
         new Executable() {

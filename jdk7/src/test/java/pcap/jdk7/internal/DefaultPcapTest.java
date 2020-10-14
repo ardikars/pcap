@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import pcap.jdk7.BaseTest;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
+import pcap.spi.exception.WarningException;
 import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.option.DefaultOfflineOptions;
@@ -25,7 +25,7 @@ public class DefaultPcapTest extends BaseTest {
   private String file;
 
   @BeforeEach
-  public void setUp() throws ErrorException {
+  void setUp() throws ErrorException {
     service = Service.Creator.create("PcapService");
     try {
       file = Files.createTempFile("temporary", ".pcapng").toAbsolutePath().toString();
@@ -35,7 +35,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void dumpOpen()
+  void dumpOpen()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -73,7 +73,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void dumpOpenAppend()
+  void dumpOpenAppend()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -130,7 +130,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void setFilter()
+  void setFilter()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -163,7 +163,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void loop()
+  void loop()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -214,7 +214,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void dispatch()
+  void dispatch()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -265,7 +265,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void next()
+  void next()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -281,7 +281,7 @@ public class DefaultPcapTest extends BaseTest {
         Assertions.assertEquals(next.capacity(), header.captureLength());
       }
       live.setNonBlock(true);
-      for (int i = 0; i < Integer.BYTES; i++) {
+      for (int i = 0; i < 5; i++) {
         live.next(header);
       }
       Assertions.assertThrows(
@@ -296,15 +296,15 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void nextEx()
+  void nextEx()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException, BreakException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
-      PacketHeader header = live.allocate(PacketHeader.class);
-      PacketBuffer buffer = live.allocate(PacketBuffer.class);
+      final PacketHeader header = live.allocate(PacketHeader.class);
+      final PacketBuffer buffer = live.allocate(PacketBuffer.class);
       for (int i = 0; i < 1; i++) {
         try {
           live.nextEx(header, buffer);
@@ -313,8 +313,7 @@ public class DefaultPcapTest extends BaseTest {
           Assertions.assertTrue(header.captureLength() > 0);
           Assertions.assertTrue(header.length() > 0);
           Assertions.assertTrue(buffer.capacity() > 0);
-        } catch (Throwable e) {
-          Assertions.assertTrue(e instanceof ReadPacketTimeoutException);
+        } catch (ErrorException | WarningException e) {
         }
         Assertions.assertThrows(
             IllegalArgumentException.class,
@@ -343,8 +342,8 @@ public class DefaultPcapTest extends BaseTest {
       }
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
-      PacketHeader header = offline.allocate(PacketHeader.class);
-      PacketBuffer buffer = offline.allocate(PacketBuffer.class);
+      final PacketHeader header = offline.allocate(PacketHeader.class);
+      final PacketBuffer buffer = offline.allocate(PacketBuffer.class);
       for (int i = 0; i < 1; i++) {
         offline.nextEx(header, buffer);
         Assertions.assertTrue(header.timestamp().second() > 0);
@@ -401,7 +400,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void stats()
+  void stats()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -419,8 +418,7 @@ public class DefaultPcapTest extends BaseTest {
         Assertions.assertTrue(dropped >= 0);
         Assertions.assertTrue(droppedByInterface >= 0);
         Assertions.assertTrue(received >= 0);
-      } catch (Throwable e) {
-        Assertions.assertTrue(e instanceof ReadPacketTimeoutException);
+      } catch (BreakException | ErrorException e) {
       }
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
@@ -436,7 +434,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void breakLoop()
+  void breakLoop()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -479,8 +477,7 @@ public class DefaultPcapTest extends BaseTest {
                 }
               },
               "Hello!");
-        } catch (Throwable e) {
-          Assertions.assertTrue(e instanceof BreakException);
+        } catch (ErrorException | BreakException e) {
           breakLoop = true;
         }
       }
@@ -522,8 +519,7 @@ public class DefaultPcapTest extends BaseTest {
                 }
               },
               "Hello!");
-        } catch (Throwable e) {
-          Assertions.assertTrue(e instanceof BreakException);
+        } catch (ErrorException | BreakException e) {
           breakLoop = true;
         }
       }
@@ -531,7 +527,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void sendPacket()
+  void sendPacket()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -561,7 +557,7 @@ public class DefaultPcapTest extends BaseTest {
           });
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
-      DefaultPacketBuffer buffer = new DefaultPacketBuffer(14);
+      final DefaultPacketBuffer buffer = new DefaultPacketBuffer(14);
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 1});
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 2});
       buffer.writeShortRE(0x0806);
@@ -577,7 +573,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void setDirection()
+  void setDirection()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -629,7 +625,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void isSwapped()
+  void isSwapped()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -644,7 +640,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void majorVersion()
+  void majorVersion()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -659,7 +655,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void minorVersion()
+  void minorVersion()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -674,7 +670,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void snapshot()
+  void snapshot()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -689,7 +685,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void getNonBlock()
+  void getNonBlock()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -708,7 +704,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void setNonBlock()
+  void setNonBlock()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -742,7 +738,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void allocate()
+  void allocate()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -795,13 +791,13 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void nullCheck()
+  void nullCheck()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
-    DefaultService defaultService = (DefaultService) this.service;
+    final DefaultService defaultService = (DefaultService) this.service;
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
       DefaultPcap pcap = (DefaultPcap) live;
       Pointer dumper =
@@ -809,7 +805,7 @@ public class DefaultPcapTest extends BaseTest {
       defaultService.nullCheck(dumper);
       NativeMappings.pcap_dump_close(dumper);
 
-      Pointer nullDumper =
+      final Pointer nullDumper =
           NativeMappings.pcap_dump_open_append(pcap.pointer, SAMPLE_NANOSECOND_PCAP);
       Assertions.assertThrows(
           IllegalStateException.class,
@@ -823,7 +819,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void compileCheck()
+  void compileCheck()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -848,7 +844,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void filterCheck()
+  void filterCheck()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -871,13 +867,13 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void loopCheck()
+  void loopCheck()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException, BreakException {
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
-      DefaultPcap pcap = (DefaultPcap) offline;
+      final DefaultPcap pcap = (DefaultPcap) offline;
       pcap.loopCheck(0);
       Assertions.assertThrows(
           ErrorException.class,
@@ -899,13 +895,13 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void ditpatchCheck()
+  void ditpatchCheck()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException, BreakException {
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
-      DefaultPcap pcap = (DefaultPcap) offline;
+      final DefaultPcap pcap = (DefaultPcap) offline;
       pcap.loopCheck(0);
       Assertions.assertThrows(
           ErrorException.class,
@@ -935,11 +931,11 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void nextExCheck() throws ErrorException, BreakException {
+  void nextExCheck() throws ErrorException, BreakException {
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
-      DefaultPcap pcap = (DefaultPcap) offline;
-      DefaultPacketHeader header = new DefaultPacketHeader();
-      DefaultPacketBuffer buffer = new DefaultPacketBuffer();
+      final DefaultPcap pcap = (DefaultPcap) offline;
+      final DefaultPacketHeader header = new DefaultPacketHeader();
+      final DefaultPacketBuffer buffer = new DefaultPacketBuffer();
       int rc = NativeMappings.pcap_next_ex(pcap.pointer, header.reference, buffer.reference);
       if (rc == 1) {
         pcap.nextExCheck(rc, header, buffer);
@@ -972,14 +968,14 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void statsCheck()
+  void statsCheck()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
-      DefaultPcap pcap = (DefaultPcap) live;
+      final DefaultPcap pcap = (DefaultPcap) live;
       pcap.statsCheck(0);
       Assertions.assertThrows(
           ErrorException.class,
@@ -993,14 +989,14 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void sendCheck()
+  void sendCheck()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
-      DefaultPcap pcap = (DefaultPcap) live;
+      final DefaultPcap pcap = (DefaultPcap) live;
       pcap.sendCheck(0);
       Assertions.assertThrows(
           ErrorException.class,
@@ -1014,14 +1010,14 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void directionCheck()
+  void directionCheck()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException, BreakException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
-      DefaultPcap pcap = (DefaultPcap) live;
+      final DefaultPcap pcap = (DefaultPcap) live;
       pcap.directionCheck(1);
       pcap.directionCheck(0);
       Assertions.assertThrows(
@@ -1036,14 +1032,14 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void getNonBlockCheck()
+  void getNonBlockCheck()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
-      DefaultPcap pcap = (DefaultPcap) live;
+      final DefaultPcap pcap = (DefaultPcap) live;
       pcap.getNonBlockCheck(0);
       Assertions.assertThrows(
           ErrorException.class,
@@ -1057,14 +1053,14 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void setNonBlockCheck()
+  void setNonBlockCheck()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
-      DefaultPcap pcap = (DefaultPcap) live;
+      final DefaultPcap pcap = (DefaultPcap) live;
       pcap.setNonBlockCheck(0);
       Assertions.assertThrows(
           ErrorException.class,
@@ -1078,9 +1074,9 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void swappedCheck() throws ErrorException, NotActivatedException {
+  void swappedCheck() throws ErrorException, NotActivatedException {
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
-      DefaultPcap pcap = (DefaultPcap) offline;
+      final DefaultPcap pcap = (DefaultPcap) offline;
       Assertions.assertTrue(pcap.swappedCheck(1));
       Assertions.assertFalse(pcap.swappedCheck(0));
       Assertions.assertFalse(pcap.swappedCheck(-1));
@@ -1097,24 +1093,26 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void getTimestampPrecision()
+  void getTimestampPrecision()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException {
+          RadioFrequencyModeNotSupportedException, NoSuchDeviceException, ActivatedException,
+          InterfaceNotUpException, InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
-    try {
-      try (Pcap live =
-          service.live(
-              lo, new DefaultLiveOptions().timestampPrecision(Timestamp.Precision.MICRO))) {
-        Assertions.assertEquals(Timestamp.Precision.MICRO, live.getTimestampPrecision());
-      }
-      try (Pcap live =
-          service.live(lo, new DefaultLiveOptions().timestampPrecision(Timestamp.Precision.NANO))) {
-        Assertions.assertEquals(Timestamp.Precision.NANO, live.getTimestampPrecision());
-      }
-    } catch (Throwable e) {
-      Assertions.assertTrue(e instanceof TimestampPrecisionNotSupportedException);
+    try (Pcap live =
+        service.live(lo, new DefaultLiveOptions().timestampPrecision(Timestamp.Precision.MICRO))) {
+      Assertions.assertEquals(Timestamp.Precision.MICRO, live.getTimestampPrecision());
+    } catch (ErrorException | WarningException | TimestampPrecisionNotSupportedException e) {
     }
+    try (Pcap live =
+        service.live(lo, new DefaultLiveOptions().timestampPrecision(Timestamp.Precision.NANO))) {
+      Assertions.assertEquals(Timestamp.Precision.NANO, live.getTimestampPrecision());
+    } catch (ErrorException | WarningException | TimestampPrecisionNotSupportedException e) {
+    }
+  }
+
+  @Test
+  public void timestampPrecision() {
+    Assertions.assertEquals(Timestamp.Precision.MICRO, DefaultPcap.timestampPrecision(0));
+    Assertions.assertEquals(Timestamp.Precision.NANO, DefaultPcap.timestampPrecision(1));
   }
 }

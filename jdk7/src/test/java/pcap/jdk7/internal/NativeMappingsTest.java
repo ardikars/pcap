@@ -14,18 +14,18 @@ import org.mockito.Mockito;
 public class NativeMappingsTest {
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     System.setProperty("pcap.af.inet6", "default");
   }
 
   @Test
-  public void libName() {
+  void libName() {
     Assertions.assertEquals("wpcap", NativeMappings.libName(true));
     Assertions.assertEquals("pcap", NativeMappings.libName(false));
   }
 
   @Test
-  public void inetAddress() {
+  void inetAddress() {
     Assertions.assertNull(NativeMappings.inetAddress(null));
 
     DefaultAddress.sockaddr sockaddr_in = new DefaultAddress.sockaddr();
@@ -58,20 +58,20 @@ public class NativeMappingsTest {
   }
 
   @Test
-  public void errorBuffer() {
+  void errorBuffer() {
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
     Assertions.assertEquals(Arrays.asList("buf"), errbuf.getFieldOrder());
     Assertions.assertNotNull(errbuf.toString());
   }
 
   @Test
-  public void bpfProgram() {
+  void bpfProgram() {
     NativeMappings.bpf_program fp = new NativeMappings.bpf_program();
     Assertions.assertEquals(Arrays.asList("bf_len", "bf_insns"), fp.getFieldOrder());
   }
 
   @Test
-  public void bpfInsn() {
+  void bpfInsn() {
     NativeMappings.bpf_insn insn = new NativeMappings.bpf_insn();
     Assertions.assertEquals(Arrays.asList("code", "jt", "jf", "k"), insn.getFieldOrder());
     NativeMappings.bpf_insn.ByReference reference = new NativeMappings.bpf_insn.ByReference();
@@ -79,7 +79,7 @@ public class NativeMappingsTest {
   }
 
   @Test
-  public void afInet6() {
+  void afInet6() {
     try (MockedStatic<Platform> theMock = Mockito.mockStatic(Platform.class)) {
       theMock
           .when(

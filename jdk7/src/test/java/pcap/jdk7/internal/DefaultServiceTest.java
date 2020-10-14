@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import pcap.jdk7.BaseTest;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
@@ -23,18 +22,18 @@ public class DefaultServiceTest extends BaseTest {
   private Service service;
 
   @BeforeEach
-  public void setUp() throws ErrorException {
+  void setUp() throws ErrorException {
     service = Service.Creator.create("PcapService");
   }
 
   @Test
-  public void version() {
+  void version() {
     Assertions.assertNotNull(service.version());
   }
 
   @Test
-  public void interfaces() throws ErrorException {
-    DefaultService defaultService = (DefaultService) service;
+  void interfaces() throws ErrorException {
+    final DefaultService defaultService = (DefaultService) service;
     Iterator<Interface> sources = defaultService.interfaces().iterator();
     while (sources.hasNext()) {
       Interface source = sources.next();
@@ -56,7 +55,7 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void live()
+  void live()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
@@ -147,7 +146,7 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void offline() throws ErrorException {
+  void offline() throws ErrorException {
     try (Pcap offline =
         service.offline(
             SAMPLE_NANOSECOND_PCAP,
@@ -168,8 +167,8 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void checkFindAllDevs() throws ErrorException {
-    DefaultService defaultService = (DefaultService) service;
+  void checkFindAllDevs() throws ErrorException {
+    final DefaultService defaultService = (DefaultService) service;
     PointerByReference alldevsPP = new PointerByReference();
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
     int rc = NativeMappings.pcap_findalldevs(alldevsPP, errbuf);
@@ -186,8 +185,8 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void checkSetSnaplen() throws ActivatedException {
-    DefaultService defaultService = (DefaultService) service;
+  void checkSetSnaplen() throws ActivatedException {
+    final DefaultService defaultService = (DefaultService) service;
     Assertions.assertThrows(
         ActivatedException.class,
         new Executable() {
@@ -200,8 +199,8 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void checkSetPromisc() throws ActivatedException {
-    DefaultService defaultService = (DefaultService) service;
+  void checkSetPromisc() throws ActivatedException {
+    final DefaultService defaultService = (DefaultService) service;
     Assertions.assertThrows(
         ActivatedException.class,
         new Executable() {
@@ -214,11 +213,11 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void nullCheck() throws ErrorException {
-    DefaultService defaultService = (DefaultService) service;
+  void nullCheck() throws ErrorException {
+    final DefaultService defaultService = (DefaultService) service;
     Interface lo = loopbackInterface(defaultService);
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
-    Pointer pointer = NativeMappings.pcap_create(lo.name(), errbuf);
+    final Pointer pointer = NativeMappings.pcap_create(lo.name(), errbuf);
     defaultService.nullCheck(pointer);
     Assertions.assertThrows(
         IllegalStateException.class,
@@ -232,11 +231,11 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void canSetRfmon() throws ErrorException, ActivatedException, NoSuchDeviceException {
-    DefaultService defaultService = (DefaultService) service;
+  void canSetRfmon() throws ErrorException, ActivatedException, NoSuchDeviceException {
+    final DefaultService defaultService = (DefaultService) service;
     Interface lo = loopbackInterface(defaultService);
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
-    Pointer pointer = NativeMappings.pcap_create(lo.name(), errbuf);
+    final Pointer pointer = NativeMappings.pcap_create(lo.name(), errbuf);
     Assertions.assertNotNull(pointer);
     int rc = NativeMappings.pcap_can_set_rfmon(pointer);
     Assertions.assertThrows(
@@ -277,8 +276,8 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void checkSetRfmon() throws ActivatedException {
-    DefaultService defaultService = (DefaultService) service;
+  void checkSetRfmon() throws ActivatedException {
+    final DefaultService defaultService = (DefaultService) service;
     Assertions.assertThrows(
         ActivatedException.class,
         new Executable() {
@@ -291,8 +290,8 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void checkSetTimeout() throws ActivatedException {
-    DefaultService defaultService = (DefaultService) service;
+  void checkSetTimeout() throws ActivatedException {
+    final DefaultService defaultService = (DefaultService) service;
     Assertions.assertThrows(
         ActivatedException.class,
         new Executable() {
@@ -305,9 +304,9 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void checkSetTimestampType()
+  void checkSetTimestampType()
       throws ActivatedException, InterfaceNotSupportTimestampTypeException {
-    DefaultService defaultService = (DefaultService) service;
+    final DefaultService defaultService = (DefaultService) service;
     Assertions.assertThrows(
         ActivatedException.class,
         new Executable() {
@@ -329,8 +328,8 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void checkSetImmediateMode() throws ActivatedException {
-    DefaultService defaultService = (DefaultService) service;
+  void checkSetImmediateMode() throws ActivatedException {
+    final DefaultService defaultService = (DefaultService) service;
     Assertions.assertThrows(
         ActivatedException.class,
         new Executable() {
@@ -343,8 +342,8 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void checkSetBufferSize() throws ActivatedException {
-    DefaultService defaultService = (DefaultService) service;
+  void checkSetBufferSize() throws ActivatedException {
+    final DefaultService defaultService = (DefaultService) service;
     Assertions.assertThrows(
         ActivatedException.class,
         new Executable() {
@@ -357,9 +356,9 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void checkSetTimestampPrecision()
+  void checkSetTimestampPrecision()
       throws ActivatedException, TimestampPrecisionNotSupportedException {
-    DefaultService defaultService = (DefaultService) service;
+    final DefaultService defaultService = (DefaultService) service;
     Assertions.assertThrows(
         TimestampPrecisionNotSupportedException.class,
         new Executable() {
@@ -380,14 +379,14 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void checkActivate()
+  void checkActivate()
       throws ErrorException, PromiscuousModePermissionDeniedException, PermissionDeniedException,
           RadioFrequencyModeNotSupportedException, ActivatedException, InterfaceNotUpException,
           NoSuchDeviceException {
-    DefaultService defaultService = (DefaultService) service;
+    final DefaultService defaultService = (DefaultService) service;
     Interface lo = loopbackInterface(defaultService);
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
-    Pointer pointer = NativeMappings.pcap_create(lo.name(), errbuf);
+    final Pointer pointer = NativeMappings.pcap_create(lo.name(), errbuf);
     Assertions.assertNotNull(pointer);
     int rc = NativeMappings.pcap_activate(pointer);
     Assertions.assertThrows(
@@ -453,8 +452,8 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void netmask() throws ErrorException {
-    DefaultService defaultService = (DefaultService) service;
+  void netmask() throws ErrorException {
+    final DefaultService defaultService = (DefaultService) service;
     Iterator<Interface> iterator = service.interfaces().iterator();
     while (iterator.hasNext()) {
       Interface source = iterator.next();
@@ -475,8 +474,8 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void errbuf() {
-    DefaultService defaultService = (DefaultService) service;
+  void errbuf() {
+    final DefaultService defaultService = (DefaultService) service;
     NativeMappings.ErrorBuffer errbuf = defaultService.errbuf(true);
     errbuf.getPointer().setString(0, "Hello!");
     Assertions.assertEquals("Hello!", defaultService.errbuf(false).getPointer().getString(0));
@@ -486,14 +485,14 @@ public class DefaultServiceTest extends BaseTest {
   }
 
   @Test
-  public void setRfmon() throws ErrorException, ActivatedException, NoSuchDeviceException {
-    DefaultService defaultService = (DefaultService) service;
+  void setRfmon() throws ErrorException, ActivatedException, NoSuchDeviceException {
+    final DefaultService defaultService = (DefaultService) service;
 
     DefaultLiveOptions options = new DefaultLiveOptions();
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
 
     Interface lo = loopbackInterface(defaultService);
-    Pointer pointer = NativeMappings.pcap_create(lo.name(), errbuf);
+    final Pointer pointer = NativeMappings.pcap_create(lo.name(), errbuf);
 
     if (NativeMappings.pcap_set_snaplen(pointer, options.snapshotLength()) == NativeMappings.OK) {
       if (NativeMappings.pcap_set_promisc(pointer, options.isPromiscuous() ? 1 : 0)

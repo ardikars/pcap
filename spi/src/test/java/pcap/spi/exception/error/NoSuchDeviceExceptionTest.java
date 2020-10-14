@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 public class NoSuchDeviceExceptionTest {
 
   @Test
-  public void throwExceptionTest() {
+  void throwExceptionTest() {
     Assertions.assertThrows(
         NoSuchDeviceException.class,
         new Executable() {

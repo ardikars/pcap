@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 public class DefaultTimestampTest {
 
   @Test
-  public void newInstance() {
+  void newInstance() {
     DefaultTimestamp timestamp = new DefaultTimestamp();
     timestamp.tv_sec = new NativeLong(1);
     timestamp.tv_usec = new NativeLong(1);

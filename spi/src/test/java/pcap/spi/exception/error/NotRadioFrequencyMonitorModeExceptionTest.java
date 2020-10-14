@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 public class NotRadioFrequencyMonitorModeExceptionTest {
 
   @Test
-  public void throwExceptionTest() {
+  void throwExceptionTest() {
     Assertions.assertThrows(
         NotRadioFrequencyMonitorModeException.class,
         new Executable() {
