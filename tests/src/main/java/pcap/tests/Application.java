@@ -1,11 +1,14 @@
 package pcap.tests;
 
 import pcap.spi.*;
+import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 
 public class Application {
+
+  private static final int MAC_ADDR_SIZE = 6;
 
   public static void main(String[] args)
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
@@ -20,11 +23,11 @@ public class Application {
     }
     System.out.println();
     System.out.println("[v] Chosen device : " + devices.name());
-    try (Pcap live = service.live(devices, new DefaultLiveOptions())) {
+    try (Pcap live = service.live(devices, new DefaultLiveOptions().proxy(PcapProxy.class))) {
       PacketBuffer packetBuffer = live.allocate(PacketBuffer.class);
       PacketHeader packetHeader = live.allocate(PacketHeader.class);
       live.nextEx(packetHeader, packetBuffer);
-      byte[] dstBuf = new byte[14];
+      byte[] dstBuf = new byte[MAC_ADDR_SIZE];
       packetBuffer.readBytes(dstBuf);
       System.out.println("Destination : " + toStringMacAddress(dstBuf));
       packetBuffer.readBytes(dstBuf);
@@ -47,5 +50,13 @@ public class Application {
       }
     }
     return sb.toString();
+  }
+
+  interface PcapProxy extends Pcap {
+
+    @Async(timeout = 5000)
+    @Override
+    void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
+        throws BreakException, ErrorException;
   }
 }

@@ -13,6 +13,7 @@ import pcap.spi.*;
 import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
+import pcap.spi.exception.warn.ReadPacketTimeoutException;
 import pcap.spi.option.DefaultLiveOptions;
 
 @RunWith(JUnitPlatform.class)
@@ -27,7 +28,7 @@ public class DefaultPollEventServiceTest extends BaseTest {
     this.eventService = new DefaultPollEventService();
   }
 
-//  @Test
+  //  @Test
   void open()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,

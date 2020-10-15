@@ -3,6 +3,9 @@
 *.jar
 *.class
 *.log
+*.trc
+*.dmp
+*.txt
 
 .gnupg/*.gpg-agent*
 .gnupg/private-keys*

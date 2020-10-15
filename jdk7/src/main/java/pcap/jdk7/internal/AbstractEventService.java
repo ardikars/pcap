@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
-import pcap.spi.exception.error.ReadPacketTimeoutException;
+import pcap.spi.exception.warn.ReadPacketTimeoutException;
 
 abstract class AbstractEventService implements EventService {
 

@@ -6,7 +6,7 @@ import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.BreakException;
 import pcap.spi.exception.error.NotActivatedException;
-import pcap.spi.exception.error.ReadPacketTimeoutException;
+import pcap.spi.exception.warn.ReadPacketTimeoutException;
 
 public class DefaultPcap implements Pcap {
 

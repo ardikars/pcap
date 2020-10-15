@@ -15,6 +15,7 @@ import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.WarningException;
 import pcap.spi.exception.error.*;
+import pcap.spi.exception.warn.ReadPacketTimeoutException;
 import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.option.DefaultOfflineOptions;
 
@@ -308,12 +309,12 @@ public class DefaultPcapTest extends BaseTest {
       for (int i = 0; i < 1; i++) {
         try {
           live.nextEx(header, buffer);
-          Assertions.assertTrue(header.timestamp().second() > 0);
-          Assertions.assertTrue(header.timestamp().microSecond() > 0);
-          Assertions.assertTrue(header.captureLength() > 0);
-          Assertions.assertTrue(header.length() > 0);
-          Assertions.assertTrue(buffer.capacity() > 0);
-        } catch (ErrorException | WarningException e) {
+          Assertions.assertTrue(header.timestamp().second() >= 0);
+          Assertions.assertTrue(header.timestamp().microSecond() >= 0);
+          Assertions.assertTrue(header.captureLength() >= 0);
+          Assertions.assertTrue(header.length() >= 0);
+          Assertions.assertTrue(buffer.capacity() >= 0);
+        } catch (ErrorException | WarningException | ReadPacketTimeoutException e) {
         }
         Assertions.assertThrows(
             IllegalArgumentException.class,
@@ -345,12 +346,16 @@ public class DefaultPcapTest extends BaseTest {
       final PacketHeader header = offline.allocate(PacketHeader.class);
       final PacketBuffer buffer = offline.allocate(PacketBuffer.class);
       for (int i = 0; i < 1; i++) {
-        offline.nextEx(header, buffer);
-        Assertions.assertTrue(header.timestamp().second() > 0);
-        Assertions.assertTrue(header.timestamp().microSecond() > 0);
-        Assertions.assertTrue(header.captureLength() > 0);
-        Assertions.assertTrue(header.length() > 0);
-        Assertions.assertTrue(buffer.capacity() > 0);
+        try {
+          offline.nextEx(header, buffer);
+          Assertions.assertTrue(header.timestamp().second() >= 0);
+          Assertions.assertTrue(header.timestamp().microSecond() >= 0);
+          Assertions.assertTrue(header.captureLength() >= 0);
+          Assertions.assertTrue(header.length() >= 0);
+          Assertions.assertTrue(buffer.capacity() >= 0);
+        } catch (ErrorException | WarningException | ReadPacketTimeoutException e) {
+
+        }
         Assertions.assertThrows(
             BreakException.class,
             new Executable() {
@@ -389,12 +394,16 @@ public class DefaultPcapTest extends BaseTest {
       PacketHeader header = offline.allocate(PacketHeader.class);
       PacketBuffer buffer = offline.allocate(PacketBuffer.class);
       for (int i = 0; i < 1; i++) {
-        offline.nextEx(header, buffer);
-        Assertions.assertTrue(header.timestamp().second() > 0);
-        Assertions.assertTrue(header.timestamp().microSecond() > 0);
-        Assertions.assertTrue(header.captureLength() > 0);
-        Assertions.assertTrue(header.length() > 0);
-        Assertions.assertTrue(buffer.capacity() > 0);
+        try {
+          offline.nextEx(header, buffer);
+          Assertions.assertTrue(header.timestamp().second() >= 0);
+          Assertions.assertTrue(header.timestamp().microSecond() >= 0);
+          Assertions.assertTrue(header.captureLength() >= 0);
+          Assertions.assertTrue(header.length() >= 0);
+          Assertions.assertTrue(buffer.capacity() >= 0);
+        } catch (ErrorException | WarningException | ReadPacketTimeoutException e) {
+
+        }
       }
     }
   }
