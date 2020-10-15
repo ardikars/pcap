@@ -427,7 +427,7 @@ public class DefaultPcapTest extends BaseTest {
         Assertions.assertTrue(dropped >= 0);
         Assertions.assertTrue(droppedByInterface >= 0);
         Assertions.assertTrue(received >= 0);
-      } catch (BreakException | ErrorException e) {
+      } catch (BreakException | ErrorException | ReadPacketTimeoutException e) {
       }
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
