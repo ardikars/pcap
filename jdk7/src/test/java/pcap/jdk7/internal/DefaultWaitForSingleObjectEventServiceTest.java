@@ -13,7 +13,7 @@ import pcap.spi.exception.error.*;
 import pcap.spi.exception.warn.ReadPacketTimeoutException;
 import pcap.spi.option.DefaultLiveOptions;
 
-@RunWith(JUnitPlatform.class)
+//@RunWith(JUnitPlatform.class)
 public class DefaultWaitForSingleObjectEventServiceTest extends BaseTest {
 
   private Service service;
@@ -25,7 +25,7 @@ public class DefaultWaitForSingleObjectEventServiceTest extends BaseTest {
     this.eventService = new DefaultWaitForSingleObjectEventService();
   }
 
-  //  @Test
+  @Test
   void open()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
@@ -63,6 +63,8 @@ public class DefaultWaitForSingleObjectEventServiceTest extends BaseTest {
             //
           } catch (ReadPacketTimeoutException e) {
             //
+          } catch (ErrorException e) {
+
           }
           buffer = myProxy.next(header);
         }

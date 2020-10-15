@@ -62,9 +62,9 @@ public class DefaultPacketBuffer implements PacketBuffer {
   void userReference(DefaultPacketHeader header) {
     if (reference.getValue() != null) {
       this.buffer = reference.getValue();
-      this.capacity = header.len;
+      this.capacity = header.captureLength();
       this.readerIndex = 0;
-      this.writerIndex = header.len;
+      this.writerIndex = header.captureLength();
       this.markedReaderIndex = 0;
       this.markedWriterIndex = 0;
     }

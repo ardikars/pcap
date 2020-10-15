@@ -309,11 +309,11 @@ public class DefaultPcapTest extends BaseTest {
       for (int i = 0; i < 1; i++) {
         try {
           live.nextEx(header, buffer);
-          Assertions.assertTrue(header.timestamp().second() >= 0);
-          Assertions.assertTrue(header.timestamp().microSecond() >= 0);
-          Assertions.assertTrue(header.captureLength() >= 0);
-          Assertions.assertTrue(header.length() >= 0);
-          Assertions.assertTrue(buffer.capacity() >= 0);
+          Assertions.assertTrue(header.timestamp().second() > 0);
+          Assertions.assertTrue(header.timestamp().microSecond() > 0);
+          Assertions.assertTrue(header.captureLength() > 0);
+          Assertions.assertTrue(header.length() > 0);
+          Assertions.assertTrue(buffer.capacity() > 0);
         } catch (ErrorException | WarningException | ReadPacketTimeoutException e) {
         }
         Assertions.assertThrows(
@@ -348,11 +348,11 @@ public class DefaultPcapTest extends BaseTest {
       for (int i = 0; i < 1; i++) {
         try {
           offline.nextEx(header, buffer);
-          Assertions.assertTrue(header.timestamp().second() >= 0);
-          Assertions.assertTrue(header.timestamp().microSecond() >= 0);
-          Assertions.assertTrue(header.captureLength() >= 0);
-          Assertions.assertTrue(header.length() >= 0);
-          Assertions.assertTrue(buffer.capacity() >= 0);
+          Assertions.assertTrue(header.timestamp().second() > 0);
+          Assertions.assertTrue(header.timestamp().microSecond() > 0);
+          Assertions.assertTrue(header.captureLength() > 0);
+          Assertions.assertTrue(header.length() > 0);
+          Assertions.assertTrue(buffer.capacity() > 0);
         } catch (ErrorException | WarningException | ReadPacketTimeoutException e) {
 
         }
@@ -396,11 +396,11 @@ public class DefaultPcapTest extends BaseTest {
       for (int i = 0; i < 1; i++) {
         try {
           offline.nextEx(header, buffer);
-          Assertions.assertTrue(header.timestamp().second() >= 0);
-          Assertions.assertTrue(header.timestamp().microSecond() >= 0);
-          Assertions.assertTrue(header.captureLength() >= 0);
-          Assertions.assertTrue(header.length() >= 0);
-          Assertions.assertTrue(buffer.capacity() >= 0);
+          Assertions.assertTrue(header.timestamp().second() > 0);
+          Assertions.assertTrue(header.timestamp().microSecond() > 0);
+          Assertions.assertTrue(header.captureLength() > 0);
+          Assertions.assertTrue(header.length() > 0);
+          Assertions.assertTrue(buffer.capacity() > 0);
         } catch (ErrorException | WarningException | ReadPacketTimeoutException e) {
 
         }

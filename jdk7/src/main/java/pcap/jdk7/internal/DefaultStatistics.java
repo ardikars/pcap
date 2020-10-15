@@ -27,6 +27,7 @@ public class DefaultStatistics extends Structure implements Statistics {
 
   public DefaultStatistics(Pointer p) {
     super(p);
+    read();
   }
 
   @Override

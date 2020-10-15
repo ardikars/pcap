@@ -35,7 +35,6 @@ public class DefaultPacketHeader extends com.sun.jna.Structure implements Packet
   void useReferece() {
     if (reference.getValue() != null) {
       useMemory(reference.getValue());
-      read();
     }
   }
 

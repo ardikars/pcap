@@ -96,11 +96,12 @@ public class DefaultPcap implements Pcap {
               new NativeMappings.pcap_handler() {
                 @Override
                 public void got_packet(Pointer user, DefaultPacketHeader header, Pointer packet) {
+                  header.read();
                   handler.gotPacket(
                       args,
                       header,
                       new DefaultPacketBuffer(
-                          packet, PacketBuffer.ByteOrder.NATIVE, header.caplen, 0, header.caplen));
+                          packet, PacketBuffer.ByteOrder.NATIVE, header.captureLength(), 0, header.captureLength()));
                 }
               },
               Pointer.NULL);
@@ -122,11 +123,12 @@ public class DefaultPcap implements Pcap {
       if (buf == null) {
         return null;
       }
+      hdr.read();
     } finally {
       readLock.unlock();
     }
     return new DefaultPacketBuffer(
-        pointer, PacketBuffer.ByteOrder.NATIVE, hdr.caplen, 0, hdr.caplen);
+        pointer, PacketBuffer.ByteOrder.NATIVE, hdr.captureLength(), 0, hdr.captureLength());
   }
 
   @Override
@@ -165,11 +167,12 @@ public class DefaultPcap implements Pcap {
               new NativeMappings.pcap_handler() {
                 @Override
                 public void got_packet(Pointer user, DefaultPacketHeader header, Pointer packet) {
+                  header.read();
                   handler.gotPacket(
                       args,
                       header,
                       new DefaultPacketBuffer(
-                          packet, PacketBuffer.ByteOrder.NATIVE, header.caplen, 0, header.caplen));
+                          packet, PacketBuffer.ByteOrder.NATIVE, header.captureLength(), 0, header.captureLength()));
                 }
               },
               Pointer.NULL);
@@ -405,6 +408,7 @@ public class DefaultPcap implements Pcap {
       throw new ReadPacketTimeoutException("");
     } else if (rc == 1) {
       header.useReferece();
+      header.read();
       buffer.userReference(header);
     } else {
       if (rc == -2) {

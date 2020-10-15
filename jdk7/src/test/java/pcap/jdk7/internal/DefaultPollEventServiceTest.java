@@ -7,8 +7,6 @@ import com.sun.jna.Pointer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.spi.*;
 import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
@@ -16,7 +14,7 @@ import pcap.spi.exception.error.*;
 import pcap.spi.exception.warn.ReadPacketTimeoutException;
 import pcap.spi.option.DefaultLiveOptions;
 
-@RunWith(JUnitPlatform.class)
+// @RunWith(JUnitPlatform.class)
 public class DefaultPollEventServiceTest extends BaseTest {
 
   private Service service;
@@ -28,7 +26,7 @@ public class DefaultPollEventServiceTest extends BaseTest {
     this.eventService = new DefaultPollEventService();
   }
 
-  //  @Test
+  @Test
   void open()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
@@ -64,6 +62,8 @@ public class DefaultPollEventServiceTest extends BaseTest {
           } catch (BreakException e) {
             //
           } catch (ReadPacketTimeoutException e) {
+            //
+          } catch (ErrorException e) {
             //
           }
           buffer = myProxy.next(header);
