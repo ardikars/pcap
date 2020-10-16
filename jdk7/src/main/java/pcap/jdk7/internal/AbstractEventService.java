@@ -20,7 +20,7 @@ abstract class AbstractEventService implements EventService {
 
   protected Async getAsync(Method method) {
     String methodName = method.getName();
-    if (methodName.equals("dispatch") || methodName.equals("next") || methodName.equals("nextEx")) {
+    if (methodName.equals("dispatch") || methodName.equals("nextEx")) {
       return method.getAnnotation(Async.class);
     }
     return null;
@@ -45,9 +45,6 @@ abstract class AbstractEventService implements EventService {
 
   protected Object invokeOnReady(long rc, long success, long timeout, Method method, Object... args)
       throws ErrorException {
-    if (method.getName().equals("next") && rc != success) {
-      return null;
-    }
     if (rc != success) {
       if (rc == timeout) {
         throw new ReadPacketTimeoutException("");
