@@ -2,9 +2,9 @@
 package pcap.spi;
 
 import pcap.spi.exception.ErrorException;
+import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.BreakException;
 import pcap.spi.exception.error.NotActivatedException;
-import pcap.spi.exception.warn.ReadPacketTimeoutException;
 
 /**
  * A handle for {@code pcap} api.
@@ -67,13 +67,13 @@ public interface Pcap extends AutoCloseable {
    * @param packetHeader packet header.
    * @param packetBuffer packet buffer.
    * @throws BreakException there are no more packets to read from `savefile`.
-   * @throws ReadPacketTimeoutException if packets are being read from a `live capture` and the
-   *     packet buffer timeout expired.
+   * @throws TimeoutException if packets are being read from a `live capture` and the packet buffer
+   *     timeout expired.
    * @throws ErrorException generic exception.
    * @since 1.0.0
    */
   void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
-      throws BreakException, ReadPacketTimeoutException, ErrorException;
+      throws BreakException, TimeoutException, ErrorException;
 
   /**
    * Processes packets from a live capture or {@code PcapLive} until cnt packets are processed, the

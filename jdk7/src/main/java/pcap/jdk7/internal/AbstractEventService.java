@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
-import pcap.spi.exception.warn.ReadPacketTimeoutException;
+import pcap.spi.exception.TimeoutException;
 
 abstract class AbstractEventService implements EventService {
 
@@ -44,12 +44,12 @@ abstract class AbstractEventService implements EventService {
   }
 
   protected Object invokeOnReady(long rc, long success, long timeout, Method method, Object... args)
-      throws ErrorException {
+      throws ErrorException, TimeoutException {
     if (rc != success) {
       if (rc == timeout) {
-        throw new ReadPacketTimeoutException("");
+        throw new TimeoutException("Read packet timeout.");
       } else {
-        throw new ErrorException("");
+        throw new ErrorException("Generic error  when read packet.");
       }
     }
     return invoke(method, args);

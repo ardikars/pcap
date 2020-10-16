@@ -9,8 +9,8 @@ import org.junit.runner.RunWith;
 import pcap.spi.*;
 import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
+import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.*;
-import pcap.spi.exception.warn.ReadPacketTimeoutException;
 import pcap.spi.option.DefaultLiveOptions;
 
 @RunWith(JUnitPlatform.class)
@@ -52,8 +52,6 @@ public class DefaultWaitForSingleObjectEventServiceTest extends BaseTest {
                 "");
           } catch (BreakException e) {
             //
-          } catch (ReadPacketTimeoutException e) {
-            //
           }
           PacketHeader header = myProxy.allocate(PacketHeader.class);
           PacketBuffer buffer = myProxy.allocate(PacketBuffer.class);
@@ -61,7 +59,7 @@ public class DefaultWaitForSingleObjectEventServiceTest extends BaseTest {
             myProxy.nextEx(header, buffer);
           } catch (BreakException e) {
             //
-          } catch (ReadPacketTimeoutException e) {
+          } catch (TimeoutException e) {
             //
           } catch (ErrorException e) {
 
@@ -89,7 +87,7 @@ public class DefaultWaitForSingleObjectEventServiceTest extends BaseTest {
     @Async(timeout = 1000) // wait for 1 secs
     @Override
     void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
-        throws BreakException, ErrorException;
+        throws BreakException, ErrorException, TimeoutException;
 
     @Async(timeout = 0) // no wait
     @Override

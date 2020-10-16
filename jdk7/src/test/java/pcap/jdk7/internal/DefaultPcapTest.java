@@ -13,9 +13,9 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
+import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.WarningException;
 import pcap.spi.exception.error.*;
-import pcap.spi.exception.warn.ReadPacketTimeoutException;
 import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.option.DefaultOfflineOptions;
 
@@ -314,7 +314,7 @@ public class DefaultPcapTest extends BaseTest {
           Assertions.assertTrue(header.captureLength() > 0);
           Assertions.assertTrue(header.length() > 0);
           Assertions.assertTrue(buffer.capacity() > 0);
-        } catch (ErrorException | WarningException | ReadPacketTimeoutException e) {
+        } catch (ErrorException | WarningException | TimeoutException e) {
         }
         Assertions.assertThrows(
             IllegalArgumentException.class,
@@ -353,7 +353,7 @@ public class DefaultPcapTest extends BaseTest {
           Assertions.assertTrue(header.captureLength() > 0);
           Assertions.assertTrue(header.length() > 0);
           Assertions.assertTrue(buffer.capacity() > 0);
-        } catch (ErrorException | WarningException | ReadPacketTimeoutException e) {
+        } catch (ErrorException | WarningException | TimeoutException e) {
 
         }
         Assertions.assertThrows(
@@ -401,7 +401,7 @@ public class DefaultPcapTest extends BaseTest {
           Assertions.assertTrue(header.captureLength() > 0);
           Assertions.assertTrue(header.length() > 0);
           Assertions.assertTrue(buffer.capacity() > 0);
-        } catch (ErrorException | WarningException | ReadPacketTimeoutException e) {
+        } catch (ErrorException | WarningException | TimeoutException e) {
 
         }
       }
@@ -427,7 +427,7 @@ public class DefaultPcapTest extends BaseTest {
         Assertions.assertTrue(dropped >= 0);
         Assertions.assertTrue(droppedByInterface >= 0);
         Assertions.assertTrue(received >= 0);
-      } catch (BreakException | ErrorException | ReadPacketTimeoutException e) {
+      } catch (BreakException | ErrorException | TimeoutException e) {
       }
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
@@ -940,7 +940,7 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  void nextExCheck() throws ErrorException, BreakException {
+  void nextExCheck() throws ErrorException, BreakException, TimeoutException {
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
       final DefaultPcap pcap = (DefaultPcap) offline;
       final DefaultPacketHeader header = new DefaultPacketHeader();
@@ -950,7 +950,7 @@ public class DefaultPcapTest extends BaseTest {
         pcap.nextExCheck(rc, header, buffer);
       }
       Assertions.assertThrows(
-          ReadPacketTimeoutException.class,
+          TimeoutException.class,
           new Executable() {
             @Override
             public void execute() throws Throwable {

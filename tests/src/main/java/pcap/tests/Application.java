@@ -3,6 +3,7 @@ package pcap.tests;
 import pcap.spi.*;
 import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
+import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 
@@ -33,6 +34,8 @@ public class Application {
       packetBuffer.readBytes(dstBuf);
       System.out.println("Source      : " + toStringMacAddress(dstBuf));
       System.out.println("Type        : " + packetBuffer.readShort());
+    } catch (TimeoutException e) {
+      e.printStackTrace();
     }
   }
 

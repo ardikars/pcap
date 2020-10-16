@@ -4,9 +4,9 @@ import com.sun.jna.Pointer;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
+import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.BreakException;
 import pcap.spi.exception.error.NotActivatedException;
-import pcap.spi.exception.warn.ReadPacketTimeoutException;
 
 public class DefaultPcap implements Pcap {
 
@@ -182,7 +182,7 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
-      throws BreakException, ErrorException, ReadPacketTimeoutException {
+      throws BreakException, ErrorException, TimeoutException {
     if (packetHeader == null) {
       throw new IllegalArgumentException("header: null (expected: header != null)");
     }
@@ -462,7 +462,7 @@ public class DefaultPcap implements Pcap {
     if (rc == 0) {
       return;
     } else if (rc == -2) {
-      throw new BreakException("");
+      throw new BreakException("Break loop.");
     } else {
       throw new ErrorException(NativeMappings.pcap_geterr(pointer).getString(0));
     }
@@ -473,7 +473,7 @@ public class DefaultPcap implements Pcap {
       if (rc == -1) {
         throw new ErrorException(NativeMappings.pcap_geterr(pointer).getString(0));
       } else if (rc == -2) {
-        throw new BreakException("");
+        throw new BreakException("Break loop.");
       } else {
         throw new ErrorException("Generic error");
       }
@@ -481,16 +481,16 @@ public class DefaultPcap implements Pcap {
   }
 
   void nextExCheck(int rc, DefaultPacketHeader header, DefaultPacketBuffer buffer)
-      throws BreakException, ErrorException {
+      throws BreakException, ErrorException, TimeoutException {
     if (rc == 0) {
-      throw new ReadPacketTimeoutException("");
+      throw new TimeoutException("Read packet timeout.");
     } else if (rc == 1) {
       header.useReferece();
       header.read();
       buffer.userReference(header);
     } else {
       if (rc == -2) {
-        throw new BreakException("");
+        throw new BreakException("Break loop.");
       } else {
         throw new ErrorException(NativeMappings.pcap_geterr(pointer).getString(0));
       }
@@ -534,7 +534,7 @@ public class DefaultPcap implements Pcap {
       return false;
     } else {
       if (swapped == -3) {
-        throw new NotActivatedException("");
+        throw new NotActivatedException("Not activated.");
       } else {
         return false;
       }
