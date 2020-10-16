@@ -88,13 +88,14 @@ public class DefaultPollEventServiceTest extends BaseTest {
   void normalizeTimeout() {
     DefaultTimestamp timestamp = new DefaultTimestamp();
     timestamp.tv_usec.setValue(1000L);
+    timestamp.write();
     Assertions.assertEquals(1, DefaultPollEventService.normalizeTimeout(1, timestamp));
     Assertions.assertEquals(1, DefaultPollEventService.normalizeTimeout(0, timestamp));
     Assertions.assertEquals(1, DefaultPollEventService.normalizeTimeout(-1, timestamp));
   }
 
   @Test
-  void resigter() {
+  void register() {
     try {
       DefaultPollEventService.register(false);
     } catch (UnsatisfiedLinkError e) {

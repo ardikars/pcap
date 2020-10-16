@@ -13,7 +13,7 @@ import pcap.spi.exception.error.*;
 import pcap.spi.exception.warn.ReadPacketTimeoutException;
 import pcap.spi.option.DefaultLiveOptions;
 
-//@RunWith(JUnitPlatform.class)
+@RunWith(JUnitPlatform.class)
 public class DefaultWaitForSingleObjectEventServiceTest extends BaseTest {
 
   private Service service;

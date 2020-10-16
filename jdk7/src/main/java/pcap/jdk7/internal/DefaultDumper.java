@@ -29,7 +29,7 @@ public class DefaultDumper implements Dumper {
     }
     DefaultPacketHeader packetHeader = (DefaultPacketHeader) header;
     DefaultPacketBuffer packetBuffer = (DefaultPacketBuffer) buffer;
-    NativeMappings.pcap_dump(pointer, packetHeader, packetBuffer.buffer);
+    NativeMappings.pcap_dump(pointer, packetHeader.getPointer(), packetBuffer.buffer);
   }
 
   @Override

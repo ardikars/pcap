@@ -10,13 +10,15 @@ import pcap.spi.exception.warn.ReadPacketTimeoutException;
 
 public class DefaultPcap implements Pcap {
 
+  private static final String READ_LOCK_FAIL = "Failed to lock (READ_LOCK)";
+  private static final String WRITE_LOCK_FAIL = "Failed to lock (WRITE_LOCK)";
+
   final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
   final ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
   final ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
 
   final Pointer pointer;
   final int netmask;
-
   final DefaultStatistics statistics = new DefaultStatistics();
 
   DefaultPcap(Pointer pointer, int netmask) {
@@ -30,7 +32,9 @@ public class DefaultPcap implements Pcap {
       throw new IllegalArgumentException("file: null (expected: file != null && notBlank(file))");
     }
     Pointer dumper;
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       dumper = NativeMappings.pcap_dump_open(pointer, file);
       nullCheck(dumper);
@@ -46,7 +50,9 @@ public class DefaultPcap implements Pcap {
       throw new IllegalArgumentException("file: null (expected: file != null && notBlank(file))");
     }
     Pointer dumper;
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       dumper = NativeMappings.pcap_dump_open_append(pointer, file);
       nullCheck(dumper);
@@ -64,14 +70,18 @@ public class DefaultPcap implements Pcap {
     }
     int rc;
     NativeMappings.bpf_program fp = new NativeMappings.bpf_program();
-    writeLock.lock();
+    if (!writeLock.tryLock()) {
+      throw new RuntimeException(WRITE_LOCK_FAIL);
+    }
     try {
       rc = NativeMappings.pcap_compile(pointer, fp, filter, optimize ? 1 : 0, netmask);
       compileCheck(rc, fp);
     } finally {
       writeLock.unlock();
     }
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       rc = NativeMappings.pcap_setfilter(pointer, fp);
       filterCheck(rc, fp);
@@ -87,7 +97,9 @@ public class DefaultPcap implements Pcap {
     if (handler == null) {
       throw new IllegalArgumentException("handler: null (expected: handler != null)");
     }
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       int rc =
           NativeMappings.pcap_loop(
@@ -95,13 +107,16 @@ public class DefaultPcap implements Pcap {
               count,
               new NativeMappings.pcap_handler() {
                 @Override
-                public void got_packet(Pointer user, DefaultPacketHeader header, Pointer packet) {
-                  header.read();
-                  handler.gotPacket(
-                      args,
-                      header,
+                public void got_packet(Pointer user, Pointer header, Pointer packet) {
+                  DefaultPacketHeader packetHeader = new DefaultPacketHeader(header);
+                  DefaultPacketBuffer packetBuffer =
                       new DefaultPacketBuffer(
-                          packet, PacketBuffer.ByteOrder.NATIVE, header.captureLength(), 0, header.captureLength()));
+                          packet,
+                          PacketBuffer.ByteOrder.NATIVE,
+                          packetHeader.captureLength(),
+                          0,
+                          packetHeader.captureLength());
+                  handler.gotPacket(args, packetHeader, packetBuffer);
                 }
               },
               Pointer.NULL);
@@ -116,19 +131,53 @@ public class DefaultPcap implements Pcap {
     if (header == null) {
       throw new IllegalArgumentException("header: null (expected: header != null)");
     }
-    DefaultPacketHeader hdr = (DefaultPacketHeader) header;
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
+    PacketBuffer buffer;
     try {
-      Pointer buf = NativeMappings.pcap_next(pointer, hdr);
-      if (buf == null) {
-        return null;
+      final DefaultPacketHeader[] packetHeader = new DefaultPacketHeader[1];
+      packetHeader[0] = (DefaultPacketHeader) header;
+      final DefaultPacketBuffer[] packetBuffer = new DefaultPacketBuffer[1];
+      int rc =
+          NativeMappings.pcap_dispatch(
+              pointer,
+              1,
+              new NativeMappings.pcap_handler() {
+                @Override
+                public void got_packet(Pointer user, Pointer header, Pointer packet) {
+                  Pointer hdrPtr = packetHeader[0].getPointer();
+                  hdrPtr.setNativeLong(
+                      DefaultTimestamp.TV_SEC_OFFSET,
+                      header.getNativeLong(DefaultTimestamp.TV_SEC_OFFSET));
+                  hdrPtr.setNativeLong(
+                      DefaultTimestamp.TV_USEC_OFFSET,
+                      header.getNativeLong(DefaultTimestamp.TV_USEC_OFFSET));
+                  hdrPtr.setInt(
+                      DefaultPacketHeader.LEN_OFFSET,
+                      header.getInt(DefaultPacketHeader.LEN_OFFSET));
+                  hdrPtr.setInt(
+                      DefaultPacketHeader.CAPLEN_OFFSET,
+                      header.getInt(DefaultPacketHeader.CAPLEN_OFFSET));
+                  packetBuffer[0] =
+                      new DefaultPacketBuffer(
+                          packet,
+                          PacketBuffer.ByteOrder.NATIVE,
+                          packetHeader[0].captureLength(),
+                          0,
+                          packetHeader[0].captureLength());
+                }
+              },
+              Pointer.NULL);
+      if (rc > 0) {
+        buffer = packetBuffer[0];
+      } else {
+        buffer = null;
       }
-      hdr.read();
     } finally {
       readLock.unlock();
     }
-    return new DefaultPacketBuffer(
-        pointer, PacketBuffer.ByteOrder.NATIVE, hdr.captureLength(), 0, hdr.captureLength());
+    return buffer;
   }
 
   @Override
@@ -142,7 +191,9 @@ public class DefaultPcap implements Pcap {
     }
     DefaultPacketHeader header = (DefaultPacketHeader) packetHeader;
     DefaultPacketBuffer buffer = (DefaultPacketBuffer) packetBuffer;
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       int rc = NativeMappings.pcap_next_ex(pointer, header.reference, buffer.reference);
       nextExCheck(rc, header, buffer);
@@ -158,7 +209,9 @@ public class DefaultPcap implements Pcap {
       throw new IllegalArgumentException("handler: null (expected: handler != null)");
     }
     int rc;
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       rc =
           NativeMappings.pcap_dispatch(
@@ -166,13 +219,16 @@ public class DefaultPcap implements Pcap {
               count,
               new NativeMappings.pcap_handler() {
                 @Override
-                public void got_packet(Pointer user, DefaultPacketHeader header, Pointer packet) {
-                  header.read();
-                  handler.gotPacket(
-                      args,
-                      header,
+                public void got_packet(Pointer user, Pointer header, Pointer packet) {
+                  DefaultPacketHeader packetHeader = new DefaultPacketHeader(header);
+                  DefaultPacketBuffer packetBuffer =
                       new DefaultPacketBuffer(
-                          packet, PacketBuffer.ByteOrder.NATIVE, header.captureLength(), 0, header.captureLength()));
+                          packet,
+                          PacketBuffer.ByteOrder.NATIVE,
+                          packetHeader.captureLength(),
+                          0,
+                          packetHeader.captureLength());
+                  handler.gotPacket(args, packetHeader, packetBuffer);
                 }
               },
               Pointer.NULL);
@@ -185,9 +241,11 @@ public class DefaultPcap implements Pcap {
   @Override
   public Statistics stats() throws ErrorException {
     int rc;
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
-      rc = NativeMappings.pcap_stats(pointer, statistics);
+      rc = NativeMappings.pcap_stats(pointer, statistics.getPointer());
       statsCheck(rc);
     } finally {
       readLock.unlock();
@@ -197,7 +255,9 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public void breakLoop() {
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       NativeMappings.pcap_breakloop(pointer);
     } finally {
@@ -217,7 +277,9 @@ public class DefaultPcap implements Pcap {
               directBuffer.capacity(), directBuffer.capacity()));
     }
     DefaultPacketBuffer buffer = (DefaultPacketBuffer) directBuffer;
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       int rc =
           NativeMappings.pcap_sendpacket(pointer, buffer.buffer, (int) directBuffer.writerIndex());
@@ -233,7 +295,9 @@ public class DefaultPcap implements Pcap {
       throw new IllegalArgumentException("direction: null (expected: direction != null)");
     }
     int result = 0;
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       if (Direction.PCAP_D_IN == direction) {
         result = NativeMappings.pcap_setdirection(pointer, 1);
@@ -251,7 +315,9 @@ public class DefaultPcap implements Pcap {
   @Override
   public boolean isSwapped() throws NotActivatedException {
     int rc;
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       rc = NativeMappings.pcap_is_swapped(pointer);
     } finally {
@@ -268,7 +334,9 @@ public class DefaultPcap implements Pcap {
   @Override
   public int majorVersion() {
     int rc;
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       rc = NativeMappings.pcap_major_version(pointer);
     } finally {
@@ -280,7 +348,9 @@ public class DefaultPcap implements Pcap {
   @Override
   public int minorVersion() {
     int rc;
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       rc = NativeMappings.pcap_minor_version(pointer);
     } finally {
@@ -292,7 +362,9 @@ public class DefaultPcap implements Pcap {
   @Override
   public int snapshot() {
     int rc;
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       rc = NativeMappings.pcap_snapshot(pointer);
     } finally {
@@ -305,7 +377,9 @@ public class DefaultPcap implements Pcap {
   public boolean getNonBlock() throws ErrorException {
     int rc;
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       rc = NativeMappings.pcap_getnonblock(pointer, errbuf);
       getNonBlockCheck(rc);
@@ -319,7 +393,9 @@ public class DefaultPcap implements Pcap {
   public void setNonBlock(boolean blocking) throws ErrorException {
     int rc;
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       rc = NativeMappings.pcap_setnonblock(pointer, blocking ? 1 : 0, errbuf);
       setNonBlockCheck(rc);
@@ -330,7 +406,9 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public void close() {
-    readLock.lock();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       NativeMappings.pcap_close(pointer);
     } finally {

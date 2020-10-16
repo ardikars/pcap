@@ -123,15 +123,13 @@ class NativeMappings {
 
   static native void pcap_breakloop(Pointer p);
 
-  static native Pointer pcap_next(Pointer p, DefaultPacketHeader h);
-
   static native int pcap_next_ex(Pointer p, PointerByReference h, PointerByReference data);
 
   static native Pointer pcap_dump_open(Pointer p, String fname);
 
   static native Pointer pcap_dump_open_append(Pointer p, String fname);
 
-  static native void pcap_dump(Pointer user, DefaultPacketHeader header, Pointer packet);
+  static native void pcap_dump(Pointer user, Pointer header, Pointer packet);
 
   static native int pcap_dump_flush(Pointer p);
 
@@ -139,7 +137,7 @@ class NativeMappings {
 
   static native void pcap_dump_close(Pointer p);
 
-  static native int pcap_stats(Pointer p, DefaultStatistics ps);
+  static native int pcap_stats(Pointer p, Pointer ps);
 
   static native int pcap_setdirection(Pointer p, int pcap_direction);
 
@@ -178,7 +176,7 @@ class NativeMappings {
 
   interface pcap_handler extends Callback {
 
-    void got_packet(Pointer args, DefaultPacketHeader header, Pointer packet);
+    void got_packet(Pointer args, Pointer header, Pointer packet);
   }
 
   interface PlatformDependent extends Library {
