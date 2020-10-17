@@ -35,7 +35,7 @@ public class DefaultPcapDumperTest extends BaseTest {
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException, BreakException {
+          InterfaceNotSupportTimestampTypeException {
     Interface source = loopbackInterface(service);
     try (Pcap live = service.live(source, new DefaultLiveOptions())) {
       try (final Dumper dumper = live.dumpOpen(file.concat(UUID.randomUUID().toString()))) {
@@ -68,6 +68,8 @@ public class DefaultPcapDumperTest extends BaseTest {
               }
             },
             null);
+      } catch (BreakException | ErrorException e) {
+
       }
     }
   }
@@ -77,7 +79,7 @@ public class DefaultPcapDumperTest extends BaseTest {
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException, BreakException {
+          InterfaceNotSupportTimestampTypeException {
     Interface source = loopbackInterface(service);
     try (Pcap live = service.live(source, new DefaultLiveOptions())) {
       try (final Dumper dumper = live.dumpOpen(file.concat(UUID.randomUUID().toString()))) {
@@ -140,6 +142,8 @@ public class DefaultPcapDumperTest extends BaseTest {
               }
             },
             null);
+      } catch (BreakException | ErrorException e) {
+
       }
     }
   }
