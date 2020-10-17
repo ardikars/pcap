@@ -38,9 +38,10 @@ class DefaultPollEventService extends AbstractEventService implements Invocation
 
   static native int poll(Pointer fds, long nfds, int timeout);
 
-  static int normalizeTimeout(int timeout, DefaultTimestamp timestamp) {
+  static int normalizeTimeout(int timeout, Pointer timestamp) {
     if (timeout <= 0 && timestamp != null) {
-      timeout = (int) (timestamp.tv_usec.longValue() / 1000L);
+      timeout =
+          (int) (timestamp.getNativeLong(DefaultTimestamp.TV_USEC_OFFSET).longValue() / 1000L);
     }
     return timeout;
   }
@@ -65,7 +66,7 @@ class DefaultPollEventService extends AbstractEventService implements Invocation
   @Override
   public <T extends Pcap> T open(Pcap pcap, Class<T> target) {
     DefaultPcap defaultPcap = (DefaultPcap) pcap;
-    Pointer pfds = new Memory(8);
+    Pointer pfds = new Pointer(Native.malloc(8));
     pfds.setInt(
         FD_OFFSET,
         NativeMappings.PlatformDependent.INSTANCE.pcap_get_selectable_fd(defaultPcap.pointer));
@@ -106,6 +107,6 @@ class DefaultPollEventService extends AbstractEventService implements Invocation
           NativeLibrary.getInstance(NativeMappings.libName(Platform.isWindows())));
     }
 
-    static native DefaultTimestamp pcap_get_required_select_timeout(Pointer p);
+    static native Pointer pcap_get_required_select_timeout(Pointer p);
   }
 }

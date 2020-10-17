@@ -15,7 +15,7 @@ public class Application {
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException, BreakException {
+          InterfaceNotSupportTimestampTypeException {
     Service service = Service.Creator.create("PcapService");
     Interface devices = service.interfaces();
     for (Interface device : devices) {
@@ -35,7 +35,11 @@ public class Application {
       System.out.println("Source      : " + toStringMacAddress(dstBuf));
       System.out.println("Type        : " + packetBuffer.readShort());
     } catch (TimeoutException e) {
-      e.printStackTrace();
+      System.err.println(e);
+    } catch (BreakException e) {
+      System.err.println(e);
+    } catch (ErrorException e) {
+      System.err.println(e);
     }
   }
 

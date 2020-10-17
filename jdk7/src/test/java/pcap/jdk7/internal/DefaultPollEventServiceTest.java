@@ -1,12 +1,13 @@
 package pcap.jdk7.internal;
 
-import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 import pcap.spi.*;
 import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
@@ -14,7 +15,7 @@ import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 
-// @RunWith(JUnitPlatform.class)
+@RunWith(JUnitPlatform.class)
 public class DefaultPollEventServiceTest extends BaseTest {
 
   private Service service;
@@ -46,7 +47,8 @@ public class DefaultPollEventServiceTest extends BaseTest {
                 new PacketHandler<String>() {
                   @Override
                   public void gotPacket(String args, PacketHeader header, PacketBuffer buffer) {
-                    // ok
+                    System.out.println(header);
+                    System.out.println(buffer);
                   }
                 },
                 "");
@@ -57,6 +59,8 @@ public class DefaultPollEventServiceTest extends BaseTest {
           PacketBuffer buffer = myProxy.allocate(PacketBuffer.class);
           try {
             myProxy.nextEx(header, buffer);
+            System.out.println(header);
+            System.out.println(buffer);
           } catch (BreakException e) {
             //
           } catch (ErrorException e) {
@@ -64,7 +68,6 @@ public class DefaultPollEventServiceTest extends BaseTest {
           } catch (TimeoutException e) {
             //
           }
-          buffer = myProxy.next(header);
         }
       }
     }
@@ -72,7 +75,7 @@ public class DefaultPollEventServiceTest extends BaseTest {
 
   @Test
   void normalizeREvents() {
-    Pointer pfds = new Memory(8);
+    Pointer pfds = new Pointer(Native.malloc(8));
     pfds.setShort(6, (short) 1);
     Assertions.assertEquals(0, DefaultPollEventService.normalizeREvents(1, pfds));
     pfds.setShort(6, (short) 4);
@@ -87,9 +90,10 @@ public class DefaultPollEventServiceTest extends BaseTest {
     DefaultTimestamp timestamp = new DefaultTimestamp();
     timestamp.tv_usec.setValue(1000L);
     timestamp.write();
-    Assertions.assertEquals(1, DefaultPollEventService.normalizeTimeout(1, timestamp));
-    Assertions.assertEquals(1, DefaultPollEventService.normalizeTimeout(0, timestamp));
-    Assertions.assertEquals(1, DefaultPollEventService.normalizeTimeout(-1, timestamp));
+    Assertions.assertEquals(1, DefaultPollEventService.normalizeTimeout(1, timestamp.getPointer()));
+    Assertions.assertEquals(1, DefaultPollEventService.normalizeTimeout(0, timestamp.getPointer()));
+    Assertions.assertEquals(
+        1, DefaultPollEventService.normalizeTimeout(-1, timestamp.getPointer()));
   }
 
   @Test

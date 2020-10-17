@@ -41,7 +41,7 @@ jobs:
         run: |
           git clone https://github.com/the-tcpdump-group/libpcap.git
           cd libpcap/
-          ./configure --prefix=$(pwd)/lib
+          ./configure --prefix=$(pwd)
           make && make install
           cd ..
           sudo chown $(whoami):admin /dev/bpf*
@@ -52,7 +52,7 @@ jobs:
           sudo apt-get update && sudo apt-get -y install build-essential bison flex autoconf make
           git clone https://github.com/the-tcpdump-group/libpcap.git
           cd libpcap/
-          ./configure --prefix=$(pwd)/lib
+          ./configure --prefix=$(pwd)
           make && make install
           cd ..
           sudo find $JAVA_HOME -type f -name "libjli*.so*" -exec cp {} /usr/lib \;
@@ -74,7 +74,7 @@ jobs:
           ls $JAVA_HOME_JDK7
           ping 127.0.0.1 &
           PID=$!
-          echo -n "-Djna.library.path=$(pwd)/libpcap/lib " >> .mvn/maven.config
+          echo -n "-Djna.library.path=$(pwd)/libpcap/lib -Djna.debug_load=true" >> .mvn/maven.config
           ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Pformat -Psonar -Plegacy-support -Dsonar.login="${{ secrets.sonar_token }}"
           kill $PID
         env:
@@ -90,7 +90,7 @@ jobs:
           ls $JAVA_HOME_JDK7
           ping 127.0.0.1 &
           PID=$!
-          echo -n "-Djna.library.path=$(pwd)/libpcap/lib " >> .mvn/maven.config
+          echo -n "-Djna.library.path=$(pwd)/libpcap/lib -Djna.debug_load=true " >> .mvn/maven.config
           sudo -E bash -c './mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat -Plegacy-support'
           kill $PID
         env:
