@@ -204,7 +204,7 @@ public class DefaultPcap implements Pcap {
 
   @Override
   public <T> void dispatch(int count, final PacketHandler<T> handler, final T args)
-      throws BreakException, ErrorException {
+      throws BreakException, ErrorException, TimeoutException {
     if (handler == null) {
       throw new IllegalArgumentException("handler: null (expected: handler != null)");
     }
