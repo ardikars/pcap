@@ -2,7 +2,7 @@
 package pcap.spi;
 
 /**
- * A handle for writing packet to a capture file.
+ * A handle for writing packet to a {@code savefile}.
  *
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
@@ -10,7 +10,7 @@ package pcap.spi;
 public interface Dumper extends AutoCloseable {
 
   /**
-   * Write a packet to a capture file.
+   * Write a packet to a {@code savefile}.
    *
    * @param header packet header wrapper ({@link PacketHeader}).
    * @param buffer packet buffer wrapper ({@link PacketBuffer}).
@@ -19,22 +19,22 @@ public interface Dumper extends AutoCloseable {
   void dump(PacketHeader header, PacketBuffer buffer);
 
   /**
-   * Capture file position.
+   * {@code savefile} position.
    *
-   * @return returns capture file position.
+   * @return returns {@code savefile} position.
    * @since 1.0.0
    */
   long position();
 
   /**
-   * Flushes the output buffer to the capture file.
+   * Flushes the output buffer to the {@code savefile}.
    *
    * @since 1.0.0
    */
   void flush();
 
   /**
-   * Closes a capture file.
+   * Closes a {@code savefile}.
    *
    * @since 1.0.0
    */

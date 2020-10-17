@@ -2,7 +2,7 @@
 package pcap.spi;
 
 /**
- * As returned by the pcap_stats().
+ * As returned by the {@link Pcap#stats()}.
  *
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0

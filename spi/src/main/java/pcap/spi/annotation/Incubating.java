@@ -14,5 +14,5 @@ import java.lang.annotation.RetentionPolicy;
  * @since 1.0.0
  */
 @Documented
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.SOURCE)
 public @interface Incubating {}

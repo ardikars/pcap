@@ -26,7 +26,7 @@ public interface PacketHeader {
   Timestamp timestamp();
 
   /**
-   * Length of portion present.
+   * Length of portion present (must be less then or equal to {@link PacketHeader#length()}).
    *
    * @return returns length of portion present.
    * @since 1.0.0
