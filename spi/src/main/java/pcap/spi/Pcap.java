@@ -8,7 +8,7 @@ import pcap.spi.exception.error.BreakException;
 import pcap.spi.exception.error.NotActivatedException;
 
 /**
- * A handle for {@code pcap} api.
+ * A handle for {@code pcap} instance.
  *
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
@@ -16,9 +16,10 @@ import pcap.spi.exception.error.NotActivatedException;
 public interface Pcap extends AutoCloseable {
 
   /**
-   * Open {@link Dumper} handler.
+   * Open {@link Dumper} handler for writing the packets to {@code savefile} (Create/Override
+   * existing file).
    *
-   * @param file location of capture file will saved.
+   * @param file location of {@code savefile} will saved.
    * @return returns {@code Pcap} {@link Dumper} handle.
    * @throws ErrorException generic exception.
    * @since 1.0.0
@@ -60,14 +61,30 @@ public interface Pcap extends AutoCloseable {
    */
   <T> void loop(int count, PacketHandler<T> handler, T args) throws BreakException, ErrorException;
 
+  /**
+   * Read the next packet (by calling {@link Pcap#dispatch(int, PacketHandler, Object)}) with a cnt
+   * of 1) and returns a {@link PacketBuffer}. The {@link PacketBuffer} and {@link PacketHeader} is
+   * not freed by the caller, and not not guaranteed to be valid after the next call to {@link
+   * Pcap#nextEx(PacketHeader, PacketBuffer)}, {@link Pcap#next(PacketHeader)}, {@link
+   * Pcap#loop(int, PacketHandler, Object)}, or {@link Pcap#dispatch(int, PacketHandler, Object)}.
+   * If the code needs it to remain valid, it must make a copy of it. The {@link PacketHeader}
+   * pointed to by {@code header} is filled in with the appropriate values for the packet.
+   *
+   * @param header appropriate values for the packet.
+   * @return returns {@link PacketBuffer} appropriate with for the {@link PacketHeader}.
+   */
   PacketBuffer next(PacketHeader header);
 
   /**
-   * Reads the next packet and returns a success/failure indication.
+   * Reads the next packet and returns a success/failure indication. The {@link PacketBuffer} and
+   * {@link PacketHeader} is not freed by the caller, and not not guaranteed to be valid after the
+   * next call to {@link Pcap#nextEx(PacketHeader, PacketBuffer)}, {@link Pcap#next(PacketHeader)},
+   * {@link Pcap#loop(int, PacketHandler, Object)}, or {@link Pcap#dispatch(int, PacketHandler,
+   * Object)}. If the code needs it to remain valid, it must make a copy of it.
    *
    * @param packetHeader packet header.
    * @param packetBuffer packet buffer.
-   * @throws BreakException there are no more packets to read from `savefile`.
+   * @throws BreakException there are no more packets to read from {@code savefile}.
    * @throws TimeoutException if packets are being read from a `live capture` and the packet buffer
    *     timeout expired.
    * @throws ErrorException generic exception.
@@ -79,13 +96,13 @@ public interface Pcap extends AutoCloseable {
   /**
    * Processes packets from a live capture or {@code PcapLive} until cnt packets are processed, the
    * end of the current bufferful of packets is reached when doing a live capture, the end of the
-   * {@code 'savefile'} is reached when reading from a {@code 'savefile'}, {@code Pcap#breakLoop()}
-   * is called, or an error occurs. Thus, when doing a live capture, cnt is the maximum number of
+   * {@code savefile} is reached when reading from a {@code savefile}, {@code Pcap#breakLoop()} is
+   * called, or an error occurs. Thus, when doing a live capture, cnt is the maximum number of
    * packets to process before returning, but is not a minimum number; when reading a live capture,
    * only one bufferful of packets is read at a time, so fewer than cnt packets may be processed. A
    * value of -1 or 0 for cnt causes all the packets received in one buffer to be processed when
    * reading a live capture, and causes all the packets in the file to be processed when reading a
-   * {@code 'savefile'}.
+   * {@code savefile}.
    *
    * <p>(In older versions of libpcap, the behavior when cnt was 0 was undefined; different
    * platforms and devices behaved differently, so code that must work with older versions of
@@ -138,6 +155,7 @@ public interface Pcap extends AutoCloseable {
    * @param directBuffer buffer started from {@link PacketBuffer#readerIndex()} to {@link
    *     PacketBuffer#writerIndex()}.
    * @throws ErrorException generic error.
+   * @since 1.0.0
    */
   void sendPacket(PacketBuffer directBuffer) throws ErrorException;
 
@@ -159,16 +177,19 @@ public interface Pcap extends AutoCloseable {
    *
    * @param direction is one of the constants {@link Direction}.
    * @throws ErrorException generic exception.
+   * @since 1.0.0
    */
   void setDirection(Direction direction) throws ErrorException;
 
   /**
-   * Find out out whether a 'savefile' has the native byte order.
+   * Find out out whether a {@code savefile} has the native byte order.
    *
-   * @return returns {@code true} if a handle is on offline mode ('savefile') and using a different
-   *     byte order with current system. For live handle, it's always returns {@code false}.
+   * @return returns {@code true} if a handle is on offline mode ({@code savefile}) and using a
+   *     different byte order with current system. For live handle, it's always returns {@code
+   *     false}.
    * @throws NotActivatedException if called this function on a capture handle that has been created
    *     but not activated.
+   * @since 1.0.0
    */
   boolean isSwapped() throws NotActivatedException;
 
@@ -178,22 +199,25 @@ public interface Pcap extends AutoCloseable {
    * @return returns {@link Timestamp.Precision#MICRO} or {@link Timestamp.Precision#NANO}, which
    *     indicates that pcap captures contains time stamps in microseconds or nanoseconds
    *     respectively.
+   * @since 1.0.0
    */
   Timestamp.Precision getTimestampPrecision();
 
   /**
-   * Get major version number of a 'savefile'. If {@link Pcap} handle is in live mode, this method
-   * are not meaningful.
+   * Get major version number of a {@code savefile}. If {@link Pcap} handle is in live mode, this
+   * method are not meaningful.
    *
-   * @return returns major version of a 'savefile.
+   * @return returns major version of a {@code savefile}.
+   * @since 1.0.0
    */
   int majorVersion();
 
   /**
-   * Get minor version number of a 'savefile'. If {@link Pcap} handle is in live mode, this method
-   * are not meaningful.
+   * Get minor version number of a {@code savefile}. If {@link Pcap} handle is in live mode, this
+   * method are not meaningful.
    *
-   * @return returns minor version of a 'savefile'.
+   * @return returns minor version of a {@code savefile}.
+   * @since 1.0.0
    */
   int minorVersion();
 
@@ -201,22 +225,24 @@ public interface Pcap extends AutoCloseable {
    * Get snapshot length.
    *
    * @return returns snapshot length.
+   * @since 1.0.0
    */
   int snapshot();
 
   /**
-   * Returns blocking mode. Always returns false if a {@link Pcap} handle in offline handle
-   * (savefile).
+   * Returns blocking mode. Always returns false if a {@link Pcap} handle in offline handle ({@code
+   * savefile}).
    *
    * @return returns {@code true} if non blocking, {@code false otherwise}.
    * @throws ErrorException error occurred.
+   * @since 1.0.0
    */
   boolean getNonBlock() throws ErrorException;
 
   /**
    * Puts a this capture handle into `non-blocking` mode, or takes it out of `non-blocking` mode,
-   * depending on whether the nonblock argument is `true` or `false`. It has no effect on
-   * `savefiles`. In `non-blocking` mode, an attempt to read from the capture descriptor with {@link
+   * depending on whether the nonblock argument is `true` or `false`. It has no effect on {@code
+   * savefiles}. In `non-blocking` mode, an attempt to read from the capture descriptor with {@link
    * Pcap#dispatch(int, PacketHandler, Object)} will, if no packets are currently available to be
    * read, return void; immediately rather than blocking waiting for packets to arrive. {@link
    * Pcap#loop(int, PacketHandler, Object)} will not work in `non-blocking` mode.
@@ -225,6 +251,7 @@ public interface Pcap extends AutoCloseable {
    *
    * @param blocking `true` for enable non blocking mode, `false` otherwise.
    * @throws ErrorException throwing some error when calling this method.
+   * @since 1.0.0
    */
   void setNonBlock(boolean blocking) throws ErrorException;
 
@@ -244,13 +271,33 @@ public interface Pcap extends AutoCloseable {
    * @param cls a class, ex {@link PacketHeader} and {@link PacketBuffer}.
    * @param <T> pointer type.
    * @return returns {@code <T>} instance.
+   * @since 1.0.0
    */
   <T> T allocate(Class<T> cls) throws IllegalArgumentException;
 
-  /** Used to specify a direction that packets will be captured. */
+  /**
+   * Used to specify a direction that packets will be captured.
+   *
+   * @since 1.0.0
+   */
   enum Direction {
+    /**
+     * Incoming and Outgoing packet's.
+     *
+     * @since 1.0.0
+     */
     PCAP_D_INOUT,
+    /**
+     * Incoming packet's.
+     *
+     * @since 1.0.0
+     */
     PCAP_D_IN,
+    /**
+     * Outgoing packet's.
+     *
+     * @since 1.0.0
+     */
     PCAP_D_OUT;
 
     private static final Direction[] VALUES = values();
@@ -260,6 +307,7 @@ public interface Pcap extends AutoCloseable {
      *
      * @param value string value.
      * @return returns {@link Direction}.
+     * @since 1.0.0
      */
     public static Direction fromString(String value) {
       for (Direction direction : VALUES) {

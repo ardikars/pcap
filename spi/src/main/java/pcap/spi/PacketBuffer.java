@@ -11,11 +11,16 @@ import pcap.spi.annotation.Incubating;
  * <p>
  *
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ * @since 1.0.0
  */
-@Incubating
 public interface PacketBuffer extends AutoCloseable {
 
-  /** @return returns the number of bytes (octets) this buffer can contain. */
+  /**
+   * Get buffer capacity.
+   *
+   * @return returns the number of bytes (octets) this buffer can contain.
+   * @since 1.0.0
+   */
   long capacity();
 
   /**
@@ -23,10 +28,16 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @param newCapacity new capacity.
    * @return returns new {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer capacity(long newCapacity);
 
-  /** @return returns the {@code readerIndex} of this buffer. */
+  /**
+   * Get reader buffer index.
+   *
+   * @return returns the {@code readerIndex} of this buffer.
+   * @since 1.0.0
+   */
   long readerIndex();
 
   /**
@@ -36,10 +47,16 @@ public interface PacketBuffer extends AutoCloseable {
    *     or greater than {@code this.writerIndex}
    * @param readerIndex reader index.
    * @return returns this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer readerIndex(long readerIndex);
 
-  /** @return returns the {@code writerIndex} of this buffer. */
+  /**
+   * Get writer buffer index.
+   *
+   * @return returns the {@code writerIndex} of this buffer.
+   * @since 1.0.0
+   */
   long writerIndex();
 
   /**
@@ -49,6 +66,7 @@ public interface PacketBuffer extends AutoCloseable {
    *     this.readerIndex} or greater than {@code this.capacity}
    * @param writerIndex writer index.
    * @return returns this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer writerIndex(long writerIndex);
 
@@ -58,42 +76,53 @@ public interface PacketBuffer extends AutoCloseable {
    * @param readerIndex reader index.
    * @param writerIndex writer index.
    * @return returns this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setIndex(long readerIndex, long writerIndex);
 
   /**
+   * Get readable bytes from a buffer.
+   *
    * @return returns the number of readable bytes which is equal to {@code (this.writerIndex -
    *     this.readerIndex)}.
+   * @since 1.0.0
    */
   long readableBytes();
 
   /**
+   * Get readable bytes from a buffer.
+   *
    * @return returns the number of writable bytes which is equal to {@code (this.capacity -
    *     this.writerIndex)}.
+   * @since 1.0.0
    */
   long writableBytes();
 
   /**
    * @return returns {@code true} if and only if {@code (this.writerIndex - this.readerIndex)} is
    *     greater than {@code 0}.
+   * @since 1.0.0
    */
   boolean isReadable();
 
   /**
    * @return returns {@code true} if and only if this buffer contains equal to or more than the
    *     specified number of elements.
+   * @since 1.0.0
    */
   boolean isReadable(long numBytes);
 
   /**
    * @return returns {@code true} if and only if {@code (this.capacity - this.writerIndex)} is
    *     greater than {@code 0}.
+   * @since 1.0.0
    */
   boolean isWritable();
 
   /**
    * @return returns {@code true} if and only if this buffer has enough room to allow writing the
    *     specified number of elements.
+   * @since 1.0.0
    */
   boolean isWritable(long numBytes);
 
@@ -102,6 +131,7 @@ public interface PacketBuffer extends AutoCloseable {
    * is identical to {@link #setIndex(long, long) setIndex(0, 0)}.
    *
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer clear();
 
@@ -111,6 +141,7 @@ public interface PacketBuffer extends AutoCloseable {
    * initial value of the marked {@code readerIndex} is {@code 0}.
    *
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer markReaderIndex();
 
@@ -120,6 +151,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the current {@code writerIndex} is less than the marked
    *     {@code readerIndex}
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer resetReaderIndex();
 
@@ -129,6 +161,7 @@ public interface PacketBuffer extends AutoCloseable {
    * initial value of the marked {@code writerIndex} is {@code 0}.
    *
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer markWriterIndex();
 
@@ -138,6 +171,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the current {@code readerIndex} is greater than the marked
    *     {@code writerIndex}
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer resetWriterIndex();
 
@@ -150,6 +184,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if {@link #writerIndex()} + {@code minWritableBytes} &gt;
    *     {@link #capacity()}
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer ensureWritable(long minWritableBytes);
 
@@ -160,6 +195,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 1} is greater than {@code this.capacity}
    * @return boolean value.
+   * @since 1.0.0
    */
   boolean getBoolean(long index);
 
@@ -170,6 +206,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 1} is greater than {@code this.capacity}
    * @return byte value.
+   * @since 1.0.0
    */
   byte getByte(long index);
 
@@ -180,6 +217,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 1} is greater than {@code this.capacity}
    * @return unsigned byte value stored in {@code short}.
+   * @since 1.0.0
    */
   short getUnsignedByte(long index);
 
@@ -190,6 +228,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 2} is greater than {@code this.capacity}
    * @return short value.
+   * @since 1.0.0
    */
   short getShort(long index);
 
@@ -201,6 +240,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 2} is greater than {@code this.capacity}
    * @return little endian short value.
+   * @since 1.0.0
    */
   short getShortRE(long index);
 
@@ -211,6 +251,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 2} is greater than {@code this.capacity}
    * @return unsigned short value stored in {@code integer}.
+   * @since 1.0.0
    */
   int getUnsignedShort(long index);
 
@@ -222,6 +263,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 2} is greater than {@code this.capacity}
    * @return unsigned little endian short value stored in {@code integer}.
+   * @since 1.0.0
    */
   int getUnsignedShortRE(long index);
 
@@ -232,6 +274,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 4} is greater than {@code this.capacity}
    * @return integer value.
+   * @since 1.0.0
    */
   int getInt(long index);
 
@@ -243,6 +286,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 4} is greater than {@code this.capacity}
    * @return little endian integer value.
+   * @since 1.0.0
    */
   int getIntRE(long index);
 
@@ -253,6 +297,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 4} is greater than {@code this.capacity}
    * @return unsigned integer value stored in {@code long}.
+   * @since 1.0.0
    */
   long getUnsignedInt(long index);
 
@@ -264,6 +309,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 4} is greater than {@code this.capacity}
    * @return unsigned little endian integer value stored in {@code long}.
+   * @since 1.0.0
    */
   long getUnsignedIntRE(long index);
 
@@ -274,6 +320,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 8} is greater than {@code this.capacity}
    * @return long value.
+   * @since 1.0.0
    */
   long getLong(long index);
 
@@ -285,6 +332,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 8} is greater than {@code this.capacity}
    * @return little endian long value.
+   * @since 1.0.0
    */
   long getLongRE(long index);
 
@@ -295,6 +343,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 4} is greater than {@code this.capacity}
    * @return float value.
+   * @since 1.0.0
    */
   float getFloat(long index);
 
@@ -306,6 +355,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 4} is greater than {@code this.capacity}
    * @return little endian float value.
+   * @since 1.0.0
    */
   float getFloatRE(long index);
 
@@ -316,6 +366,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 8} is greater than {@code this.capacity}
    * @return double value.
+   * @since 1.0.0
    */
   double getDouble(long index);
 
@@ -327,6 +378,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 8} is greater than {@code this.capacity}
    * @return little endian double value.
+   * @since 1.0.0
    */
   double getDoubleRE(long index);
 
@@ -343,6 +395,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param dst destination.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer getBytes(long index, PacketBuffer dst);
 
@@ -354,14 +407,14 @@ public interface PacketBuffer extends AutoCloseable {
    * not. This method does not modify {@code readerIndex} or {@code writerIndex} of the source
    * buffer (i.e. {@code this}).
    *
+   * @param index index.
+   * @param dst destination.
    * @param length the number of bytes to transfer
+   * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0}, if
    *     {@code index + length} is greater than {@code this.capacity}, or if {@code length} is
    *     greater than {@code dst.writableBytes}
-   * @param index index.
-   * @param dst destination.
-   * @param length length.
-   * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer getBytes(long index, PacketBuffer dst, long length);
 
@@ -370,17 +423,16 @@ public interface PacketBuffer extends AutoCloseable {
    * {@code index}. This method does not modify {@code readerIndex} or {@code writerIndex} of both
    * the source (i.e. {@code this}) and the destination.
    *
+   * @param index index.
+   * @param dst destination.
    * @param dstIndex the first index of the destination
    * @param length the number of bytes to transfer
+   * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0}, if the
    *     specified {@code dstIndex} is less than {@code 0}, if {@code index + length} is greater
    *     than {@code this.capacity}, or if {@code dstIndex + length} is greater than {@code
    *     dst.capacity}
-   * @param index index.
-   * @param dst destination.
-   * @param dstIndex destination index.
-   * @param length length.
-   * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer getBytes(long index, PacketBuffer dst, long dstIndex, long length);
 
@@ -394,6 +446,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param dst destination.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer getBytes(long index, byte[] dst);
 
@@ -402,17 +455,15 @@ public interface PacketBuffer extends AutoCloseable {
    * {@code index}. This method does not modify {@code readerIndex} or {@code writerIndex} of this
    * buffer.
    *
+   * @param index index.
    * @param dstIndex the first index of the destination
    * @param length the number of bytes to transfer
+   * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0}, if the
    *     specified {@code dstIndex} is less than {@code 0}, if {@code index + length} is greater
    *     than {@code this.capacity}, or if {@code dstIndex + length} is greater than {@code
    *     dst.length}
-   * @param index index.
-   * @param dst destination.
-   * @param dstIndex destinationIndex.
-   * @param length length.
-   * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer getBytes(long index, byte[] dst, long dstIndex, long length);
 
@@ -424,6 +475,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param charset that should be used
    * @return the sequence
    * @return a string from buffer.
+   * @since 1.0.0
    */
   CharSequence getCharSequence(long index, long length, Charset charset);
 
@@ -436,6 +488,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param value value.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setBoolean(long index, boolean value);
 
@@ -449,6 +502,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param value value.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setByte(long index, int value);
 
@@ -462,6 +516,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param value value.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setShort(long index, int value);
 
@@ -475,6 +530,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param value value.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setShortRE(long index, int value);
 
@@ -487,6 +543,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param value value.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setInt(long index, int value);
 
@@ -500,6 +557,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param value value.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setIntRE(long index, int value);
 
@@ -512,6 +570,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param value value.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setLong(long index, long value);
 
@@ -525,6 +584,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param value value.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setLongRE(long index, long value);
 
@@ -537,6 +597,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param value value.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setFloat(long index, float value);
 
@@ -550,6 +611,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param value value.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setFloatRE(long index, float value);
 
@@ -562,6 +624,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param value value.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setDouble(long index, double value);
 
@@ -575,6 +638,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param value value.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setDoubleRE(long index, double value);
 
@@ -591,6 +655,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param src source.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setBytes(long index, PacketBuffer src);
 
@@ -602,14 +667,14 @@ public interface PacketBuffer extends AutoCloseable {
    * not. This method does not modify {@code readerIndex} or {@code writerIndex} of the source
    * buffer (i.e. {@code this}).
    *
+   * @param index index.
+   * @param src source.
    * @param length the number of bytes to transfer
+   * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0}, if
    *     {@code index + length} is greater than {@code this.capacity}, or if {@code length} is
    *     greater than {@code src.readableBytes}
-   * @param index index.
-   * @param src source.
-   * @param length length.
-   * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setBytes(long index, PacketBuffer src, long length);
 
@@ -618,17 +683,16 @@ public interface PacketBuffer extends AutoCloseable {
    * {@code index}. This method does not modify {@code readerIndex} or {@code writerIndex} of both
    * the source (i.e. {@code this}) and the destination.
    *
+   * @param index index.
+   * @param src source.
    * @param srcIndex the first index of the source
    * @param length the number of bytes to transfer
+   * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0}, if the
    *     specified {@code srcIndex} is less than {@code 0}, if {@code index + length} is greater
    *     than {@code this.capacity}, or if {@code srcIndex + length} is greater than {@code
    *     src.capacity}
-   * @param index index.
-   * @param src source.
-   * @param srcIndex source index.
-   * @param length length.
-   * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setBytes(long index, PacketBuffer src, long srcIndex, long length);
 
@@ -642,6 +706,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param src source.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setBytes(long index, byte[] src);
 
@@ -659,6 +724,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param srcIndex source index.
    * @param length length.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setBytes(long index, byte[] src, long srcIndex, long length);
 
@@ -672,6 +738,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param sequence to write.
    * @param charset that should be used.
    * @return this {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer setCharSequence(long index, CharSequence sequence, Charset charset);
 
@@ -681,6 +748,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 1}
    * @return boolean value.
+   * @since 1.0.0
    */
   boolean readBoolean();
 
@@ -690,6 +758,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 1}
    * @return byte value.
+   * @since 1.0.0
    */
   byte readByte();
 
@@ -699,6 +768,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 1}
    * @return unsigned byte stored in {@code short}.
+   * @since 1.0.0
    */
   short readUnsignedByte();
 
@@ -708,6 +778,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 2}
    * @return short value.
+   * @since 1.0.0
    */
   short readShort();
 
@@ -717,6 +788,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 2}
    * @return little endian short value.
+   * @since 1.0.0
    */
   short readShortRE();
 
@@ -726,6 +798,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 2}
    * @return unsigned short value stored in {@code integer}.
+   * @since 1.0.0
    */
   int readUnsignedShort();
 
@@ -735,6 +808,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 2}
    * @return unsigned little endian short value stored in {@code integer}.
+   * @since 1.0.0
    */
   int readUnsignedShortRE();
 
@@ -744,6 +818,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 4}
    * @return integer value.
+   * @since 1.0.0
    */
   int readInt();
 
@@ -753,6 +828,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 4}
    * @return little endian integer value.
+   * @since 1.0.0
    */
   int readIntRE();
 
@@ -762,6 +838,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 4}
    * @return unsigned integer value.
+   * @since 1.0.0
    */
   long readUnsignedInt();
 
@@ -771,6 +848,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 4}
    * @return unsigned little endian integer value.
+   * @since 1.0.0
    */
   long readUnsignedIntRE();
 
@@ -780,6 +858,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 8}
    * @return long value.
+   * @since 1.0.0
    */
   long readLong();
 
@@ -789,6 +868,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 8}
    * @return little endian long value.
+   * @since 1.0.0
    */
   long readLongRE();
 
@@ -798,6 +878,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 4}
    * @return float value.
+   * @since 1.0.0
    */
   float readFloat();
 
@@ -807,6 +888,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 4}
    * @return little endian float value.
+   * @since 1.0.0
    */
   float readFloatRE();
 
@@ -816,6 +898,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 8}
    * @return double value.
+   * @since 1.0.0
    */
   double readDouble();
 
@@ -825,6 +908,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 8}
    * @return little endian double value.
+   * @since 1.0.0
    */
   double readDoubleRE();
 
@@ -839,6 +923,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code dst.writableBytes} is greater than {@code
    *     this.readableBytes}
+   * @since 1.0.0
    */
   PacketBuffer readBytes(PacketBuffer dst);
 
@@ -852,6 +937,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @throws IndexOutOfBoundsException if {@code length} is greater than {@code this.readableBytes}
    *     or if {@code length} is greater than {@code dst.writableBytes}
+   * @since 1.0.0
    */
   PacketBuffer readBytes(PacketBuffer dst, long length);
 
@@ -867,6 +953,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code dstIndex} is less than {@code 0}, if
    *     {@code length} is greater than {@code this.readableBytes}, or if {@code dstIndex + length}
    *     is greater than {@code dst.capacity}
+   * @since 1.0.0
    */
   PacketBuffer readBytes(PacketBuffer dst, long dstIndex, long length);
 
@@ -879,6 +966,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code dst.length} is greater than {@code
    *     this.readableBytes}
+   * @since 1.0.0
    */
   PacketBuffer readBytes(byte[] dst);
 
@@ -894,6 +982,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code dstIndex} is less than {@code 0}, if
    *     {@code length} is greater than {@code this.readableBytes}, or if {@code dstIndex + length}
    *     is greater than {@code dst.length}
+   * @since 1.0.0
    */
   PacketBuffer readBytes(byte[] dst, long dstIndex, long length);
 
@@ -902,6 +991,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code length} is greater than {@code this.readableBytes}
+   * @since 1.0.0
    */
   PacketBuffer skipBytes(long length);
 
@@ -913,6 +1003,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param charset that should be used
    * @return the char sequence.
    * @throws IndexOutOfBoundsException if {@code length} is greater than {@code this.readableBytes}
+   * @since 1.0.0
    */
   CharSequence readCharSequence(long length, Charset charset);
 
@@ -922,6 +1013,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 1}
+   * @since 1.0.0
    */
   PacketBuffer writeBoolean(boolean value);
 
@@ -932,6 +1024,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 1}
+   * @since 1.0.0
    */
   PacketBuffer writeByte(int value);
 
@@ -942,6 +1035,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 2}
+   * @since 1.0.0
    */
   PacketBuffer writeShort(int value);
 
@@ -952,6 +1046,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 2}
+   * @since 1.0.0
    */
   PacketBuffer writeShortRE(int value);
 
@@ -961,6 +1056,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 4}
+   * @since 1.0.0
    */
   PacketBuffer writeInt(int value);
 
@@ -970,6 +1066,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 4}
+   * @since 1.0.0
    */
   PacketBuffer writeIntRE(int value);
 
@@ -979,6 +1076,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 8}
+   * @since 1.0.0
    */
   PacketBuffer writeLong(long value);
 
@@ -988,6 +1086,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 8}
+   * @since 1.0.0
    */
   PacketBuffer writeLongRE(long value);
 
@@ -997,6 +1096,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 4}
+   * @since 1.0.0
    */
   PacketBuffer writeFloat(float value);
 
@@ -1006,6 +1106,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 4}
+   * @since 1.0.0
    */
   PacketBuffer writeFloatRE(float value);
 
@@ -1015,6 +1116,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 8}
+   * @since 1.0.0
    */
   PacketBuffer writeDouble(double value);
 
@@ -1024,6 +1126,7 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 8}
+   * @since 1.0.0
    */
   PacketBuffer writeDoubleRE(double value);
 
@@ -1038,6 +1141,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code src.readableBytes} is greater than {@code
    *     this.writableBytes}
+   * @since 1.0.0
    */
   PacketBuffer writeBytes(PacketBuffer src);
 
@@ -1054,6 +1158,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code length} is greater than {@code this.writableBytes}
    *     or if {@code length} is greater then {@code src.readableBytes}
+   * @since 1.0.0
    */
   PacketBuffer writeBytes(PacketBuffer src, long length);
 
@@ -1069,6 +1174,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code srcIndex} is less than {@code 0}, if
    *     {@code srcIndex + length} is greater than {@code src.capacity}, or if {@code length} is
    *     greater than {@code this.writableBytes}
+   * @since 1.0.0
    */
   PacketBuffer writeBytes(PacketBuffer src, long srcIndex, long length);
 
@@ -1081,6 +1187,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code src.length} is greater than {@code
    *     this.writableBytes}
+   * @since 1.0.0
    */
   PacketBuffer writeBytes(byte[] src);
 
@@ -1096,6 +1203,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @throws IndexOutOfBoundsException if the specified {@code srcIndex} is less than {@code 0}, if
    *     {@code srcIndex + length} is greater than {@code src.length}, or if {@code length} is
    *     greater than {@code this.writableBytes}
+   * @since 1.0.0
    */
   PacketBuffer writeBytes(byte[] src, long srcIndex, long length);
 
@@ -1108,6 +1216,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @return the written number of bytes.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is not large enough to write
    *     the whole sequence
+   * @since 1.0.0
    */
   PacketBuffer writeCharSequence(CharSequence sequence, Charset charset);
 
@@ -1118,6 +1227,7 @@ public interface PacketBuffer extends AutoCloseable {
    * {@code writerIndex} of this buffer.
    *
    * @return copied {@link PacketBuffer} buffer's.
+   * @since 1.0.0
    */
   PacketBuffer copy();
 
@@ -1129,6 +1239,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param length length.
    * @return copied {@link PacketBuffer} buffer's.
+   * @since 1.0.0
    */
   PacketBuffer copy(long index, long length);
 
@@ -1139,6 +1250,7 @@ public interface PacketBuffer extends AutoCloseable {
    * modify {@code readerIndex} or {@code writerIndex} of this buffer.
    *
    * @return returns sliced {@link PacketBuffer} buffer's.
+   * @since 1.0.0
    */
   PacketBuffer slice();
 
@@ -1150,6 +1262,7 @@ public interface PacketBuffer extends AutoCloseable {
    * @param index index.
    * @param length length.
    * @return returns sliced {@link PacketBuffer} buffer's.
+   * @since 1.0.0
    */
   PacketBuffer slice(long index, long length);
 
@@ -1158,6 +1271,7 @@ public interface PacketBuffer extends AutoCloseable {
    * this buffer affects each other's content while they maintain separate indexes and marks
    *
    * @return returns duplicated {@link PacketBuffer}.
+   * @since 1.0.0
    */
   PacketBuffer duplicate();
 
@@ -1165,6 +1279,7 @@ public interface PacketBuffer extends AutoCloseable {
    * Retrieves this buffer's byte order.
    *
    * @return returns {@link ByteOrder#BIG_ENDIAN} or {@link ByteOrder#LITTLE_ENDIAN}.
+   * @since 1.0.0
    */
   ByteOrder byteOrder();
 
@@ -1173,22 +1288,50 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @param byteOrder byte order.
    * @return returns this buffer's with new byte order.
+   * @since 1.0.0
    */
   PacketBuffer byteOrder(ByteOrder byteOrder);
 
-  /** Release this {@link PacketBuffer} buffer */
+  /**
+   * Release this {@link PacketBuffer} buffer
+   *
+   * @since 1.0.0
+   */
   @Incubating
   boolean release();
 
-  /** Byte order. */
+  /**
+   * Byte order.
+   *
+   * @since 1.0.0
+   */
   @Incubating
   enum ByteOrder {
+    /**
+     * Big endianess.
+     *
+     * @since 1.0.0
+     */
     BIG_ENDIAN,
+    /**
+     * Little endianess.
+     *
+     * @since 1.0.0
+     */
     LITTLE_ENDIAN;
+    /**
+     * Get native byte order.
+     *
+     * @since 1.0.0
+     */
     public static ByteOrder NATIVE = ByteOrder.valueOf(java.nio.ByteOrder.nativeOrder().toString());
   }
 
-  /** Indicate the buffer is sliced. */
+  /**
+   * Indicate the buffer is sliced.
+   *
+   * @since 1.0.0
+   */
   @Incubating
   interface Sliced {
 
@@ -1196,14 +1339,26 @@ public interface PacketBuffer extends AutoCloseable {
      * Unslice buffer.
      *
      * @return returns unsliced {@link PacketBuffer} buffer.
+     * @since 1.0.0
      */
     @Incubating
     PacketBuffer unSlice();
   }
 
+  /**
+   * Charset.
+   *
+   * @since 1.0.0
+   */
   @Incubating
   interface Charset {
 
+    /**
+     * Get charset name.
+     *
+     * @since 1.0.0
+     * @return returns charset name.
+     */
     @Incubating
     String name();
   }
