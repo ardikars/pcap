@@ -7,6 +7,7 @@ import java.lang.reflect.Proxy;
 import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
+import pcap.spi.exception.error.BreakException;
 
 abstract class AbstractEventService implements EventService {
 
@@ -30,7 +31,8 @@ abstract class AbstractEventService implements EventService {
     return (T) Proxy.newProxyInstance(target.getClassLoader(), new Class[] {target}, handler);
   }
 
-  protected Object invoke(Method method, Object... args) throws ErrorException {
+  protected Object invoke(Method method, Object... args)
+      throws BreakException, ErrorException, TimeoutException {
     try {
       if (method.getName().equals("close")) {
         close();
@@ -44,7 +46,7 @@ abstract class AbstractEventService implements EventService {
   }
 
   protected Object invokeOnReady(long rc, long success, long timeout, Method method, Object... args)
-      throws ErrorException, TimeoutException {
+      throws BreakException, ErrorException, TimeoutException {
     if (rc != success) {
       if (rc == timeout) {
         throw new TimeoutException("Read packet timeout.");
