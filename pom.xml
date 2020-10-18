@@ -53,16 +53,14 @@
         <java.version>11</java.version>
         <java.jdk7.version>1.7</java.jdk7.version>
         <jdk.version>${java.version}</jdk.version>
-        <slf4j.version>1.7.30</slf4j.version>
-        <log4j2.version>2.13.3</log4j2.version>
-        <jmh.version>1.25.2</jmh.version>
 
+        <jna.version>5.6.0</jna.version>
+        <jmh.version>1.26</jmh.version>
+
+        <mockito.version>3.5.13</mockito.version>
         <junit.jupiter.api.version>5.6.2</junit.jupiter.api.version>
         <junit.jupiter.engine.version>5.6.1</junit.jupiter.engine.version>
         <junit.platform.runner.version>1.6.2</junit.platform.runner.version>
-        <mockito.version>3.5.10</mockito.version>
-        <mockito.inline.version>3.5.10</mockito.inline.version>
-        <mockito.junit.jupiter.version>3.5.10</mockito.junit.jupiter.version>
 
         <fmt.maven.plugin.version>2.9</fmt.maven.plugin.version>
         <jacoco.maven.plugin.version>0.8.5</jacoco.maven.plugin.version>
@@ -93,19 +91,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j2.version}</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- Test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -186,7 +171,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-junit-jupiter</artifactId>
-                <version>${mockito.junit.jupiter.version}</version>
+                <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
