@@ -1297,15 +1297,23 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @since 1.0.0
    */
-  @Incubating
   boolean release();
+
+  /**
+   * Casting buffer to {@link Packet}.
+   *
+   * @param t packet type.
+   * @param <T> type.
+   * @return returns {@link Packet}.
+   */
+  @Incubating
+  <T extends Packet.Abstract> T cast(Class<T> t);
 
   /**
    * Byte order.
    *
    * @since 1.0.0
    */
-  @Incubating
   enum ByteOrder {
     /**
      * Big endianess.
@@ -1332,7 +1340,6 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @since 1.0.0
    */
-  @Incubating
   interface Sliced {
 
     /**
@@ -1341,7 +1348,6 @@ public interface PacketBuffer extends AutoCloseable {
      * @return returns unsliced {@link PacketBuffer} buffer.
      * @since 1.0.0
      */
-    @Incubating
     PacketBuffer unSlice();
   }
 
@@ -1350,7 +1356,6 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @since 1.0.0
    */
-  @Incubating
   interface Charset {
 
     /**
@@ -1359,7 +1364,6 @@ public interface PacketBuffer extends AutoCloseable {
      * @since 1.0.0
      * @return returns charset name.
      */
-    @Incubating
     String name();
   }
 }

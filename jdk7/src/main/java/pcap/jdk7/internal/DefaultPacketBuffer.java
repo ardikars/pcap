@@ -2,6 +2,8 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import java.lang.reflect.InvocationTargetException;
+import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 
 public class DefaultPacketBuffer implements PacketBuffer {
@@ -879,6 +881,22 @@ public class DefaultPacketBuffer implements PacketBuffer {
   public void close() throws Exception {
     if (!release()) {
       throw new IllegalStateException("Can't release the buffer: " + getClass());
+    }
+  }
+
+  @Override
+  public <T extends Packet.Abstract> T cast(Class<T> type) {
+    try {
+      Packet packet = type.getConstructor(PacketBuffer.class).newInstance(this);
+      return (T) packet;
+    } catch (InstantiationException e) {
+      return null;
+    } catch (IllegalAccessException e) {
+      return null;
+    } catch (NoSuchMethodException e) {
+      return null;
+    } catch (InvocationTargetException e) {
+      return null;
     }
   }
 
