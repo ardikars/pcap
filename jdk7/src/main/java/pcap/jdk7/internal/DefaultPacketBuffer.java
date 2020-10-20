@@ -2,9 +2,14 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import java.lang.ref.PhantomReference;
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
 import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
+import pcap.spi.exception.MemoryLeakException;
 
 public class DefaultPacketBuffer implements PacketBuffer {
 
@@ -29,17 +34,8 @@ public class DefaultPacketBuffer implements PacketBuffer {
   protected long markedWriterIndex;
   com.sun.jna.ptr.PointerByReference reference;
 
-  public DefaultPacketBuffer() {
+  DefaultPacketBuffer() {
     this.reference = new com.sun.jna.ptr.PointerByReference();
-  }
-
-  public DefaultPacketBuffer(int capacity) {
-    this(
-        new com.sun.jna.Pointer(com.sun.jna.Native.malloc(capacity)),
-        ByteOrder.NATIVE,
-        capacity,
-        0L,
-        0L);
   }
 
   DefaultPacketBuffer(
@@ -85,10 +81,10 @@ public class DefaultPacketBuffer implements PacketBuffer {
               "newCapacity: %d (expected: newCapacity(%d) > 0)", newCapacity, newCapacity));
     }
     if (buffer == null) {
-      this.buffer = new Pointer(Native.malloc(newCapacity));
-      this.capacity = newCapacity;
-      this.reference.setValue(buffer);
-      return this;
+      FinalizablePacketBuffer buffer = PacketBufferManager.allocate(newCapacity);
+      buffer.reference = this.reference;
+      buffer.reference.setValue(buffer.buffer);
+      return buffer;
     } else {
       if (newCapacity <= capacity) {
         this.capacity = newCapacity;
@@ -98,15 +94,16 @@ public class DefaultPacketBuffer implements PacketBuffer {
         this.markedWriterIndex = 0L;
         return this;
       } else {
-        Pointer newBuf = new Pointer(Native.malloc(newCapacity));
-        memcpy(newBuf, buffer, capacity);
-        Native.free(Pointer.nativeValue(buffer));
-        this.buffer = newBuf;
-        this.reference.setValue(newBuf);
-        this.capacity = newCapacity;
-        this.markedReaderIndex = 0L;
-        this.markedWriterIndex = 0L;
-        return this;
+        FinalizablePacketBuffer finalizableBuffer = PacketBufferManager.allocate(newCapacity);
+        memcpy(finalizableBuffer.buffer, buffer, capacity);
+        release();
+        finalizableBuffer.reference = reference;
+        finalizableBuffer.reference.setValue(finalizableBuffer.buffer);
+        finalizableBuffer.readerIndex = readerIndex;
+        finalizableBuffer.writerIndex = writerIndex;
+        finalizableBuffer.markedReaderIndex = 0L;
+        finalizableBuffer.markedWriterIndex = 0L;
+        return finalizableBuffer;
       }
     }
   }
@@ -705,10 +702,11 @@ public class DefaultPacketBuffer implements PacketBuffer {
   @Override
   public String toString() {
     String format =
-        "[%s] => [capacity: %d, readerIndex: %d, writerIndex: %d, markedReaderIndex: %d, markedWriterIndex: %d]";
+        "[%s] => [address: %s, capacity: %d, readerIndex: %d, writerIndex: %d, markedReaderIndex: %d, markedWriterIndex: %d]";
     return String.format(
         format,
         getClass().getSimpleName(),
+        Pointer.nativeValue(buffer),
         capacity,
         readerIndex,
         writerIndex,
@@ -846,9 +844,9 @@ public class DefaultPacketBuffer implements PacketBuffer {
   public PacketBuffer copy(long index, long length) {
     // check buffer overflow
     checkIndex(index, length);
-    com.sun.jna.Pointer newBuf = new com.sun.jna.Pointer(com.sun.jna.Native.malloc(length));
-    memcpy(newBuf, buffer.share(index, length), length);
-    return new DefaultPacketBuffer(newBuf, byteOrder, length, 0L, 0L);
+    FinalizablePacketBuffer newBuf = PacketBufferManager.allocate(length);
+    memcpy(newBuf.buffer, buffer.share(index, length), length);
+    return newBuf;
   }
 
   @Override
@@ -869,10 +867,18 @@ public class DefaultPacketBuffer implements PacketBuffer {
   }
 
   @Override
-  public boolean release() {
-    if (buffer != null && !(this instanceof PacketBuffer.Sliced)) {
-      Native.free(Pointer.nativeValue(buffer));
-      return true;
+  public synchronized boolean release() {
+    if (buffer != null
+        && !(this instanceof PacketBuffer.Sliced)
+        && (this instanceof FinalizablePacketBuffer)) {
+      long address = Pointer.nativeValue(buffer);
+      Boolean memory = PacketBufferManager.MEMORY_ARENA.getOrDefault(address, null);
+      if (memory != null && !memory) {
+        Native.free(address);
+        PacketBufferManager.MEMORY_ARENA.remove(address);
+        return true;
+      }
+      return false;
     }
     return false;
   }
@@ -917,6 +923,60 @@ public class DefaultPacketBuffer implements PacketBuffer {
     @Override
     public DefaultPacketBuffer unSlice() {
       return prev;
+    }
+  }
+
+  static final class FinalizablePacketBuffer extends DefaultPacketBuffer {
+
+    public FinalizablePacketBuffer(
+        Pointer buffer, ByteOrder byteOrder, long capacity, long readerIndex, long writerIndex) {
+      super(buffer, byteOrder, capacity, readerIndex, writerIndex);
+    }
+  }
+
+  static final class PacketBufferReference extends PhantomReference<FinalizablePacketBuffer> {
+
+    final long address;
+
+    public PacketBufferReference(
+        long address, FinalizablePacketBuffer referent, ReferenceQueue<FinalizablePacketBuffer> q) {
+      super(referent, q);
+      this.address = address;
+    }
+  }
+
+  static final class PacketBufferManager {
+
+    static final Map<Long, Boolean> MEMORY_ARENA =
+        Collections.synchronizedMap(new HashMap<Long, Boolean>());
+    static final Set<Reference<FinalizablePacketBuffer>> REFS =
+        Collections.synchronizedSet(new HashSet<Reference<FinalizablePacketBuffer>>());
+    static final ReferenceQueue<FinalizablePacketBuffer> RQ =
+        new ReferenceQueue<FinalizablePacketBuffer>();
+
+    static synchronized FinalizablePacketBuffer allocate(long capacity) {
+      long address = Native.malloc(capacity);
+      FinalizablePacketBuffer buffer =
+          new FinalizablePacketBuffer(new Pointer(address), ByteOrder.NATIVE, capacity, 0L, 0L);
+      REFS.add(new PacketBufferReference(address, buffer, RQ));
+      MEMORY_ARENA.put(address, false);
+
+      // cleanup
+      PacketBufferReference ref;
+      while ((ref = (PacketBufferReference) RQ.poll()) != null) {
+        Boolean memory = MEMORY_ARENA.getOrDefault(ref.address, null);
+        if (memory != null) {
+          if (!memory) {
+            throw new MemoryLeakException(
+                String.format(
+                    "PacketBuffer[%d] garbage collected before release() method has been called.",
+                    ref.address));
+          } else {
+            REFS.remove(ref);
+          }
+        }
+      }
+      return buffer;
     }
   }
 }

@@ -559,7 +559,7 @@ public class DefaultPcapTest extends BaseTest {
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
-      DefaultPacketBuffer buffer = new DefaultPacketBuffer(14);
+      PacketBuffer buffer = live.allocate(PacketBuffer.class).capacity(14);
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 1});
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 2});
       buffer.writeShortRE(0x0806);
@@ -582,18 +582,16 @@ public class DefaultPcapTest extends BaseTest {
           });
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
-      final DefaultPacketBuffer buffer = new DefaultPacketBuffer(14);
+      final PacketBuffer buffer = offline.allocate(PacketBuffer.class).capacity(14);
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 1});
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 2});
       buffer.writeShortRE(0x0806);
-      Assertions.assertThrows(
-          ErrorException.class,
-          new Executable() {
-            @Override
-            public void execute() throws Throwable {
-              offline.sendPacket(buffer);
-            }
-          });
+      buffer.release();
+      try {
+        offline.sendPacket(buffer);
+      } catch (ErrorException e) {
+        buffer.release();
+      }
     }
   }
 
@@ -961,8 +959,8 @@ public class DefaultPcapTest extends BaseTest {
   void nextExCheck() {
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
       final DefaultPcap pcap = (DefaultPcap) offline;
-      final DefaultPacketHeader header = new DefaultPacketHeader();
-      final DefaultPacketBuffer buffer = new DefaultPacketBuffer();
+      final DefaultPacketHeader header = (DefaultPacketHeader) pcap.allocate(PacketHeader.class);
+      final DefaultPacketBuffer buffer = (DefaultPacketBuffer) pcap.allocate(PacketBuffer.class);
       int rc = NativeMappings.pcap_next_ex(pcap.pointer, header.reference, buffer.reference);
       if (rc == 1) {
         pcap.nextExCheck(rc, header, buffer);
