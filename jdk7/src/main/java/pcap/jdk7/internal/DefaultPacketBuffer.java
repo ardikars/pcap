@@ -7,6 +7,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.exception.MemoryLeakException;
@@ -868,17 +869,11 @@ public class DefaultPacketBuffer implements PacketBuffer {
 
   @Override
   public synchronized boolean release() {
-    if (buffer != null
-        && !(this instanceof PacketBuffer.Sliced)
-        && (this instanceof FinalizablePacketBuffer)) {
-      long address = Pointer.nativeValue(buffer);
-      Boolean memory = PacketBufferManager.MEMORY_ARENA.getOrDefault(address, null);
-      if (memory != null && !memory) {
-        Native.free(address);
-        PacketBufferManager.MEMORY_ARENA.remove(address);
-        return true;
-      }
-      return false;
+    if (this instanceof FinalizablePacketBuffer) {
+      FinalizablePacketBuffer packetBuffer = (FinalizablePacketBuffer) this;
+      Native.free(packetBuffer.phantomReference.address);
+      PacketBufferReference.ADDR_UPDTR.set(packetBuffer.phantomReference, 0L);
+      return true;
     }
     return false;
   }
@@ -928,6 +923,8 @@ public class DefaultPacketBuffer implements PacketBuffer {
 
   static final class FinalizablePacketBuffer extends DefaultPacketBuffer {
 
+    private PacketBufferReference phantomReference;
+
     public FinalizablePacketBuffer(
         Pointer buffer, ByteOrder byteOrder, long capacity, long readerIndex, long writerIndex) {
       super(buffer, byteOrder, capacity, readerIndex, writerIndex);
@@ -936,19 +933,21 @@ public class DefaultPacketBuffer implements PacketBuffer {
 
   static final class PacketBufferReference extends PhantomReference<FinalizablePacketBuffer> {
 
-    final long address;
+    static final AtomicLongFieldUpdater<PacketBufferReference> ADDR_UPDTR =
+        AtomicLongFieldUpdater.newUpdater(PacketBufferReference.class, "address");
+
+    volatile long address;
 
     public PacketBufferReference(
-        long address, FinalizablePacketBuffer referent, ReferenceQueue<FinalizablePacketBuffer> q) {
+        FinalizablePacketBuffer referent, ReferenceQueue<FinalizablePacketBuffer> q) {
       super(referent, q);
-      this.address = address;
+      this.address = Pointer.nativeValue(referent.buffer);
+      referent.phantomReference = this;
     }
   }
 
   static final class PacketBufferManager {
 
-    static final Map<Long, Boolean> MEMORY_ARENA =
-        Collections.synchronizedMap(new HashMap<Long, Boolean>());
     static final Set<Reference<FinalizablePacketBuffer>> REFS =
         Collections.synchronizedSet(new HashSet<Reference<FinalizablePacketBuffer>>());
     static final ReferenceQueue<FinalizablePacketBuffer> RQ =
@@ -958,22 +957,16 @@ public class DefaultPacketBuffer implements PacketBuffer {
       long address = Native.malloc(capacity);
       FinalizablePacketBuffer buffer =
           new FinalizablePacketBuffer(new Pointer(address), ByteOrder.NATIVE, capacity, 0L, 0L);
-      REFS.add(new PacketBufferReference(address, buffer, RQ));
-      MEMORY_ARENA.put(address, false);
+      REFS.add(new PacketBufferReference(buffer, RQ));
 
       // cleanup
       PacketBufferReference ref;
       while ((ref = (PacketBufferReference) RQ.poll()) != null) {
-        Boolean memory = MEMORY_ARENA.getOrDefault(ref.address, null);
-        if (memory != null) {
-          if (!memory) {
-            throw new MemoryLeakException(
-                String.format(
-                    "PacketBuffer[%d] garbage collected before release() method has been called.",
-                    ref.address));
-          } else {
-            REFS.remove(ref);
-          }
+        if (PacketBufferReference.ADDR_UPDTR.get(ref) != 0L) {
+          throw new MemoryLeakException(
+              "PacketBuffer["
+                  + ref.address
+                  + "] was garbage collected before PacketBuffer.release() method has been called.");
         }
       }
       return buffer;

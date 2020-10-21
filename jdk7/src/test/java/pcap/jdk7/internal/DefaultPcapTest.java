@@ -322,6 +322,7 @@ public class DefaultPcapTest extends BaseTest {
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
       final PacketHeader header = live.allocate(PacketHeader.class);
       final PacketBuffer buffer = live.allocate(PacketBuffer.class);
+      logBuf("nextEx", buffer);
       for (int i = 0; i < 1; i++) {
         try {
           live.nextEx(header, buffer);
@@ -361,6 +362,7 @@ public class DefaultPcapTest extends BaseTest {
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
       final PacketHeader header = offline.allocate(PacketHeader.class);
       final PacketBuffer buffer = offline.allocate(PacketBuffer.class);
+      logBuf("nextEx", buffer);
       for (int i = 0; i < 1; i++) {
         try {
           offline.nextEx(header, buffer);
@@ -409,6 +411,7 @@ public class DefaultPcapTest extends BaseTest {
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
       PacketHeader header = offline.allocate(PacketHeader.class);
       PacketBuffer buffer = offline.allocate(PacketBuffer.class);
+      logBuf("nextEx", buffer);
       for (int i = 0; i < 1; i++) {
         try {
           offline.nextEx(header, buffer);
@@ -434,6 +437,7 @@ public class DefaultPcapTest extends BaseTest {
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
       PacketHeader header = live.allocate(PacketHeader.class);
       PacketBuffer buffer = live.allocate(PacketBuffer.class);
+      logBuf("stats", buffer);
       try {
         live.nextEx(header, buffer);
         Statistics statistics = live.stats();
@@ -560,6 +564,7 @@ public class DefaultPcapTest extends BaseTest {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
       PacketBuffer buffer = live.allocate(PacketBuffer.class).capacity(14);
+      logBuf("sendPacket", buffer);
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 1});
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 2});
       buffer.writeShortRE(0x0806);
@@ -583,6 +588,8 @@ public class DefaultPcapTest extends BaseTest {
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
       final PacketBuffer buffer = offline.allocate(PacketBuffer.class).capacity(14);
+      logBuf("sendPacket", buffer);
+
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 1});
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 2});
       buffer.writeShortRE(0x0806);
@@ -769,6 +776,7 @@ public class DefaultPcapTest extends BaseTest {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
       PacketBuffer buffer = live.allocate(PacketBuffer.class);
+      logBuf("allocate", buffer);
       Assertions.assertNotNull(buffer);
       PacketHeader header = live.allocate(PacketHeader.class);
       Assertions.assertNotNull(header);
@@ -791,6 +799,7 @@ public class DefaultPcapTest extends BaseTest {
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
       PacketBuffer buffer = offline.allocate(PacketBuffer.class);
+      logBuf("allocate", buffer);
       Assertions.assertNotNull(buffer);
       PacketHeader header = offline.allocate(PacketHeader.class);
       Assertions.assertNotNull(header);
@@ -961,6 +970,7 @@ public class DefaultPcapTest extends BaseTest {
       final DefaultPcap pcap = (DefaultPcap) offline;
       final DefaultPacketHeader header = (DefaultPacketHeader) pcap.allocate(PacketHeader.class);
       final DefaultPacketBuffer buffer = (DefaultPacketBuffer) pcap.allocate(PacketBuffer.class);
+      logBuf("nextExChack", buffer);
       int rc = NativeMappings.pcap_next_ex(pcap.pointer, header.reference, buffer.reference);
       if (rc == 1) {
         pcap.nextExCheck(rc, header, buffer);
@@ -1142,5 +1152,9 @@ public class DefaultPcapTest extends BaseTest {
   public void timestampPrecision() {
     Assertions.assertEquals(Timestamp.Precision.MICRO, DefaultPcap.timestampPrecision(0));
     Assertions.assertEquals(Timestamp.Precision.NANO, DefaultPcap.timestampPrecision(1));
+  }
+
+  private static void logBuf(String message, PacketBuffer buffer) {
+    // System.out.println(message + ": " + buffer);
   }
 }
