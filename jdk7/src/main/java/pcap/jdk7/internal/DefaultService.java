@@ -53,7 +53,7 @@ public class DefaultService implements Service {
   @Override
   public Pcap offline(String source, OfflineOptions options) throws ErrorException {
     Pointer pointer;
-    if (lock.tryLock()) {
+    if (!lock.tryLock()) {
       throw new RuntimeException(READ_LOCK_FAIL);
     }
     try {
