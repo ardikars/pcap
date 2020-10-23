@@ -74,7 +74,7 @@ jobs:
           ls $JAVA_HOME_JDK7
           ping 127.0.0.1 &
           PID=$!
-          echo -n "-Djna.library.path=$(pwd)/libpcap/lib -Djna.debug_load=true" >> .mvn/maven.config
+          echo -n " -Djna.library.path=$(pwd)/libpcap/lib -Djna.debug_load=true" >> .mvn/maven.config
           ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Pformat -Psonar -Plegacy-support -Dsonar.login="${{ secrets.sonar_token }}"
           kill $PID
         env:
@@ -90,7 +90,7 @@ jobs:
           ls $JAVA_HOME_JDK7
           ping 127.0.0.1 &
           PID=$!
-          echo -n "-Djna.library.path=$(pwd)/libpcap/lib -Djna.debug_load=true " >> .mvn/maven.config
+          echo -n " -Djna.library.path=$(pwd)/libpcap/lib -Djna.debug_load=true " >> .mvn/maven.config
           sudo -E bash -c './mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat -Plegacy-support'
           kill $PID
         env:
