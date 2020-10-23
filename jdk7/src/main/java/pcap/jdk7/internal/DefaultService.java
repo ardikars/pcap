@@ -15,6 +15,8 @@ import pcap.spi.option.DefaultLiveOptions;
 
 public class DefaultService implements Service {
 
+  private static final String READ_LOCK_FAIL = "Failed to lock (READ_LOCK)";
+
   private final ReentrantReadWriteLock.WriteLock lock =
       new ReentrantReadWriteLock(true).writeLock();
 
@@ -34,7 +36,9 @@ public class DefaultService implements Service {
   public DefaultInterface interfaces() throws ErrorException {
     DefaultInterface pcapIf;
     PointerByReference alldevsPP = new PointerByReference();
-    lock.lock();
+    if (!lock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       checkFindAllDevs(NativeMappings.pcap_findalldevs(alldevsPP, errbuf(true)));
       Pointer alldevsp = alldevsPP.getValue();
@@ -49,7 +53,9 @@ public class DefaultService implements Service {
   @Override
   public Pcap offline(String source, OfflineOptions options) throws ErrorException {
     Pointer pointer;
-    lock.lock();
+    if (lock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       if (options.timestampPrecision() == null) {
         pointer = NativeMappings.pcap_open_offline(source, errbuf(true));
@@ -70,7 +76,9 @@ public class DefaultService implements Service {
           NoSuchDeviceException, PromiscuousModePermissionDeniedException, ErrorException,
           TimestampPrecisionNotSupportedException {
     Pointer pointer;
-    lock.lock();
+    if (!lock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
     try {
       pointer = NativeMappings.pcap_create(source.name(), errbuf(true));
       nullCheck(pointer);

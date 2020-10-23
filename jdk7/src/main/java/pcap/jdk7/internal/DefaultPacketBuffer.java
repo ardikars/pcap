@@ -2,16 +2,22 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import java.lang.ref.PhantomReference;
-import java.lang.ref.Reference;
-import java.lang.ref.ReferenceQueue;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.exception.MemoryLeakException;
 
+import java.lang.ref.PhantomReference;
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+
 public class DefaultPacketBuffer implements PacketBuffer {
+
+  private static final boolean LEAK_DETECTOR =
+      System.getProperty("pcap.buffer.leakDetector", "false").equals("true");
 
   private static final int BYTE_SIZE = 1;
   private static final int SHORT_SIZE = 2;
@@ -867,11 +873,11 @@ public class DefaultPacketBuffer implements PacketBuffer {
   }
 
   @Override
-  public synchronized boolean release() {
+  public boolean release() {
     if (this instanceof FinalizablePacketBuffer) {
       FinalizablePacketBuffer packetBuffer = (FinalizablePacketBuffer) this;
-      Native.free(packetBuffer.phantomReference.address);
-      PacketBufferReference.ADDR_UPDTR.set(packetBuffer.phantomReference, 0L);
+      Native.free(packetBuffer.phantomReference.address.get());
+      packetBuffer.phantomReference.address.set(0L);
       return true;
     }
     return false;
@@ -926,15 +932,12 @@ public class DefaultPacketBuffer implements PacketBuffer {
 
   static final class PacketBufferReference extends PhantomReference<FinalizablePacketBuffer> {
 
-    static final AtomicLongFieldUpdater<PacketBufferReference> ADDR_UPDTR =
-        AtomicLongFieldUpdater.newUpdater(PacketBufferReference.class, "address");
-
-    volatile long address;
+    final AtomicLong address;
 
     public PacketBufferReference(
-        FinalizablePacketBuffer referent, ReferenceQueue<FinalizablePacketBuffer> q) {
+        long rawAddr, FinalizablePacketBuffer referent, ReferenceQueue<FinalizablePacketBuffer> q) {
       super(referent, q);
-      this.address = Pointer.nativeValue(referent.buffer);
+      this.address = new AtomicLong(rawAddr);
       referent.phantomReference = this;
     }
   }
@@ -946,21 +949,24 @@ public class DefaultPacketBuffer implements PacketBuffer {
     static final ReferenceQueue<FinalizablePacketBuffer> RQ =
         new ReferenceQueue<FinalizablePacketBuffer>();
 
-    static synchronized FinalizablePacketBuffer allocate(long capacity) {
+    static FinalizablePacketBuffer allocate(long capacity) {
       long address = Native.malloc(capacity);
       FinalizablePacketBuffer buffer =
           new FinalizablePacketBuffer(new Pointer(address), ByteOrder.NATIVE, capacity, 0L, 0L);
-      REFS.add(new PacketBufferReference(buffer, RQ));
+      PacketBufferReference bufRef = new PacketBufferReference(address, buffer, RQ);
+      REFS.add(bufRef);
 
-      // cleanup
+      // cleanup native memory wrapped in garbage collected object.
       PacketBufferReference ref;
       while ((ref = (PacketBufferReference) RQ.poll()) != null) {
-        if (PacketBufferReference.ADDR_UPDTR.get(ref) != 0L) {
-          Native.free(ref.address);
-          throw new MemoryLeakException(
-              "PacketBuffer["
-                  + ref.address
-                  + "] was garbage collected before PacketBuffer.release() method has been called.");
+        if (ref.address.get() != 0L) {
+          Native.free(ref.address.get()); // force deallocate memory
+          if (LEAK_DETECTOR) {
+            throw new MemoryLeakException(
+                String.format(
+                    "[LEAK] PacketBuffer.release() was not called before it's garbage collected. ",
+                    ref.address.get()));
+          }
         }
       }
       return buffer;
