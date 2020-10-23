@@ -5,7 +5,6 @@ import com.sun.jna.Pointer;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 import pcap.spi.Packet;
@@ -890,13 +889,7 @@ public class DefaultPacketBuffer implements PacketBuffer {
     try {
       Packet packet = type.getConstructor(PacketBuffer.class).newInstance(this);
       return (T) packet;
-    } catch (InstantiationException e) {
-      return null;
-    } catch (IllegalAccessException e) {
-      return null;
-    } catch (NoSuchMethodException e) {
-      return null;
-    } catch (InvocationTargetException e) {
+    } catch (Throwable e) {
       return null;
     }
   }
@@ -963,6 +956,7 @@ public class DefaultPacketBuffer implements PacketBuffer {
       PacketBufferReference ref;
       while ((ref = (PacketBufferReference) RQ.poll()) != null) {
         if (PacketBufferReference.ADDR_UPDTR.get(ref) != 0L) {
+          Native.free(ref.address);
           throw new MemoryLeakException(
               "PacketBuffer["
                   + ref.address

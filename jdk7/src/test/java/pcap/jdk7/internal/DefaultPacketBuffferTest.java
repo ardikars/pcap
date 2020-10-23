@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.exception.MemoryLeakException;
 
@@ -2898,6 +2899,33 @@ public class DefaultPacketBuffferTest {
             DefaultPacketBuffer.PacketBufferManager.allocate(4);
           }
         });
+  }
+
+  @Test
+  public void cast() {
+    try (DefaultPacketBuffer.FinalizablePacketBuffer buf =
+        DefaultPacketBuffer.PacketBufferManager.allocate(4)) {
+      Assertions.assertNotNull(buf.cast(TestPacket.class));
+      Assertions.assertNull(buf.cast(Packet.Abstract.class));
+    } catch (Exception e) {
+    }
+  }
+
+  static class TestPacket extends Packet.Abstract {
+
+    public TestPacket(PacketBuffer buffer) {
+      super(buffer);
+    }
+
+    @Override
+    public PacketBuffer buffer() {
+      return null;
+    }
+
+    @Override
+    protected int size() {
+      return 0;
+    }
   }
 
   @AfterEach

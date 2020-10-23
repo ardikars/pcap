@@ -28,6 +28,11 @@ public interface Packet {
       buffer.readerIndex(offset + length);
     }
 
+    @Override
+    public PacketBuffer buffer() {
+      return buffer;
+    }
+
     protected abstract int size();
   }
 }
