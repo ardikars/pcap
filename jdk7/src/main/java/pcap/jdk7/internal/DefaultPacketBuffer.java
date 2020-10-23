@@ -960,7 +960,7 @@ public class DefaultPacketBuffer implements PacketBuffer {
       PacketBufferReference ref;
       while ((ref = (PacketBufferReference) RQ.poll()) != null) {
         if (ref.address.get() != 0L) {
-          Native.free(ref.address.get()); // force deallocate memory
+          Native.free(ref.address.getAndSet(0L)); // force deallocate memory and set address to '0'.
           if (LEAK_DETECTOR) {
             throw new MemoryLeakException(
                 String.format(
