@@ -33,6 +33,8 @@ public interface Service {
   /**
    * Find all interfaces on your system.
    *
+   * <p>Note that there may be network devices that cannot be opened by the process calling this.
+   *
    * @return returns iterable {@link Interface}'s.
    * @throws ErrorException generic error.
    * @since 1.0.0
