@@ -336,46 +336,4 @@ public interface Service {
       throw new ErrorException("No service provider implementation for (" + name + ").");
     }
   }
-
-  /**
-   * No service provider.
-   *
-   * @since 1.0.0
-   */
-  class NoService implements Service {
-
-    /** {@inheritDoc} */
-    @Override
-    public String name() {
-      return "NoService";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String version() {
-      return "0.0.0";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Interface interfaces() throws ErrorException {
-      throw new ErrorException("No API implementation.");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Pcap offline(String source, OfflineOptions options) throws ErrorException {
-      throw new ErrorException("No API implementation.");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Pcap live(Interface source, LiveOptions options)
-        throws InterfaceNotSupportTimestampTypeException, InterfaceNotUpException,
-            RadioFrequencyModeNotSupportedException, ActivatedException, PermissionDeniedException,
-            NoSuchDeviceException, PromiscuousModePermissionDeniedException, ErrorException,
-            TimestampPrecisionNotSupportedException {
-      throw new ErrorException("No API implementation.");
-    }
-  }
 }
