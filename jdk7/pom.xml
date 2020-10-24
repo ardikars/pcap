@@ -6,7 +6,7 @@
     <parent>
         <artifactId>pcap</artifactId>
         <groupId>com.ardikars.pcap</groupId>
-        <version>0.4.6</version>
+        <version>0.4.7</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -44,11 +44,16 @@
                         <artifactId>modulemaker-maven-plugin</artifactId>
                         <configuration>
                             <name>pcap.jdk7</name>
-                            <multirelease>true</multirelease>
+                            <multirelease>false</multirelease>
                             <packages>
+                                pcap.jdk7.internal
                             </packages>
+                            <requires>
+                                com.sun.jna,
+                                pcap.spi
+                            </requires>
                             <uses>
-                                pcap.jdk7.Service
+                                pcap.spi.Service
                             </uses>
                             <provides>
                                 <provide>
