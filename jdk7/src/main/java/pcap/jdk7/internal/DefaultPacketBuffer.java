@@ -2,10 +2,6 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import pcap.spi.Packet;
-import pcap.spi.PacketBuffer;
-import pcap.spi.exception.MemoryLeakException;
-
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -13,6 +9,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import pcap.spi.Packet;
+import pcap.spi.PacketBuffer;
+import pcap.spi.exception.MemoryLeakException;
 
 public class DefaultPacketBuffer implements PacketBuffer {
 
@@ -972,7 +971,7 @@ public class DefaultPacketBuffer implements PacketBuffer {
           if (LEAK_DETECTION) {
             StringBuilder stactTraceBuilder = new StringBuilder();
             for (int i = ref.stackTraceElements.length - 1; i >= 0; i--) {
-              stactTraceBuilder.append("\t" + ref.stackTraceElements[i].toString() + "\n");
+              stactTraceBuilder.append("\t[" + ref.stackTraceElements[i].toString() + "]\n");
             }
             throw new MemoryLeakException(
                 String.format(

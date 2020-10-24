@@ -64,6 +64,6 @@ public class Application {
     @Async(timeout = 5000)
     @Override
     void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
-        throws BreakException, ErrorException;
+        throws BreakException, ErrorException, TimeoutException;
   }
 }
