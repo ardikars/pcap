@@ -13,6 +13,10 @@ image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap
 image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=duplicated_lines_density["Duplicated lines" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
 image:https://sonarcloud.io/api/project_badges/measure?project=com.ardikars.pcap%3Apcap&metric=sqale_index["Techinal debt" link="https://sonarcloud.io/dashboard?id=com.ardikars.pcap:pcap"]
 
+
+image:https://img.shields.io/maven-central/v/com.ardikars.pcap/pcap.svg?label=maven%20central["maven central" link="https://search.maven.org/search?q=g:%22com.ardikars.pcap%22%20AND%20a:%22pcap%22"]
+image:https://javadoc.io/badge2/com.ardikars.pcap/pcap-spi/javadoc.svg["Javadoc" link="https://javadoc.io/doc/com.ardikars.pcap/pcap-spi"]
+
 == About this project
 
 Provides JVM network packet processing library for rapid development.

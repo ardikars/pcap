@@ -2,9 +2,21 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import java.lang.ref.PhantomReference;
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
+import pcap.spi.exception.MemoryLeakException;
 
 public class DefaultPacketBuffer implements PacketBuffer {
+
+  private static final boolean LEAK_DETECTION =
+      System.getProperty("pcap.leakDetection", "false").equals("true");
 
   private static final int BYTE_SIZE = 1;
   private static final int SHORT_SIZE = 2;
@@ -27,17 +39,8 @@ public class DefaultPacketBuffer implements PacketBuffer {
   protected long markedWriterIndex;
   com.sun.jna.ptr.PointerByReference reference;
 
-  public DefaultPacketBuffer() {
+  DefaultPacketBuffer() {
     this.reference = new com.sun.jna.ptr.PointerByReference();
-  }
-
-  public DefaultPacketBuffer(int capacity) {
-    this(
-        new com.sun.jna.Pointer(com.sun.jna.Native.malloc(capacity)),
-        ByteOrder.NATIVE,
-        capacity,
-        0L,
-        0L);
   }
 
   DefaultPacketBuffer(
@@ -83,10 +86,10 @@ public class DefaultPacketBuffer implements PacketBuffer {
               "newCapacity: %d (expected: newCapacity(%d) > 0)", newCapacity, newCapacity));
     }
     if (buffer == null) {
-      this.buffer = new Pointer(Native.malloc(newCapacity));
-      this.capacity = newCapacity;
-      this.reference.setValue(buffer);
-      return this;
+      FinalizablePacketBuffer buffer = PacketBufferManager.allocate(newCapacity);
+      buffer.reference = this.reference;
+      buffer.reference.setValue(buffer.buffer);
+      return buffer;
     } else {
       if (newCapacity <= capacity) {
         this.capacity = newCapacity;
@@ -96,15 +99,16 @@ public class DefaultPacketBuffer implements PacketBuffer {
         this.markedWriterIndex = 0L;
         return this;
       } else {
-        Pointer newBuf = new Pointer(Native.malloc(newCapacity));
-        memcpy(newBuf, buffer, capacity);
-        Native.free(Pointer.nativeValue(buffer));
-        this.buffer = newBuf;
-        this.reference.setValue(newBuf);
-        this.capacity = newCapacity;
-        this.markedReaderIndex = 0L;
-        this.markedWriterIndex = 0L;
-        return this;
+        FinalizablePacketBuffer finalizableBuffer = PacketBufferManager.allocate(newCapacity);
+        memcpy(finalizableBuffer.buffer, buffer, capacity);
+        release();
+        finalizableBuffer.reference = reference;
+        finalizableBuffer.reference.setValue(finalizableBuffer.buffer);
+        finalizableBuffer.readerIndex = readerIndex;
+        finalizableBuffer.writerIndex = writerIndex;
+        finalizableBuffer.markedReaderIndex = 0L;
+        finalizableBuffer.markedWriterIndex = 0L;
+        return finalizableBuffer;
       }
     }
   }
@@ -703,10 +707,11 @@ public class DefaultPacketBuffer implements PacketBuffer {
   @Override
   public String toString() {
     String format =
-        "[%s] => [capacity: %d, readerIndex: %d, writerIndex: %d, markedReaderIndex: %d, markedWriterIndex: %d]";
+        "[%s] => [address: %s, capacity: %d, readerIndex: %d, writerIndex: %d, markedReaderIndex: %d, markedWriterIndex: %d]";
     return String.format(
         format,
         getClass().getSimpleName(),
+        Pointer.nativeValue(buffer),
         capacity,
         readerIndex,
         writerIndex,
@@ -844,9 +849,9 @@ public class DefaultPacketBuffer implements PacketBuffer {
   public PacketBuffer copy(long index, long length) {
     // check buffer overflow
     checkIndex(index, length);
-    com.sun.jna.Pointer newBuf = new com.sun.jna.Pointer(com.sun.jna.Native.malloc(length));
-    memcpy(newBuf, buffer.share(index, length), length);
-    return new DefaultPacketBuffer(newBuf, byteOrder, length, 0L, 0L);
+    FinalizablePacketBuffer newBuf = PacketBufferManager.allocate(length);
+    memcpy(newBuf.buffer, buffer.share(index, length), length);
+    return newBuf;
   }
 
   @Override
@@ -868,8 +873,10 @@ public class DefaultPacketBuffer implements PacketBuffer {
 
   @Override
   public boolean release() {
-    if (buffer != null && !(this instanceof PacketBuffer.Sliced)) {
-      Native.free(Pointer.nativeValue(buffer));
+    if (this instanceof FinalizablePacketBuffer) {
+      FinalizablePacketBuffer packetBuffer = (FinalizablePacketBuffer) this;
+      Native.free(packetBuffer.phantomReference.address.get());
+      packetBuffer.phantomReference.address.set(0L);
       return true;
     }
     return false;
@@ -879,6 +886,16 @@ public class DefaultPacketBuffer implements PacketBuffer {
   public void close() throws Exception {
     if (!release()) {
       throw new IllegalStateException("Can't release the buffer: " + getClass());
+    }
+  }
+
+  @Override
+  public <T extends Packet.Abstract> T cast(Class<T> type) {
+    try {
+      Packet packet = type.getConstructor(PacketBuffer.class).newInstance(this);
+      return (T) packet;
+    } catch (Throwable e) {
+      return null;
     }
   }
 
@@ -899,6 +916,71 @@ public class DefaultPacketBuffer implements PacketBuffer {
     @Override
     public DefaultPacketBuffer unSlice() {
       return prev;
+    }
+  }
+
+  static final class FinalizablePacketBuffer extends DefaultPacketBuffer {
+
+    private PacketBufferReference phantomReference;
+
+    public FinalizablePacketBuffer(
+        Pointer buffer, ByteOrder byteOrder, long capacity, long readerIndex, long writerIndex) {
+      super(buffer, byteOrder, capacity, readerIndex, writerIndex);
+    }
+  }
+
+  static final class PacketBufferReference extends PhantomReference<FinalizablePacketBuffer> {
+
+    final AtomicLong address;
+    StackTraceElement[] stackTraceElements;
+
+    public PacketBufferReference(
+        long rawAddr, FinalizablePacketBuffer referent, ReferenceQueue<FinalizablePacketBuffer> q) {
+      super(referent, q);
+      this.address = new AtomicLong(rawAddr);
+      referent.phantomReference = this;
+      fillStackTrace(LEAK_DETECTION);
+    }
+
+    void fillStackTrace(boolean enabled) {
+      if (enabled) {
+        stackTraceElements = Thread.currentThread().getStackTrace();
+      }
+    }
+  }
+
+  static final class PacketBufferManager {
+
+    static final Set<Reference<FinalizablePacketBuffer>> REFS =
+        Collections.synchronizedSet(new HashSet<Reference<FinalizablePacketBuffer>>());
+    static final ReferenceQueue<FinalizablePacketBuffer> RQ =
+        new ReferenceQueue<FinalizablePacketBuffer>();
+
+    static FinalizablePacketBuffer allocate(long capacity) {
+      long address = Native.malloc(capacity);
+      FinalizablePacketBuffer buffer =
+          new FinalizablePacketBuffer(new Pointer(address), ByteOrder.NATIVE, capacity, 0L, 0L);
+      PacketBufferReference bufRef = new PacketBufferReference(address, buffer, RQ);
+      REFS.add(bufRef);
+
+      // cleanup native memory wrapped in garbage collected object.
+      PacketBufferReference ref;
+      while ((ref = (PacketBufferReference) RQ.poll()) != null) {
+        if (ref.address.get() != 0L) {
+          Native.free(ref.address.getAndSet(0L)); // force deallocate memory and set address to '0'.
+          if (LEAK_DETECTION) {
+            StringBuilder stactTraceBuilder = new StringBuilder();
+            for (int i = ref.stackTraceElements.length - 1; i >= 0; i--) {
+              stactTraceBuilder.append("\t[" + ref.stackTraceElements[i].toString() + "]\n");
+            }
+            throw new MemoryLeakException(
+                String.format(
+                    "PacketBuffer.release() was not called before it's garbage collected.\n\tCreated at:\n%s",
+                    stactTraceBuilder.toString()));
+          }
+        }
+      }
+      return buffer;
     }
   }
 }

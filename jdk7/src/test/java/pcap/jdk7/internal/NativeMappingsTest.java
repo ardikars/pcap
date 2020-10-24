@@ -5,10 +5,12 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-// @RunWith(JUnitPlatform.class)
+@RunWith(JUnitPlatform.class)
 public class NativeMappingsTest {
 
   @BeforeEach

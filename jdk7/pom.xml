@@ -6,7 +6,7 @@
     <parent>
         <artifactId>pcap</artifactId>
         <groupId>com.ardikars.pcap</groupId>
-        <version>0.4.3</version>
+        <version>0.4.5</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
-            <version>5.6.0</version>
+            <version>${jna.version}</version>
         </dependency>
     </dependencies>
 
@@ -43,13 +43,10 @@
                         <groupId>codes.rafael.modulemaker</groupId>
                         <artifactId>modulemaker-maven-plugin</artifactId>
                         <configuration>
-                            <name>pcap.jdk7.internal</name>
+                            <name>pcap.jdk7</name>
                             <multirelease>true</multirelease>
                             <packages>
                             </packages>
-                            <exports>
-                                pcap.jdk7.internal
-                            </exports>
                             <uses>
                                 pcap.jdk7.Service
                             </uses>

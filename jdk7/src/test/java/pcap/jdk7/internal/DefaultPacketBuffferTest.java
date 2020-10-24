@@ -1,5 +1,6 @@
 package pcap.jdk7.internal;
 
+import java.lang.ref.WeakReference;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,7 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
+import pcap.spi.exception.MemoryLeakException;
 
 @RunWith(JUnitPlatform.class)
 public class DefaultPacketBuffferTest {
@@ -21,11 +24,18 @@ public class DefaultPacketBuffferTest {
   private static final int INTEGER_BYTES = 4;
   private static final int LONG_BYTES = 8;
 
+  static void logBuf(String message, PacketBuffer buffer) {
+    // System.out.println(message + ": " + buffer);
+  }
+
   @BeforeEach
   void setUp() {
-    smallBuffer = new DefaultPacketBuffer(SHORT_BYTES);
-    mediumBuffer = new DefaultPacketBuffer(INTEGER_BYTES);
-    largeBuffer = new DefaultPacketBuffer(LONG_BYTES);
+    smallBuffer = DefaultPacketBuffer.PacketBufferManager.allocate(SHORT_BYTES);
+    logBuf("setUp", smallBuffer);
+    mediumBuffer = DefaultPacketBuffer.PacketBufferManager.allocate(INTEGER_BYTES);
+    logBuf("setUp", mediumBuffer);
+    largeBuffer = DefaultPacketBuffer.PacketBufferManager.allocate(LONG_BYTES);
+    logBuf("setUp", largeBuffer);
   }
 
   @Test
@@ -43,35 +53,38 @@ public class DefaultPacketBuffferTest {
     Assertions.assertEquals(INTEGER_BYTES, mediumBuffer.capacity());
     Assertions.assertEquals(LONG_BYTES, largeBuffer.capacity());
 
-    largeBuffer
-        .setIndex(largeBuffer.capacity(), largeBuffer.capacity())
-        .markReaderIndex()
-        .markWriterIndex()
-        .capacity(largeBuffer.capacity() * SHORT_BYTES);
+    largeBuffer =
+        largeBuffer
+            .setIndex(largeBuffer.capacity(), largeBuffer.capacity())
+            .markReaderIndex()
+            .markWriterIndex()
+            .capacity(largeBuffer.capacity() * SHORT_BYTES);
     Assertions.assertEquals(LONG_BYTES * SHORT_BYTES, largeBuffer.capacity());
-    Assertions.assertEquals(LONG_BYTES, largeBuffer.readerIndex());
-    Assertions.assertEquals(LONG_BYTES, largeBuffer.writerIndex());
-    largeBuffer
-        .setIndex(largeBuffer.capacity(), largeBuffer.capacity())
-        .markReaderIndex()
-        .markWriterIndex()
-        .capacity(LONG_BYTES);
+    Assertions.assertEquals(largeBuffer.readerIndex(), largeBuffer.readerIndex());
+    Assertions.assertEquals(largeBuffer.writerIndex(), largeBuffer.writerIndex());
+    largeBuffer =
+        largeBuffer
+            .setIndex(largeBuffer.capacity(), largeBuffer.capacity())
+            .markReaderIndex()
+            .markWriterIndex()
+            .capacity(LONG_BYTES);
     Assertions.assertEquals(LONG_BYTES, largeBuffer.capacity());
     Assertions.assertEquals(LONG_BYTES, largeBuffer.readerIndex());
     Assertions.assertEquals(LONG_BYTES, largeBuffer.writerIndex());
 
-    largeBuffer
-        .capacity(largeBuffer.capacity() * SHORT_BYTES)
-        .setIndex(BYTE_BYTES, SHORT_BYTES)
-        .capacity(LONG_BYTES);
+    largeBuffer =
+        largeBuffer
+            .capacity(largeBuffer.capacity() * SHORT_BYTES)
+            .setIndex(BYTE_BYTES, SHORT_BYTES)
+            .capacity(LONG_BYTES);
     Assertions.assertEquals(LONG_BYTES, largeBuffer.capacity());
     Assertions.assertEquals(BYTE_BYTES, largeBuffer.readerIndex());
     Assertions.assertEquals(SHORT_BYTES, largeBuffer.writerIndex());
 
-    final DefaultPacketBuffer buffer = new DefaultPacketBuffer();
+    DefaultPacketBuffer buffer = new DefaultPacketBuffer();
     Assertions.assertNull(buffer.buffer);
-    buffer.capacity(LONG_BYTES);
-    Assertions.assertNotNull(buffer.buffer);
+    buffer = (DefaultPacketBuffer) buffer.capacity(LONG_BYTES);
+    Assertions.assertNotNull(buffer);
     Assertions.assertEquals(LONG_BYTES, buffer.capacity());
 
     Assertions.assertThrows(
@@ -79,7 +92,7 @@ public class DefaultPacketBuffferTest {
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            buffer.capacity(0);
+            new DefaultPacketBuffer().capacity(0);
           }
         });
     Assertions.assertTrue(buffer.release());
@@ -795,7 +808,9 @@ public class DefaultPacketBuffferTest {
     largeBuffer.getBytes(0, bufBytes);
     Assertions.assertArrayEquals(largeBytes, bufBytes);
 
-    PacketBuffer newBuf = new DefaultPacketBuffer((int) largeBuffer.capacity());
+    PacketBuffer newBuf = DefaultPacketBuffer.PacketBufferManager.allocate(largeBuffer.capacity());
+    logBuf("getBytes", newBuf);
+
     largeBuffer.getBytes(0, newBuf);
     for (int i = 0; i < newBuf.capacity(); i++) {
       Assertions.assertEquals(newBuf.getByte(i), largeBuffer.getByte(i));
@@ -1542,11 +1557,17 @@ public class DefaultPacketBuffferTest {
   @Test
   void readBytes() {
     final byte[] smallBytesDst = new byte[SHORT_BYTES];
-    final DefaultPacketBuffer smallBufDst = new DefaultPacketBuffer(SHORT_BYTES);
+    final DefaultPacketBuffer smallBufDst =
+        DefaultPacketBuffer.PacketBufferManager.allocate(SHORT_BYTES);
+    logBuf("readBytes", smallBufDst);
     final byte[] mediumBytesDst = new byte[INTEGER_BYTES];
-    final DefaultPacketBuffer mediumBufDst = new DefaultPacketBuffer(INTEGER_BYTES);
+    final DefaultPacketBuffer mediumBufDst =
+        DefaultPacketBuffer.PacketBufferManager.allocate(INTEGER_BYTES);
+    logBuf("readBytes", mediumBufDst);
     final byte[] largeBytesDst = new byte[LONG_BYTES];
-    final DefaultPacketBuffer largeBufDst = new DefaultPacketBuffer(LONG_BYTES);
+    final DefaultPacketBuffer largeBufDst =
+        DefaultPacketBuffer.PacketBufferManager.allocate(LONG_BYTES);
+    logBuf("readBytes", largeBufDst);
 
     for (int i = 0; i < SHORT_BYTES; i++) {
       smallBuffer.writeByte(i);
@@ -2025,11 +2046,17 @@ public class DefaultPacketBuffferTest {
   @Test
   void writeBytes() {
     final byte[] smallBytesDst = new byte[SHORT_BYTES];
-    final DefaultPacketBuffer smallBufSrc = new DefaultPacketBuffer(SHORT_BYTES);
+    final DefaultPacketBuffer smallBufSrc =
+        DefaultPacketBuffer.PacketBufferManager.allocate(SHORT_BYTES);
+    logBuf("writeBytes", smallBufSrc);
     final byte[] mediumBytesDst = new byte[INTEGER_BYTES];
-    final DefaultPacketBuffer mediumBufSrc = new DefaultPacketBuffer(INTEGER_BYTES);
+    final DefaultPacketBuffer mediumBufSrc =
+        DefaultPacketBuffer.PacketBufferManager.allocate(INTEGER_BYTES);
+    logBuf("writeBytes", mediumBufSrc);
     final byte[] largeBytesDst = new byte[LONG_BYTES];
-    final DefaultPacketBuffer largeBufSrc = new DefaultPacketBuffer(LONG_BYTES);
+    final DefaultPacketBuffer largeBufSrc =
+        DefaultPacketBuffer.PacketBufferManager.allocate(LONG_BYTES);
+    logBuf("writeBytes", largeBufSrc);
 
     for (int i = 0; i < SHORT_BYTES; i++) {
       smallBufSrc.writeByte(i);
@@ -2831,8 +2858,73 @@ public class DefaultPacketBuffferTest {
             largeBuffer.slice().close();
           }
         });
-    try (PacketBuffer buf = new DefaultPacketBuffer(BYTE_BYTES)) {
+    try (PacketBuffer buf = DefaultPacketBuffer.PacketBufferManager.allocate(BYTE_BYTES)) {
+      logBuf("autoCloseable", buf);
       Assertions.assertEquals(BYTE_BYTES, buf.capacity());
+    }
+  }
+
+  @Test
+  public void noLeak() {
+    for (int i = 0; i < 1000; i++) {
+      System.gc();
+      if (i % 2 == 0) {
+        DefaultPacketBuffer.FinalizablePacketBuffer allocate =
+            DefaultPacketBuffer.PacketBufferManager.allocate(4);
+        logBuf("noLeak", allocate);
+        assert allocate.release();
+      } else {
+        DefaultPacketBuffer.FinalizablePacketBuffer allocate =
+            DefaultPacketBuffer.PacketBufferManager.allocate(8);
+        logBuf("noLeak", allocate);
+        assert allocate.release();
+      }
+    }
+  }
+
+  // @Test
+  public void leak() {
+    DefaultPacketBuffer.FinalizablePacketBuffer buf =
+        DefaultPacketBuffer.PacketBufferManager.allocate(4);
+    logBuf("leak", buf);
+    WeakReference<DefaultPacketBuffer.FinalizablePacketBuffer> weakReference =
+        new WeakReference<DefaultPacketBuffer.FinalizablePacketBuffer>(buf);
+    buf = null;
+    System.gc();
+    Assertions.assertThrows(
+        MemoryLeakException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            DefaultPacketBuffer.PacketBufferManager.allocate(4);
+          }
+        });
+  }
+
+  @Test
+  public void cast() {
+    try (DefaultPacketBuffer.FinalizablePacketBuffer buf =
+        DefaultPacketBuffer.PacketBufferManager.allocate(4)) {
+      Assertions.assertNotNull(buf.cast(TestPacket.class));
+      Assertions.assertNull(buf.cast(Packet.Abstract.class));
+    } catch (Exception e) {
+    }
+  }
+
+  static class TestPacket extends Packet.Abstract {
+
+    public TestPacket(PacketBuffer buffer) {
+      super(buffer);
+    }
+
+    @Override
+    public PacketBuffer buffer() {
+      return null;
+    }
+
+    @Override
+    protected int size() {
+      return 0;
     }
   }
 

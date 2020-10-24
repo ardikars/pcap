@@ -422,10 +422,17 @@ public class DefaultPcap implements Pcap {
       throw new IllegalArgumentException(
           "type: null (expected: type is PacketHeader.class or PacketBuffer.class)");
     }
-    if (cls.isAssignableFrom(PacketHeader.class)) {
-      return (T) new DefaultPacketHeader();
-    } else if (cls.isAssignableFrom(PacketBuffer.class)) {
-      return (T) new DefaultPacketBuffer();
+    if (!readLock.tryLock()) {
+      throw new RuntimeException(READ_LOCK_FAIL);
+    }
+    try {
+      if (cls.isAssignableFrom(PacketHeader.class)) {
+        return (T) new DefaultPacketHeader();
+      } else if (cls.isAssignableFrom(PacketBuffer.class)) {
+        return (T) new DefaultPacketBuffer();
+      }
+    } finally {
+      readLock.unlock();
     }
     throw new IllegalArgumentException("Class: " + cls + " is unsupported.");
   }

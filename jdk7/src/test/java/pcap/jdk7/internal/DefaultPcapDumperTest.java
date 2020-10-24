@@ -1,5 +1,6 @@
 package pcap.jdk7.internal;
 
+import com.sun.jna.Pointer;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.UUID;
@@ -134,9 +135,10 @@ public class DefaultPcapDumperTest extends BaseTest {
                     new Executable() {
                       @Override
                       public void execute() throws Throwable {
-                        try (PacketBuffer buf = new DefaultPacketBuffer(0)) {
-                          dumper.dump(header, buf);
-                        }
+                        dumper.dump(
+                            header,
+                            new DefaultPacketBuffer(
+                                new Pointer(0), PacketBuffer.ByteOrder.NATIVE, 0, 0, 0));
                       }
                     });
               }

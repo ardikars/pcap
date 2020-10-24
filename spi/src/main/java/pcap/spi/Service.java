@@ -115,16 +115,15 @@ public interface Service {
     int snapshotLength();
 
     /**
-     * If, when capturing, you capture the entire contents of the packet, that requires more CPU *
-     * time to copy the packet to your application, more disk and possibly network bandwidth to *
-     * write the packet data to a file, and more disk space to save the packet. If you don't need *
-     * the entire contents of the packet - for example, if you are only interested in the TCP *
-     * headers of packets - you can set the "snapshot length" for the capture to an appropriate *
-     * value. If the snapshot length is set to snaplen, and snaplen is less than the size of a *
-     * packet that is captured, only the first snaplen bytes of that packet will be captured and *
-     * provided as packet data. A snapshot length of 65535 should be sufficient, on most if not all
-     * * networks, to capture all the data available from the packet. * * @see <a
-     * href="https://www.tcpdump.org/manpages/pcap.3pcap.html">pcap.3pcap.html"</a>
+     * If, when capturing, you capture the entire contents of the packet, that requires more CPU
+     * time to copy the packet to your application, more disk and possibly network bandwidth to
+     * write the packet data to a file, and more disk space to save the packet. If you don't need
+     * the entire contents of the packet - for example, if you are only interested in the TCP
+     * headers of packets - you can set the "snapshot length" for the capture to an appropriate
+     * value. If the snapshot length is less than the size of a packet that is captured, only the
+     * first snapshot length bytes of that packet will be captured and provided as packet data. A
+     * snapshot length of 65535 should be sufficient, on most if not all networks, to capture all
+     * the data available from the packet.
      *
      * @see <a href="https://www.tcpdump.org/manpages/pcap.3pcap.html">pcap.3pcap.html"</a>
      * @param snapshotLength shapshot length.
@@ -151,8 +150,8 @@ public interface Service {
      * address that the adapter recognizes, are provided to the host. This is useful for passively
      * capturing traffic between two or more other hosts for analysis. Note that even if an
      * application does not set promiscuous mode, the adapter could well be in promiscuous mode for
-     * some other reason. For now, this doesn't work on the "any" device; if an argument of "any" or
-     * NULL is supplied, the setting of promiscuous mode is ignored.
+     * some other reason. For now, this doesn't work on the "any" device; if an argument of "any" is
+     * supplied, the setting of promiscuous mode is ignored.
      *
      * @see <a href="https://www.tcpdump.org/manpages/pcap.3pcap.html">pcap.3pcap.html"</a>
      * @param promiscuous promiscuous mode.
@@ -217,7 +216,7 @@ public interface Service {
      * read packets to return within a limited period of time, because, on some platforms, the
      * packet buffer timeout isn't supported, and, on other platforms, the timer doesn't start until
      * at least one packet arrives. This means that the packet buffer timeout should NOT be used,
-     * for example, in an interactive application to allow the packet capture loop to ``poll'' for
+     * for example, in an interactive application to allow the packet capture loop to "poll" for
      * user input periodically, as there's no guarantee that a call reading packets will return
      * after the timeout expires even if no packets have arrived.
      *

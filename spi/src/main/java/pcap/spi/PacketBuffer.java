@@ -233,13 +233,13 @@ public interface PacketBuffer extends AutoCloseable {
   short getShort(long index);
 
   /**
-   * Gets a 16-bit short integer at the specified absolute {@code index} in this buffer in Little
-   * Endian Byte Order. This method does not modify {@code readerIndex} or {@code writerIndex} of
-   * this buffer.
+   * Gets a 16-bit short integer at the specified absolute {@code index} in this buffer in Reserved
+   * Native Endian Byte Order. This method does not modify {@code readerIndex} or {@code
+   * writerIndex} of this buffer.
    *
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 2} is greater than {@code this.capacity}
-   * @return little endian short value.
+   * @return reserved native endian short value.
    * @since 1.0.0
    */
   short getShortRE(long index);
@@ -257,12 +257,12 @@ public interface PacketBuffer extends AutoCloseable {
 
   /**
    * Gets an unsigned 16-bit short integer at the specified absolute {@code index} in this buffer in
-   * Little Endian Byte Order. This method does not modify {@code readerIndex} or {@code
+   * Reserved Native Endian Byte Order. This method does not modify {@code readerIndex} or {@code
    * writerIndex} of this buffer.
    *
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 2} is greater than {@code this.capacity}
-   * @return unsigned little endian short value stored in {@code integer}.
+   * @return unsigned reserved native endian short value stored in {@code integer}.
    * @since 1.0.0
    */
   int getUnsignedShortRE(long index);
@@ -279,13 +279,13 @@ public interface PacketBuffer extends AutoCloseable {
   int getInt(long index);
 
   /**
-   * Gets a 32-bit integer at the specified absolute {@code index} in this buffer with Little Endian
-   * Byte Order. This method does not modify {@code readerIndex} or {@code writerIndex} of this
-   * buffer.
+   * Gets a 32-bit integer at the specified absolute {@code index} in this buffer with Reserved
+   * Native Endian Byte Order. This method does not modify {@code readerIndex} or {@code
+   * writerIndex} of this buffer.
    *
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 4} is greater than {@code this.capacity}
-   * @return little endian integer value.
+   * @return reserved native endian integer value.
    * @since 1.0.0
    */
   int getIntRE(long index);
@@ -303,12 +303,12 @@ public interface PacketBuffer extends AutoCloseable {
 
   /**
    * Gets an unsigned 32-bit integer at the specified absolute {@code index} in this buffer in
-   * Little Endian Byte Order. This method does not modify {@code readerIndex} or {@code
+   * Reserved Native Endian Byte Order. This method does not modify {@code readerIndex} or {@code
    * writerIndex} of this buffer.
    *
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 4} is greater than {@code this.capacity}
-   * @return unsigned little endian integer value stored in {@code long}.
+   * @return unsigned reserved native endian integer value stored in {@code long}.
    * @since 1.0.0
    */
   long getUnsignedIntRE(long index);
@@ -325,13 +325,13 @@ public interface PacketBuffer extends AutoCloseable {
   long getLong(long index);
 
   /**
-   * Gets a 64-bit long integer at the specified absolute {@code index} in this buffer in Little
-   * Endian Byte Order. This method does not modify {@code readerIndex} or {@code writerIndex} of
-   * this buffer.
+   * Gets a 64-bit long integer at the specified absolute {@code index} in this buffer in Reserved
+   * Native Endian Byte Order. This method does not modify {@code readerIndex} or {@code
+   * writerIndex} of this buffer.
    *
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 8} is greater than {@code this.capacity}
-   * @return little endian long value.
+   * @return reserved native endian long value.
    * @since 1.0.0
    */
   long getLongRE(long index);
@@ -349,12 +349,12 @@ public interface PacketBuffer extends AutoCloseable {
 
   /**
    * Gets a 32-bit floating point number at the specified absolute {@code index} in this buffer in
-   * Little Endian Byte Order. This method does not modify {@code readerIndex} or {@code
+   * Reserved Native Endian Byte Order. This method does not modify {@code readerIndex} or {@code
    * writerIndex} of this buffer.
    *
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 4} is greater than {@code this.capacity}
-   * @return little endian float value.
+   * @return reserved native endian float value.
    * @since 1.0.0
    */
   float getFloatRE(long index);
@@ -372,12 +372,12 @@ public interface PacketBuffer extends AutoCloseable {
 
   /**
    * Gets a 64-bit floating point number at the specified absolute {@code index} in this buffer in
-   * Little Endian Byte Order. This method does not modify {@code readerIndex} or {@code
+   * Reserved Native Endian Byte Order. This method does not modify {@code readerIndex} or {@code
    * writerIndex} of this buffer.
    *
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 8} is greater than {@code this.capacity}
-   * @return little endian double value.
+   * @return reserved native endian double value.
    * @since 1.0.0
    */
   double getDoubleRE(long index);
@@ -522,8 +522,8 @@ public interface PacketBuffer extends AutoCloseable {
 
   /**
    * Sets the specified 16-bit short integer at the specified absolute {@code index} in this buffer
-   * with the Little Endian Byte Order. The 16 high-order bits of the specified value are ignored.
-   * This method does not modify {@code readerIndex} or {@code writerIndex} of this buffer.
+   * with the Reserved Native Endian Byte Order. The 16 high-order bits of the specified value are
+   * ignored. This method does not modify {@code readerIndex} or {@code writerIndex} of this buffer.
    *
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 2} is greater than {@code this.capacity}
@@ -549,7 +549,7 @@ public interface PacketBuffer extends AutoCloseable {
 
   /**
    * Sets the specified 32-bit integer at the specified absolute {@code index} in this buffer with
-   * Little Endian byte order . This method does not modify {@code readerIndex} or {@code
+   * Reserved Native Endian byte order . This method does not modify {@code readerIndex} or {@code
    * writerIndex} of this buffer.
    *
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
@@ -576,7 +576,7 @@ public interface PacketBuffer extends AutoCloseable {
 
   /**
    * Sets the specified 64-bit long integer at the specified absolute {@code index} in this buffer
-   * in Little Endian Byte Order. This method does not modify {@code readerIndex} or {@code
+   * in Reserved Native Endian Byte Order. This method does not modify {@code readerIndex} or {@code
    * writerIndex} of this buffer.
    *
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
@@ -603,8 +603,8 @@ public interface PacketBuffer extends AutoCloseable {
 
   /**
    * Sets the specified 32-bit floating-point number at the specified absolute {@code index} in this
-   * buffer in Little Endian Byte Order. This method does not modify {@code readerIndex} or {@code
-   * writerIndex} of this buffer.
+   * buffer in Reserved Native Endian Byte Order. This method does not modify {@code readerIndex} or
+   * {@code writerIndex} of this buffer.
    *
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 4} is greater than {@code this.capacity}
@@ -630,8 +630,8 @@ public interface PacketBuffer extends AutoCloseable {
 
   /**
    * Sets the specified 64-bit floating-point number at the specified absolute {@code index} in this
-   * buffer in Little Endian Byte Order. This method does not modify {@code readerIndex} or {@code
-   * writerIndex} of this buffer.
+   * buffer in Reserved Native Endian Byte Order. This method does not modify {@code readerIndex} or
+   * {@code writerIndex} of this buffer.
    *
    * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
    *     {@code index + 8} is greater than {@code this.capacity}
@@ -783,11 +783,11 @@ public interface PacketBuffer extends AutoCloseable {
   short readShort();
 
   /**
-   * Gets a 16-bit short integer at the current {@code readerIndex} in the Little Endian Byte Order
-   * and increases the {@code readerIndex} by {@code 2} in this buffer.
+   * Gets a 16-bit short integer at the current {@code readerIndex} in the Reserved Native Endian
+   * Byte Order and increases the {@code readerIndex} by {@code 2} in this buffer.
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 2}
-   * @return little endian short value.
+   * @return reserved native endian short value.
    * @since 1.0.0
    */
   short readShortRE();
@@ -803,11 +803,11 @@ public interface PacketBuffer extends AutoCloseable {
   int readUnsignedShort();
 
   /**
-   * Gets an unsigned 16-bit short integer at the current {@code readerIndex} in the Little Endian
-   * Byte Order and increases the {@code readerIndex} by {@code 2} in this buffer.
+   * Gets an unsigned 16-bit short integer at the current {@code readerIndex} in the Reserved Native
+   * Endian Byte Order and increases the {@code readerIndex} by {@code 2} in this buffer.
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 2}
-   * @return unsigned little endian short value stored in {@code integer}.
+   * @return unsigned reserved native endian short value stored in {@code integer}.
    * @since 1.0.0
    */
   int readUnsignedShortRE();
@@ -823,11 +823,11 @@ public interface PacketBuffer extends AutoCloseable {
   int readInt();
 
   /**
-   * Gets a 32-bit integer at the current {@code readerIndex} in the Little Endian Byte Order and
-   * increases the {@code readerIndex} by {@code 4} in this buffer.
+   * Gets a 32-bit integer at the current {@code readerIndex} in the Reserved Native Endian Byte
+   * Order and increases the {@code readerIndex} by {@code 4} in this buffer.
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 4}
-   * @return little endian integer value.
+   * @return reserved native endian integer value.
    * @since 1.0.0
    */
   int readIntRE();
@@ -843,11 +843,11 @@ public interface PacketBuffer extends AutoCloseable {
   long readUnsignedInt();
 
   /**
-   * Gets an unsigned 32-bit integer at the current {@code readerIndex} in the Little Endian Byte
-   * Order and increases the {@code readerIndex} by {@code 4} in this buffer.
+   * Gets an unsigned 32-bit integer at the current {@code readerIndex} in the Reserved Native
+   * Endian Byte Order and increases the {@code readerIndex} by {@code 4} in this buffer.
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 4}
-   * @return unsigned little endian integer value.
+   * @return unsigned reserved native endian integer value.
    * @since 1.0.0
    */
   long readUnsignedIntRE();
@@ -863,11 +863,11 @@ public interface PacketBuffer extends AutoCloseable {
   long readLong();
 
   /**
-   * Gets a 64-bit integer at the current {@code readerIndex} in the Little Endian Byte Order and
-   * increases the {@code readerIndex} by {@code 8} in this buffer.
+   * Gets a 64-bit integer at the current {@code readerIndex} in the Reserved Native Endian Byte
+   * Order and increases the {@code readerIndex} by {@code 8} in this buffer.
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 8}
-   * @return little endian long value.
+   * @return reserved native endian long value.
    * @since 1.0.0
    */
   long readLongRE();
@@ -883,11 +883,11 @@ public interface PacketBuffer extends AutoCloseable {
   float readFloat();
 
   /**
-   * Gets a 32-bit floating point number at the current {@code readerIndex} in Little Endian Byte
-   * Order and increases the {@code readerIndex} by {@code 4} in this buffer.
+   * Gets a 32-bit floating point number at the current {@code readerIndex} in Reserved Native
+   * Endian Byte Order and increases the {@code readerIndex} by {@code 4} in this buffer.
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 4}
-   * @return little endian float value.
+   * @return reserved native endian float value.
    * @since 1.0.0
    */
   float readFloatRE();
@@ -903,11 +903,11 @@ public interface PacketBuffer extends AutoCloseable {
   double readDouble();
 
   /**
-   * Gets a 64-bit floating point number at the current {@code readerIndex} in Little Endian Byte
-   * Order and increases the {@code readerIndex} by {@code 8} in this buffer.
+   * Gets a 64-bit floating point number at the current {@code readerIndex} in Reserved Native
+   * Endian Byte Order and increases the {@code readerIndex} by {@code 8} in this buffer.
    *
    * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 8}
-   * @return little endian double value.
+   * @return reserved native endian double value.
    * @since 1.0.0
    */
   double readDoubleRE();
@@ -1040,8 +1040,8 @@ public interface PacketBuffer extends AutoCloseable {
   PacketBuffer writeShort(int value);
 
   /**
-   * Sets the specified 16-bit short integer in the Little Endian Byte Order at the current {@code
-   * writerIndex} and increases the {@code writerIndex} by {@code 2} in this buffer. The 16
+   * Sets the specified 16-bit short integer in the Reserved Native Endian Byte Order at the current
+   * {@code writerIndex} and increases the {@code writerIndex} by {@code 2} in this buffer. The 16
    * high-order bits of the specified value are ignored.
    *
    * @return this {@link PacketBuffer}.
@@ -1061,8 +1061,8 @@ public interface PacketBuffer extends AutoCloseable {
   PacketBuffer writeInt(int value);
 
   /**
-   * Sets the specified 32-bit integer at the current {@code writerIndex} in the Little Endian Byte
-   * Order and increases the {@code writerIndex} by {@code 4} in this buffer.
+   * Sets the specified 32-bit integer at the current {@code writerIndex} in the Reserved Native
+   * Endian Byte Order and increases the {@code writerIndex} by {@code 4} in this buffer.
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 4}
@@ -1081,8 +1081,8 @@ public interface PacketBuffer extends AutoCloseable {
   PacketBuffer writeLong(long value);
 
   /**
-   * Sets the specified 64-bit long integer at the current {@code writerIndex} in the Little Endian
-   * Byte Order and increases the {@code writerIndex} by {@code 8} in this buffer.
+   * Sets the specified 64-bit long integer at the current {@code writerIndex} in the Reserved
+   * Native Endian Byte Order and increases the {@code writerIndex} by {@code 8} in this buffer.
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 8}
@@ -1101,8 +1101,8 @@ public interface PacketBuffer extends AutoCloseable {
   PacketBuffer writeFloat(float value);
 
   /**
-   * Sets the specified 32-bit floating point number at the current {@code writerIndex} in Little
-   * Endian Byte Order and increases the {@code writerIndex} by {@code 4} in this buffer.
+   * Sets the specified 32-bit floating point number at the current {@code writerIndex} in Reserved
+   * Native Endian Byte Order and increases the {@code writerIndex} by {@code 4} in this buffer.
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 4}
@@ -1121,8 +1121,8 @@ public interface PacketBuffer extends AutoCloseable {
   PacketBuffer writeDouble(double value);
 
   /**
-   * Sets the specified 64-bit floating point number at the current {@code writerIndex} in Little
-   * Endian Byte Order and increases the {@code writerIndex} by {@code 8} in this buffer.
+   * Sets the specified 64-bit floating point number at the current {@code writerIndex} in Reserved
+   * Native Endian Byte Order and increases the {@code writerIndex} by {@code 8} in this buffer.
    *
    * @return this {@link PacketBuffer}.
    * @throws IndexOutOfBoundsException if {@code this.writableBytes} is less than {@code 8}
@@ -1276,7 +1276,7 @@ public interface PacketBuffer extends AutoCloseable {
   PacketBuffer duplicate();
 
   /**
-   * Retrieves this buffer's byte order.
+   * Retrieves this buffer's native byte order.
    *
    * @return returns {@link ByteOrder#BIG_ENDIAN} or {@link ByteOrder#LITTLE_ENDIAN}.
    * @since 1.0.0
@@ -1297,15 +1297,23 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @since 1.0.0
    */
-  @Incubating
   boolean release();
+
+  /**
+   * Casting buffer to {@link Packet}.
+   *
+   * @param t packet type.
+   * @param <T> type.
+   * @return returns {@link Packet}.
+   */
+  @Incubating
+  <T extends Packet.Abstract> T cast(Class<T> t);
 
   /**
    * Byte order.
    *
    * @since 1.0.0
    */
-  @Incubating
   enum ByteOrder {
     /**
      * Big endianess.
@@ -1332,7 +1340,6 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @since 1.0.0
    */
-  @Incubating
   interface Sliced {
 
     /**
@@ -1341,7 +1348,6 @@ public interface PacketBuffer extends AutoCloseable {
      * @return returns unsliced {@link PacketBuffer} buffer.
      * @since 1.0.0
      */
-    @Incubating
     PacketBuffer unSlice();
   }
 
@@ -1350,7 +1356,6 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @since 1.0.0
    */
-  @Incubating
   interface Charset {
 
     /**
@@ -1359,7 +1364,6 @@ public interface PacketBuffer extends AutoCloseable {
      * @since 1.0.0
      * @return returns charset name.
      */
-    @Incubating
     String name();
   }
 }
