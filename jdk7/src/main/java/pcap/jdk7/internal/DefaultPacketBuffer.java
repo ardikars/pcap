@@ -2,6 +2,10 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import pcap.spi.Packet;
+import pcap.spi.PacketBuffer;
+import pcap.spi.exception.MemoryLeakException;
+
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -9,14 +13,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-import pcap.spi.Packet;
-import pcap.spi.PacketBuffer;
-import pcap.spi.exception.MemoryLeakException;
 
 public class DefaultPacketBuffer implements PacketBuffer {
 
-  private static final boolean LEAK_DETECTOR =
-      System.getProperty("pcap.buffer.leakDetector", "false").equals("true");
+  private static final boolean LEAK_DETECTION =
+      System.getProperty("pcap.leakDetection", "false").equals("true");
 
   private static final int BYTE_SIZE = 1;
   private static final int SHORT_SIZE = 2;
@@ -932,12 +933,20 @@ public class DefaultPacketBuffer implements PacketBuffer {
   static final class PacketBufferReference extends PhantomReference<FinalizablePacketBuffer> {
 
     final AtomicLong address;
+    StackTraceElement[] stackTraceElements;
 
     public PacketBufferReference(
         long rawAddr, FinalizablePacketBuffer referent, ReferenceQueue<FinalizablePacketBuffer> q) {
       super(referent, q);
       this.address = new AtomicLong(rawAddr);
       referent.phantomReference = this;
+      fillStackTrace(LEAK_DETECTION);
+    }
+
+    void fillStackTrace(boolean enabled) {
+      if (enabled) {
+        stackTraceElements = Thread.currentThread().getStackTrace();
+      }
     }
   }
 
@@ -960,11 +969,15 @@ public class DefaultPacketBuffer implements PacketBuffer {
       while ((ref = (PacketBufferReference) RQ.poll()) != null) {
         if (ref.address.get() != 0L) {
           Native.free(ref.address.getAndSet(0L)); // force deallocate memory and set address to '0'.
-          if (LEAK_DETECTOR) {
+          if (LEAK_DETECTION) {
+            StringBuilder stactTraceBuilder = new StringBuilder();
+            for (int i = ref.stackTraceElements.length - 1; i >= 0; i--) {
+              stactTraceBuilder.append("\t" + ref.stackTraceElements[i].toString() + "\n");
+            }
             throw new MemoryLeakException(
                 String.format(
-                    "[LEAK] PacketBuffer.release() was not called before it's garbage collected. ",
-                    ref.address.get()));
+                    "PacketBuffer.release() was not called before it's garbage collected.\n\tCreated at:\n%s",
+                    stactTraceBuilder.toString()));
           }
         }
       }
