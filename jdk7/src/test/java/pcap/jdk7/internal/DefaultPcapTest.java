@@ -25,6 +25,10 @@ public class DefaultPcapTest extends BaseTest {
   private Service service;
   private String file;
 
+  private static void logBuf(String message, PacketBuffer buffer) {
+    // System.out.println(message + ": " + buffer);
+  }
+
   @BeforeEach
   void setUp() throws ErrorException {
     service = Service.Creator.create("PcapService");
@@ -568,7 +572,11 @@ public class DefaultPcapTest extends BaseTest {
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 1});
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 2});
       buffer.writeShortRE(0x0806);
-      live.sendPacket(buffer);
+      try {
+        live.sendPacket(buffer);
+      } finally {
+        Assertions.assertTrue(buffer.release());
+      }
       Assertions.assertThrows(
           IllegalArgumentException.class,
           new Executable() {
@@ -597,7 +605,9 @@ public class DefaultPcapTest extends BaseTest {
       try {
         offline.sendPacket(buffer);
       } catch (ErrorException e) {
-        buffer.release();
+        //
+      } finally {
+        Assertions.assertTrue(buffer.release());
       }
     }
   }
@@ -1152,9 +1162,5 @@ public class DefaultPcapTest extends BaseTest {
   public void timestampPrecision() {
     Assertions.assertEquals(Timestamp.Precision.MICRO, DefaultPcap.timestampPrecision(0));
     Assertions.assertEquals(Timestamp.Precision.NANO, DefaultPcap.timestampPrecision(1));
-  }
-
-  private static void logBuf(String message, PacketBuffer buffer) {
-    // System.out.println(message + ": " + buffer);
   }
 }
