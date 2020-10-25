@@ -1163,4 +1163,26 @@ public class DefaultPcapTest extends BaseTest {
     Assertions.assertEquals(Timestamp.Precision.MICRO, DefaultPcap.timestampPrecision(0));
     Assertions.assertEquals(Timestamp.Precision.NANO, DefaultPcap.timestampPrecision(1));
   }
+
+  @Test
+  public void writeLock()
+      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+          RadioFrequencyModeNotSupportedException, NoSuchDeviceException, ActivatedException,
+          InterfaceNotUpException, InterfaceNotSupportTimestampTypeException {
+    Interface lo = loopbackInterface(service);
+    try (final Pcap live =
+        service.live(lo, new DefaultLiveOptions().timestampPrecision(Timestamp.Precision.MICRO))) {
+      final DefaultPcap defaultPcap = (DefaultPcap) live;
+      defaultPcap.tryReadLock();
+      Assertions.assertThrows(
+          RuntimeException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              defaultPcap.tryWriteLock();
+            }
+          });
+    } catch (ErrorException | WarningException | TimestampPrecisionNotSupportedException e) {
+    }
+  }
 }

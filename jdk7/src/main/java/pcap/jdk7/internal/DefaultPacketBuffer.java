@@ -956,6 +956,8 @@ public class DefaultPacketBuffer implements PacketBuffer {
     static final ReferenceQueue<FinalizablePacketBuffer> RQ =
         new ReferenceQueue<FinalizablePacketBuffer>();
 
+    private PacketBufferManager() {}
+
     static FinalizablePacketBuffer allocate(long capacity) {
       long address = Native.malloc(capacity);
       FinalizablePacketBuffer buffer =

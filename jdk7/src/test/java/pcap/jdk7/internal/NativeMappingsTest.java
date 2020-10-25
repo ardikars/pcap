@@ -79,6 +79,17 @@ public class NativeMappingsTest {
   }
 
   @Test
+  void afInet() {
+    DefaultAddress.sockaddr sockaddr = new DefaultAddress.sockaddr();
+    sockaddr.sa_family = NativeMappings.AF_INET;
+    sockaddr.write();
+    Assertions.assertNotNull(NativeMappings.inetAddress(sockaddr));
+    sockaddr.sa_data = new byte[] {1};
+    sockaddr.write();
+    Assertions.assertNull(NativeMappings.inetAddress(sockaddr));
+  }
+
+  @Test
   void afInet6() {
     try (MockedStatic<Platform> theMock = Mockito.mockStatic(Platform.class)) {
       theMock
