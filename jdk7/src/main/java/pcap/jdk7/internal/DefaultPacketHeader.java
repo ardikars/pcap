@@ -1,41 +1,34 @@
 package pcap.jdk7.internal;
 
-import java.util.ArrayList;
-import java.util.List;
 import pcap.spi.PacketHeader;
 
-public class DefaultPacketHeader extends com.sun.jna.Structure implements PacketHeader {
+class DefaultPacketHeader implements PacketHeader {
 
-  static final int TS_OFFSET;
-  static final int CAPLEN_OFFSET;
-  static final int LEN_OFFSET;
+  static final int CAPLEN_OFFSET = DefaultTimestamp.SIZEOF;
+  static final int LEN_OFFSET = CAPLEN_OFFSET + 4;
+  static final int SIZEOF = LEN_OFFSET + 4;
 
-  static {
-    DefaultPacketHeader ph = new DefaultPacketHeader();
-    TS_OFFSET = ph.fieldOffset("ts");
-    CAPLEN_OFFSET = ph.fieldOffset("caplen");
-    LEN_OFFSET = ph.fieldOffset("len");
-  }
-
-  public DefaultTimestamp ts;
-  public int caplen;
-  public int len;
+  private final DefaultTimestamp ts;
+  com.sun.jna.Pointer pointer;
   com.sun.jna.ptr.PointerByReference reference;
 
-  public DefaultPacketHeader() {
+  DefaultPacketHeader() {
     this.reference = new com.sun.jna.ptr.PointerByReference();
+    this.ts = new DefaultTimestamp();
   }
 
-  public DefaultPacketHeader(com.sun.jna.Pointer pointer) {
-    super(pointer);
-    this.reference = new com.sun.jna.ptr.PointerByReference(pointer);
-    read();
+  DefaultPacketHeader(com.sun.jna.Pointer pointer) {
+    this.pointer = pointer;
+    this.ts = new DefaultTimestamp(pointer);
   }
 
-  void useReferece() {
-    if (reference.getValue() != null) {
-      useMemory(reference.getValue());
-    }
+  void useReference() {
+    setPointer(reference.getValue());
+  }
+
+  void setPointer(com.sun.jna.Pointer pointer) {
+    this.pointer = pointer;
+    this.ts.setPointer(pointer);
   }
 
   @Override
@@ -45,20 +38,19 @@ public class DefaultPacketHeader extends com.sun.jna.Structure implements Packet
 
   @Override
   public int captureLength() {
-    return getPointer().getInt(CAPLEN_OFFSET);
+    if (pointer != null) {
+      return pointer.getInt(CAPLEN_OFFSET);
+    } else {
+      return 0;
+    }
   }
 
   @Override
   public int length() {
-    return getPointer().getInt(LEN_OFFSET);
-  }
-
-  @Override
-  protected List<String> getFieldOrder() {
-    List<String> list = new ArrayList<String>();
-    list.add("ts");
-    list.add("caplen");
-    list.add("len");
-    return list;
+    if (pointer != null) {
+      return pointer.getInt(LEN_OFFSET);
+    } else {
+      return 0;
+    }
   }
 }

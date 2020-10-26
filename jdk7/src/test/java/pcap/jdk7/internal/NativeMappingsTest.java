@@ -81,7 +81,11 @@ public class NativeMappingsTest {
   @Test
   void afInet() {
     DefaultAddress.sockaddr sockaddr = new DefaultAddress.sockaddr();
-    sockaddr.sa_family = NativeMappings.AF_INET;
+    if (DefaultAddress.sockaddr.isLinuxOrWindows()) {
+      sockaddr.sa_family = NativeMappings.AF_INET;
+    } else {
+      sockaddr.sa_family = Short.reverseBytes(NativeMappings.AF_INET);
+    }
     sockaddr.write();
     Assertions.assertNotNull(NativeMappings.inetAddress(sockaddr));
     sockaddr.sa_data = new byte[] {1};

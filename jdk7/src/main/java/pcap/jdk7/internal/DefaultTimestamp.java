@@ -1,42 +1,44 @@
 package pcap.jdk7.internal;
 
-import com.sun.jna.NativeLong;
-import com.sun.jna.Structure;
-import java.util.ArrayList;
-import java.util.List;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import pcap.spi.Timestamp;
 
-public class DefaultTimestamp extends Structure implements Timestamp {
+class DefaultTimestamp implements Timestamp {
 
-  static final int TV_SEC_OFFSET;
-  static final int TV_USEC_OFFSET;
+  static final int TV_SEC_OFFSET = 0;
+  static final int TV_USEC_OFFSET = Native.LONG_SIZE;
+  static final int SIZEOF = TV_USEC_OFFSET + Native.LONG_SIZE;
 
-  static {
-    DefaultTimestamp tv = new DefaultTimestamp();
-    TV_SEC_OFFSET = tv.fieldOffset("tv_sec");
-    TV_USEC_OFFSET = tv.fieldOffset("tv_usec");
+  private com.sun.jna.Pointer pointer;
+
+  DefaultTimestamp() {
+    this(Pointer.NULL);
   }
 
-  public NativeLong tv_sec;
-  public NativeLong tv_usec;
+  DefaultTimestamp(com.sun.jna.Pointer pointer) {
+    this.pointer = pointer;
+  }
 
-  public DefaultTimestamp() {}
-
-  @Override
-  protected List<String> getFieldOrder() {
-    List<String> list = new ArrayList<String>();
-    list.add("tv_sec");
-    list.add("tv_usec");
-    return list;
+  void setPointer(com.sun.jna.Pointer pointer) {
+    this.pointer = pointer;
   }
 
   @Override
   public long second() {
-    return getPointer().getNativeLong(TV_SEC_OFFSET).longValue();
+    if (pointer != null) {
+      return pointer.getNativeLong(TV_SEC_OFFSET).longValue();
+    } else {
+      return 0L;
+    }
   }
 
   @Override
   public long microSecond() {
-    return getPointer().getNativeLong(TV_USEC_OFFSET).longValue();
+    if (pointer != null) {
+      return pointer.getNativeLong(TV_USEC_OFFSET).longValue();
+    } else {
+      return 0L;
+    }
   }
 }

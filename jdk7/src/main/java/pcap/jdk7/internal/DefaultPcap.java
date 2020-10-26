@@ -8,7 +8,7 @@ import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.BreakException;
 import pcap.spi.exception.error.NotActivatedException;
 
-public class DefaultPcap implements Pcap {
+class DefaultPcap implements Pcap {
 
   final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
   final ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
@@ -16,11 +16,12 @@ public class DefaultPcap implements Pcap {
 
   final Pointer pointer;
   final int netmask;
-  final DefaultStatistics statistics = new DefaultStatistics();
+  final DefaultStatistics statistics;
 
   DefaultPcap(Pointer pointer, int netmask) {
     this.pointer = pointer;
     this.netmask = netmask;
+    this.statistics = new DefaultStatistics();
   }
 
   static Timestamp.Precision timestampPrecision(int rc) {
@@ -139,19 +140,7 @@ public class DefaultPcap implements Pcap {
               new NativeMappings.pcap_handler() {
                 @Override
                 public void got_packet(Pointer user, Pointer header, Pointer packet) {
-                  Pointer hdrPtr = packetHeader[0].getPointer();
-                  hdrPtr.setNativeLong(
-                      DefaultTimestamp.TV_SEC_OFFSET,
-                      header.getNativeLong(DefaultTimestamp.TV_SEC_OFFSET));
-                  hdrPtr.setNativeLong(
-                      DefaultTimestamp.TV_USEC_OFFSET,
-                      header.getNativeLong(DefaultTimestamp.TV_USEC_OFFSET));
-                  hdrPtr.setInt(
-                      DefaultPacketHeader.LEN_OFFSET,
-                      header.getInt(DefaultPacketHeader.LEN_OFFSET));
-                  hdrPtr.setInt(
-                      DefaultPacketHeader.CAPLEN_OFFSET,
-                      header.getInt(DefaultPacketHeader.CAPLEN_OFFSET));
+                  packetHeader[0].setPointer(header);
                   packetBuffer[0] =
                       new DefaultPacketBuffer(
                           packet,
@@ -232,7 +221,7 @@ public class DefaultPcap implements Pcap {
     int rc;
     tryReadLock();
     try {
-      rc = NativeMappings.pcap_stats(pointer, statistics.getPointer());
+      rc = NativeMappings.pcap_stats(pointer, statistics.pointer);
       statsCheck(rc);
     } finally {
       readLock.unlock();
@@ -385,6 +374,7 @@ public class DefaultPcap implements Pcap {
     tryReadLock();
     try {
       NativeMappings.pcap_close(pointer);
+      com.sun.jna.Native.free(com.sun.jna.Pointer.nativeValue(statistics.pointer));
     } finally {
       readLock.unlock();
     }
@@ -456,9 +446,8 @@ public class DefaultPcap implements Pcap {
     if (rc == 0) {
       throw new TimeoutException("Read packet timeout.");
     } else if (rc == 1) {
-      header.useReferece();
-      header.read();
-      buffer.userReference(header);
+      header.useReference();
+      buffer.useReference(header);
     } else {
       if (rc == -2) {
         throw new BreakException("Break loop.");

@@ -13,7 +13,7 @@ import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.exception.MemoryLeakException;
 
-public class DefaultPacketBuffer implements PacketBuffer {
+class DefaultPacketBuffer implements PacketBuffer {
 
   private static final boolean LEAK_DETECTION =
       System.getProperty("pcap.leakDetection", "false").equals("true");
@@ -29,7 +29,7 @@ public class DefaultPacketBuffer implements PacketBuffer {
         com.sun.jna.NativeLibrary.getInstance(com.sun.jna.Platform.C_LIBRARY_NAME));
   }
 
-  public com.sun.jna.Pointer buffer;
+  com.sun.jna.Pointer buffer;
   protected ByteOrder byteOrder;
   protected long capacity;
   protected long writtenBytes = 0L; // for setCharSequence and writeCharSequence
@@ -62,15 +62,13 @@ public class DefaultPacketBuffer implements PacketBuffer {
   static native com.sun.jna.Pointer memcpy(
       com.sun.jna.Pointer dst, com.sun.jna.Pointer src, long n);
 
-  void userReference(DefaultPacketHeader header) {
-    if (reference.getValue() != null) {
-      this.buffer = reference.getValue();
-      this.capacity = header.captureLength();
-      this.readerIndex = 0;
-      this.writerIndex = header.captureLength();
-      this.markedReaderIndex = 0;
-      this.markedWriterIndex = 0;
-    }
+  void useReference(DefaultPacketHeader header) {
+    this.buffer = reference.getValue();
+    this.capacity = header.captureLength();
+    this.readerIndex = 0;
+    this.writerIndex = header.captureLength();
+    this.markedReaderIndex = 0;
+    this.markedWriterIndex = 0;
   }
 
   @Override

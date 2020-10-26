@@ -1,5 +1,8 @@
 package pcap.jdk7.internal;
 
+import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
+import com.sun.jna.Pointer;
 import java.lang.ref.WeakReference;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,7 +14,7 @@ import pcap.spi.PacketBuffer;
 import pcap.spi.exception.MemoryLeakException;
 
 @RunWith(JUnitPlatform.class)
-public class DefaultPacketBuffferTest {
+public class DefaultPacketBufferTest {
 
   private static final int BYTE_BYTES = 1;
   private static final int SHORT_BYTES = 2;
@@ -20,20 +23,21 @@ public class DefaultPacketBuffferTest {
 
   @Test
   void useMemory() {
-    final PacketBuffer smallBuffer = DefaultPacketBuffer.PacketBufferManager.allocate(SHORT_BYTES);
-    final PacketBuffer mediumBuffer =
-        DefaultPacketBuffer.PacketBufferManager.allocate(INTEGER_BYTES);
-    final PacketBuffer largeBuffer = DefaultPacketBuffer.PacketBufferManager.allocate(LONG_BYTES);
+    Pointer hdrPtr = new Pointer(Native.malloc(DefaultPacketHeader.SIZEOF));
+    hdrPtr.setNativeLong(DefaultTimestamp.TV_SEC_OFFSET, new NativeLong(0));
+    hdrPtr.setNativeLong(DefaultTimestamp.TV_USEC_OFFSET, new NativeLong(0));
+    hdrPtr.setInt(DefaultPacketHeader.CAPLEN_OFFSET, 4);
+    hdrPtr.setInt(DefaultPacketHeader.LEN_OFFSET, 4);
 
-    DefaultPacketHeader header = new DefaultPacketHeader();
+    DefaultPacketHeader header = new DefaultPacketHeader(hdrPtr);
+
+    Pointer bufPtr = new Pointer(Native.malloc(header.captureLength()));
     DefaultPacketBuffer buffer = new DefaultPacketBuffer();
-    buffer.userReference(header);
-    buffer.reference.setValue(((DefaultPacketBuffer) smallBuffer).buffer);
-    buffer.userReference(header);
+    buffer.reference.setValue(bufPtr);
+    buffer.useReference(header);
 
-    Assertions.assertTrue(smallBuffer.release());
-    Assertions.assertTrue(mediumBuffer.release());
-    Assertions.assertTrue(largeBuffer.release());
+    Native.free(Pointer.nativeValue(hdrPtr));
+    Native.free(Pointer.nativeValue(bufPtr));
   }
 
   @Test

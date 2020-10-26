@@ -1,6 +1,7 @@
 package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import org.junit.jupiter.api.Assertions;
@@ -87,13 +88,12 @@ public class DefaultPollEventServiceTest extends BaseTest {
 
   @Test
   void normalizeTimeout() {
-    DefaultTimestamp timestamp = new DefaultTimestamp();
-    timestamp.tv_usec.setValue(1000L);
-    timestamp.write();
-    Assertions.assertEquals(1, DefaultPollEventService.normalizeTimeout(1, timestamp.getPointer()));
-    Assertions.assertEquals(1, DefaultPollEventService.normalizeTimeout(0, timestamp.getPointer()));
-    Assertions.assertEquals(
-        1, DefaultPollEventService.normalizeTimeout(-1, timestamp.getPointer()));
+    Pointer pointer = new Pointer(Native.malloc(DefaultTimestamp.SIZEOF));
+    pointer.setNativeLong(DefaultTimestamp.TV_USEC_OFFSET, new NativeLong(1000L));
+    Assertions.assertEquals(1, DefaultPollEventService.normalizeTimeout(1, pointer));
+    Assertions.assertEquals(1, DefaultPollEventService.normalizeTimeout(0, pointer));
+    Assertions.assertEquals(1, DefaultPollEventService.normalizeTimeout(-1, pointer));
+    Native.free(Pointer.nativeValue(pointer));
   }
 
   @Test

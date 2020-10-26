@@ -4,11 +4,11 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import pcap.spi.Address;
 
-public class DefaultAddressIterator implements Iterator<Address> {
+class DefaultAddressIterator implements Iterator<Address> {
 
   private DefaultAddress next;
 
-  public DefaultAddressIterator(DefaultAddress next) {
+  DefaultAddressIterator(DefaultAddress next) {
     this.next = next;
   }
 
