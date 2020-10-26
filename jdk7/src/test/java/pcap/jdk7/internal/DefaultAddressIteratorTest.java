@@ -30,11 +30,11 @@ public class DefaultAddressIteratorTest {
   void newInstance() throws ErrorException {
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
     DefaultService defaultService = (DefaultService) service;
-    DefaultInterface pcapIf;
+    NativeMappings.pcap_if pcapIf;
     PointerByReference alldevsPP = new PointerByReference();
     defaultService.checkFindAllDevs(NativeMappings.pcap_findalldevs(alldevsPP, errbuf));
     Pointer alldevsp = alldevsPP.getValue();
-    pcapIf = new DefaultInterface(alldevsp);
+    pcapIf = new NativeMappings.pcap_if(alldevsp);
     NativeMappings.pcap_freealldevs(pcapIf.getPointer());
 
     final Iterator<Interface> sources = pcapIf.iterator();
@@ -48,7 +48,7 @@ public class DefaultAddressIteratorTest {
         final Iterator<Address> addresses = source.addresses().iterator();
         while (addresses.hasNext()) {
           Address address = addresses.next();
-          DefaultAddress defaultAddress = (DefaultAddress) address;
+          NativeMappings.pcap_addr defaultAddress = (NativeMappings.pcap_addr) address;
           Assertions.assertEquals(
               Arrays.asList("next", "addr", "netmask", "broadaddr", "dstaddr"),
               defaultAddress.getFieldOrder());

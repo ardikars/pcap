@@ -27,11 +27,11 @@ public class DefaultInterfaceTest {
   void newInstance() throws ErrorException {
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
     DefaultService defaultService = (DefaultService) service;
-    DefaultInterface pcapIf;
+    NativeMappings.pcap_if pcapIf;
     PointerByReference alldevsPP = new PointerByReference();
     defaultService.checkFindAllDevs(NativeMappings.pcap_findalldevs(alldevsPP, errbuf));
     Pointer alldevsp = alldevsPP.getValue();
-    pcapIf = new DefaultInterface(alldevsp);
+    pcapIf = new NativeMappings.pcap_if(alldevsp);
     NativeMappings.pcap_freealldevs(pcapIf.getPointer());
 
     Assertions.assertEquals(

@@ -6,9 +6,9 @@ import pcap.spi.Address;
 
 class DefaultAddressIterator implements Iterator<Address> {
 
-  private DefaultAddress next;
+  private Address next;
 
-  DefaultAddressIterator(DefaultAddress next) {
+  DefaultAddressIterator(Address next) {
     this.next = next;
   }
 
@@ -18,11 +18,11 @@ class DefaultAddressIterator implements Iterator<Address> {
   }
 
   @Override
-  public DefaultAddress next() {
+  public Address next() {
     if (!hasNext()) {
       throw new NoSuchElementException();
     }
-    DefaultAddress previous = next;
+    Address previous = next;
     next = next.next();
     return previous;
   }

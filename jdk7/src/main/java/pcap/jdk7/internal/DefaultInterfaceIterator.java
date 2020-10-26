@@ -6,9 +6,9 @@ import pcap.spi.Interface;
 
 class DefaultInterfaceIterator implements Iterator<Interface> {
 
-  private DefaultInterface next;
+  private Interface next;
 
-  DefaultInterfaceIterator(DefaultInterface next) {
+  DefaultInterfaceIterator(Interface next) {
     this.next = next;
   }
 
@@ -18,11 +18,11 @@ class DefaultInterfaceIterator implements Iterator<Interface> {
   }
 
   @Override
-  public DefaultInterface next() {
+  public Interface next() {
     if (!hasNext()) {
       throw new NoSuchElementException();
     }
-    DefaultInterface previous = next;
+    Interface previous = next;
     next = next.next();
     return previous;
   }

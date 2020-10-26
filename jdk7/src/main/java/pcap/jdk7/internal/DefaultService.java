@@ -31,14 +31,14 @@ public class DefaultService implements Service {
   }
 
   @Override
-  public DefaultInterface interfaces() throws ErrorException {
-    DefaultInterface pcapIf;
+  public Interface interfaces() throws ErrorException {
+    NativeMappings.pcap_if pcapIf;
     PointerByReference alldevsPP = new PointerByReference();
     tryWriteLock();
     try {
       checkFindAllDevs(NativeMappings.pcap_findalldevs(alldevsPP, errbuf(true)));
       Pointer alldevsp = alldevsPP.getValue();
-      pcapIf = new DefaultInterface(alldevsp);
+      pcapIf = new NativeMappings.pcap_if(alldevsp);
       NativeMappings.pcap_freealldevs(pcapIf.getPointer());
     } finally {
       writeLock.unlock();
