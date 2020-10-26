@@ -4,11 +4,11 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import pcap.spi.Interface;
 
-public class DefaultInterfaceIterator implements Iterator<Interface> {
+class DefaultInterfaceIterator implements Iterator<Interface> {
 
-  private DefaultInterface next;
+  private Interface next;
 
-  public DefaultInterfaceIterator(DefaultInterface next) {
+  DefaultInterfaceIterator(Interface next) {
     this.next = next;
   }
 
@@ -18,11 +18,11 @@ public class DefaultInterfaceIterator implements Iterator<Interface> {
   }
 
   @Override
-  public DefaultInterface next() {
+  public Interface next() {
     if (!hasNext()) {
       throw new NoSuchElementException();
     }
-    DefaultInterface previous = next;
+    Interface previous = next;
     next = next.next();
     return previous;
   }

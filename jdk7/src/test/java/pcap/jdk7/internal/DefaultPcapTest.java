@@ -25,6 +25,10 @@ public class DefaultPcapTest extends BaseTest {
   private Service service;
   private String file;
 
+  private static void logBuf(String message, PacketBuffer buffer) {
+    // System.out.println(message + ": " + buffer);
+  }
+
   @BeforeEach
   void setUp() throws ErrorException {
     service = Service.Creator.create("PcapService");
@@ -568,7 +572,11 @@ public class DefaultPcapTest extends BaseTest {
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 1});
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 2});
       buffer.writeShortRE(0x0806);
-      live.sendPacket(buffer);
+      try {
+        live.sendPacket(buffer);
+      } finally {
+        Assertions.assertTrue(buffer.release());
+      }
       Assertions.assertThrows(
           IllegalArgumentException.class,
           new Executable() {
@@ -597,7 +605,9 @@ public class DefaultPcapTest extends BaseTest {
       try {
         offline.sendPacket(buffer);
       } catch (ErrorException e) {
-        buffer.release();
+        //
+      } finally {
+        Assertions.assertTrue(buffer.release());
       }
     }
   }
@@ -1154,7 +1164,25 @@ public class DefaultPcapTest extends BaseTest {
     Assertions.assertEquals(Timestamp.Precision.NANO, DefaultPcap.timestampPrecision(1));
   }
 
-  private static void logBuf(String message, PacketBuffer buffer) {
-    // System.out.println(message + ": " + buffer);
+  @Test
+  public void writeLock()
+      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+          RadioFrequencyModeNotSupportedException, NoSuchDeviceException, ActivatedException,
+          InterfaceNotUpException, InterfaceNotSupportTimestampTypeException {
+    Interface lo = loopbackInterface(service);
+    try (final Pcap live =
+        service.live(lo, new DefaultLiveOptions().timestampPrecision(Timestamp.Precision.MICRO))) {
+      final DefaultPcap defaultPcap = (DefaultPcap) live;
+      defaultPcap.tryReadLock();
+      Assertions.assertThrows(
+          RuntimeException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              defaultPcap.tryWriteLock();
+            }
+          });
+    } catch (ErrorException | WarningException | TimestampPrecisionNotSupportedException e) {
+    }
   }
 }

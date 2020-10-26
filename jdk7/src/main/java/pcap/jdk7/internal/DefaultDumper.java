@@ -5,11 +5,11 @@ import pcap.spi.Dumper;
 import pcap.spi.PacketBuffer;
 import pcap.spi.PacketHeader;
 
-public class DefaultDumper implements Dumper {
+class DefaultDumper implements Dumper {
 
   private final Pointer pointer;
 
-  public DefaultDumper(Pointer pointer) {
+  DefaultDumper(Pointer pointer) {
     this.pointer = pointer;
   }
 
@@ -29,7 +29,9 @@ public class DefaultDumper implements Dumper {
     }
     DefaultPacketHeader packetHeader = (DefaultPacketHeader) header;
     DefaultPacketBuffer packetBuffer = (DefaultPacketBuffer) buffer;
-    NativeMappings.pcap_dump(pointer, packetHeader.getPointer(), packetBuffer.buffer);
+    if (packetHeader.pointer != null && packetBuffer.buffer != null) {
+      NativeMappings.pcap_dump(pointer, packetHeader.pointer, packetBuffer.buffer);
+    }
   }
 
   @Override

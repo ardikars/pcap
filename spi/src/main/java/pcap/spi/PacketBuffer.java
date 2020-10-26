@@ -6,10 +6,15 @@ import pcap.spi.annotation.Incubating;
 /**
  * Used to wrap low-level memory address.
  *
- * <p>Creation of a buffer
+ * <p>Creation of a buffer:
  *
- * <p>
+ * <p><code>
+ * Pcap pcap = ..;
+ * PacketBuffer buffer = pcap.allocate(PacketBuffer.class).capacity(8);
+ * assert buffer.release();
+ * </code>
  *
+ * @see Pcap#allocate(Class)
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */

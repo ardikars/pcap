@@ -15,9 +15,7 @@ import pcap.spi.option.DefaultLiveOptions;
 
 public class DefaultService implements Service {
 
-  private static final String READ_LOCK_FAIL = "Failed to lock (READ_LOCK)";
-
-  private final ReentrantReadWriteLock.WriteLock lock =
+  private final ReentrantReadWriteLock.WriteLock writeLock =
       new ReentrantReadWriteLock(true).writeLock();
 
   private final NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
@@ -33,19 +31,17 @@ public class DefaultService implements Service {
   }
 
   @Override
-  public DefaultInterface interfaces() throws ErrorException {
-    DefaultInterface pcapIf;
+  public Interface interfaces() throws ErrorException {
+    NativeMappings.pcap_if pcapIf;
     PointerByReference alldevsPP = new PointerByReference();
-    if (!lock.tryLock()) {
-      throw new RuntimeException(READ_LOCK_FAIL);
-    }
+    tryWriteLock();
     try {
       checkFindAllDevs(NativeMappings.pcap_findalldevs(alldevsPP, errbuf(true)));
       Pointer alldevsp = alldevsPP.getValue();
-      pcapIf = new DefaultInterface(alldevsp);
+      pcapIf = new NativeMappings.pcap_if(alldevsp);
       NativeMappings.pcap_freealldevs(pcapIf.getPointer());
     } finally {
-      lock.unlock();
+      writeLock.unlock();
     }
     return pcapIf;
   }
@@ -53,9 +49,7 @@ public class DefaultService implements Service {
   @Override
   public Pcap offline(String source, OfflineOptions options) throws ErrorException {
     Pointer pointer;
-    if (!lock.tryLock()) {
-      throw new RuntimeException(READ_LOCK_FAIL);
-    }
+    tryWriteLock();
     try {
       if (options.timestampPrecision() == null) {
         pointer = NativeMappings.pcap_open_offline(source, errbuf(true));
@@ -64,7 +58,7 @@ public class DefaultService implements Service {
       }
       nullCheck(pointer);
     } finally {
-      lock.unlock();
+      writeLock.unlock();
     }
     return new DefaultPcap(pointer, 0);
   }
@@ -76,9 +70,7 @@ public class DefaultService implements Service {
           NoSuchDeviceException, PromiscuousModePermissionDeniedException, ErrorException,
           TimestampPrecisionNotSupportedException {
     Pointer pointer;
-    if (!lock.tryLock()) {
-      throw new RuntimeException(READ_LOCK_FAIL);
-    }
+    tryWriteLock();
     try {
       pointer = NativeMappings.pcap_create(source.name(), errbuf(true));
       nullCheck(pointer);
@@ -102,7 +94,7 @@ public class DefaultService implements Service {
 
       checkActivate(pointer, NativeMappings.pcap_activate(pointer));
     } finally {
-      lock.unlock();
+      writeLock.unlock();
     }
     DefaultPcap pcap = new DefaultPcap(pointer, netmask(source));
     if (options instanceof DefaultLiveOptions) {
@@ -297,5 +289,9 @@ public class DefaultService implements Service {
       errbuf.clear();
     }
     return errbuf;
+  }
+
+  void tryWriteLock() {
+    writeLock.lock();
   }
 }

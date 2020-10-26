@@ -27,13 +27,15 @@ public interface Timestamp {
   long microSecond();
 
   /**
-   * Time stamp resolution types. Not all systems and interfaces will necessarily support all of
-   * these resolutions when doing live captures; all of them can be requested when reading a
-   * savefile.
+   * Time stamp resolution types.
+   *
+   * <p>Not all systems and interfaces will necessarily support all of these resolutions when doing
+   * live captures; all of them can be requested when reading a {@code savefile}.
    *
    * @since 1.0.0
    */
   enum Precision {
+
     /**
      * Use timestamps with microsecond precision (default).
      *

@@ -19,12 +19,12 @@ class DefaultPollEventService extends AbstractEventService implements Invocation
 
   final Pointer pfds;
 
-  public DefaultPollEventService() {
+  DefaultPollEventService() {
     super(null);
     this.pfds = null;
   }
 
-  public DefaultPollEventService(DefaultPcap pcap, Pointer pfds) {
+  DefaultPollEventService(DefaultPcap pcap, Pointer pfds) {
     super(pcap);
     this.pfds = pfds;
   }

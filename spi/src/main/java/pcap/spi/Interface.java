@@ -18,7 +18,7 @@ public interface Interface extends Iterable<Interface> {
   Interface next();
 
   /**
-   * Name to hand to {@code "pcap_open_live()"}.
+   * Interface name.
    *
    * @return returns interface name.
    * @since 1.0.0

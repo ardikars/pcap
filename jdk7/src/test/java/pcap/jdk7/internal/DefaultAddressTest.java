@@ -34,11 +34,11 @@ public class DefaultAddressTest {
   void newInstance() throws ErrorException {
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
     DefaultService defaultService = (DefaultService) service;
-    DefaultInterface pcapIf;
+    NativeMappings.pcap_if pcapIf;
     PointerByReference alldevsPP = new PointerByReference();
     defaultService.checkFindAllDevs(NativeMappings.pcap_findalldevs(alldevsPP, errbuf));
     Pointer alldevsp = alldevsPP.getValue();
-    pcapIf = new DefaultInterface(alldevsp);
+    pcapIf = new NativeMappings.pcap_if(alldevsp);
     NativeMappings.pcap_freealldevs(pcapIf.getPointer());
 
     final Iterator<Interface> sources = pcapIf.iterator();
@@ -52,7 +52,7 @@ public class DefaultAddressTest {
         final Iterator<Address> addresses = source.addresses().iterator();
         while (addresses.hasNext()) {
           Address address = addresses.next();
-          DefaultAddress defaultAddress = (DefaultAddress) address;
+          NativeMappings.pcap_addr defaultAddress = (NativeMappings.pcap_addr) address;
           Assertions.assertEquals(
               Arrays.asList("next", "addr", "netmask", "broadaddr", "dstaddr"),
               defaultAddress.getFieldOrder());
@@ -83,8 +83,8 @@ public class DefaultAddressTest {
 
   @Test
   void sockaddr() {
-    try (MockedStatic<DefaultAddress.sockaddr> theMock =
-        Mockito.mockStatic(DefaultAddress.sockaddr.class)) {
+    try (MockedStatic<NativeMappings.sockaddr> theMock =
+        Mockito.mockStatic(NativeMappings.sockaddr.class)) {
       short saFamily;
 
       theMock
@@ -92,11 +92,11 @@ public class DefaultAddressTest {
               new MockedStatic.Verification() {
                 @Override
                 public void apply() throws Throwable {
-                  DefaultAddress.sockaddr.isLinuxOrWindows();
+                  NativeMappings.sockaddr.isLinuxOrWindows();
                 }
               })
           .thenReturn(false);
-      DefaultAddress.sockaddr isWindowsType = new DefaultAddress.sockaddr();
+      NativeMappings.sockaddr isWindowsType = new NativeMappings.sockaddr();
       isWindowsType.sa_family = 2;
       isWindowsType.setAutoSynch(true);
       isWindowsType.setAutoRead(true);
@@ -109,12 +109,12 @@ public class DefaultAddressTest {
               new MockedStatic.Verification() {
                 @Override
                 public void apply() throws Throwable {
-                  DefaultAddress.sockaddr.isLinuxOrWindows();
+                  NativeMappings.sockaddr.isLinuxOrWindows();
                 }
               })
           .thenReturn(true);
 
-      DefaultAddress.sockaddr nonWindowsType = new DefaultAddress.sockaddr();
+      NativeMappings.sockaddr nonWindowsType = new NativeMappings.sockaddr();
       nonWindowsType.sa_family = 2;
       nonWindowsType.setAutoSynch(true);
       nonWindowsType.setAutoRead(true);
@@ -124,9 +124,9 @@ public class DefaultAddressTest {
     }
 
     Assertions.assertTrue(
-        DefaultAddress.sockaddr.getSaFamilyByByteOrder((short) 2, ByteOrder.LITTLE_ENDIAN) >= 0);
+        NativeMappings.sockaddr.getSaFamilyByByteOrder((short) 2, ByteOrder.LITTLE_ENDIAN) >= 0);
     Assertions.assertTrue(
-        DefaultAddress.sockaddr.getSaFamilyByByteOrder((short) 2, ByteOrder.BIG_ENDIAN) >= 0);
+        NativeMappings.sockaddr.getSaFamilyByByteOrder((short) 2, ByteOrder.BIG_ENDIAN) >= 0);
   }
 
   @Test
@@ -150,7 +150,7 @@ public class DefaultAddressTest {
                 }
               })
           .thenReturn(false);
-      Assertions.assertFalse(DefaultAddress.sockaddr.isLinuxOrWindows());
+      Assertions.assertFalse(NativeMappings.sockaddr.isLinuxOrWindows());
       theMock
           .when(
               new MockedStatic.Verification() {
@@ -169,7 +169,7 @@ public class DefaultAddressTest {
                 }
               })
           .thenReturn(true);
-      Assertions.assertTrue(DefaultAddress.sockaddr.isLinuxOrWindows());
+      Assertions.assertTrue(NativeMappings.sockaddr.isLinuxOrWindows());
       theMock
           .when(
               new MockedStatic.Verification() {
@@ -188,7 +188,7 @@ public class DefaultAddressTest {
                 }
               })
           .thenReturn(false);
-      Assertions.assertTrue(DefaultAddress.sockaddr.isLinuxOrWindows());
+      Assertions.assertTrue(NativeMappings.sockaddr.isLinuxOrWindows());
       theMock
           .when(
               new MockedStatic.Verification() {
@@ -207,7 +207,7 @@ public class DefaultAddressTest {
                 }
               })
           .thenReturn(true);
-      Assertions.assertTrue(DefaultAddress.sockaddr.isLinuxOrWindows());
+      Assertions.assertTrue(NativeMappings.sockaddr.isLinuxOrWindows());
     }
   }
 }

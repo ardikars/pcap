@@ -20,17 +20,17 @@ public interface Pcap extends AutoCloseable {
    * existing file).
    *
    * @param file location of {@code savefile} will saved.
-   * @return returns {@code Pcap} {@link Dumper} handle.
+   * @return returns new {@link Dumper} handle.
    * @throws ErrorException generic exception.
    * @since 1.0.0
    */
   Dumper dumpOpen(String file) throws ErrorException;
 
   /**
-   * Append packet buffer on existing {@code pcap} file.
+   * Open {@code savefile} or create the new one if it's doesn't exist.
    *
    * @param file location of saved file.
-   * @return returns {@code Pcap} {@link Dumper} handle.
+   * @return returns new {@link Dumper} handle.
    * @throws ErrorException generic error.
    * @since 1.0.0
    */
@@ -70,7 +70,7 @@ public interface Pcap extends AutoCloseable {
    * If the code needs it to remain valid, it must make a copy of it. The {@link PacketHeader}
    * pointed to by {@code header} is filled in with the appropriate values for the packet.
    *
-   * @param header appropriate values for the packet.
+   * @param header header.
    * @return returns {@link PacketBuffer} appropriate with for the {@link PacketHeader}.
    */
   PacketBuffer next(PacketHeader header);
@@ -82,8 +82,11 @@ public interface Pcap extends AutoCloseable {
    * {@link Pcap#loop(int, PacketHandler, Object)}, or {@link Pcap#dispatch(int, PacketHandler,
    * Object)}. If the code needs it to remain valid, it must make a copy of it.
    *
-   * @param packetHeader packet header.
-   * @param packetBuffer packet buffer.
+   * <p>The {@link PacketHeader} pointed to by {@code header} and the {@link PacketBuffer} pointer
+   * by {@code buffer} is filled in with the appropriate values for the packet.
+   *
+   * @param packetHeader header.
+   * @param packetBuffer buffer.
    * @throws BreakException there are no more packets to read from {@code savefile}.
    * @throws TimeoutException if packets are being read from a `live capture` and the packet buffer
    *     timeout expired.
@@ -94,28 +97,7 @@ public interface Pcap extends AutoCloseable {
       throws BreakException, TimeoutException, ErrorException;
 
   /**
-   * Processes packets from a live capture or {@code PcapLive} until cnt packets are processed, the
-   * end of the current bufferful of packets is reached when doing a live capture, the end of the
-   * {@code savefile} is reached when reading from a {@code savefile}, {@code Pcap#breakLoop()} is
-   * called, or an error occurs. Thus, when doing a live capture, cnt is the maximum number of
-   * packets to process before returning, but is not a minimum number; when reading a live capture,
-   * only one bufferful of packets is read at a time, so fewer than cnt packets may be processed. A
-   * value of -1 or 0 for cnt causes all the packets received in one buffer to be processed when
-   * reading a live capture, and causes all the packets in the file to be processed when reading a
-   * {@code savefile}.
-   *
-   * <p>(In older versions of libpcap, the behavior when cnt was 0 was undefined; different
-   * platforms and devices behaved differently, so code that must work with older versions of
-   * libpcap should use -1, nor 0, as the value of cnt.)
-   *
-   * <p>callback specifies a {@code PacketHandler} routine to be called with three arguments : a
-   * {@code args} which is passed in the user argument to {@code Pcap#loop()} or {@code
-   * Pcap#dispatch()}, a const struct pcap_pkthdr pointer pointing to the packet time stamp and
-   * lengths, and a {@code args} to the first caplen bytes of data from the packet.
-   *
-   * <p>(In older versions of libpcap, the behavior when cnt was 0 was undefined; different
-   * platforms and devices behaved differently, so code that must work with older versions of
-   * libpcap should use -1, nor 0, as the value of cnt.)
+   * Processes packets from a live capture or {@code PcapLive} until cnt packets are processed.
    *
    * @param count number of packets.
    * @param handler {@link PacketHandler} callback function.
@@ -142,8 +124,9 @@ public interface Pcap extends AutoCloseable {
   Statistics stats() throws ErrorException;
 
   /**
-   * Force a {@link Pcap#loop(int, PacketHandler, Object)} call to return And throw {@link
-   * BreakException} on {@link Pcap#loop(int, PacketHandler, Object)}.
+   * Force a {@link Pcap#loop(int, PacketHandler, Object)} or {@link Pcap#dispatch(int,
+   * PacketHandler, Object)} call to return And throw {@link BreakException} on {@link
+   * Pcap#loop(int, PacketHandler, Object)}.
    *
    * @since 1.0.0
    */
@@ -240,24 +223,24 @@ public interface Pcap extends AutoCloseable {
   boolean getNonBlock() throws ErrorException;
 
   /**
-   * Puts a this capture handle into `non-blocking` mode, or takes it out of `non-blocking` mode,
-   * depending on whether the nonblock argument is `true` or `false`. It has no effect on {@code
-   * savefiles}. In `non-blocking` mode, an attempt to read from the capture descriptor with {@link
-   * Pcap#dispatch(int, PacketHandler, Object)} will, if no packets are currently available to be
-   * read, return void; immediately rather than blocking waiting for packets to arrive. {@link
-   * Pcap#loop(int, PacketHandler, Object)} will not work in `non-blocking` mode.
+   * Puts a this capture handle into {@code non-blocking} mode, or takes it out of {@code
+   * non-blocking} mode, depending on whether the {@code blocking} argument is {@code true} or
+   * {@code false}. It has no effect on {@code savefiles}. In {@code non-blocking} mode, an attempt
+   * to read from the capture descriptor with {@link Pcap#dispatch(int, PacketHandler, Object)}
+   * will, if no packets are currently available to be read, return void; immediately rather than
+   * blocking waiting for packets to arrive. {@link Pcap#loop(int, PacketHandler, Object)} will not
+   * work in {@code non-blocking} mode.
    *
    * <p>When {@link Pcap} handle created, a handle is not in non blocking mode.
    *
-   * @param blocking `true` for enable non blocking mode, `false` otherwise.
+   * @param blocking {@code true} for enable non blocking mode, {@code false} otherwise.
    * @throws ErrorException throwing some error when calling this method.
    * @since 1.0.0
    */
   void setNonBlock(boolean blocking) throws ErrorException;
 
   /**
-   * Close {@code PcapLive} or {@code PcapOffline}. <br>
-   * Note: BPF handle will closed automaticly.
+   * Close {@code PcapLive} or {@code PcapOffline}.
    *
    * @since 1.0.0
    */
@@ -265,9 +248,8 @@ public interface Pcap extends AutoCloseable {
   void close();
 
   /**
-   * Create pointer to given type and automatically deallocate when this handler has been closed.
+   * Create pointer to given type.
    *
-   * @see Pcap#close()
    * @param cls a class, ex {@link PacketHeader} and {@link PacketBuffer}.
    * @param <T> pointer type.
    * @return returns {@code <T>} instance.

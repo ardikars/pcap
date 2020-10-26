@@ -28,7 +28,7 @@ public class NativeMappingsTest {
   void inetAddress() {
     Assertions.assertNull(NativeMappings.inetAddress(null));
 
-    DefaultAddress.sockaddr sockaddr_in = new DefaultAddress.sockaddr();
+    NativeMappings.sockaddr sockaddr_in = new NativeMappings.sockaddr();
     sockaddr_in.sa_family = NativeMappings.AF_INET;
     sockaddr_in.sa_data = new byte[] {0, 0, 127, 0, 0, 1};
     try {
@@ -38,7 +38,7 @@ public class NativeMappingsTest {
       System.out.println("AF_INET6: " + NativeMappings.AF_INET6);
     }
 
-    DefaultAddress.sockaddr sockaddr_in6 = new DefaultAddress.sockaddr();
+    NativeMappings.sockaddr sockaddr_in6 = new NativeMappings.sockaddr();
     sockaddr_in6.sa_family = NativeMappings.AF_INET6;
     sockaddr_in6.sa_data = new byte[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
     try {
@@ -49,7 +49,7 @@ public class NativeMappingsTest {
       System.out.println("AF_INET6: " + NativeMappings.AF_INET6);
     }
 
-    DefaultAddress.sockaddr sockaddr_err = new DefaultAddress.sockaddr();
+    NativeMappings.sockaddr sockaddr_err = new NativeMappings.sockaddr();
     sockaddr_err.sa_family = NativeMappings.AF_INET;
     sockaddr_err.sa_data = new byte[] {0};
     Assertions.assertNull(NativeMappings.inetAddress(sockaddr_err));
@@ -76,6 +76,21 @@ public class NativeMappingsTest {
     Assertions.assertEquals(Arrays.asList("code", "jt", "jf", "k"), insn.getFieldOrder());
     NativeMappings.bpf_insn.ByReference reference = new NativeMappings.bpf_insn.ByReference();
     Assertions.assertNotNull(reference);
+  }
+
+  @Test
+  void afInet() {
+    NativeMappings.sockaddr sockaddr = new NativeMappings.sockaddr();
+    if (NativeMappings.sockaddr.isLinuxOrWindows()) {
+      sockaddr.sa_family = NativeMappings.AF_INET;
+    } else {
+      sockaddr.sa_family = Short.reverseBytes(NativeMappings.AF_INET);
+    }
+    sockaddr.write();
+    Assertions.assertNotNull(NativeMappings.inetAddress(sockaddr));
+    sockaddr.sa_data = new byte[] {1};
+    sockaddr.write();
+    Assertions.assertNull(NativeMappings.inetAddress(sockaddr));
   }
 
   @Test

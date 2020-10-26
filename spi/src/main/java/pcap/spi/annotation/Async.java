@@ -1,3 +1,4 @@
+/** This code is licenced under the GPL version 2. */
 package pcap.spi.annotation;
 
 import java.lang.annotation.ElementType;
@@ -9,10 +10,10 @@ import pcap.spi.PacketHeader;
 
 /**
  * Indicate the {@link pcap.spi.Pcap#dispatch(int, PacketHandler, Object)} or {@link
- * pcap.spi.Pcap#next(PacketHeader)} are capable for perform non-blocking I/O. {@link pcap.spi.Pcap}
- * must be set in non-blocking mode by calling {@link pcap.spi.Pcap#setNonBlock(boolean)} ({@code
- * true}).
+ * pcap.spi.Pcap#next(PacketHeader)} is capable to perform non-blocking I/O. The device must be put
+ * in non-blocking mode with a call to {@link pcap.spi.Pcap#setNonBlock(boolean)} ({@code true}).
  *
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
 @Target(ElementType.METHOD)

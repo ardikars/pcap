@@ -16,7 +16,7 @@ class DefaultWaitForSingleObjectEventService extends AbstractEventService
 
   final long handle;
 
-  public DefaultWaitForSingleObjectEventService() {
+  DefaultWaitForSingleObjectEventService() {
     super(null);
     this.handle = 0;
   }

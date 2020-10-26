@@ -5,6 +5,8 @@ import pcap.spi.PacketBuffer;
 
 class StringUtils {
 
+  private StringUtils() {}
+
   // see netty-buffer code
   static long setCharSequence(
       PacketBuffer self, long index, CharSequence seq, PacketBuffer.Charset charset) {

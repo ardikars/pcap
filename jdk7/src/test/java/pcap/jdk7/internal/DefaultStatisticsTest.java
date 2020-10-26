@@ -1,5 +1,7 @@
 package pcap.jdk7.internal;
 
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -11,17 +13,19 @@ public class DefaultStatisticsTest {
   @Test
   void newInstance() {
     DefaultStatistics statistics = new DefaultStatistics();
-    statistics.ps_drop = 1;
-    statistics.ps_ifdrop = 1;
-    statistics.ps_recv = 1;
-    statistics.write();
-    Assertions.assertEquals(1, statistics.dropped());
-    Assertions.assertEquals(1, statistics.droppedByInterface());
-    Assertions.assertEquals(1, statistics.received());
+    Assertions.assertEquals(0, statistics.dropped());
+    Assertions.assertEquals(0, statistics.droppedByInterface());
+    Assertions.assertEquals(0, statistics.received());
 
-    DefaultStatistics fromPointer = new DefaultStatistics(statistics.getPointer());
+    DefaultStatistics fromPointer = new DefaultStatistics();
+    fromPointer.pointer.setInt(DefaultStatistics.PS_RECV_OFFSET, 1);
+    fromPointer.pointer.setInt(DefaultStatistics.PS_DROP_OFFSET, 1);
+    fromPointer.pointer.setInt(DefaultStatistics.PS_IFDROP_OFFSET, 1);
+
+    Assertions.assertEquals(1, fromPointer.received());
     Assertions.assertEquals(1, fromPointer.dropped());
     Assertions.assertEquals(1, fromPointer.droppedByInterface());
-    Assertions.assertEquals(1, fromPointer.received());
+
+    Native.free(Pointer.nativeValue(fromPointer.pointer));
   }
 }

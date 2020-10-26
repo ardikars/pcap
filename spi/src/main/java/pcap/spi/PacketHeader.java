@@ -2,15 +2,12 @@
 package pcap.spi;
 
 /**
- * Generic per-packet information, as supplied by libpcap.
+ * Generic per-packet information.
  *
- * <p>The time stamp can and should be a {@link Timestamp}, regardless of whether your system
- * supports 32-bit {@link Timestamp#second()} in {@link Timestamp}, 64-bit {@link
- * Timestamp#second()} in {@link Timestamp}, or both if it supports both 32-bit and 64-bit
- * applications. The on-disk format of savefiles uses 32-bit {@link Timestamp#second()} (and {@link
- * Timestamp#microSecond()} ()}); this structure is irrelevant to that. 32-bit and 64-bit versions
- * of libpcap, even if they're on the same platform, should supply the appropriate version of {@link
- * Timestamp}, even if that's not what the underlying packet capture mechanism supplies.
+ * <p>{@link PacketHeader} supply the appropriate version of {@link Timestamp}, regardless of
+ * whether your system supports 32-bit {@link Timestamp}, 64-bit {@link Timestamp}, or both.
+ *
+ * <p>Note: On-disk format of {@code savefiles} uses 32-bit {@link Timestamp}.
  *
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0

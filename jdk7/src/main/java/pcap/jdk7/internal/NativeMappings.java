@@ -6,13 +6,16 @@ import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.nio.ByteOrder;
 import java.util.*;
+import pcap.spi.Address;
+import pcap.spi.Interface;
 
 class NativeMappings {
 
-  public static final int OK = 0;
-  public static final int TRUE = 1;
-  public static final int FALSE = 0;
+  static final int OK = 0;
+  static final int TRUE = 1;
+  static final int FALSE = 0;
   static final short AF_INET;
   static final short AF_INET6;
   private static final Map<String, Object> NATIVE_LOAD_LIBRARY_OPTIONS =
@@ -155,7 +158,7 @@ class NativeMappings {
 
   static native int pcap_is_swapped(Pointer p);
 
-  static InetAddress inetAddress(DefaultAddress.sockaddr sockaddr) {
+  static InetAddress inetAddress(sockaddr sockaddr) {
     if (sockaddr == null) {
       return null;
     }
@@ -258,5 +261,158 @@ class NativeMappings {
     }
 
     public static class ByReference extends bpf_insn implements Structure.ByReference {}
+  }
+
+  public static class sockaddr extends Structure {
+
+    private static final ByteOrder NATIVE_BYTE_ORDER = ByteOrder.nativeOrder();
+
+    public short sa_family;
+    public byte[] sa_data = new byte[14];
+
+    public sockaddr() {}
+
+    static boolean isLinuxOrWindows() {
+      return Platform.isWindows() || Platform.isLinux();
+    }
+
+    static short getSaFamilyByByteOrder(short saFamily, ByteOrder bo) {
+      if (bo.equals(ByteOrder.BIG_ENDIAN)) {
+        return (short) (0xFF & saFamily);
+      } else {
+        return (short) (0xFF & (saFamily >> 8));
+      }
+    }
+
+    @Override
+    protected List<String> getFieldOrder() {
+      List<String> fieldOrder = new ArrayList<String>();
+      fieldOrder.add("sa_family");
+      fieldOrder.add("sa_data");
+      return fieldOrder;
+    }
+
+    public short getSaFamily() {
+      if (isLinuxOrWindows()) {
+        return sa_family;
+      } else {
+        return getSaFamilyByByteOrder(sa_family, NATIVE_BYTE_ORDER);
+      }
+    }
+
+    public static class ByReference extends sockaddr implements Structure.ByReference {}
+  }
+
+  public static class pcap_if extends Structure implements Interface {
+
+    public ByReference next;
+    public String name;
+    public String description;
+    public pcap_addr.ByReference addresses;
+    public int flags;
+
+    public pcap_if() {}
+
+    public pcap_if(Pointer pointer) {
+      super(pointer);
+      read();
+    }
+
+    @Override
+    public pcap_if next() {
+      return next;
+    }
+
+    @Override
+    public String name() {
+      return name;
+    }
+
+    @Override
+    public String description() {
+      return description;
+    }
+
+    @Override
+    public pcap_addr addresses() {
+      return addresses;
+    }
+
+    @Override
+    public int flags() {
+      return flags;
+    }
+
+    @Override
+    public Iterator<Interface> iterator() {
+      return new DefaultInterfaceIterator(this);
+    }
+
+    @Override
+    protected List<String> getFieldOrder() {
+      List<String> fieldOrder = new ArrayList<String>();
+      fieldOrder.add("next");
+      fieldOrder.add("name");
+      fieldOrder.add("description");
+      fieldOrder.add("addresses");
+      fieldOrder.add("flags");
+      return fieldOrder;
+    }
+
+    public static class ByReference extends pcap_if implements Structure.ByReference {}
+  }
+
+  public static class pcap_addr extends Structure implements Address {
+
+    public ByReference next;
+    public sockaddr.ByReference addr;
+    public sockaddr.ByReference netmask;
+    public sockaddr.ByReference broadaddr;
+    public sockaddr.ByReference dstaddr;
+
+    public pcap_addr() {}
+
+    @Override
+    public pcap_addr next() {
+      return next;
+    }
+
+    @Override
+    public InetAddress address() {
+      return NativeMappings.inetAddress(addr);
+    }
+
+    @Override
+    public InetAddress netmask() {
+      return NativeMappings.inetAddress(netmask);
+    }
+
+    @Override
+    public InetAddress broadcast() {
+      return NativeMappings.inetAddress(broadaddr);
+    }
+
+    @Override
+    public InetAddress destination() {
+      return NativeMappings.inetAddress(dstaddr);
+    }
+
+    @Override
+    public Iterator<Address> iterator() {
+      return new DefaultAddressIterator(this);
+    }
+
+    @Override
+    protected List<String> getFieldOrder() {
+      List<String> fieldOrder = new ArrayList<String>();
+      fieldOrder.add("next");
+      fieldOrder.add("addr");
+      fieldOrder.add("netmask");
+      fieldOrder.add("broadaddr");
+      fieldOrder.add("dstaddr");
+      return fieldOrder;
+    }
+
+    public static class ByReference extends pcap_addr implements Structure.ByReference {}
   }
 }
