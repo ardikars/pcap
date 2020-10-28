@@ -50,7 +50,9 @@ jobs:
       - name: actions/setup-pcap
         run: |
           sudo apt-get update && sudo apt-get -y install build-essential bison flex autoconf make
-          git clone https://github.com/the-tcpdump-group/libpcap.git
+          wget -c https://github.com/the-tcpdump-group/libpcap/archive/libpcap-1.2.1.tar.gz
+          tar -xzvf libpcap-1.2.1.tar.gz
+          mv libpcap-libpcap-1.2.1 libpcap
           cd libpcap/
           ./configure --prefix=$(pwd)
           make && make install

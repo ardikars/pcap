@@ -5,6 +5,7 @@ import pcap.spi.Pcap;
 import pcap.spi.Service;
 import pcap.spi.Timestamp;
 import pcap.spi.annotation.Incubating;
+import pcap.spi.annotation.Version;
 
 /** {@inheritDoc} */
 public class DefaultLiveOptions implements Service.LiveOptions {
@@ -24,10 +25,10 @@ public class DefaultLiveOptions implements Service.LiveOptions {
     this.promiscuous = true;
     this.rfmon = false;
     this.timeout = 2000;
-    this.timestampType = Timestamp.Type.HOST;
+    this.timestampType = null;
     this.immediate = true;
     this.bufferSize = 0;
-    this.timestampPrecision = Timestamp.Precision.MICRO;
+    this.timestampPrecision = null;
   }
 
   /** {@inheritDoc} */
@@ -83,12 +84,14 @@ public class DefaultLiveOptions implements Service.LiveOptions {
   }
 
   /** {@inheritDoc} */
+  @Version(major = 1, minor = 2, patch = 1)
   @Override
   public Timestamp.Type timestampType() {
     return timestampType;
   }
 
   /** {@inheritDoc} */
+  @Version(major = 1, minor = 2, patch = 1)
   @Override
   public Service.LiveOptions timestampType(Timestamp.Type timestampType) {
     this.timestampType = timestampType;
@@ -96,12 +99,14 @@ public class DefaultLiveOptions implements Service.LiveOptions {
   }
 
   /** {@inheritDoc} */
+  @Version(major = 1, minor = 5, patch = 0)
   @Override
   public boolean isImmediate() {
     return immediate;
   }
 
   /** {@inheritDoc} */
+  @Version(major = 1, minor = 5, patch = 0)
   @Override
   public Service.LiveOptions immediate(boolean immediate) {
     this.immediate = immediate;
@@ -122,12 +127,14 @@ public class DefaultLiveOptions implements Service.LiveOptions {
   }
 
   /** {@inheritDoc} */
+  @Version(major = 1, minor = 5, patch = 0)
   @Override
   public Timestamp.Precision timestampPrecision() {
     return timestampPrecision;
   }
 
   /** {@inheritDoc} */
+  @Version(major = 1, minor = 5, patch = 0)
   @Override
   public Service.LiveOptions timestampPrecision(Timestamp.Precision timestampPrecision) {
     this.timestampPrecision = timestampPrecision;

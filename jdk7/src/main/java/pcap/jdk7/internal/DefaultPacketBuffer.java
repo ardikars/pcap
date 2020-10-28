@@ -380,7 +380,7 @@ class DefaultPacketBuffer implements PacketBuffer {
 
   @Override
   public PacketBuffer setCharSequence(long index, CharSequence seq, Charset charset) {
-    this.writtenBytes = StringUtils.setCharSequence(this, index, seq, charset);
+    this.writtenBytes = Utils.setCharSequence(this, index, seq, charset);
     return this;
   }
 

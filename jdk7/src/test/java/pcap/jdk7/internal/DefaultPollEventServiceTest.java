@@ -34,40 +34,44 @@ public class DefaultPollEventServiceTest extends BaseTest {
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
-    if (!Platform.isWindows()) {
-      Interface lo = loopbackInterface(service);
-      try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
-        live.setNonBlock(true);
-        if (!Platform.isWindows()) {
-          MyProxy myProxy = eventService.open(live, MyProxy.class);
-          Assertions.assertNotNull(myProxy);
+    if (Utils.MAJOR > 1
+        || (Utils.MAJOR == 1 && Utils.MINOR > 9)
+        || (Utils.MAJOR == 1 && Utils.MAJOR == 9 && Utils.MINOR >= 1)) {
+      if (!Platform.isWindows()) {
+        Interface lo = loopbackInterface(service);
+        try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
+          live.setNonBlock(true);
+          if (!Platform.isWindows()) {
+            MyProxy myProxy = eventService.open(live, MyProxy.class);
+            Assertions.assertNotNull(myProxy);
 
-          try {
-            myProxy.dispatch(
-                1,
-                new PacketHandler<String>() {
-                  @Override
-                  public void gotPacket(String args, PacketHeader header, PacketBuffer buffer) {
-                    System.out.println(header);
-                    System.out.println(buffer);
-                  }
-                },
-                "");
-          } catch (BreakException e) {
-            //
-          }
-          PacketHeader header = myProxy.allocate(PacketHeader.class);
-          PacketBuffer buffer = myProxy.allocate(PacketBuffer.class);
-          try {
-            myProxy.nextEx(header, buffer);
-            System.out.println(header);
-            System.out.println(buffer);
-          } catch (BreakException e) {
-            //
-          } catch (ErrorException e) {
-            //
-          } catch (TimeoutException e) {
-            //
+            try {
+              myProxy.dispatch(
+                  1,
+                  new PacketHandler<String>() {
+                    @Override
+                    public void gotPacket(String args, PacketHeader header, PacketBuffer buffer) {
+                      System.out.println(header);
+                      System.out.println(buffer);
+                    }
+                  },
+                  "");
+            } catch (BreakException e) {
+              //
+            }
+            PacketHeader header = myProxy.allocate(PacketHeader.class);
+            PacketBuffer buffer = myProxy.allocate(PacketBuffer.class);
+            try {
+              myProxy.nextEx(header, buffer);
+              System.out.println(header);
+              System.out.println(buffer);
+            } catch (BreakException e) {
+              //
+            } catch (ErrorException e) {
+              //
+            } catch (TimeoutException e) {
+              //
+            }
           }
         }
       }
