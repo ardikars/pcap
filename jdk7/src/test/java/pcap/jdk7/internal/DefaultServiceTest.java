@@ -152,17 +152,23 @@ public class DefaultServiceTest extends BaseTest {
             SAMPLE_NANOSECOND_PCAP,
             new DefaultOfflineOptions().timestampPrecision(Timestamp.Precision.MICRO))) {
       Assertions.assertNotNull(offline);
+    } catch (ErrorException e) {
+      System.err.println(e.getMessage()); // pcap 1.2.1
     }
     try (Pcap offline =
         service.offline(
             SAMPLE_NANOSECOND_PCAP,
             new DefaultOfflineOptions().timestampPrecision(Timestamp.Precision.NANO))) {
       Assertions.assertNotNull(offline);
+    } catch (ErrorException e) {
+      System.err.println(e.getMessage()); // pcap 1.2.1
     }
     try (Pcap offline =
         service.offline(
             SAMPLE_NANOSECOND_PCAP, new DefaultOfflineOptions().timestampPrecision(null))) {
       Assertions.assertNotNull(offline);
+    } catch (ErrorException e) {
+      System.err.println(e.getMessage()); // pcap 1.2.1
     }
   }
 
@@ -220,7 +226,7 @@ public class DefaultServiceTest extends BaseTest {
     final Pointer pointer = NativeMappings.pcap_create(lo.name(), errbuf);
     defaultService.nullCheck(pointer);
     Assertions.assertThrows(
-        IllegalStateException.class,
+        ErrorException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {

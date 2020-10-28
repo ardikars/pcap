@@ -39,7 +39,8 @@ public class DefaultPcapDumperTest extends BaseTest {
           InterfaceNotSupportTimestampTypeException {
     Interface source = loopbackInterface(service);
     try (Pcap live = service.live(source, new DefaultLiveOptions())) {
-      try (final Dumper dumper = live.dumpOpen(file.concat(UUID.randomUUID().toString()))) {
+      String newFile = file.concat(UUID.randomUUID().toString());
+      try (final Dumper dumper = live.dumpOpen(newFile)) {
         live.loop(
             1,
             new PacketHandler<Dumper>() {
@@ -69,6 +70,11 @@ public class DefaultPcapDumperTest extends BaseTest {
               }
             },
             null);
+        try (Dumper append = live.dumpOpenAppend(newFile)) {
+            //
+        } catch (NullPointerException | UnsatisfiedLinkError e) {
+
+        }
       } catch (BreakException | ErrorException e) {
 
       }

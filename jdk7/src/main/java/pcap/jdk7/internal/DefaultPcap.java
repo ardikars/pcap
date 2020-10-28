@@ -3,6 +3,7 @@ package pcap.jdk7.internal;
 import com.sun.jna.Pointer;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import pcap.spi.*;
+import pcap.spi.annotation.Version;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.BreakException;
@@ -34,7 +35,7 @@ class DefaultPcap implements Pcap {
 
   @Override
   public DefaultDumper dumpOpen(String file) throws ErrorException {
-    if (StringUtils.blank(file)) {
+    if (Utils.blank(file)) {
       throw new IllegalArgumentException("file: null (expected: file != null && notBlank(file))");
     }
     Pointer dumper;
@@ -49,24 +50,38 @@ class DefaultPcap implements Pcap {
   }
 
   @Override
+  @Version(major = 1, minor = 7, patch = 2)
   public DefaultDumper dumpOpenAppend(String file) throws ErrorException {
-    if (StringUtils.blank(file)) {
+    if (Utils.blank(file)) {
       throw new IllegalArgumentException("file: null (expected: file != null && notBlank(file))");
     }
-    Pointer dumper;
-    tryReadLock();
-    try {
-      dumper = NativeMappings.pcap_dump_open_append(pointer, file);
-      nullCheck(dumper);
-    } finally {
-      readLock.unlock();
+    Version version = Utils.getVersion(DefaultPcap.class, "dumpOpenAppend", String.class);
+    if (Utils.isValidVersion(version)) {
+      Pointer dumper;
+      tryReadLock();
+      try {
+        dumper = NativeMappings.PlatformDependent.INSTANCE.pcap_dump_open_append(pointer, file);
+        nullCheck(dumper);
+      } finally {
+        readLock.unlock();
+      }
+      return new DefaultDumper(dumper);
+    } else {
+      throw new ErrorException(
+          String.format(
+              "version: %d.%d.%d (expected: minimal version(%d.%d.%d))",
+              Utils.MAJOR,
+              Utils.MINOR,
+              Utils.PATCH,
+              version.minor(),
+              version.minor(),
+              version.patch()));
     }
-    return new DefaultDumper(dumper);
   }
 
   @Override
   public void setFilter(String filter, boolean optimize) throws ErrorException {
-    if (StringUtils.blank(filter)) {
+    if (Utils.blank(filter)) {
       throw new IllegalArgumentException(
           "filter: null (expected: filter != null && notBlank(filter))");
     }
@@ -299,7 +314,12 @@ class DefaultPcap implements Pcap {
     tryReadLock();
     Timestamp.Precision precision;
     try {
-      precision = timestampPrecision(NativeMappings.pcap_get_tstamp_precision(pointer));
+      precision =
+          timestampPrecision(
+              NativeMappings.PlatformDependent.INSTANCE.pcap_get_tstamp_precision(pointer));
+    } catch (NullPointerException | UnsatisfiedLinkError e) {
+      System.err.println("pcap_get_tstamp_precision: Function doesn't exist.");
+      return Timestamp.Precision.MICRO;
     } finally {
       readLock.unlock();
     }

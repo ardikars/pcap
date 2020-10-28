@@ -77,19 +77,20 @@ public class DefaultService implements Service {
       checkSetSnaplen(NativeMappings.pcap_set_snaplen(pointer, options.snapshotLength()));
       checkSetPromisc(NativeMappings.pcap_set_promisc(pointer, options.isPromiscuous() ? 1 : 0));
       checkSetTimeout(NativeMappings.pcap_set_timeout(pointer, options.timeout()));
-      if (options.timestampType() != null) {
-        checkSetTimestampType(
-            NativeMappings.pcap_set_tstamp_type(pointer, options.timestampType().value()));
-      }
       if (options.bufferSize() >= 0) {
         checkSetBufferSize(NativeMappings.pcap_set_buffer_size(pointer, options.bufferSize()));
       }
       boolean canSetRfmon = canSetRfmon(pointer, NativeMappings.pcap_can_set_rfmon(pointer));
 
       //  platform dependent
+      if (options.timestampType() != null) {
+        setTimestampTypeIfPossible(pointer, options);
+      }
+      if (options.timestampPrecision() != null) {
+        setTimestampPrecisionIfPossible(pointer, options);
+      }
       setRfMonIfPossible(pointer, options.isRfmon(), canSetRfmon);
-      setImmedateModeIfPossible(pointer, options);
-      setTimestampPrecisionIfPossible(pointer, options);
+      setImmediateModeIfPossible(pointer, options);
       // end of platform dependent
 
       checkActivate(pointer, NativeMappings.pcap_activate(pointer));
@@ -111,7 +112,7 @@ public class DefaultService implements Service {
     try {
       return NativeMappings.PlatformDependent.INSTANCE.pcap_open_offline_with_tstamp_precision(
           source, options.timestampPrecision().value(), errbuf(true));
-    } catch (NullPointerException e) {
+    } catch (NullPointerException | UnsatisfiedLinkError e) {
       // fallback
       System.err.println(
           "pcap_open_offline_with_tstamp_precision: Function doesn't exist. Fallback: pcap_open_offline.");
@@ -119,9 +120,9 @@ public class DefaultService implements Service {
     }
   }
 
-  void nullCheck(Pointer pointer) {
+  void nullCheck(Pointer pointer) throws ErrorException {
     if (pointer == null) {
-      throw new IllegalStateException(errbuf.toString());
+      throw new ErrorException(errbuf.toString());
     }
   }
 
@@ -143,7 +144,7 @@ public class DefaultService implements Service {
       try {
         checkSetRfmon(
             NativeMappings.PlatformDependent.INSTANCE.pcap_set_rfmon(pointer, rfmon ? 1 : 0));
-      } catch (NullPointerException e) {
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
         System.err.println("pcap_set_rfmon: Function doesn't exist.");
       }
     }
@@ -162,7 +163,7 @@ public class DefaultService implements Service {
         if (result < 0) {
           throw new ErrorException(NativeMappings.pcap_statustostr(result));
         } else {
-          System.out.println("pcap_can_set_rfmon: " + NativeMappings.pcap_statustostr(result));
+          System.err.println("pcap_can_set_rfmon: " + NativeMappings.pcap_statustostr(result));
         }
       }
     }
@@ -181,6 +182,17 @@ public class DefaultService implements Service {
     }
   }
 
+  void setTimestampTypeIfPossible(Pointer pointer, LiveOptions options)
+      throws ActivatedException, InterfaceNotSupportTimestampTypeException {
+    try {
+      checkSetTimestampType(
+          NativeMappings.PlatformDependent.INSTANCE.pcap_set_tstamp_type(
+              pointer, options.timestampType().value()));
+    } catch (NullPointerException | UnsatisfiedLinkError e) {
+      System.err.println("pcap_set_tstamp_type: Function doesn't exist.");
+    }
+  }
+
   void checkSetTimestampType(int result)
       throws ActivatedException, InterfaceNotSupportTimestampTypeException {
     if (result == -4) {
@@ -189,16 +201,16 @@ public class DefaultService implements Service {
       throw new InterfaceNotSupportTimestampTypeException(
           "Error occurred when set timestamp type.");
     } else if (result == 3) {
-      System.out.println("pcap_set_tstamp_type: " + NativeMappings.pcap_statustostr(result));
+      System.err.println("pcap_set_tstamp_type: " + NativeMappings.pcap_statustostr(result));
     }
   }
 
-  void setImmedateModeIfPossible(Pointer pointer, LiveOptions options) throws ActivatedException {
+  void setImmediateModeIfPossible(Pointer pointer, LiveOptions options) throws ActivatedException {
     try {
       checkSetImmediateMode(
           NativeMappings.PlatformDependent.INSTANCE.pcap_set_immediate_mode(
               pointer, options.isImmediate() ? 1 : 0));
-    } catch (NullPointerException e) {
+    } catch (NullPointerException | UnsatisfiedLinkError e) {
       System.err.println("pcap_set_immediate_mode: Function doesn't exist.");
     }
   }
@@ -221,7 +233,7 @@ public class DefaultService implements Service {
       checkSetTimestampPrecision(
           NativeMappings.PlatformDependent.INSTANCE.pcap_set_tstamp_precision(
               pointer, options.timestampPrecision().value()));
-    } catch (NullPointerException e) {
+    } catch (NullPointerException | UnsatisfiedLinkError e) {
       System.err.println("pcap_set_tstamp_precision: Function doesn't exist.");
     }
   }
@@ -243,9 +255,9 @@ public class DefaultService implements Service {
     if (result == 2) {
       throw new PromiscuousModeNotSupported(NativeMappings.pcap_geterr(pointer).getString(0));
     } else if (result == 3) {
-      System.out.println("pcap_activate: " + NativeMappings.pcap_statustostr(result));
+      System.err.println("pcap_activate: " + NativeMappings.pcap_statustostr(result));
     } else if (result == 1) {
-      System.out.println("pcap_activate: " + NativeMappings.pcap_statustostr(result));
+      System.err.println("pcap_activate: " + NativeMappings.pcap_statustostr(result));
     } else if (result == -4) {
       throw new ActivatedException("Error occurred when activate a handle.");
     } else if (result == -5) {

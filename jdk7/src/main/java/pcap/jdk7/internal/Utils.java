@@ -2,10 +2,66 @@ package pcap.jdk7.internal;
 
 import java.nio.charset.StandardCharsets;
 import pcap.spi.PacketBuffer;
+import pcap.spi.annotation.Version;
 
-class StringUtils {
+class Utils {
 
-  private StringUtils() {}
+  static final int MAJOR;
+  static final int MINOR;
+  static final int PATCH;
+
+  static {
+    String version = NativeMappings.pcap_lib_version();
+    char[] chars = version.toCharArray();
+    int startIndex = 0;
+    int endIndex = 0;
+    for (int i = chars.length - 1; i >= 0; i--) {
+      if (chars[i] == '-') {
+        endIndex = i;
+      }
+      if (Character.isDigit(chars[i])) {
+        startIndex = i;
+        if (i - 1 >= 0 && chars[i - 1] == ' ') {
+          break;
+        }
+      }
+    }
+    String[] splited =
+        version.substring(startIndex, endIndex < startIndex ? chars.length : endIndex).split("\\.");
+    MAJOR = Integer.parseInt(splited[0]);
+    MINOR = Integer.parseInt(splited[1]);
+    PATCH = Integer.parseInt(splited[2]);
+  }
+
+  private Utils() {}
+
+  static boolean isValidVersion(Version version) {
+    if (version == null) {
+      return true;
+    }
+    if (MAJOR < version.major()) {
+      return false;
+    } else if (MAJOR > version.major()) {
+      return true;
+    } else {
+      if (MINOR < version.minor()) {
+        return false;
+      } else if (MINOR > version.minor()) {
+        return true;
+      } else {
+        return PATCH >= version.patch();
+      }
+    }
+  }
+
+  static Version getVersion(Class cls, String name, Class... params) {
+    try {
+      Version version = cls.getMethod(name, params).getAnnotation(Version.class);
+      return version;
+    } catch (NoSuchMethodException e) {
+      return null;
+    }
+  }
 
   // see netty-buffer code
   static long setCharSequence(

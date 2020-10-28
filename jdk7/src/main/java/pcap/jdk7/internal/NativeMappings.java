@@ -27,13 +27,15 @@ class NativeMappings {
 
     // for interface mapping
     final Map<String, String> funcMap = new HashMap<String, String>();
+    funcMap.put("pcap_dump_open_append", "pcap_dump_open_append");
+    funcMap.put("pcap_get_tstamp_precision", "pcap_get_tstamp_precision");
+    funcMap.put("pcap_set_tstamp_type", "pcap_set_tstamp_type");
     funcMap.put("pcap_set_rfmon", "pcap_set_rfmon");
     funcMap.put(
         "pcap_open_offline_with_tstamp_precision", "pcap_open_offline_with_tstamp_precision");
     funcMap.put("pcap_set_tstamp_precision", "pcap_set_tstamp_precision");
     funcMap.put("pcap_set_immediate_mode", "pcap_set_immediate_mode");
     funcMap.put("pcap_get_selectable_fd", "pcap_get_selectable_fd");
-    funcMap.put("pcap_get_required_select_timeout", "pcap_get_required_select_timeout");
     funcMap.put("pcap_getevent", "pcap_getevent");
 
     NATIVE_LOAD_LIBRARY_OPTIONS.put(
@@ -49,6 +51,8 @@ class NativeMappings {
     AF_INET6 = defaultAfInet6();
   }
 
+  private NativeMappings() {}
+
   static String libName(boolean isWindows) {
     if (isWindows) {
       return "wpcap";
@@ -56,8 +60,6 @@ class NativeMappings {
       return "pcap";
     }
   }
-
-  private NativeMappings() {}
 
   static short defaultAfInet6() {
     short af_inet6 = 0;
@@ -104,8 +106,6 @@ class NativeMappings {
 
   static native int pcap_set_timeout(Pointer p, int timeout);
 
-  static native int pcap_set_tstamp_type(Pointer p, int tstampType);
-
   static native int pcap_set_buffer_size(Pointer p, int bufferSize);
 
   static native int pcap_activate(Pointer p);
@@ -130,8 +130,6 @@ class NativeMappings {
 
   static native Pointer pcap_dump_open(Pointer p, String fname);
 
-  static native Pointer pcap_dump_open_append(Pointer p, String fname);
-
   static native void pcap_dump(Pointer user, Pointer header, Pointer packet);
 
   static native int pcap_dump_flush(Pointer p);
@@ -147,8 +145,6 @@ class NativeMappings {
   static native int pcap_setnonblock(Pointer p, int nonblock, ErrorBuffer errbuf);
 
   static native int pcap_getnonblock(Pointer p, ErrorBuffer errbuf);
-
-  static native int pcap_get_tstamp_precision(Pointer p);
 
   static native int pcap_minor_version(Pointer p);
 
@@ -187,6 +183,12 @@ class NativeMappings {
     PlatformDependent INSTANCE =
         com.sun.jna.Native.load(
             libName(Platform.isWindows()), PlatformDependent.class, NATIVE_LOAD_LIBRARY_OPTIONS);
+
+    Pointer pcap_dump_open_append(Pointer p, String fname);
+
+    int pcap_set_tstamp_type(Pointer p, int tstampType);
+
+    int pcap_get_tstamp_precision(Pointer p);
 
     int pcap_set_rfmon(Pointer p, int rfmon);
 
