@@ -87,7 +87,8 @@
         <maven.surefire.plugin.version>3.0.0-M5</maven.surefire.plugin.version>
         <maven.project.info.reports.plugin.version>3.1.1</maven.project.info.reports.plugin.version>
 
-        <aggregate.report.dir>tests/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
+	<aggregate.report.dir>tests/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
+    <sonar.exclusions>**/src/test/java/**/*.java</sonar.exclusions>
     </properties>
 
     <dependencies>

@@ -33,7 +33,7 @@ public interface Packet {
     protected final long offset;
     protected final long length;
 
-    public Abstract(PacketBuffer buffer) {
+    protected Abstract(PacketBuffer buffer) {
       if (buffer.readableBytes() < size()) {
         throw new IllegalArgumentException(
             String.format(
