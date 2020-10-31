@@ -29,7 +29,6 @@ class DefaultPacketBuffer implements PacketBuffer {
         com.sun.jna.NativeLibrary.getInstance(com.sun.jna.Platform.C_LIBRARY_NAME));
   }
 
-  com.sun.jna.Pointer buffer;
   protected ByteOrder byteOrder;
   protected long capacity;
   protected long writtenBytes = 0L; // for setCharSequence and writeCharSequence
@@ -37,6 +36,7 @@ class DefaultPacketBuffer implements PacketBuffer {
   protected long writerIndex;
   protected long markedReaderIndex;
   protected long markedWriterIndex;
+  com.sun.jna.Pointer buffer;
   com.sun.jna.ptr.PointerByReference reference;
 
   DefaultPacketBuffer() {
@@ -966,21 +966,25 @@ class DefaultPacketBuffer implements PacketBuffer {
       // cleanup native memory wrapped in garbage collected object.
       PacketBufferReference ref;
       while ((ref = (PacketBufferReference) RQ.poll()) != null) {
-        if (ref.address.get() != 0L) {
-          Native.free(ref.address.getAndSet(0L)); // force deallocate memory and set address to '0'.
-          if (LEAK_DETECTION) {
-            StringBuilder stactTraceBuilder = new StringBuilder();
-            for (int i = ref.stackTraceElements.length - 1; i >= 0; i--) {
-              stactTraceBuilder.append("\t[" + ref.stackTraceElements[i].toString() + "]\n");
-            }
-            throw new MemoryLeakException(
-                String.format(
-                    "PacketBuffer.release() was not called before it's garbage collected.\n\tCreated at:\n%s",
-                    stactTraceBuilder.toString()));
-          }
-        }
+        checkLeak(ref, LEAK_DETECTION);
       }
       return buffer;
+    }
+
+    static void checkLeak(PacketBufferReference ref, boolean enabled) {
+      if (ref.address.get() != 0L) {
+        Native.free(ref.address.getAndSet(0L)); // force deallocate memory and set address to '0'.
+        if (enabled) {
+          StringBuilder stackTraceBuilder = new StringBuilder();
+          for (int i = ref.stackTraceElements.length - 1; i >= 0; i--) {
+            stackTraceBuilder.append("\t[" + ref.stackTraceElements[i].toString() + "]\n");
+          }
+          throw new MemoryLeakException(
+              String.format(
+                  "PacketBuffer.release() was not called before it's garbage collected.\n\tCreated at:\n%s",
+                  stackTraceBuilder.toString()));
+        }
+      }
     }
   }
 }

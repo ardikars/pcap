@@ -1,6 +1,10 @@
 package pcap.jdk7.internal;
 
 import com.sun.jna.Pointer;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,11 +18,6 @@ import pcap.spi.exception.WarningException;
 import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.option.DefaultOfflineOptions;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.UUID;
 
 @RunWith(JUnitPlatform.class)
 public class DefaultPcapTest extends BaseTest {

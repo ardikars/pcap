@@ -43,11 +43,6 @@ class DefaultWaitForSingleObjectEventService extends AbstractEventService
   }
 
   @Override
-  public void close() {
-    //
-  }
-
-  @Override
   public Object invoke(Object proxy, Method proxyMethod, Object[] args) throws Throwable {
     Method pcapMethod =
         pcap.getClass().getDeclaredMethod(proxyMethod.getName(), proxyMethod.getParameterTypes());

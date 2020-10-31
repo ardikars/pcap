@@ -10,8 +10,6 @@ interface EventService {
   @Incubating
   <T extends Pcap> T open(Pcap pcap, Class<T> target);
 
-  void close();
-
   class Creator {
 
     private Creator() {}

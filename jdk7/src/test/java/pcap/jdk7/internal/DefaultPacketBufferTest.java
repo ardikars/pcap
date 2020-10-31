@@ -3,7 +3,7 @@ package pcap.jdk7.internal;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
-import java.lang.ref.WeakReference;
+import java.lang.ref.ReferenceQueue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -3626,7 +3626,7 @@ public class DefaultPacketBufferTest {
 
   @Test
   public void noLeak() {
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 100; i++) {
       System.gc();
       if (i % 2 == 0) {
         DefaultPacketBuffer.FinalizablePacketBuffer allocate =
@@ -3640,22 +3640,41 @@ public class DefaultPacketBufferTest {
     }
   }
 
-  // @Test
-  public void leak() {
-    DefaultPacketBuffer.FinalizablePacketBuffer buf =
-        DefaultPacketBuffer.PacketBufferManager.allocate(4);
-    WeakReference<DefaultPacketBuffer.FinalizablePacketBuffer> weakReference =
-        new WeakReference<DefaultPacketBuffer.FinalizablePacketBuffer>(buf);
-    buf = null;
-    System.gc();
+  @Test
+  public void checkLeakEnabled() {
+    ReferenceQueue<DefaultPacketBuffer.FinalizablePacketBuffer> RQ =
+        new ReferenceQueue<DefaultPacketBuffer.FinalizablePacketBuffer>();
+    int capacity = 4;
+    long address = Native.malloc(capacity);
+    DefaultPacketBuffer.FinalizablePacketBuffer buffer =
+        new DefaultPacketBuffer.FinalizablePacketBuffer(
+            new Pointer(address), PacketBuffer.ByteOrder.NATIVE, capacity, 0L, 0L);
+    final DefaultPacketBuffer.PacketBufferReference bufRef =
+        new DefaultPacketBuffer.PacketBufferReference(address, buffer, RQ);
+    bufRef.fillStackTrace(true);
     Assertions.assertThrows(
         MemoryLeakException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            DefaultPacketBuffer.PacketBufferManager.allocate(4);
+            DefaultPacketBuffer.PacketBufferManager.checkLeak(bufRef, true);
           }
         });
+  }
+
+  @Test
+  public void checkLeakDisabled() {
+    ReferenceQueue<DefaultPacketBuffer.FinalizablePacketBuffer> RQ =
+        new ReferenceQueue<DefaultPacketBuffer.FinalizablePacketBuffer>();
+    int capacity = 4;
+    long address = Native.malloc(capacity);
+    DefaultPacketBuffer.FinalizablePacketBuffer buffer =
+        new DefaultPacketBuffer.FinalizablePacketBuffer(
+            new Pointer(address), PacketBuffer.ByteOrder.NATIVE, capacity, 0L, 0L);
+    final DefaultPacketBuffer.PacketBufferReference bufRef =
+        new DefaultPacketBuffer.PacketBufferReference(address, buffer, RQ);
+    bufRef.fillStackTrace(false);
+    DefaultPacketBuffer.PacketBufferManager.checkLeak(bufRef, false);
   }
 
   @Test
