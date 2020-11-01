@@ -62,6 +62,18 @@ class DefaultPacketBuffer implements PacketBuffer {
   static native com.sun.jna.Pointer memcpy(
       com.sun.jna.Pointer dst, com.sun.jna.Pointer src, long n);
 
+  static <T extends Packet.Abstract> T checkCastThrowable(Class<?> type, Throwable e) {
+    if (e.getCause() instanceof IllegalArgumentException) {
+      throw (IllegalArgumentException) e.getCause();
+    } else if (e instanceof NoSuchMethodException) {
+      throw new IllegalArgumentException(
+          String.format(
+              "Add constructor: public %s(%s) to %s.",
+              type.getSimpleName(), PacketBuffer.class.getName(), type.getName()));
+    }
+    return null;
+  }
+
   void useReference(DefaultPacketHeader header) {
     this.buffer = reference.getValue();
     this.capacity = header.captureLength();
@@ -893,7 +905,7 @@ class DefaultPacketBuffer implements PacketBuffer {
       Packet packet = type.getConstructor(PacketBuffer.class).newInstance(this);
       return (T) packet;
     } catch (Throwable e) {
-      return null;
+      return checkCastThrowable(type, e);
     }
   }
 

@@ -11,10 +11,10 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>pcap-common</artifactId>
+    <artifactId>pcap-codec</artifactId>
 
-    <name>Pcap Common</name>
-    <description>Common utils</description>
+    <name>Pcap Codec</name>
+    <description>Packet Codec</description>
     <url>https://pcap.ardikars.com</url>
 
     <properties>
@@ -23,18 +23,18 @@
     </properties>
 
     <dependencies>
-        <!-- Logging frameworks - completely optional -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-            <optional>true</optional>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>pcap-spi</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j2.version}</version>
-            <optional>true</optional>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>pcap-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>pcap-jdk7</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

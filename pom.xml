@@ -12,6 +12,7 @@
     <modules>
         <module>spi</module>
         <module>common</module>
+        <module>codec</module>
         <module>jdk7</module>
         <module>tests</module>
     </modules>
@@ -153,6 +154,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>pcap-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>pcap-codec</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -3679,11 +3679,30 @@ public class DefaultPacketBufferTest {
 
   @Test
   public void cast() {
-    try (DefaultPacketBuffer.FinalizablePacketBuffer buf =
+    try (final DefaultPacketBuffer.FinalizablePacketBuffer buf =
         DefaultPacketBuffer.PacketBufferManager.allocate(4)) {
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              buf.cast(TestPacket.class);
+            }
+          });
+      buf.setIndex(0, 4);
       Assertions.assertNotNull(buf.cast(TestPacket.class));
-      Assertions.assertNull(buf.cast(Packet.Abstract.class));
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              buf.cast(Packet.Abstract.class);
+            }
+          });
+      Assertions.assertNull(
+          DefaultPacketBuffer.checkCastThrowable(Integer.class, new IllegalAccessError()));
     } catch (Exception e) {
+      throw new RuntimeException(e);
     }
   }
 
@@ -3700,7 +3719,7 @@ public class DefaultPacketBufferTest {
 
     @Override
     protected int size() {
-      return 0;
+      return 4;
     }
   }
 }
