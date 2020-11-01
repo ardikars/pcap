@@ -1,12 +1,11 @@
 package pcap.common.net;
 
-import pcap.common.util.Arrays;
-import pcap.common.util.Bytes;
-
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import pcap.common.util.Arrays;
+import pcap.common.util.Bytes;
 
 /**
  * InetAddress utils.

@@ -4,6 +4,7 @@ import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import java.lang.ref.ReferenceQueue;
+import java.lang.reflect.InvocationTargetException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -3697,6 +3698,15 @@ public class DefaultPacketBufferTest {
             @Override
             public void execute() throws Throwable {
               buf.cast(Packet.Abstract.class);
+            }
+          });
+      Assertions.assertThrows(
+          IllegalStateException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              DefaultPacketBuffer.checkCastThrowable(
+                  Integer.class, new InvocationTargetException(new IllegalStateException()));
             }
           });
       Assertions.assertNull(

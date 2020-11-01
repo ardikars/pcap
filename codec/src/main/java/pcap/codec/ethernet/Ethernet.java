@@ -50,7 +50,7 @@ public class Ethernet extends Packet.Abstract {
   }
 
   @Override
-  protected int size() {
+  public int size() {
     return 14;
   }
 

@@ -5,6 +5,7 @@ import com.sun.jna.Pointer;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -70,6 +71,8 @@ class DefaultPacketBuffer implements PacketBuffer {
           String.format(
               "Add constructor: public %s(%s) to %s.",
               type.getSimpleName(), PacketBuffer.class.getName(), type.getName()));
+    } else if (e instanceof InvocationTargetException) {
+      throw (RuntimeException) e.getCause();
     }
     return null;
   }
