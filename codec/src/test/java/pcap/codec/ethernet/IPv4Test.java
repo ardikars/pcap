@@ -71,9 +71,12 @@ public class IPv4Test {
       Assertions.assertArrayEquals(new byte[] {10, 0, 0, 2}, ipv4.destination().getAddress());
       Assertions.assertArrayEquals(new byte[0], ipv4.options());
 
+      Assertions.assertTrue(ipv4.isValidChecksum());
+
       ipv4.ihl(6);
       ipv4.options(new byte[] {1, 1, 1, 1});
       Assertions.assertArrayEquals(new byte[] {1, 1, 1, 1}, ipv4.options());
+      Assertions.assertFalse(ipv4.isValidChecksum());
 
       // to string
       Assertions.assertNotNull(ipv4.toString());

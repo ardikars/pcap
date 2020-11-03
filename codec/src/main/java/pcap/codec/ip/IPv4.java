@@ -72,19 +72,19 @@ public class IPv4 extends Packet.Abstract {
     this.maxIhl = ihl();
   }
 
-  private static short calculateChecksum(PacketBuffer buffer, int headerLength, long offset) {
+  private static int calculateChecksum(PacketBuffer buffer, int headerLength, long offset) {
     long index = offset;
     int accumulation = 0;
     for (long i = 0; i < headerLength * 2; ++i) {
       if (i == 5) {
         accumulation += 0;
       } else {
-        accumulation += 0xFFFF & buffer.getShort(index);
+        accumulation += 0xFFFF & buffer.getShortRE(index);
       }
       index += 2;
     }
     accumulation = (accumulation >> 16 & 0xFFFF) + (accumulation & 0xFFFF);
-    return (short) (~accumulation & 0xFFFF);
+    return (~accumulation & 0xFFFF);
   }
 
   public int version() {
@@ -192,6 +192,10 @@ public class IPv4 extends Packet.Abstract {
 
   public int calculateChecksum() {
     return calculateChecksum(buffer, ihl(), offset);
+  }
+
+  public boolean isValidChecksum() {
+    return checksum() == calculateChecksum();
   }
 
   public Inet4Address source() {
