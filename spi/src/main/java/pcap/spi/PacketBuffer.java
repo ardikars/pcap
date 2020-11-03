@@ -1337,7 +1337,8 @@ public interface PacketBuffer extends AutoCloseable {
      *
      * @since 1.0.0
      */
-    public static ByteOrder NATIVE = ByteOrder.valueOf(java.nio.ByteOrder.nativeOrder().toString());
+    public static final ByteOrder NATIVE =
+        ByteOrder.valueOf(java.nio.ByteOrder.nativeOrder().toString());
   }
 
   /**

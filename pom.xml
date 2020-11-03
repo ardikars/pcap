@@ -7,10 +7,12 @@
     <groupId>com.ardikars.pcap</groupId>
     <artifactId>pcap</artifactId>
     <packaging>pom</packaging>
-    <version>0.6.0</version>
+    <version>0.7.0</version>
 
     <modules>
         <module>spi</module>
+        <module>common</module>
+        <module>codec</module>
         <module>jdk7</module>
         <module>tests</module>
     </modules>
@@ -54,6 +56,9 @@
         <java.jdk7.version>1.7</java.jdk7.version>
         <jdk.version>${java.version}</jdk.version>
 
+        <slf4j.version>1.7.30</slf4j.version>
+        <log4j2.version>2.13.3</log4j2.version>
+
         <jna.version>5.6.0</jna.version>
         <jmh.version>1.26</jmh.version>
 
@@ -87,10 +92,24 @@
         <maven.surefire.plugin.version>3.0.0-M5</maven.surefire.plugin.version>
         <maven.project.info.reports.plugin.version>3.1.1</maven.project.info.reports.plugin.version>
 
-        <aggregate.report.dir>tests/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
+	<aggregate.report.dir>tests/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
+    <sonar.exclusions>**/src/test/java/**/*.java</sonar.exclusions>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j2.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -130,6 +149,16 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>pcap-spi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>pcap-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>pcap-codec</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

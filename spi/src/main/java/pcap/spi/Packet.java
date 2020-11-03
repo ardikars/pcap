@@ -33,14 +33,14 @@ public interface Packet {
     protected final long offset;
     protected final long length;
 
-    public Abstract(PacketBuffer buffer) {
+    protected Abstract(PacketBuffer buffer) {
+      this.buffer = buffer;
       if (buffer.readableBytes() < size()) {
         throw new IllegalArgumentException(
             String.format(
                 "buffer.readableBytes: %d (expected: buffer.readableBytes(%d) >= packet.size(%d))",
                 buffer.readableBytes(), buffer.readableBytes(), size()));
       }
-      this.buffer = buffer;
       this.offset = buffer.readerIndex();
       this.length = size();
       buffer.readerIndex(offset + length);

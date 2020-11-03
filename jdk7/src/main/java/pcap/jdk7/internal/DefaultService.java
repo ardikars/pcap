@@ -80,7 +80,8 @@ public class DefaultService implements Service {
       if (options.bufferSize() >= 0) {
         checkSetBufferSize(NativeMappings.pcap_set_buffer_size(pointer, options.bufferSize()));
       }
-      boolean canSetRfmon = canSetRfmon(pointer, NativeMappings.pcap_can_set_rfmon(pointer));
+      boolean canSetRfmon =
+          canSetRfmon(pointer, NativeMappings.PLATFORM_DEPENDENT.pcap_can_set_rfmon(pointer));
 
       //  platform dependent
       if (options.timestampType() != null) {
@@ -109,15 +110,13 @@ public class DefaultService implements Service {
   }
 
   Pointer setOfflineWithTimestampPrecisionIfPossible(String source, OfflineOptions options) {
-    try {
-      return NativeMappings.PlatformDependent.INSTANCE.pcap_open_offline_with_tstamp_precision(
-          source, options.timestampPrecision().value(), errbuf(true));
-    } catch (NullPointerException | UnsatisfiedLinkError e) {
-      // fallback
-      System.err.println(
-          "pcap_open_offline_with_tstamp_precision: Function doesn't exist. Fallback: pcap_open_offline.");
-      return NativeMappings.pcap_open_offline(source, errbuf(true));
+    Pointer pointer =
+        NativeMappings.PLATFORM_DEPENDENT.pcap_open_offline_with_tstamp_precision(
+            source, options.timestampPrecision().value(), errbuf(true));
+    if (pointer == null) { // fallback for backport support
+      pointer = NativeMappings.pcap_open_offline(source, errbuf(true));
     }
+    return pointer;
   }
 
   void nullCheck(Pointer pointer) throws ErrorException {
@@ -141,12 +140,7 @@ public class DefaultService implements Service {
   void setRfMonIfPossible(Pointer pointer, boolean rfmon, boolean canSetRfmon)
       throws ActivatedException {
     if (canSetRfmon) {
-      try {
-        checkSetRfmon(
-            NativeMappings.PlatformDependent.INSTANCE.pcap_set_rfmon(pointer, rfmon ? 1 : 0));
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
-        System.err.println("pcap_set_rfmon: Function doesn't exist.");
-      }
+      checkSetRfmon(NativeMappings.PLATFORM_DEPENDENT.pcap_set_rfmon(pointer, rfmon ? 1 : 0));
     }
   }
 
@@ -161,9 +155,10 @@ public class DefaultService implements Service {
         throw new ErrorException(NativeMappings.pcap_geterr(pointer).getString(0));
       } else {
         if (result < 0) {
-          throw new ErrorException(NativeMappings.pcap_statustostr(result));
+          throw new ErrorException(NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
         } else {
-          System.err.println("pcap_can_set_rfmon: " + NativeMappings.pcap_statustostr(result));
+          System.err.println(
+              "pcap_can_set_rfmon: " + NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
         }
       }
     }
@@ -184,13 +179,9 @@ public class DefaultService implements Service {
 
   void setTimestampTypeIfPossible(Pointer pointer, LiveOptions options)
       throws ActivatedException, InterfaceNotSupportTimestampTypeException {
-    try {
-      checkSetTimestampType(
-          NativeMappings.PlatformDependent.INSTANCE.pcap_set_tstamp_type(
-              pointer, options.timestampType().value()));
-    } catch (NullPointerException | UnsatisfiedLinkError e) {
-      System.err.println("pcap_set_tstamp_type: Function doesn't exist.");
-    }
+    checkSetTimestampType(
+        NativeMappings.PLATFORM_DEPENDENT.pcap_set_tstamp_type(
+            pointer, options.timestampType().value()));
   }
 
   void checkSetTimestampType(int result)
@@ -201,18 +192,15 @@ public class DefaultService implements Service {
       throw new InterfaceNotSupportTimestampTypeException(
           "Error occurred when set timestamp type.");
     } else if (result == 3) {
-      System.err.println("pcap_set_tstamp_type: " + NativeMappings.pcap_statustostr(result));
+      System.err.println(
+          "pcap_set_tstamp_type: " + NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
     }
   }
 
   void setImmediateModeIfPossible(Pointer pointer, LiveOptions options) throws ActivatedException {
-    try {
-      checkSetImmediateMode(
-          NativeMappings.PlatformDependent.INSTANCE.pcap_set_immediate_mode(
-              pointer, options.isImmediate() ? 1 : 0));
-    } catch (NullPointerException | UnsatisfiedLinkError e) {
-      System.err.println("pcap_set_immediate_mode: Function doesn't exist.");
-    }
+    checkSetImmediateMode(
+        NativeMappings.PLATFORM_DEPENDENT.pcap_set_immediate_mode(
+            pointer, options.isImmediate() ? 1 : 0));
   }
 
   void checkSetImmediateMode(int result) throws ActivatedException {
@@ -229,13 +217,9 @@ public class DefaultService implements Service {
 
   void setTimestampPrecisionIfPossible(Pointer pointer, LiveOptions options)
       throws ActivatedException, TimestampPrecisionNotSupportedException {
-    try {
-      checkSetTimestampPrecision(
-          NativeMappings.PlatformDependent.INSTANCE.pcap_set_tstamp_precision(
-              pointer, options.timestampPrecision().value()));
-    } catch (NullPointerException | UnsatisfiedLinkError e) {
-      System.err.println("pcap_set_tstamp_precision: Function doesn't exist.");
-    }
+    checkSetTimestampPrecision(
+        NativeMappings.PLATFORM_DEPENDENT.pcap_set_tstamp_precision(
+            pointer, options.timestampPrecision().value()));
   }
 
   void checkSetTimestampPrecision(int result)
@@ -255,9 +239,11 @@ public class DefaultService implements Service {
     if (result == 2) {
       throw new PromiscuousModeNotSupported(NativeMappings.pcap_geterr(pointer).getString(0));
     } else if (result == 3) {
-      System.err.println("pcap_activate: " + NativeMappings.pcap_statustostr(result));
+      System.err.println(
+          "pcap_activate: " + NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
     } else if (result == 1) {
-      System.err.println("pcap_activate: " + NativeMappings.pcap_statustostr(result));
+      System.err.println(
+          "pcap_activate: " + NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
     } else if (result == -4) {
       throw new ActivatedException("Error occurred when activate a handle.");
     } else if (result == -5) {

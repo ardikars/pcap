@@ -1,5 +1,7 @@
 package pcap.tests;
 
+import pcap.codec.ethernet.Ethernet;
+import pcap.codec.ip.IPv4;
 import pcap.spi.*;
 import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
@@ -34,7 +36,12 @@ public class Application {
       System.out.println("\tLength                     : " + packetHeader.length());
       System.out.println("]");
       System.out.println();
-      System.out.println(packetBuffer.cast(Ethernet.class));
+      Ethernet ethernet = packetBuffer.cast(Ethernet.class);
+      System.out.println(ethernet);
+      if (ethernet.type() == IPv4.TYPE) {
+        IPv4 ipv4 = packetBuffer.readerIndex(ethernet.size()).cast(IPv4.class);
+        System.out.println(ipv4);
+      }
       System.out.println();
       Statistics statistics = live.stats();
       System.out.println("[ Statistics:");
@@ -57,70 +64,5 @@ public class Application {
     @Override
     void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
         throws BreakException, ErrorException, TimeoutException;
-  }
-
-  public static class Ethernet extends Packet.Abstract {
-
-    private static final int SIZE = 14;
-    private static final int MAC_ADDR_SIZE = 6;
-
-    private final int dstOffset;
-    private final int srcOffset;
-    private final int typeOffset;
-
-    public Ethernet(PacketBuffer buffer) {
-      super(buffer);
-      this.dstOffset = 0;
-      this.srcOffset = MAC_ADDR_SIZE;
-      this.typeOffset = srcOffset + MAC_ADDR_SIZE;
-    }
-
-    private static String toStringMacAddress(byte[] address) {
-      final StringBuilder sb = new StringBuilder();
-      for (final byte b : address) {
-        if (sb.length() > 0) {
-          sb.append(':');
-        }
-        String hex = Integer.toHexString(b & 0xff);
-        if (hex.length() == 1) {
-          sb.append('0' + hex);
-        } else {
-          sb.append(hex);
-        }
-      }
-      return sb.toString();
-    }
-
-    public byte[] destination() {
-      byte[] address = new byte[MAC_ADDR_SIZE];
-      buffer.getBytes(dstOffset, address);
-      return address;
-    }
-
-    public byte[] source() {
-      byte[] address = new byte[MAC_ADDR_SIZE];
-      buffer.getBytes(srcOffset, address);
-      return address;
-    }
-
-    public int type() {
-      return buffer.getShortRE(typeOffset);
-    }
-
-    @Override
-    protected int size() {
-      return SIZE;
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("[ Ethernet: \n");
-      sb.append("\tDestination : " + toStringMacAddress(destination()) + "\n");
-      sb.append("\tSource      : " + toStringMacAddress(source()) + "\n");
-      sb.append("\tType        : " + type() + "\n");
-      sb.append("]");
-      return sb.toString();
-    }
   }
 }

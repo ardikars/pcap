@@ -38,13 +38,8 @@ class DefaultWaitForSingleObjectEventService extends AbstractEventService
   @Override
   public <T extends Pcap> T open(Pcap pcap, Class<T> target) {
     DefaultPcap defaultPcap = (DefaultPcap) pcap;
-    long handle = NativeMappings.PlatformDependent.INSTANCE.pcap_getevent(defaultPcap.pointer);
+    long handle = NativeMappings.PLATFORM_DEPENDENT.pcap_getevent(defaultPcap.pointer);
     return newProxy(target, new DefaultWaitForSingleObjectEventService(defaultPcap, handle));
-  }
-
-  @Override
-  public void close() {
-    //
   }
 
   @Override

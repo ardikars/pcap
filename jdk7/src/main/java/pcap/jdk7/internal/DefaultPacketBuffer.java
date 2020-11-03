@@ -5,6 +5,7 @@ import com.sun.jna.Pointer;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +30,6 @@ class DefaultPacketBuffer implements PacketBuffer {
         com.sun.jna.NativeLibrary.getInstance(com.sun.jna.Platform.C_LIBRARY_NAME));
   }
 
-  com.sun.jna.Pointer buffer;
   protected ByteOrder byteOrder;
   protected long capacity;
   protected long writtenBytes = 0L; // for setCharSequence and writeCharSequence
@@ -37,6 +37,7 @@ class DefaultPacketBuffer implements PacketBuffer {
   protected long writerIndex;
   protected long markedReaderIndex;
   protected long markedWriterIndex;
+  com.sun.jna.Pointer buffer;
   com.sun.jna.ptr.PointerByReference reference;
 
   DefaultPacketBuffer() {
@@ -61,6 +62,20 @@ class DefaultPacketBuffer implements PacketBuffer {
 
   static native com.sun.jna.Pointer memcpy(
       com.sun.jna.Pointer dst, com.sun.jna.Pointer src, long n);
+
+  static <T extends Packet.Abstract> T checkCastThrowable(Class<?> type, Throwable e) {
+    if (e.getCause() instanceof IllegalArgumentException) {
+      throw (IllegalArgumentException) e.getCause();
+    } else if (e instanceof NoSuchMethodException) {
+      throw new IllegalArgumentException(
+          String.format(
+              "Add constructor: public %s(%s) to %s.",
+              type.getSimpleName(), PacketBuffer.class.getName(), type.getName()));
+    } else if (e instanceof InvocationTargetException) {
+      throw (RuntimeException) e.getCause();
+    }
+    return null;
+  }
 
   void useReference(DefaultPacketHeader header) {
     this.buffer = reference.getValue();
@@ -893,7 +908,7 @@ class DefaultPacketBuffer implements PacketBuffer {
       Packet packet = type.getConstructor(PacketBuffer.class).newInstance(this);
       return (T) packet;
     } catch (Throwable e) {
-      return null;
+      return checkCastThrowable(type, e);
     }
   }
 
@@ -966,21 +981,25 @@ class DefaultPacketBuffer implements PacketBuffer {
       // cleanup native memory wrapped in garbage collected object.
       PacketBufferReference ref;
       while ((ref = (PacketBufferReference) RQ.poll()) != null) {
-        if (ref.address.get() != 0L) {
-          Native.free(ref.address.getAndSet(0L)); // force deallocate memory and set address to '0'.
-          if (LEAK_DETECTION) {
-            StringBuilder stactTraceBuilder = new StringBuilder();
-            for (int i = ref.stackTraceElements.length - 1; i >= 0; i--) {
-              stactTraceBuilder.append("\t[" + ref.stackTraceElements[i].toString() + "]\n");
-            }
-            throw new MemoryLeakException(
-                String.format(
-                    "PacketBuffer.release() was not called before it's garbage collected.\n\tCreated at:\n%s",
-                    stactTraceBuilder.toString()));
-          }
-        }
+        checkLeak(ref, LEAK_DETECTION);
       }
       return buffer;
+    }
+
+    static void checkLeak(PacketBufferReference ref, boolean enabled) {
+      if (ref.address.get() != 0L) {
+        Native.free(ref.address.getAndSet(0L)); // force deallocate memory and set address to '0'.
+        if (enabled) {
+          StringBuilder stackTraceBuilder = new StringBuilder();
+          for (int i = ref.stackTraceElements.length - 1; i >= 0; i--) {
+            stackTraceBuilder.append("\t[" + ref.stackTraceElements[i].toString() + "]\n");
+          }
+          throw new MemoryLeakException(
+              String.format(
+                  "PacketBuffer.release() was not called before it's garbage collected.\n\tCreated at:\n%s",
+                  stackTraceBuilder.toString()));
+        }
+      }
     }
   }
 }

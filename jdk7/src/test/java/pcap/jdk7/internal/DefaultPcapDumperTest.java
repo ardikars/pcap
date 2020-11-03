@@ -71,8 +71,8 @@ public class DefaultPcapDumperTest extends BaseTest {
             },
             null);
         try (Dumper append = live.dumpOpenAppend(newFile)) {
-            //
-        } catch (NullPointerException | UnsatisfiedLinkError e) {
+          //
+        } catch (UnsatisfiedLinkError e) {
 
         }
       } catch (BreakException | ErrorException e) {

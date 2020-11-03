@@ -60,7 +60,7 @@ class DefaultPcap implements Pcap {
       Pointer dumper;
       tryReadLock();
       try {
-        dumper = NativeMappings.PlatformDependent.INSTANCE.pcap_dump_open_append(pointer, file);
+        dumper = NativeMappings.PLATFORM_DEPENDENT.pcap_dump_open_append(pointer, file);
         nullCheck(dumper);
       } finally {
         readLock.unlock();
@@ -315,11 +315,8 @@ class DefaultPcap implements Pcap {
     Timestamp.Precision precision;
     try {
       precision =
-          timestampPrecision(
-              NativeMappings.PlatformDependent.INSTANCE.pcap_get_tstamp_precision(pointer));
-    } catch (NullPointerException | UnsatisfiedLinkError e) {
-      System.err.println("pcap_get_tstamp_precision: Function doesn't exist.");
-      return Timestamp.Precision.MICRO;
+          timestampPrecision(NativeMappings.PLATFORM_DEPENDENT.pcap_get_tstamp_precision(pointer));
+
     } finally {
       readLock.unlock();
     }
