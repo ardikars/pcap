@@ -11,18 +11,20 @@ import pcap.spi.PacketBuffer;
 import pcap.spi.Pcap;
 import pcap.spi.Service;
 import pcap.spi.exception.ErrorException;
-import pcap.spi.exception.error.BreakException;
-import pcap.spi.option.DefaultOfflineOptions;
+import pcap.spi.exception.error.*;
+import pcap.spi.option.DefaultLiveOptions;
 
 @RunWith(JUnitPlatform.class)
 public class IPv4Test {
 
   @Test
-  void readWrite() throws ErrorException, BreakException {
-    try (final Pcap pcap =
-        Service.Creator.create("PcapService")
-            .offline("../jdk7/src/test/resources/sample.pcapng", new DefaultOfflineOptions())) {
-
+  void readWrite()
+      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException {
+    Service service = Service.Creator.create("PcapService");
+    try (final Pcap pcap = service.live(service.interfaces(), new DefaultLiveOptions())) {
       final PacketBuffer buffer = pcap.allocate(PacketBuffer.class).capacity(24);
       buffer.writerIndex(buffer.capacity());
       buffer.setByte(0, (4 & 0xF) << 4 | 6 & 0xF);

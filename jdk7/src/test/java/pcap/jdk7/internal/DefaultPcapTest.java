@@ -764,22 +764,24 @@ public class DefaultPcapTest extends BaseTest {
       Assertions.assertFalse(live.getNonBlock());
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
-      Assertions.assertThrows(
-          ErrorException.class,
-          new Executable() {
-            @Override
-            public void execute() throws Throwable {
-              offline.setNonBlock(true);
-            }
-          });
-      Assertions.assertThrows(
-          ErrorException.class,
-          new Executable() {
-            @Override
-            public void execute() throws Throwable {
-              offline.setNonBlock(false);
-            }
-          });
+      if (!NativeMappings.isWinPcap) {
+        Assertions.assertThrows(
+            ErrorException.class,
+            new Executable() {
+              @Override
+              public void execute() throws Throwable {
+                offline.setNonBlock(true);
+              }
+            });
+        Assertions.assertThrows(
+            ErrorException.class,
+            new Executable() {
+              @Override
+              public void execute() throws Throwable {
+                offline.setNonBlock(false);
+              }
+            });
+      }
     }
   }
 
@@ -862,7 +864,7 @@ public class DefaultPcapTest extends BaseTest {
           });
       try {
         final Pointer nullDumper =
-            NativeMappings.PlatformDependent.INSTANCE.pcap_dump_open_append(
+            NativeMappings.PLATFORM_DEPENDENT.pcap_dump_open_append(
                 pcap.pointer, SAMPLE_NANOSECOND_PCAP);
         //
       } catch (NullPointerException | UnsatisfiedLinkError e) {

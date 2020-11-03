@@ -243,7 +243,7 @@ public class DefaultServiceTest extends BaseTest {
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
     final Pointer pointer = NativeMappings.pcap_create(lo.name(), errbuf);
     Assertions.assertNotNull(pointer);
-    int rc = NativeMappings.pcap_can_set_rfmon(pointer);
+    int rc = NativeMappings.PLATFORM_DEPENDENT.pcap_can_set_rfmon(pointer);
     Assertions.assertThrows(
         ActivatedException.class,
         new Executable() {

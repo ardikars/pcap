@@ -10,6 +10,7 @@ import java.nio.ByteOrder;
 import java.util.*;
 import pcap.spi.Address;
 import pcap.spi.Interface;
+import pcap.spi.Timestamp;
 
 class NativeMappings {
 
@@ -18,6 +19,8 @@ class NativeMappings {
   static final int FALSE = 0;
   static final short AF_INET;
   static final short AF_INET6;
+  static final DefaultPlatformDependent PLATFORM_DEPENDENT;
+  static final boolean isWinPcap;
   private static final Map<String, Object> NATIVE_LOAD_LIBRARY_OPTIONS =
       new HashMap<String, Object>();
 
@@ -46,6 +49,8 @@ class NativeMappings {
             return funcMap.get(method.getName());
           }
         });
+    PLATFORM_DEPENDENT = new DefaultPlatformDependent();
+    isWinPcap = NativeMappings.pcap_lib_version().toLowerCase().contains("winpcap");
 
     AF_INET = 2;
     AF_INET6 = defaultAfInet6();
@@ -86,8 +91,6 @@ class NativeMappings {
 
   static native String pcap_lib_version();
 
-  static native String pcap_statustostr(int error);
-
   static native Pointer pcap_geterr(Pointer p);
 
   static native int pcap_findalldevs(PointerByReference alldevsp, ErrorBuffer errbuf);
@@ -101,8 +104,6 @@ class NativeMappings {
   static native int pcap_set_snaplen(Pointer p, int snaplen);
 
   static native int pcap_set_promisc(Pointer p, int promisc);
-
-  static native int pcap_can_set_rfmon(Pointer p);
 
   static native int pcap_set_timeout(Pointer p, int timeout);
 
@@ -180,9 +181,9 @@ class NativeMappings {
 
   interface PlatformDependent extends Library {
 
-    PlatformDependent INSTANCE =
-        com.sun.jna.Native.load(
-            libName(Platform.isWindows()), PlatformDependent.class, NATIVE_LOAD_LIBRARY_OPTIONS);
+    int pcap_can_set_rfmon(Pointer p);
+
+    String pcap_statustostr(int error);
 
     Pointer pcap_dump_open_append(Pointer p, String fname);
 
@@ -202,6 +203,123 @@ class NativeMappings {
     int pcap_get_selectable_fd(Pointer p);
 
     long pcap_getevent(Pointer p);
+  }
+
+  static class DefaultPlatformDependent implements PlatformDependent {
+
+    private static final PlatformDependent NATIVE =
+        com.sun.jna.Native.load(
+            libName(Platform.isWindows()), PlatformDependent.class, NATIVE_LOAD_LIBRARY_OPTIONS);
+
+    @Override
+    public int pcap_can_set_rfmon(Pointer p) {
+      try {
+        return NATIVE.pcap_can_set_rfmon(p);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        System.err.println("pcap_can_set_frmon: Function doesn't exist.");
+        return 0;
+      }
+    }
+
+    @Override
+    public String pcap_statustostr(int error) {
+      try {
+        return NATIVE.pcap_statustostr(error);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        return "pcap_statustostr: Function doesn't exist.";
+      }
+    }
+
+    @Override
+    public Pointer pcap_dump_open_append(Pointer p, String fname) {
+      try {
+        return NATIVE.pcap_dump_open_append(p, fname);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        System.err.println("pcap_dump_open_append: Function doesn't exist.");
+        return null;
+      }
+    }
+
+    @Override
+    public int pcap_set_tstamp_type(Pointer p, int tstampType) {
+      try {
+        return NATIVE.pcap_set_tstamp_type(p, tstampType);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        System.err.println("pcap_set_tstamp_type: Function doesn't exist.");
+        return 0;
+      }
+    }
+
+    @Override
+    public int pcap_get_tstamp_precision(Pointer p) {
+      try {
+        return NATIVE.pcap_get_tstamp_precision(p);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        System.err.println("pcap_get_tstamp_precision: Function doesn't exist.");
+        return Timestamp.Precision.MICRO.value();
+      }
+    }
+
+    @Override
+    public int pcap_set_rfmon(Pointer p, int rfmon) {
+      try {
+        return NATIVE.pcap_set_rfmon(p, rfmon);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        System.err.println("pcap_set_rfmon: Function doesn't exist.");
+        return 0;
+      }
+    }
+
+    @Override
+    public Pointer pcap_open_offline_with_tstamp_precision(
+        String fname, int precision, ErrorBuffer errbuf) {
+      try {
+        return NATIVE.pcap_open_offline_with_tstamp_precision(fname, precision, errbuf);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        System.err.println("pcap_open_offline_with_tstamp_precision: Function doesn't exist.");
+        return null;
+      }
+    }
+
+    @Override
+    public int pcap_set_tstamp_precision(Pointer p, int tstamp_precision) {
+      try {
+        return NATIVE.pcap_set_tstamp_precision(p, tstamp_precision);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        System.err.println("pcap_set_tstamp_precision: Function doesn't exist.");
+        return 0;
+      }
+    }
+
+    @Override
+    public int pcap_set_immediate_mode(Pointer p, int immediate_mode) {
+      try {
+        return NATIVE.pcap_set_immediate_mode(p, immediate_mode);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        System.err.println("pcap_set_immediate_mode: Function doesn't exist.");
+        return 0;
+      }
+    }
+
+    @Override
+    public int pcap_get_selectable_fd(Pointer p) {
+      try {
+        return NATIVE.pcap_get_selectable_fd(p);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        System.err.println("pcap_get_selectable_fd: Function doesn't exist.");
+        return -1;
+      }
+    }
+
+    @Override
+    public long pcap_getevent(Pointer p) {
+      try {
+        return NATIVE.pcap_getevent(p);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        System.err.println("pcap_getevent: Function doesn't exist.");
+        return -1;
+      }
+    }
   }
 
   public static final class ErrorBuffer extends Structure {

@@ -1,12 +1,11 @@
 package pcap.codec.ip;
 
+import java.net.Inet4Address;
+import java.util.Arrays;
 import pcap.common.net.InetAddresses;
 import pcap.common.util.Strings;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
-
-import java.net.Inet4Address;
-import java.util.Arrays;
 
 /*
  *  0                   1                   2                   3

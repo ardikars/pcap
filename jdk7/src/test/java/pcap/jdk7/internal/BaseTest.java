@@ -29,6 +29,18 @@ abstract class BaseTest {
           }
         }
       }
+      // try get by description
+      iterator = service.interfaces().iterator();
+      if (iterator != null) {
+        while (iterator.hasNext()) {
+          Interface source = iterator.next();
+          if (source.description() != null
+              && source.description().toLowerCase().contains("loopback")) {
+            LOOPBACK = source;
+            return LOOPBACK;
+          }
+        }
+      }
       throw new ErrorException("Loopback interface is not found.");
     } else {
       return LOOPBACK;

@@ -9,16 +9,20 @@ import pcap.spi.PacketBuffer;
 import pcap.spi.Pcap;
 import pcap.spi.Service;
 import pcap.spi.exception.ErrorException;
-import pcap.spi.option.DefaultOfflineOptions;
+import pcap.spi.exception.error.*;
+import pcap.spi.option.DefaultLiveOptions;
 
 @RunWith(JUnitPlatform.class)
 public class EthernetTest {
 
   @Test
-  void readWrite() throws ErrorException {
-    try (final Pcap pcap =
-        Service.Creator.create("PcapService")
-            .offline("../jdk7/src/test/resources/sample.pcapng", new DefaultOfflineOptions())) {
+  void readWrite()
+      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException {
+    Service service = Service.Creator.create("PcapService");
+    try (final Pcap pcap = service.live(service.interfaces(), new DefaultLiveOptions())) {
       PacketBuffer buffer = pcap.allocate(PacketBuffer.class).capacity(14);
       buffer.setIndex(0, buffer.capacity());
       Ethernet ethernet = buffer.cast(Ethernet.class);

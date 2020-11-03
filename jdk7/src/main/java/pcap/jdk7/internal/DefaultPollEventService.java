@@ -68,8 +68,7 @@ class DefaultPollEventService extends AbstractEventService implements Invocation
     DefaultPcap defaultPcap = (DefaultPcap) pcap;
     Pointer pfds = new Memory(8);
     pfds.setInt(
-        FD_OFFSET,
-        NativeMappings.PlatformDependent.INSTANCE.pcap_get_selectable_fd(defaultPcap.pointer));
+        FD_OFFSET, NativeMappings.PLATFORM_DEPENDENT.pcap_get_selectable_fd(defaultPcap.pointer));
     pfds.setShort(EVENTS_OFFSET, POLLIN);
     return newProxy(target, new DefaultPollEventService(defaultPcap, pfds));
   }

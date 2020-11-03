@@ -1,1 +1,1 @@
-mvnw.cmd -t .mvn/toolchains.xml clean install jacoco:report-aggregate -Pcoverage -Pformat -Pjavadoc -Plegacy-support
+mvnw.cmd -t .mvn/toolchains.xml clean install jacoco:report-aggregate -Pcoverage -Pformat -Pjavadoc -Plegacy-support -Djna.library.path="C:\Windows\System32\Npcap"

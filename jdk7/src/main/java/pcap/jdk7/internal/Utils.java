@@ -28,9 +28,21 @@ class Utils {
     }
     String[] splited =
         version.substring(startIndex, endIndex < startIndex ? chars.length : endIndex).split("\\.");
-    MAJOR = Integer.parseInt(splited[0]);
-    MINOR = Integer.parseInt(splited[1]);
-    PATCH = Integer.parseInt(splited[2]);
+    if (splited.length > 1) {
+      MAJOR = Integer.parseInt(splited[0]);
+    } else {
+      MAJOR = 1;
+    }
+    if (splited.length > 2) {
+      MINOR = Integer.parseInt(splited[1]);
+    } else {
+      MINOR = 0;
+    }
+    if (splited.length > 3) {
+      PATCH = Integer.parseInt(splited[2]);
+    } else {
+      PATCH = 0;
+    }
   }
 
   private Utils() {}
