@@ -33,6 +33,18 @@ public class IPv4Test {
 
       // write
       ipv4.version(4);
+      Assertions.assertThrows(IllegalArgumentException.class, new Executable() {
+        @Override
+        public void execute() throws Throwable {
+          ipv4.ihl(7);
+        }
+      });
+      Assertions.assertThrows(IllegalArgumentException.class, new Executable() {
+        @Override
+        public void execute() throws Throwable {
+          ipv4.ihl(4);
+        }
+      });
       ipv4.ihl(5);
       ipv4.dscp(2);
       ipv4.ecn(3);

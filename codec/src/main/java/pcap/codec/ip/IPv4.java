@@ -1,12 +1,13 @@
 package pcap.codec.ip;
 
-import java.net.Inet4Address;
-import java.util.Arrays;
 import pcap.common.net.InetAddresses;
 import pcap.common.util.Strings;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
+
+import java.net.Inet4Address;
+import java.util.Arrays;
 
 /*
  *  0                   1                   2                   3
@@ -53,6 +54,8 @@ public class IPv4 extends Packet.Abstract {
   private final long destination;
   private final long options;
 
+  private final int maxIhl;
+
   public IPv4(PacketBuffer buffer) {
     super(buffer);
     this.version = offset;
@@ -66,6 +69,7 @@ public class IPv4 extends Packet.Abstract {
     this.source = headerChecksum + 2;
     this.destination = source + 4;
     this.options = destination + 4;
+    this.maxIhl = ihl();
   }
 
   private static short calculateChecksum(PacketBuffer buffer, int headerLength, long offset) {
@@ -97,6 +101,10 @@ public class IPv4 extends Packet.Abstract {
   }
 
   public IPv4 ihl(int value) {
+    if (value < 5 || value > maxIhl) {
+      throw new IllegalArgumentException(
+          String.format("value: %d (expected: 5 >= value <= %d)", value, maxIhl));
+    }
     buffer.setByte(version, (version() & 0xF) << 4 | value & 0xF);
     return this;
   }
@@ -226,7 +234,10 @@ public class IPv4 extends Packet.Abstract {
     if (!buffer.isReadable()) {
       throw new IllegalStateException("buffer is not readable.");
     }
-    return buffer.getByte(buffer.readerIndex()) & 0xF;
+    if (version == 0) {
+      return (buffer.getByte(buffer.readerIndex()) & 0xF) << 2;
+    }
+    return (buffer.getByte(version) & 0xF) << 2;
   }
 
   @Override
