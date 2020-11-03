@@ -6,6 +6,7 @@ import pcap.common.net.InetAddresses;
 import pcap.common.util.Strings;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
+import pcap.spi.annotation.Incubating;
 
 /*
  *  0                   1                   2                   3
@@ -35,6 +36,7 @@ import pcap.spi.PacketBuffer;
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
+@Incubating
 public class IPv4 extends Packet.Abstract {
 
   public static final int TYPE = 0x0800;
