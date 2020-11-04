@@ -539,7 +539,7 @@
         <profile>
             <id>release</id>
             <properties>
-                <skipTests>true</skipTests>
+                <maven.test.skip>true</maven.test.skip>
             </properties>
             <build>
                 <plugins>

@@ -51,8 +51,8 @@ public class DefaultPollEventServiceTest extends BaseTest {
                   new PacketHandler<String>() {
                     @Override
                     public void gotPacket(String args, PacketHeader header, PacketBuffer buffer) {
-                      System.out.println(header);
-                      System.out.println(buffer);
+                      Assertions.assertNotNull(header);
+                      Assertions.assertNotNull(buffer);
                     }
                   },
                   "");
@@ -63,8 +63,6 @@ public class DefaultPollEventServiceTest extends BaseTest {
             PacketBuffer buffer = myProxy.allocate(PacketBuffer.class);
             try {
               myProxy.nextEx(header, buffer);
-              System.out.println(header);
-              System.out.println(buffer);
             } catch (BreakException e) {
               //
             } catch (ErrorException e) {

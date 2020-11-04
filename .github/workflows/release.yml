@@ -50,4 +50,4 @@ jobs:
           export JAVA_HOME=$(pwd)/.mvn/toolchains
           echo "JAVA_HOME = $JAVA_HOME"
           echo "JAVA_HOME_JDK7 = $JAVA_HOME_JDK7"
-          ./mvnw -B -t .mvn/toolchains.xml -s .mvn/release-settings.xml deploy -Plegacy-support -Prelease -DskipTests=true
+          ./mvnw -B -t .mvn/toolchains.xml -s .mvn/release-settings.xml deploy -Plegacy-support -Prelease

@@ -6,6 +6,10 @@ import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
 
+/**
+ * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ * @since 1.0.0
+ */
 @Incubating
 public class Ethernet extends Packet.Abstract {
 
@@ -41,11 +45,11 @@ public class Ethernet extends Packet.Abstract {
   }
 
   public int type() {
-    return buffer.getShortRE(type);
+    return buffer.getShort(type);
   }
 
   public Ethernet type(int value) {
-    buffer.setShortRE(type, value);
+    buffer.setShort(type, value);
     return this;
   }
 

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.common.net.MacAddress;
+import pcap.common.util.Hexs;
 import pcap.spi.PacketBuffer;
 import pcap.spi.Pcap;
 import pcap.spi.Service;
@@ -15,6 +16,8 @@ import pcap.spi.option.DefaultLiveOptions;
 @RunWith(JUnitPlatform.class)
 public class EthernetTest {
 
+  private static final byte[] BYTES = Hexs.parseHex("d80d17269cee8c8590c30b330800");
+
   @Test
   void readWrite()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
@@ -23,9 +26,18 @@ public class EthernetTest {
           InterfaceNotSupportTimestampTypeException {
     Service service = Service.Creator.create("PcapService");
     try (final Pcap pcap = service.live(service.interfaces(), new DefaultLiveOptions())) {
-      PacketBuffer buffer = pcap.allocate(PacketBuffer.class).capacity(14);
-      buffer.setIndex(0, buffer.capacity());
-      Ethernet ethernet = buffer.cast(Ethernet.class);
+      final PacketBuffer buffer =
+          pcap.allocate(PacketBuffer.class)
+              .capacity(BYTES.length)
+              .byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN);
+      buffer.writeBytes(BYTES);
+
+      final Ethernet ethernet = buffer.cast(Ethernet.class);
+
+      Assertions.assertEquals(MacAddress.valueOf("d8:0d:17:26:9c:ee"), ethernet.destination());
+      Assertions.assertEquals(MacAddress.valueOf("8c:85:90:c3:0b:33"), ethernet.source());
+      Assertions.assertEquals(0x0800, ethernet.type());
+
       // write
       ethernet.destination(MacAddress.BROADCAST);
       ethernet.source(MacAddress.DUMMY);

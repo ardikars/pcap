@@ -1,13 +1,12 @@
 package pcap.codec.ip;
 
+import java.net.Inet4Address;
 import pcap.common.net.InetAddresses;
+import pcap.common.util.Bytes;
 import pcap.common.util.Strings;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
-
-import java.net.Inet4Address;
-import java.util.Arrays;
 
 /*
  *  0                   1                   2                   3
@@ -79,7 +78,7 @@ public class IPv4 extends Packet.Abstract {
       if (i == 5) {
         accumulation += 0;
       } else {
-        accumulation += 0xFFFF & buffer.getShortRE(index);
+        accumulation += 0xFFFF & buffer.getShort(index);
       }
       index += 2;
     }
@@ -128,38 +127,38 @@ public class IPv4 extends Packet.Abstract {
   }
 
   public int totalLength() {
-    return buffer.getShortRE(totalLength) & 0xFFFF;
+    return buffer.getShort(totalLength) & 0xFFFF;
   }
 
   public IPv4 totalLength(int value) {
-    buffer.setShortRE(totalLength, value & 0xFFFF);
+    buffer.setShort(totalLength, value & 0xFFFF);
     return this;
   }
 
   public int identification() {
-    return buffer.getShortRE(identification) & 0xFFFF;
+    return buffer.getShort(identification) & 0xFFFF;
   }
 
   public IPv4 identification(int value) {
-    buffer.setShortRE(identification, value & 0xFFFF);
+    buffer.setShort(identification, value & 0xFFFF);
     return this;
   }
 
   public int flags() {
-    return (buffer.getShortRE(flags) >> 13) & 0x7;
+    return (buffer.getShort(flags) >> 13) & 0x7;
   }
 
   public IPv4 flags(int value) {
-    buffer.setShortRE(flags, (value & 0x7) << 13 | fragmentOffset() & 0x1FFF);
+    buffer.setShort(flags, (value & 0x7) << 13 | fragmentOffset() & 0x1FFF);
     return this;
   }
 
   public int fragmentOffset() {
-    return buffer.getShortRE(flags) & 0x1FFF;
+    return buffer.getShort(flags) & 0x1FFF;
   }
 
   public IPv4 fragmentOffset(int value) {
-    buffer.setShortRE(flags, (flags() & 0x7) << 13 | value & 0x1FFF);
+    buffer.setShort(flags, (flags() & 0x7) << 13 | value & 0x1FFF);
     return this;
   }
 
@@ -173,20 +172,20 @@ public class IPv4 extends Packet.Abstract {
   }
 
   public int protocol() {
-    return buffer.getByte(protocol) & 0xFFFF;
+    return buffer.getByte(protocol) & 0xFF;
   }
 
   public IPv4 protocol(int value) {
-    buffer.setByte(protocol, value & 0xFFFF);
+    buffer.setByte(protocol, value & 0xFF);
     return this;
   }
 
   public int checksum() {
-    return buffer.getShortRE(headerChecksum) & 0xFFFF;
+    return buffer.getShort(headerChecksum) & 0xFFFF;
   }
 
   public IPv4 checksum(int value) {
-    buffer.setShortRE(headerChecksum, value & 0xFFFF);
+    buffer.setShort(headerChecksum, value & 0xFFFF);
     return this;
   }
 
@@ -199,7 +198,7 @@ public class IPv4 extends Packet.Abstract {
   }
 
   public Inet4Address source() {
-    return getInet4Address(source);
+    return InetAddresses.fromBytesToInet4Address(Bytes.toByteArray(buffer.getInt(source)));
   }
 
   public IPv4 source(Inet4Address address) {
@@ -208,7 +207,7 @@ public class IPv4 extends Packet.Abstract {
   }
 
   public Inet4Address destination() {
-    return getInet4Address(destination);
+    return InetAddresses.fromBytesToInet4Address(Bytes.toByteArray(buffer.getInt(destination)));
   }
 
   public IPv4 destination(Inet4Address address) {
@@ -223,22 +222,21 @@ public class IPv4 extends Packet.Abstract {
   }
 
   public IPv4 options(byte[] value) {
-    buffer.setBytes(options, value, 0, (ihl() - 5) << 2);
+    int maxLength = (ihl() - 5) << 2;
+    if (value.length < maxLength) {
+      buffer.setBytes(options, value, 0, value.length);
+    } else {
+      buffer.setBytes(options, value, 0, maxLength);
+    }
     return this;
-  }
-
-  private Inet4Address getInet4Address(long offset) {
-    byte[] address = new byte[4];
-    buffer.getBytes(offset, address);
-    return InetAddresses.fromBytesToInet4Address(address);
   }
 
   @Override
   public int size() {
-    if (!buffer.isReadable()) {
-      throw new IllegalStateException("buffer is not readable.");
-    }
-    if (version == 0) {
+    if (maxIhl == 0) {
+      if (!buffer.isReadable()) {
+        throw new IllegalStateException("buffer is not readable.");
+      }
       return (buffer.getByte(buffer.readerIndex()) & 0xF) << 2;
     }
     return (buffer.getByte(version) & 0xF) << 2;
@@ -260,7 +258,7 @@ public class IPv4 extends Packet.Abstract {
         .add("checksum", checksum())
         .add("source", source().getHostAddress())
         .add("destination", destination().getHostAddress())
-        .add("options", Arrays.toString(options()))
+        .add("options", "0x" + Strings.hex(options()))
         .toString();
   }
 }

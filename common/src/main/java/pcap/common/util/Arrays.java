@@ -320,9 +320,12 @@ public final class Arrays {
   /**
    * To string objects.
    *
+   * <p>Use java.util.Array.toString(..) instead.
+   *
    * @param objs objs.
    * @return returns {@link String}.
    */
+  @Deprecated
   public static String toString(Object... objs) {
     return java.util.Arrays.toString(objs);
   }
