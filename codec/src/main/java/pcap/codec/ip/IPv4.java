@@ -4,6 +4,7 @@ import java.net.Inet4Address;
 import pcap.common.net.InetAddresses;
 import pcap.common.util.Bytes;
 import pcap.common.util.Strings;
+import pcap.common.util.Validate;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
@@ -71,13 +72,17 @@ public class IPv4 extends Packet.Abstract {
     this.maxIhl = ihl();
   }
 
+  public static IPv4 newInstance(int size, PacketBuffer buffer) {
+    Validate.notIllegalArgument(size >= 20 || size <= 60, "buffer size is not sufficient.");
+    buffer.setByte(buffer.readerIndex(), (4 & 0xF) << 4 | (size >> 2) & 0xF);
+    return new IPv4(buffer);
+  }
+
   private static int calculateChecksum(PacketBuffer buffer, int headerLength, long offset) {
     long index = offset;
     int accumulation = 0;
     for (long i = 0; i < headerLength * 2; ++i) {
-      if (i == 5) {
-        accumulation += 0;
-      } else {
+      if (i != 5) {
         accumulation += 0xFFFF & buffer.getShort(index);
       }
       index += 2;
@@ -234,9 +239,7 @@ public class IPv4 extends Packet.Abstract {
   @Override
   public int size() {
     if (maxIhl == 0) {
-      if (!buffer.isReadable()) {
-        throw new IllegalStateException("buffer is not readable.");
-      }
+      Validate.notIllegalState(buffer.readableBytes() >= 20, "buffer size is not sufficient.");
       return (buffer.getByte(buffer.readerIndex()) & 0xF) << 2;
     }
     return (buffer.getByte(version) & 0xF) << 2;

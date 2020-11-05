@@ -1,6 +1,10 @@
 package pcap.codec.tcp;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.nio.ByteBuffer;
 import pcap.common.util.Strings;
+import pcap.common.util.Validate;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
@@ -59,6 +63,12 @@ public class Tcp extends Packet.Abstract {
     this.urgentPointer = checksum + 2;
     this.options = urgentPointer + 2;
     this.maxDataOffset = dataOffset;
+  }
+
+  public static Tcp newInstance(int size, PacketBuffer buffer) {
+    Validate.notIllegalArgument(size >= 20 || size <= 60, "buffer size is not sufficient.");
+    buffer.setShort(0, size << 10);
+    return new Tcp(buffer);
   }
 
   public int sourcePort() {
@@ -228,6 +238,43 @@ public class Tcp extends Packet.Abstract {
     return this;
   }
 
+  public int calculateChecksum(InetAddress srcAddr, InetAddress dstAddr, int payloadLength) {
+    boolean isIp = srcAddr instanceof Inet4Address && dstAddr instanceof Inet4Address;
+    int accumulation = 0;
+    ByteBuffer bb = ByteBuffer.allocate(isIp ? 12 : 40);
+    bb.put(srcAddr.getAddress());
+    bb.put(dstAddr.getAddress());
+    bb.put((byte) 0);
+    bb.put((byte) TYPE);
+    if (isIp) {
+      bb.putShort((short) ((this.dataOffset() << 2) + payloadLength));
+    } else {
+      bb.putInt((this.dataOffset() << 2) + payloadLength);
+    }
+    bb.rewind();
+
+    for (int i = 0; i < bb.capacity() / 2; ++i) {
+      accumulation += bb.getShort() & 0xFFFF;
+    }
+
+    long offset = this.offset;
+    long length =
+        payloadLength % 2 == 0 ? payloadLength + this.size() : payloadLength + this.size() - 1;
+    for (long i = offset; i < length; i += 2) {
+      accumulation += this.buffer.getShort(i) & 0xFFFF;
+    }
+    if (payloadLength % 2 > 0) {
+      accumulation += ((this.buffer.getByte(length)) & 0xFF) << 8;
+    }
+
+    accumulation = (accumulation >> 16 & 0xFFFF) + (accumulation & 0xFFFF);
+    return (~accumulation & 0xFFFF);
+  }
+
+  public boolean isValidChecksum(Inet4Address src, Inet4Address dst, int payloadLength) {
+    return calculateChecksum(src, dst, payloadLength) == 0;
+  }
+
   public int urgentPointer() {
     return buffer.getShort(urgentPointer) & 0xFFFF;
   }
@@ -293,9 +340,7 @@ public class Tcp extends Packet.Abstract {
   @Override
   public int size() {
     if (maxDataOffset == 0) {
-      if (buffer.readableBytes() < 20) {
-        throw new IllegalStateException("buffer size is not sufficient.");
-      }
+      Validate.notIllegalState(buffer.readableBytes() >= 20, "buffer size is not sufficient.");
       return ((buffer.getShort(buffer.readerIndex() + 12) >> 12) & 0xF) << 2;
     }
     return dataOffset() << 2;

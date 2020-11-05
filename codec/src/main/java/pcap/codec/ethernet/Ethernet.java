@@ -2,6 +2,7 @@ package pcap.codec.ethernet;
 
 import pcap.common.net.MacAddress;
 import pcap.common.util.Strings;
+import pcap.common.util.Validate;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
@@ -24,6 +25,11 @@ public class Ethernet extends Packet.Abstract {
     this.destination = offset;
     this.source = destination + MacAddress.MAC_ADDRESS_LENGTH;
     this.type = source + MacAddress.MAC_ADDRESS_LENGTH;
+  }
+
+  public static Ethernet newInstance(int size, PacketBuffer buffer) {
+    Validate.notIllegalArgument(size == 14, "buffer size is not sufficient.");
+    return new Ethernet(buffer);
   }
 
   public MacAddress destination() {

@@ -1,10 +1,12 @@
 package pcap.codec.tcp;
 
+import java.net.Inet4Address;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import pcap.common.net.InetAddresses;
 import pcap.common.util.Hexs;
 import pcap.common.util.Strings;
 import pcap.spi.PacketBuffer;
@@ -18,7 +20,8 @@ import pcap.spi.option.DefaultLiveOptions;
 public class TcpTest {
 
   private static final byte[] BYTES =
-      Hexs.parseHex("c82f01bbf3731826394d0f5b801808000f5900000101080a25cbc8a9d9dddf95");
+      Hexs.parseHex(
+          "c82f01bbf3731826394d0f5b801808000f5900000101080a25cbc8a9d9dddf951703030022b15027736052b94d137aec334b9a023e897c9ffb0bfcaa30df75295c93cce2ba8ca0");
 
   @Test
   void readWrite()
@@ -54,6 +57,12 @@ public class TcpTest {
       Assertions.assertEquals(0, tcp.urgentPointer());
       Assertions.assertEquals("0101080a25cbc8a9d9dddf95", Strings.hex(tcp.options()));
       Assertions.assertEquals(tcp.dataOffset() << 2, tcp.size());
+
+      Inet4Address src =
+          InetAddresses.fromBytesToInet4Address(new byte[] {(byte) 192, (byte) 168, 0, 109});
+      Inet4Address dst =
+          InetAddresses.fromBytesToInet4Address(new byte[] {74, 125, (byte) 200, 94});
+      Assertions.assertTrue(tcp.isValidChecksum(src, dst, 39));
 
       tcp.sourcePort(443);
       tcp.destinationPort(51247);
