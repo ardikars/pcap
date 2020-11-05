@@ -33,6 +33,8 @@ import pcap.spi.annotation.Incubating;
 @Incubating
 public class Tcp extends Packet.Abstract {
 
+  public static final int TYPE = 6;
+
   private final long sourcePort;
   private final long destinationPort;
   private final long sequenceNumber;

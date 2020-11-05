@@ -45,7 +45,7 @@ public class Ethernet extends Packet.Abstract {
   }
 
   public int type() {
-    return buffer.getShort(type);
+    return buffer.getShort(type) & 0xFFFF;
   }
 
   public Ethernet type(int value) {

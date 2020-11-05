@@ -7,7 +7,7 @@
     <groupId>com.ardikars.pcap</groupId>
     <artifactId>pcap</artifactId>
     <packaging>pom</packaging>
-    <version>0.7.0</version>
+    <version>0.7.1</version>
 
     <modules>
         <module>spi</module>
@@ -543,10 +543,6 @@
             </properties>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>com.coveo</groupId>
-                        <artifactId>fmt-maven-plugin</artifactId>
-                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>

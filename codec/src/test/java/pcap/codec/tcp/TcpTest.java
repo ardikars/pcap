@@ -138,7 +138,7 @@ public class TcpTest {
           pcap.allocate(PacketBuffer.class)
               .capacity(BYTES.length)
               .byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN);
-      buffer.writerIndex(buffer.capacity());
+      buffer.writeBytes(BYTES);
 
       final Tcp tcp = buffer.cast(Tcp.class);
 
