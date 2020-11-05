@@ -33,6 +33,9 @@ public class IPv4Test {
       buffer.writeBytes(BYTES);
 
       final IPv4 ipv4 = buffer.cast(IPv4.class);
+      final IPv4 comparison = IPv4.newInstance(ipv4.size(), buffer);
+      Assertions.assertEquals(ipv4, comparison);
+
       Assertions.assertEquals(4, ipv4.version());
       Assertions.assertEquals(5, ipv4.ihl());
       Assertions.assertEquals(0, ipv4.dscp());
@@ -165,6 +168,31 @@ public class IPv4Test {
             @Override
             public void execute() throws Throwable {
               newBuffer.setIndex(0, 0).cast(IPv4.class);
+            }
+          });
+
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              IPv4.newInstance(0, buffer);
+            }
+          });
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              IPv4.newInstance(61, buffer);
+            }
+          });
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              IPv4.newInstance(20, buffer.setIndex(0, 0));
             }
           });
 

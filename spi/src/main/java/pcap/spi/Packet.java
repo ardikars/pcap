@@ -43,7 +43,6 @@ public interface Packet {
       }
       this.offset = buffer.readerIndex();
       this.length = size();
-      buffer.readerIndex(offset + length);
     }
 
     /** {@inheritDoc} */
@@ -58,5 +57,33 @@ public interface Packet {
      * @return returns packet size.
      */
     protected abstract int size();
+
+    @Override
+    public boolean equals(Object o) {
+      if (!(o instanceof Abstract)) {
+        return false;
+      }
+      Abstract packet = (Abstract) o;
+      if (size() != packet.size()) {
+        return false;
+      }
+      int size = size();
+      for (long i = 0; i < size; i++) {
+        if (buffer.getByte(offset + i) != packet.buffer.getByte(packet.offset + i)) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      int result = 1;
+      long length = offset + size();
+      for (long i = offset; i < length; i++) {
+        result = 31 * result + buffer.getByte(i);
+      }
+      return result;
+    }
   }
 }

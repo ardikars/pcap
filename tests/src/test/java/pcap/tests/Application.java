@@ -28,38 +28,41 @@ public class Application {
     try (Pcap live = service.live(devices, new DefaultLiveOptions().proxy(PcapProxy.class))) {
       PacketBuffer packetBuffer = live.allocate(PacketBuffer.class);
       PacketHeader packetHeader = live.allocate(PacketHeader.class);
-      live.nextEx(packetHeader, packetBuffer);
-      System.out.println("[ PacketHeader:");
-      System.out.println("\tTimestamp -> Second        : " + packetHeader.timestamp().second());
-      System.out.println(
-          "\tTimestamp -> Micro second  : " + packetHeader.timestamp().microSecond());
-      System.out.println("\tCapture length             : " + packetHeader.captureLength());
-      System.out.println("\tLength                     : " + packetHeader.length());
-      System.out.println("]");
-      System.out.println();
-      Statistics statistics = live.stats();
-      System.out.println("[ Statistics:");
-      System.out.println("\tReceived                   : " + statistics.received());
-      System.out.println("\tDropped                    : " + statistics.dropped());
-      System.out.println("\tDropped by interface       : " + statistics.droppedByInterface());
-      System.out.println("]");
-      System.out.println();
-
-      Ethernet ethernet =
-          packetBuffer.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN).cast(Ethernet.class);
-      System.out.println(ethernet);
-      if (ethernet.type() == IPv4.TYPE) {
-        IPv4 ipv4 = packetBuffer.readerIndex(ethernet.size()).cast(IPv4.class);
-        System.out.println(ipv4);
-        if (ipv4.protocol() == Tcp.TYPE) {
-          Tcp tcp = packetBuffer.readerIndex(ethernet.size() + ipv4.size()).cast(Tcp.class);
-          System.out.println(tcp);
+      for (int i = 0; i < 10; i++) {
+        try {
+          live.nextEx(packetHeader, packetBuffer);
+          System.out.println("[ PacketHeader:");
+          System.out.println("\tTimestamp -> Second        : " + packetHeader.timestamp().second());
+          System.out.println(
+              "\tTimestamp -> Micro second  : " + packetHeader.timestamp().microSecond());
+          System.out.println("\tCapture length             : " + packetHeader.captureLength());
+          System.out.println("\tLength                     : " + packetHeader.length());
+          System.out.println("]");
+          System.out.println();
+          Statistics statistics = live.stats();
+          System.out.println("[ Statistics:");
+          System.out.println("\tReceived                   : " + statistics.received());
+          System.out.println("\tDropped                    : " + statistics.dropped());
+          System.out.println("\tDropped by interface       : " + statistics.droppedByInterface());
+          System.out.println("]");
+          System.out.println();
+          Ethernet ethernet =
+              packetBuffer.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN).cast(Ethernet.class);
+          System.out.println(ethernet);
+          if (ethernet.type() == IPv4.TYPE) {
+            IPv4 ipv4 = packetBuffer.readerIndex(ethernet.size()).cast(IPv4.class);
+            System.out.println(ipv4);
+            if (ipv4.protocol() == Tcp.TYPE) {
+              Tcp tcp = packetBuffer.readerIndex(ethernet.size() + ipv4.size()).cast(Tcp.class);
+              System.out.println(tcp);
+            }
+          }
+        } catch (TimeoutException e) {
+          System.err.println(e);
+        } catch (BreakException e) {
+          System.err.println(e);
         }
       }
-    } catch (TimeoutException e) {
-      System.err.println(e);
-    } catch (BreakException e) {
-      System.err.println(e);
     } catch (ErrorException e) {
       System.err.println(e);
     }

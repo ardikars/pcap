@@ -38,6 +38,9 @@ public class TcpTest {
       buffer.writeBytes(BYTES);
 
       final Tcp tcp = buffer.cast(Tcp.class);
+      final Tcp comparison = Tcp.newInstance(tcp.size(), buffer);
+      Assertions.assertEquals(tcp, comparison);
+
       Assertions.assertEquals(51247, tcp.sourcePort());
       Assertions.assertEquals(443, tcp.destinationPort());
       Assertions.assertEquals(4084406310L, tcp.sequenceNumber());
@@ -52,7 +55,7 @@ public class TcpTest {
       Assertions.assertFalse(tcp.rst());
       Assertions.assertFalse(tcp.syn());
       Assertions.assertFalse(tcp.fin());
-      Assertions.assertEquals(2048, tcp.windowsSize());
+      Assertions.assertEquals(2048, tcp.windowSize());
       Assertions.assertEquals(3929, tcp.checksum());
       Assertions.assertEquals(0, tcp.urgentPointer());
       Assertions.assertEquals("0101080a25cbc8a9d9dddf95", Strings.hex(tcp.options()));
@@ -78,7 +81,7 @@ public class TcpTest {
       tcp.rst(true);
       tcp.syn(true);
       tcp.fin(true);
-      tcp.windowsSize(4096);
+      tcp.windowSize(4096);
       tcp.checksum(2);
       tcp.urgentPointer(0);
       tcp.options(new byte[] {127, 0, 0, 1});
@@ -97,7 +100,7 @@ public class TcpTest {
       Assertions.assertTrue(tcp.rst());
       Assertions.assertTrue(tcp.syn());
       Assertions.assertTrue(tcp.fin());
-      Assertions.assertEquals(4096, tcp.windowsSize());
+      Assertions.assertEquals(4096, tcp.windowSize());
       Assertions.assertEquals(2, tcp.checksum());
       Assertions.assertEquals(0, tcp.urgentPointer());
       Assertions.assertArrayEquals(new byte[] {127, 0, 0, 1}, tcp.options());
@@ -131,6 +134,32 @@ public class TcpTest {
               buffer.setIndex(0, 0).cast(Tcp.class);
             }
           });
+
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              Tcp.newInstance(0, buffer);
+            }
+          });
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              Tcp.newInstance(61, buffer);
+            }
+          });
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              Tcp.newInstance(20, buffer.setIndex(0, 0));
+            }
+          });
+
       buffer.release();
     }
   }

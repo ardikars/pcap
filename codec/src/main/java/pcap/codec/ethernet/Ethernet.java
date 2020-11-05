@@ -28,7 +28,8 @@ public class Ethernet extends Packet.Abstract {
   }
 
   public static Ethernet newInstance(int size, PacketBuffer buffer) {
-    Validate.notIllegalArgument(size == 14, "buffer size is not sufficient.");
+    Validate.notIllegalArgument(
+        size == 14 && buffer.readableBytes() >= 14, "buffer size is not sufficient.");
     return new Ethernet(buffer);
   }
 

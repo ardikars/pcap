@@ -66,8 +66,10 @@ public class Tcp extends Packet.Abstract {
   }
 
   public static Tcp newInstance(int size, PacketBuffer buffer) {
-    Validate.notIllegalArgument(size >= 20 || size <= 60, "buffer size is not sufficient.");
-    buffer.setShort(0, size << 10);
+    Validate.notIllegalArgument(
+        size >= 20 && size <= 60 && buffer.readableBytes() >= 20, "buffer size is not sufficient.");
+    int flags = buffer.getShort(buffer.readerIndex() + 12) & 0x1FF;
+    buffer.setShort(buffer.readerIndex() + 12, flags & 0x1FF | (size >> 2) << 12);
     return new Tcp(buffer);
   }
 
@@ -220,11 +222,11 @@ public class Tcp extends Packet.Abstract {
     return this;
   }
 
-  public int windowsSize() {
+  public int windowSize() {
     return buffer.getShort(windowSize) & 0xFFFF;
   }
 
-  public Tcp windowsSize(int value) {
+  public Tcp windowSize(int value) {
     buffer.setShort(windowSize, value & 0xFFFF);
     return this;
   }
@@ -354,7 +356,7 @@ public class Tcp extends Packet.Abstract {
         .add("sequenceNumber", sequenceNumber())
         .add("acknowledgmentNumber", acknowledgmentNumber())
         .add("dataOffset", dataOffset())
-        .add("urg", ns())
+        .add("ns", ns())
         .add("cwr", cwr())
         .add("ece", ece())
         .add("urg", urg())
@@ -363,8 +365,8 @@ public class Tcp extends Packet.Abstract {
         .add("rst", rst())
         .add("syn", syn())
         .add("fin", fin())
-        .add("windowsSize", windowsSize())
-        .add("checksum", checksum())
+        .add("windowsSize", windowSize())
+        .add("checksum", Integer.toHexString(checksum()))
         .add("urgentPointer", urgentPointer())
         .add("options", Strings.hex(options()))
         .toString();

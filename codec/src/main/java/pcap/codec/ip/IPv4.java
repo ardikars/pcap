@@ -73,7 +73,8 @@ public class IPv4 extends Packet.Abstract {
   }
 
   public static IPv4 newInstance(int size, PacketBuffer buffer) {
-    Validate.notIllegalArgument(size >= 20 || size <= 60, "buffer size is not sufficient.");
+    Validate.notIllegalArgument(
+        size >= 20 && size <= 60 && buffer.readableBytes() >= 20, "buffer size is not sufficient.");
     buffer.setByte(buffer.readerIndex(), (4 & 0xF) << 4 | (size >> 2) & 0xF);
     return new IPv4(buffer);
   }
@@ -258,7 +259,7 @@ public class IPv4 extends Packet.Abstract {
         .add("fragmentOffset", fragmentOffset())
         .add("ttl", ttl())
         .add("protocol", protocol())
-        .add("checksum", checksum())
+        .add("checksum", Integer.toHexString(checksum()))
         .add("source", source().getHostAddress())
         .add("destination", destination().getHostAddress())
         .add("options", Strings.hex(options()))
