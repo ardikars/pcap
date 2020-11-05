@@ -34,7 +34,7 @@ public class Ethernet extends Packet.Abstract {
   }
 
   public MacAddress destination() {
-    return getMacAddress(destination);
+    return MacAddress.valueOf((buffer.getLong(destination) >> 16) & 0xffffffffffffL);
   }
 
   public Ethernet destination(MacAddress macAddress) {
@@ -43,7 +43,7 @@ public class Ethernet extends Packet.Abstract {
   }
 
   public MacAddress source() {
-    return getMacAddress(source);
+    return MacAddress.valueOf((buffer.getLong(source) >> 16) & 0xffffffffffffL);
   }
 
   public Ethernet source(MacAddress macAddress) {
@@ -63,12 +63,6 @@ public class Ethernet extends Packet.Abstract {
   @Override
   public int size() {
     return 14;
-  }
-
-  private MacAddress getMacAddress(long offset) {
-    byte[] macAddress = new byte[MacAddress.MAC_ADDRESS_LENGTH];
-    buffer.getBytes(offset, macAddress);
-    return MacAddress.valueOf(macAddress);
   }
 
   @Override

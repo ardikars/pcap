@@ -1,13 +1,14 @@
 package pcap.codec.tcp;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.nio.ByteBuffer;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
+
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.nio.ByteBuffer;
 
 /*
    0                   1                   2                   3
@@ -303,32 +304,33 @@ public class Tcp extends Packet.Abstract {
   }
 
   private short getShortFlags() {
+    int val = buffer.getShort(dataOffset) & 0x1FF;
     short flags = 0;
-    if (ns()) {
+    if (((val >> 8) & 0x1) == 1) {
       flags += 256;
     }
-    if (cwr()) {
+    if (((val >> 7) & 0x1) == 1) {
       flags += 128;
     }
-    if (ece()) {
+    if (((val >> 6) & 0x1) == 1) {
       flags += 64;
     }
-    if (urg()) {
+    if (((val >> 5) & 0x1) == 1) {
       flags += 32;
     }
-    if (ack()) {
+    if (((val >> 4) & 0x1) == 1) {
       flags += 16;
     }
-    if (psh()) {
+    if (((val >> 3) & 0x1) == 1) {
       flags += 8;
     }
-    if (rst()) {
+    if (((val >> 2) & 0x1) == 1) {
       flags += 4;
     }
-    if (syn()) {
+    if (((val >> 1) & 0x1) == 1) {
       flags += 2;
     }
-    if (fin()) {
+    if ((val & 0x1) == 1) {
       flags += 1;
     }
     return flags;
