@@ -2897,30 +2897,16 @@ public class DefaultPacketBufferTest {
     Assertions.assertEquals(PacketBuffer.ByteOrder.NATIVE, smallBuffer.byteOrder());
     Assertions.assertEquals(PacketBuffer.ByteOrder.NATIVE, mediumBuffer.byteOrder());
     Assertions.assertEquals(PacketBuffer.ByteOrder.NATIVE, largeBuffer.byteOrder());
-    Assertions.assertThrows(
-        UnsupportedOperationException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            smallBuffer.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN);
-          }
-        });
-    Assertions.assertThrows(
-        UnsupportedOperationException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN);
-          }
-        });
-    Assertions.assertThrows(
-        UnsupportedOperationException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            largeBuffer.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN);
-          }
-        });
+
+    Assertions.assertEquals(
+        PacketBuffer.ByteOrder.BIG_ENDIAN,
+        smallBuffer.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN).byteOrder());
+    Assertions.assertEquals(
+        PacketBuffer.ByteOrder.BIG_ENDIAN,
+        mediumBuffer.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN).byteOrder());
+    Assertions.assertEquals(
+        PacketBuffer.ByteOrder.BIG_ENDIAN,
+        largeBuffer.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN).byteOrder());
 
     Assertions.assertTrue(smallBuffer.release());
     Assertions.assertTrue(mediumBuffer.release());

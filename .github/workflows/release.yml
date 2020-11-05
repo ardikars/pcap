@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-16.04]
-        java: [8]
+        java: [7]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/cache@v1
@@ -50,4 +50,4 @@ jobs:
           export JAVA_HOME=$(pwd)/.mvn/toolchains
           echo "JAVA_HOME = $JAVA_HOME"
           echo "JAVA_HOME_JDK7 = $JAVA_HOME_JDK7"
-          ./mvnw -B -t .mvn/toolchains.xml -s .mvn/release-settings.xml deploy -Plegacy-support -Prelease -DskipTests=true
+          ./mvnw -B -t .mvn/toolchains.xml -s .mvn/release-settings.xml deploy -Plegacy-support -Prelease

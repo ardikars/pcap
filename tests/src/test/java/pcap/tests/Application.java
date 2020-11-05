@@ -2,6 +2,7 @@ package pcap.tests;
 
 import pcap.codec.ethernet.Ethernet;
 import pcap.codec.ip.IPv4;
+import pcap.codec.tcp.Tcp;
 import pcap.spi.*;
 import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
@@ -36,19 +37,25 @@ public class Application {
       System.out.println("\tLength                     : " + packetHeader.length());
       System.out.println("]");
       System.out.println();
-      Ethernet ethernet = packetBuffer.cast(Ethernet.class);
-      System.out.println(ethernet);
-      if (ethernet.type() == IPv4.TYPE) {
-        IPv4 ipv4 = packetBuffer.readerIndex(ethernet.size()).cast(IPv4.class);
-        System.out.println(ipv4);
-      }
-      System.out.println();
       Statistics statistics = live.stats();
       System.out.println("[ Statistics:");
       System.out.println("\tReceived                   : " + statistics.received());
       System.out.println("\tDropped                    : " + statistics.dropped());
       System.out.println("\tDropped by interface       : " + statistics.droppedByInterface());
       System.out.println("]");
+      System.out.println();
+
+      Ethernet ethernet =
+          packetBuffer.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN).cast(Ethernet.class);
+      System.out.println(ethernet);
+      if (ethernet.type() == IPv4.TYPE) {
+        IPv4 ipv4 = packetBuffer.readerIndex(ethernet.size()).cast(IPv4.class);
+        System.out.println(ipv4);
+        if (ipv4.protocol() == Tcp.TYPE) {
+          Tcp tcp = packetBuffer.readerIndex(ethernet.size() + ipv4.size()).cast(Tcp.class);
+          System.out.println(tcp);
+        }
+      }
     } catch (TimeoutException e) {
       System.err.println(e);
     } catch (BreakException e) {

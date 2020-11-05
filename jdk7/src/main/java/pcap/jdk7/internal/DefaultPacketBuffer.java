@@ -30,13 +30,13 @@ class DefaultPacketBuffer implements PacketBuffer {
         com.sun.jna.NativeLibrary.getInstance(com.sun.jna.Platform.C_LIBRARY_NAME));
   }
 
-  protected ByteOrder byteOrder;
   protected long capacity;
   protected long writtenBytes = 0L; // for setCharSequence and writeCharSequence
   protected long readerIndex;
   protected long writerIndex;
   protected long markedReaderIndex;
   protected long markedWriterIndex;
+  protected boolean reverse;
   com.sun.jna.Pointer buffer;
   com.sun.jna.ptr.PointerByReference reference;
 
@@ -52,12 +52,12 @@ class DefaultPacketBuffer implements PacketBuffer {
       long writerIndex) {
     this.buffer = buffer;
     this.reference = new com.sun.jna.ptr.PointerByReference(buffer);
-    this.byteOrder = byteOrder;
     this.capacity = capacity;
     this.readerIndex = readerIndex;
     this.writerIndex = writerIndex;
     this.markedReaderIndex = 0L;
     this.markedWriterIndex = 0L;
+    this.reverse = ByteOrder.NATIVE != byteOrder;
   }
 
   static native com.sun.jna.Pointer memcpy(
@@ -670,7 +670,14 @@ class DefaultPacketBuffer implements PacketBuffer {
 
   @Override
   public ByteOrder byteOrder() {
-    return byteOrder;
+    if (reverse) {
+      if (ByteOrder.LITTLE_ENDIAN == ByteOrder.NATIVE) {
+        return ByteOrder.BIG_ENDIAN;
+      } else {
+        return ByteOrder.LITTLE_ENDIAN;
+      }
+    }
+    return ByteOrder.NATIVE;
   }
 
   @Override
@@ -744,21 +751,33 @@ class DefaultPacketBuffer implements PacketBuffer {
   public short getShort(long index) {
     // check buffer overflow
     checkIndex(index, SHORT_SIZE);
-    return buffer.getShort(index);
+    if (reverse) {
+      return Short.reverseBytes(buffer.getShort(index));
+    } else {
+      return buffer.getShort(index);
+    }
   }
 
   @Override
   public int getInt(long index) {
     // check buffer overflow
     checkIndex(index, INT_SIZE);
-    return buffer.getInt(index);
+    if (reverse) {
+      return Integer.reverseBytes(buffer.getInt(index));
+    } else {
+      return buffer.getInt(index);
+    }
   }
 
   @Override
   public long getLong(long index) {
     // check buffer overflow
     checkIndex(index, LONG_SIZE);
-    return buffer.getLong(index);
+    if (reverse) {
+      return Long.reverseBytes(buffer.getLong(index));
+    } else {
+      return buffer.getLong(index);
+    }
   }
 
   @Override
@@ -809,7 +828,11 @@ class DefaultPacketBuffer implements PacketBuffer {
   public PacketBuffer setShort(long index, int value) {
     // check buffer overflow
     checkIndex(index, SHORT_SIZE);
-    buffer.setShort(index, (short) value);
+    if (reverse) {
+      buffer.setShort(index, Short.reverseBytes((short) value));
+    } else {
+      buffer.setShort(index, (short) value);
+    }
     return this;
   }
 
@@ -817,7 +840,11 @@ class DefaultPacketBuffer implements PacketBuffer {
   public PacketBuffer setInt(long index, int value) {
     // check buffer overflow
     checkIndex(index, INT_SIZE);
-    buffer.setInt(index, value);
+    if (reverse) {
+      buffer.setInt(index, Integer.reverseBytes(value));
+    } else {
+      buffer.setInt(index, value);
+    }
     return this;
   }
 
@@ -825,7 +852,11 @@ class DefaultPacketBuffer implements PacketBuffer {
   public PacketBuffer setLong(long index, long value) {
     // check buffer overflow
     checkIndex(index, LONG_SIZE);
-    buffer.setLong(index, value);
+    if (reverse) {
+      buffer.setLong(index, Long.reverseBytes(value));
+    } else {
+      buffer.setLong(index, value);
+    }
     return this;
   }
 
@@ -876,12 +907,13 @@ class DefaultPacketBuffer implements PacketBuffer {
 
   @Override
   public PacketBuffer duplicate() {
-    return new DefaultPacketBuffer(buffer, byteOrder, capacity, readerIndex, writerIndex);
+    return new DefaultPacketBuffer(buffer, byteOrder(), capacity, readerIndex, writerIndex);
   }
 
   @Override
   public PacketBuffer byteOrder(ByteOrder byteOrder) {
-    throw new UnsupportedOperationException();
+    this.reverse = byteOrder != ByteOrder.NATIVE;
+    return this;
   }
 
   @Override
@@ -919,7 +951,7 @@ class DefaultPacketBuffer implements PacketBuffer {
     Sliced(DefaultPacketBuffer prev, long index, long length) {
       super(
           prev.buffer.share(index),
-          prev.byteOrder,
+          prev.byteOrder(),
           length,
           prev.readerIndex - index < 0 ? 0 : prev.readerIndex - index,
           prev.writerIndex - index < 0 ? 0 : prev.writerIndex - index);
