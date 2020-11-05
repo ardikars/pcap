@@ -74,6 +74,9 @@ class DefaultPacketBuffer implements PacketBuffer {
               type.getSimpleName(), PacketBuffer.class.getName(), type.getName()));
     } else if (e instanceof InvocationTargetException) {
       throw (RuntimeException) e.getCause();
+    } else if (e instanceof InstantiationException) {
+      throw new IllegalArgumentException(
+          "A class must be extends " + Packet.Abstract.class.getName());
     }
     return null;
   }
@@ -940,8 +943,8 @@ class DefaultPacketBuffer implements PacketBuffer {
     try {
       Constructor<T> constructor = type.getDeclaredConstructor(PacketBuffer.class);
       constructor.setAccessible(true);
-      return (T) constructor.newInstance(this);
-    } catch (Throwable e) {
+      return constructor.newInstance(this);
+    } catch (Exception e) {
       return checkCastThrowable(type, e);
     }
   }
