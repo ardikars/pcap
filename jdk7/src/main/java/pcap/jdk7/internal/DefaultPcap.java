@@ -56,27 +56,16 @@ class DefaultPcap implements Pcap {
       throw new IllegalArgumentException("file: null (expected: file != null && notBlank(file))");
     }
     Version version = Utils.getVersion(DefaultPcap.class, "dumpOpenAppend", String.class);
-    if (Utils.isValidVersion(version)) {
-      Pointer dumper;
-      tryReadLock();
-      try {
-        dumper = NativeMappings.PLATFORM_DEPENDENT.pcap_dump_open_append(pointer, file);
-        nullCheck(dumper);
-      } finally {
-        readLock.unlock();
-      }
-      return new DefaultDumper(dumper);
-    } else {
-      throw new ErrorException(
-          String.format(
-              "version: %d.%d.%d (expected: minimal version(%d.%d.%d))",
-              Utils.MAJOR,
-              Utils.MINOR,
-              Utils.PATCH,
-              version.minor(),
-              version.minor(),
-              version.patch()));
+    Utils.validateVersion(version);
+    Pointer dumper;
+    tryReadLock();
+    try {
+      dumper = NativeMappings.PLATFORM_DEPENDENT.pcap_dump_open_append(pointer, file);
+      nullCheck(dumper);
+    } finally {
+      readLock.unlock();
     }
+    return new DefaultDumper(dumper);
   }
 
   @Override
