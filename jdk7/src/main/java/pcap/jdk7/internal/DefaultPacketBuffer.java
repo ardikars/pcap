@@ -5,6 +5,7 @@ import com.sun.jna.Pointer;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -937,8 +938,9 @@ class DefaultPacketBuffer implements PacketBuffer {
   @Override
   public <T extends Packet.Abstract> T cast(Class<T> type) {
     try {
-      Packet packet = type.getConstructor(PacketBuffer.class).newInstance(this);
-      return (T) packet;
+      Constructor<T> constructor = type.getDeclaredConstructor(PacketBuffer.class);
+      constructor.setAccessible(true);
+      return (T) constructor.newInstance(this);
     } catch (Throwable e) {
       return checkCastThrowable(type, e);
     }

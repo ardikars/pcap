@@ -19,7 +19,7 @@ public class Ethernet extends Packet.Abstract {
   private final long source;
   private final long type;
 
-  public Ethernet(PacketBuffer buffer) {
+  private Ethernet(PacketBuffer buffer) {
     super(buffer);
     this.destination = offset;
     this.source = destination + MacAddress.MAC_ADDRESS_LENGTH;

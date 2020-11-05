@@ -47,7 +47,7 @@ public class Tcp extends Packet.Abstract {
 
   private final long maxDataOffset;
 
-  public Tcp(PacketBuffer buffer) {
+  private Tcp(PacketBuffer buffer) {
     super(buffer);
     this.sourcePort = offset;
     this.destinationPort = sourcePort + 2;
@@ -321,7 +321,7 @@ public class Tcp extends Packet.Abstract {
         .add("windowsSize", windowsSize())
         .add("checksum", checksum())
         .add("urgentPointer", urgentPointer())
-        .add("options", "0x" + Strings.hex(options()))
+        .add("options", Strings.hex(options()))
         .toString();
   }
 }

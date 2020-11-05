@@ -56,7 +56,7 @@ public class IPv4 extends Packet.Abstract {
 
   private final int maxIhl;
 
-  public IPv4(PacketBuffer buffer) {
+  private IPv4(PacketBuffer buffer) {
     super(buffer);
     this.version = offset;
     this.dscp = version + 1;
@@ -259,7 +259,7 @@ public class IPv4 extends Packet.Abstract {
         .add("checksum", checksum())
         .add("source", source().getHostAddress())
         .add("destination", destination().getHostAddress())
-        .add("options", "0x" + Strings.hex(options()))
+        .add("options", Strings.hex(options()))
         .toString();
   }
 }
