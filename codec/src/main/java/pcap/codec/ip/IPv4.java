@@ -38,7 +38,7 @@ import pcap.spi.annotation.Incubating;
  * @since 1.0.0
  */
 @Incubating
-public class IPv4 extends Packet.Abstract {
+public final class IPv4 extends Packet.Abstract {
 
   public static final int TYPE = 0x0800;
 
@@ -259,10 +259,10 @@ public class IPv4 extends Packet.Abstract {
         .add("fragmentOffset", fragmentOffset())
         .add("ttl", ttl())
         .add("protocol", protocol())
-        .add("checksum", Integer.toHexString(checksum()))
+        .add("checksum", "0x" + Integer.toHexString(checksum()))
         .add("source", source().getHostAddress())
         .add("destination", destination().getHostAddress())
-        .add("options", Strings.hex(options()))
+        .add("options", "0x" + Strings.hex(options()))
         .toString();
   }
 }

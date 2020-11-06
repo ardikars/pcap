@@ -12,7 +12,7 @@ import pcap.spi.annotation.Incubating;
  * @since 1.0.0
  */
 @Incubating
-public class Ethernet extends Packet.Abstract {
+public final class Ethernet extends Packet.Abstract {
 
   public static final int TYPE = 1;
 

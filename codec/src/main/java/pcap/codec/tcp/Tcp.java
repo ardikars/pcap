@@ -36,7 +36,7 @@ import java.nio.ByteBuffer;
  * @since 1.0.0
  */
 @Incubating
-public class Tcp extends Packet.Abstract {
+public final class Tcp extends Packet.Abstract {
 
   public static final int TYPE = 6;
 
@@ -368,9 +368,9 @@ public class Tcp extends Packet.Abstract {
         .add("syn", syn())
         .add("fin", fin())
         .add("windowsSize", windowSize())
-        .add("checksum", Integer.toHexString(checksum()))
+        .add("checksum", "0x" + Integer.toHexString(checksum()))
         .add("urgentPointer", urgentPointer())
-        .add("options", Strings.hex(options()))
+        .add("options", "0x" + Strings.hex(options()))
         .toString();
   }
 }
