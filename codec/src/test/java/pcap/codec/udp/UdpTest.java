@@ -3,6 +3,7 @@ package pcap.codec.udp;
 import java.net.Inet4Address;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.common.net.InetAddresses;
@@ -49,7 +50,7 @@ public class UdpTest {
           InetAddresses.fromBytesToInet4Address(new byte[] {(byte) 192, (byte) 168, 18, 20});
       Inet4Address dst =
           InetAddresses.fromBytesToInet4Address(new byte[] {(byte) 192, (byte) 168, 18, 1});
-      Assertions.assertTrue(udp.isValidChecksum(src, dst, udp.length() - udp.size()));
+      Assertions.assertTrue(udp.isValidChecksum(src, dst));
 
       udp.sourcePort(53);
       udp.destinationPort(48345);
@@ -62,10 +63,36 @@ public class UdpTest {
       Assertions.assertEquals(0, udp.checksum());
 
       udp.length(63);
-      udp.checksum(udp.calculateChecksum(src, dst, udp.length() - udp.size()));
-      Assertions.assertTrue(udp.isValidChecksum(src, dst, udp.length() - udp.size()));
+      udp.checksum(udp.calculateChecksum(src, dst));
+      Assertions.assertTrue(udp.isValidChecksum(src, dst));
+      Assertions.assertFalse(udp.isValidChecksum(src, src));
 
       Assertions.assertNotNull(udp.toString());
+
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              Udp.newInstance(0, buffer);
+            }
+          });
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              Udp.newInstance(65536, buffer);
+            }
+          });
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              Udp.newInstance(20, buffer.setIndex(0, 0));
+            }
+          });
 
       buffer.release();
     }

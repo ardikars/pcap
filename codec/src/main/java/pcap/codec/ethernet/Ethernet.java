@@ -1,9 +1,9 @@
 package pcap.codec.ethernet;
 
+import pcap.codec.AbstractPacket;
 import pcap.common.net.MacAddress;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
-import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
 
@@ -12,7 +12,7 @@ import pcap.spi.annotation.Incubating;
  * @since 1.0.0
  */
 @Incubating
-public final class Ethernet extends Packet.Abstract {
+public final class Ethernet extends AbstractPacket {
 
   public static final int TYPE = 1;
 

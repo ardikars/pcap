@@ -66,6 +66,7 @@ public class TcpTest {
       Inet4Address dst =
           InetAddresses.fromBytesToInet4Address(new byte[] {74, 125, (byte) 200, 94});
       Assertions.assertTrue(tcp.isValidChecksum(src, dst, 39));
+      Assertions.assertFalse(tcp.isValidChecksum(src, src, 39));
 
       tcp.sourcePort(443);
       tcp.destinationPort(51247);

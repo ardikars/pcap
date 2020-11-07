@@ -1,11 +1,11 @@
 package pcap.codec.ip;
 
 import java.net.Inet4Address;
+import pcap.codec.AbstractPacket;
 import pcap.common.net.InetAddresses;
 import pcap.common.util.Bytes;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
-import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
 
@@ -38,7 +38,7 @@ import pcap.spi.annotation.Incubating;
  * @since 1.0.0
  */
 @Incubating
-public final class Ip4 extends Packet.Abstract {
+public final class Ip4 extends AbstractPacket {
 
   public static final int TYPE = 0x0800;
 
@@ -77,19 +77,6 @@ public final class Ip4 extends Packet.Abstract {
         size >= 20 && size <= 60 && buffer.readableBytes() >= 20, "buffer size is not sufficient.");
     buffer.setByte(buffer.readerIndex(), (4 & 0xF) << 4 | (size >> 2) & 0xF);
     return new Ip4(buffer);
-  }
-
-  private static int calculateChecksum(PacketBuffer buffer, int headerLength, long offset) {
-    long index = offset;
-    int accumulation = 0;
-    for (long i = 0; i < headerLength * 2; ++i) {
-      if (i != 5) {
-        accumulation += 0xFFFF & buffer.getShort(index);
-      }
-      index += 2;
-    }
-    accumulation = (accumulation >> 16 & 0xFFFF) + (accumulation & 0xFFFF);
-    return (~accumulation & 0xFFFF);
   }
 
   public int version() {
@@ -196,7 +183,10 @@ public final class Ip4 extends Packet.Abstract {
   }
 
   public int calculateChecksum() {
-    return calculateChecksum(buffer, ihl(), offset);
+    int accumulation = Checksum.sum(buffer, offset, ihl() << 2);
+    accumulation -= buffer.getShort(10) & 0xFFFF;
+    accumulation = (accumulation >> 16 & 0xFFFF) + (accumulation & 0xFFFF);
+    return (~accumulation & 0xFFFF);
   }
 
   public boolean isValidChecksum() {
@@ -229,11 +219,7 @@ public final class Ip4 extends Packet.Abstract {
 
   public Ip4 options(byte[] value) {
     int maxLength = (ihl() - 5) << 2;
-    if (value.length < maxLength) {
-      buffer.setBytes(options, value, 0, value.length);
-    } else {
-      buffer.setBytes(options, value, 0, maxLength);
-    }
+    buffer.setBytes(options, value, 0, Math.min(value.length, maxLength));
     return this;
   }
 

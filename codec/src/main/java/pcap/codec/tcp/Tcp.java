@@ -1,13 +1,13 @@
 package pcap.codec.tcp;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.nio.ByteBuffer;
+import pcap.codec.AbstractPacket;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
-import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
+
+import java.net.Inet4Address;
+import java.net.InetAddress;
 
 /*
    0                   1                   2                   3
@@ -35,7 +35,7 @@ import pcap.spi.annotation.Incubating;
  * @since 1.0.0
  */
 @Incubating
-public final class Tcp extends Packet.Abstract {
+public final class Tcp extends AbstractPacket {
 
   public static final int TYPE = 6;
 
@@ -241,36 +241,7 @@ public final class Tcp extends Packet.Abstract {
   }
 
   public int calculateChecksum(InetAddress srcAddr, InetAddress dstAddr, int payloadLength) {
-    boolean isIp = srcAddr instanceof Inet4Address && dstAddr instanceof Inet4Address;
-    int accumulation = 0;
-    ByteBuffer bb = ByteBuffer.allocate(isIp ? 12 : 40);
-    bb.put(srcAddr.getAddress());
-    bb.put(dstAddr.getAddress());
-    bb.put((byte) 0);
-    bb.put((byte) TYPE);
-    if (isIp) {
-      bb.putShort((short) ((this.dataOffset() << 2) + payloadLength));
-    } else {
-      bb.putInt((this.dataOffset() << 2) + payloadLength);
-    }
-    bb.rewind();
-
-    for (int i = 0; i < bb.capacity() / 2; ++i) {
-      accumulation += bb.getShort() & 0xFFFF;
-    }
-
-    long offset = this.offset;
-    long length =
-        payloadLength % 2 == 0 ? payloadLength + this.size() : payloadLength + this.size() - 1;
-    for (long i = offset; i < length; i += 2) {
-      accumulation += this.buffer.getShort(i) & 0xFFFF;
-    }
-    if (payloadLength % 2 > 0) {
-      accumulation += ((this.buffer.getByte(length)) & 0xFF) << 8;
-    }
-
-    accumulation = (accumulation >> 16 & 0xFFFF) + (accumulation & 0xFFFF);
-    return (~accumulation & 0xFFFF);
+    return Checksum.calculate(buffer, offset, srcAddr, dstAddr, TYPE, size(), payloadLength);
   }
 
   public boolean isValidChecksum(Inet4Address src, Inet4Address dst, int payloadLength) {
@@ -294,43 +265,17 @@ public final class Tcp extends Packet.Abstract {
 
   public Tcp options(byte[] value) {
     int maxLength = (dataOffset() - 5) << 2;
-    if (value.length < maxLength) {
-      buffer.setBytes(options, value, 0, value.length);
-    } else {
-      buffer.setBytes(options, value, 0, maxLength);
-    }
+    buffer.setBytes(options, value, 0, Math.min(value.length, maxLength));
     return this;
   }
 
   private short getShortFlags() {
     int val = buffer.getShort(dataOffset) & 0x1FF;
     short flags = 0;
-    if (((val >> 8) & 0x1) == 1) {
-      flags += 256;
-    }
-    if (((val >> 7) & 0x1) == 1) {
-      flags += 128;
-    }
-    if (((val >> 6) & 0x1) == 1) {
-      flags += 64;
-    }
-    if (((val >> 5) & 0x1) == 1) {
-      flags += 32;
-    }
-    if (((val >> 4) & 0x1) == 1) {
-      flags += 16;
-    }
-    if (((val >> 3) & 0x1) == 1) {
-      flags += 8;
-    }
-    if (((val >> 2) & 0x1) == 1) {
-      flags += 4;
-    }
-    if (((val >> 1) & 0x1) == 1) {
-      flags += 2;
-    }
-    if ((val & 0x1) == 1) {
-      flags += 1;
+    for (int i = 8; i >= 0; i--) {
+      if (((val >> i) & 0x1) == 1) {
+        flags += 1 << i;
+      }
     }
     return flags;
   }

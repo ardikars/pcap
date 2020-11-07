@@ -2,10 +2,9 @@ package pcap.codec.udp;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.nio.ByteBuffer;
+import pcap.codec.AbstractPacket;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
-import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
 
@@ -14,7 +13,7 @@ import pcap.spi.annotation.Incubating;
  * @since 1.0.0
  */
 @Incubating
-public final class Udp extends Packet.Abstract {
+public final class Udp extends AbstractPacket {
 
   public static final int TYPE = 17;
 
@@ -74,41 +73,12 @@ public final class Udp extends Packet.Abstract {
     return this;
   }
 
-  public int calculateChecksum(InetAddress srcAddr, InetAddress dstAddr, int payloadLength) {
-    boolean isIp = srcAddr instanceof Inet4Address && dstAddr instanceof Inet4Address;
-    int accumulation = 0;
-    ByteBuffer bb = ByteBuffer.allocate(isIp ? 12 : 40);
-    bb.put(srcAddr.getAddress());
-    bb.put(dstAddr.getAddress());
-    bb.put((byte) 0);
-    bb.put((byte) TYPE);
-    if (isIp) {
-      bb.putShort((short) length());
-    } else {
-      bb.putInt(length());
-    }
-    bb.rewind();
-
-    for (int i = 0; i < bb.capacity() / 2; ++i) {
-      accumulation += bb.getShort() & 0xFFFF;
-    }
-
-    long offset = this.offset;
-    long length =
-        payloadLength % 2 == 0 ? payloadLength + this.size() : payloadLength + this.size() - 1;
-    for (long i = offset; i < length; i += 2) {
-      accumulation += this.buffer.getShort(i) & 0xFFFF;
-    }
-    if (payloadLength % 2 > 0) {
-      accumulation += ((this.buffer.getByte(length)) & 0xFF) << 8;
-    }
-
-    accumulation = (accumulation >> 16 & 0xFFFF) + (accumulation & 0xFFFF);
-    return (~accumulation & 0xFFFF);
+  public int calculateChecksum(InetAddress srcAddr, InetAddress dstAddr) {
+    return Checksum.calculate(buffer, offset, srcAddr, dstAddr, TYPE, size(), length() - size());
   }
 
-  public boolean isValidChecksum(Inet4Address src, Inet4Address dst, int payloadLength) {
-    return calculateChecksum(src, dst, payloadLength) == 0;
+  public boolean isValidChecksum(Inet4Address src, Inet4Address dst) {
+    return calculateChecksum(src, dst) == 0;
   }
 
   @Override
