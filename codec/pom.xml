@@ -6,7 +6,7 @@
     <parent>
         <artifactId>pcap</artifactId>
         <groupId>com.ardikars.pcap</groupId>
-        <version>0.8.0</version>
+        <version>0.8.1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -47,7 +47,7 @@
                         <groupId>codes.rafael.modulemaker</groupId>
                         <artifactId>modulemaker-maven-plugin</artifactId>
                         <configuration>
-                            <name>pcap.common</name>
+                            <name>pcap.codec</name>
                             <multirelease>false</multirelease>
                             <packages>
                                 pcap.codec.ethernet,
