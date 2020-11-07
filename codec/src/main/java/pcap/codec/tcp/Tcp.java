@@ -1,14 +1,13 @@
 package pcap.codec.tcp;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.nio.ByteBuffer;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
-
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.nio.ByteBuffer;
 
 /*
    0                   1                   2                   3

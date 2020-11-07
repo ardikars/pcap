@@ -1,7 +1,7 @@
 package pcap.tests;
 
 import pcap.codec.ethernet.Ethernet;
-import pcap.codec.ip.IPv4;
+import pcap.codec.ip.Ip4;
 import pcap.codec.tcp.Tcp;
 import pcap.spi.*;
 import pcap.spi.annotation.Async;
@@ -49,8 +49,8 @@ public class Application {
           Ethernet ethernet =
               packetBuffer.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN).cast(Ethernet.class);
           System.out.println(ethernet);
-          if (ethernet.type() == IPv4.TYPE) {
-            IPv4 ipv4 = packetBuffer.readerIndex(ethernet.size()).cast(IPv4.class);
+          if (ethernet.type() == Ip4.TYPE) {
+            Ip4 ipv4 = packetBuffer.readerIndex(ethernet.size()).cast(Ip4.class);
             System.out.println(ipv4);
             if (ipv4.protocol() == Tcp.TYPE) {
               Tcp tcp = packetBuffer.readerIndex(ethernet.size() + ipv4.size()).cast(Tcp.class);

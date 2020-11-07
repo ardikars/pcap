@@ -1,14 +1,13 @@
 package pcap.codec.udp;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.nio.ByteBuffer;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
-
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.nio.ByteBuffer;
 
 /**
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
@@ -96,7 +95,7 @@ public final class Udp extends Packet.Abstract {
 
     long offset = this.offset;
     long length =
-            payloadLength % 2 == 0 ? payloadLength + this.size() : payloadLength + this.size() - 1;
+        payloadLength % 2 == 0 ? payloadLength + this.size() : payloadLength + this.size() - 1;
     for (long i = offset; i < length; i += 2) {
       accumulation += this.buffer.getShort(i) & 0xFFFF;
     }
@@ -113,7 +112,7 @@ public final class Udp extends Packet.Abstract {
   }
 
   @Override
-  protected int size() {
+  public int size() {
     return 8;
   }
 

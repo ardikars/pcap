@@ -14,7 +14,7 @@ import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 
 @RunWith(JUnitPlatform.class)
-public class IPv4Test {
+public class Ip4Test {
 
   private static final byte[] BYTES = Hexs.parseHex("4500005b00004000400666acc0a8006d4a7dc85e");
 
@@ -32,8 +32,8 @@ public class IPv4Test {
               .byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN);
       buffer.writeBytes(BYTES);
 
-      final IPv4 ipv4 = buffer.cast(IPv4.class);
-      final IPv4 comparison = IPv4.newInstance(ipv4.size(), buffer);
+      final Ip4 ipv4 = buffer.cast(Ip4.class);
+      final Ip4 comparison = Ip4.newInstance(ipv4.size(), buffer);
       Assertions.assertEquals(ipv4, comparison);
 
       Assertions.assertEquals(4, ipv4.version());
@@ -61,7 +61,7 @@ public class IPv4Test {
 
       newBuffer.setByte(0, (4 & 0xF) << 4 | 6 & 0xF);
 
-      final IPv4 newIpv4 = newBuffer.cast(IPv4.class);
+      final Ip4 newIpv4 = newBuffer.cast(Ip4.class);
       newIpv4.version(4);
       newIpv4.ihl(6);
       newIpv4.dscp(ipv4.dscp());
@@ -159,7 +159,7 @@ public class IPv4Test {
           new Executable() {
             @Override
             public void execute() throws Throwable {
-              buffer.setIndex(0, 0).cast(IPv4.class);
+              buffer.setIndex(0, 0).cast(Ip4.class);
             }
           });
       Assertions.assertThrows(
@@ -167,7 +167,7 @@ public class IPv4Test {
           new Executable() {
             @Override
             public void execute() throws Throwable {
-              newBuffer.setIndex(0, 0).cast(IPv4.class);
+              newBuffer.setIndex(0, 0).cast(Ip4.class);
             }
           });
 
@@ -176,7 +176,7 @@ public class IPv4Test {
           new Executable() {
             @Override
             public void execute() throws Throwable {
-              IPv4.newInstance(0, buffer);
+              Ip4.newInstance(0, buffer);
             }
           });
       Assertions.assertThrows(
@@ -184,7 +184,7 @@ public class IPv4Test {
           new Executable() {
             @Override
             public void execute() throws Throwable {
-              IPv4.newInstance(61, buffer);
+              Ip4.newInstance(61, buffer);
             }
           });
       Assertions.assertThrows(
@@ -192,7 +192,7 @@ public class IPv4Test {
           new Executable() {
             @Override
             public void execute() throws Throwable {
-              IPv4.newInstance(20, buffer.setIndex(0, 0));
+              Ip4.newInstance(20, buffer.setIndex(0, 0));
             }
           });
 

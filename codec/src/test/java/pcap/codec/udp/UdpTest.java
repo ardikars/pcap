@@ -1,5 +1,6 @@
 package pcap.codec.udp;
 
+import java.net.Inet4Address;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -12,8 +13,6 @@ import pcap.spi.Service;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
-
-import java.net.Inet4Address;
 
 @RunWith(JUnitPlatform.class)
 public class UdpTest {
@@ -36,14 +35,20 @@ public class UdpTest {
               .byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN);
       buffer.writeBytes(BYTES);
       final Udp udp = buffer.cast(Udp.class);
+      final Udp comparison = Udp.newInstance(8, buffer);
+      Assertions.assertEquals(udp, comparison);
 
       Assertions.assertEquals(48345, udp.sourcePort());
       Assertions.assertEquals(53, udp.destinationPort());
       Assertions.assertEquals(63, udp.length());
       Assertions.assertEquals(947, udp.checksum());
 
-      Inet4Address src = InetAddresses.fromBytesToInet4Address(new byte[]{(byte) 192, (byte) 168, 18, 20});
-      Inet4Address dst = InetAddresses.fromBytesToInet4Address(new byte[]{(byte) 192, (byte) 168, 18, 1});
+      Assertions.assertEquals(8, udp.size());
+
+      Inet4Address src =
+          InetAddresses.fromBytesToInet4Address(new byte[] {(byte) 192, (byte) 168, 18, 20});
+      Inet4Address dst =
+          InetAddresses.fromBytesToInet4Address(new byte[] {(byte) 192, (byte) 168, 18, 1});
       Assertions.assertTrue(udp.isValidChecksum(src, dst, udp.length() - udp.size()));
 
       udp.sourcePort(53);
@@ -55,6 +60,12 @@ public class UdpTest {
       Assertions.assertEquals(48345, udp.destinationPort());
       Assertions.assertEquals(64, udp.length());
       Assertions.assertEquals(0, udp.checksum());
+
+      udp.length(63);
+      udp.checksum(udp.calculateChecksum(src, dst, udp.length() - udp.size()));
+      Assertions.assertTrue(udp.isValidChecksum(src, dst, udp.length() - udp.size()));
+
+      Assertions.assertNotNull(udp.toString());
 
       buffer.release();
     }
