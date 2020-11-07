@@ -143,6 +143,10 @@ public class DefaultServiceTest extends BaseTest {
       Assertions.assertNotNull(live);
     } catch (TimestampPrecisionNotSupportedException e) {
     }
+    try (Pcap live = service.live(lo, new DefaultLiveOptions().proxy(Proxy.class))) {
+      Assertions.assertNotNull(live);
+    } catch (TimestampPrecisionNotSupportedException e) {
+    }
   }
 
   @Test
@@ -513,4 +517,6 @@ public class DefaultServiceTest extends BaseTest {
       }
     }
   }
+
+  interface Proxy extends Pcap {}
 }

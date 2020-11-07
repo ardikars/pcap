@@ -1,8 +1,9 @@
 package pcap.codec.ethernet;
 
+import pcap.codec.AbstractPacket;
 import pcap.common.net.MacAddress;
 import pcap.common.util.Strings;
-import pcap.spi.Packet;
+import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
 
@@ -11,7 +12,7 @@ import pcap.spi.annotation.Incubating;
  * @since 1.0.0
  */
 @Incubating
-public class Ethernet extends Packet.Abstract {
+public final class Ethernet extends AbstractPacket {
 
   public static final int TYPE = 1;
 
@@ -19,15 +20,21 @@ public class Ethernet extends Packet.Abstract {
   private final long source;
   private final long type;
 
-  public Ethernet(PacketBuffer buffer) {
+  private Ethernet(PacketBuffer buffer) {
     super(buffer);
     this.destination = offset;
     this.source = destination + MacAddress.MAC_ADDRESS_LENGTH;
     this.type = source + MacAddress.MAC_ADDRESS_LENGTH;
   }
 
+  public static Ethernet newInstance(int size, PacketBuffer buffer) {
+    Validate.notIllegalArgument(
+        size == 14 && buffer.readableBytes() >= 14, "buffer size is not sufficient.");
+    return new Ethernet(buffer);
+  }
+
   public MacAddress destination() {
-    return getMacAddress(destination);
+    return MacAddress.valueOf((buffer.getLong(destination) >> 16) & 0xffffffffffffL);
   }
 
   public Ethernet destination(MacAddress macAddress) {
@@ -36,7 +43,7 @@ public class Ethernet extends Packet.Abstract {
   }
 
   public MacAddress source() {
-    return getMacAddress(source);
+    return MacAddress.valueOf((buffer.getLong(source) >> 16) & 0xffffffffffffL);
   }
 
   public Ethernet source(MacAddress macAddress) {
@@ -56,12 +63,6 @@ public class Ethernet extends Packet.Abstract {
   @Override
   public int size() {
     return 14;
-  }
-
-  private MacAddress getMacAddress(long offset) {
-    byte[] macAddress = new byte[MacAddress.MAC_ADDRESS_LENGTH];
-    buffer.getBytes(offset, macAddress);
-    return MacAddress.valueOf(macAddress);
   }
 
   @Override

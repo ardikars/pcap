@@ -5,6 +5,7 @@ import com.sun.jna.Pointer;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
+import pcap.spi.annotation.Incubating;
 import pcap.spi.exception.MemoryLeakException;
 
 class DefaultPacketBuffer implements PacketBuffer {
@@ -63,6 +65,8 @@ class DefaultPacketBuffer implements PacketBuffer {
   static native com.sun.jna.Pointer memcpy(
       com.sun.jna.Pointer dst, com.sun.jna.Pointer src, long n);
 
+  static native int memcmp(com.sun.jna.Pointer buf1, com.sun.jna.Pointer buf2, long size);
+
   static <T extends Packet.Abstract> T checkCastThrowable(Class<?> type, Throwable e) {
     if (e.getCause() instanceof IllegalArgumentException) {
       throw (IllegalArgumentException) e.getCause();
@@ -73,6 +77,9 @@ class DefaultPacketBuffer implements PacketBuffer {
               type.getSimpleName(), PacketBuffer.class.getName(), type.getName()));
     } else if (e instanceof InvocationTargetException) {
       throw (RuntimeException) e.getCause();
+    } else if (e instanceof InstantiationException) {
+      throw new IllegalArgumentException(
+          "A class must be extends " + Packet.Abstract.class.getName());
     }
     return null;
   }
@@ -724,6 +731,38 @@ class DefaultPacketBuffer implements PacketBuffer {
     return (index | length | (index + length) | (capacity - (index + length))) < 0;
   }
 
+  @Incubating
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    DefaultPacketBuffer that = (DefaultPacketBuffer) o;
+    if (!isReadable() && !that.isReadable()) {
+      return true;
+    }
+    if (readableBytes() != that.readableBytes()) {
+      return false;
+    }
+    return 0
+        == memcmp(
+            buffer.share(readerIndex()), that.buffer.share(that.readerIndex()), readableBytes());
+  }
+
+  @Incubating
+  @Override
+  public int hashCode() {
+    if (!isReadable()) {
+      return 0;
+    }
+    long hcLength = readerIndex + readableBytes();
+    int result = 1;
+    for (long i = readerIndex; i < hcLength; i++) {
+      result = 31 * result + buffer.getByte(i);
+    }
+    return result;
+  }
+
   @Override
   public String toString() {
     String format =
@@ -937,9 +976,10 @@ class DefaultPacketBuffer implements PacketBuffer {
   @Override
   public <T extends Packet.Abstract> T cast(Class<T> type) {
     try {
-      Packet packet = type.getConstructor(PacketBuffer.class).newInstance(this);
-      return (T) packet;
-    } catch (Throwable e) {
+      Constructor<T> constructor = type.getDeclaredConstructor(PacketBuffer.class);
+      constructor.setAccessible(true);
+      return constructor.newInstance(this);
+    } catch (Exception e) {
       return checkCastThrowable(type, e);
     }
   }

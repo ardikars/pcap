@@ -3,6 +3,7 @@ package pcap.jdk7.internal;
 import java.nio.charset.StandardCharsets;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Version;
+import pcap.spi.exception.ErrorException;
 
 class Utils {
 
@@ -46,6 +47,15 @@ class Utils {
   }
 
   private Utils() {}
+
+  static void validateVersion(Version version) throws ErrorException {
+    if (!isValidVersion(version)) {
+      throw new ErrorException(
+          String.format(
+              "version: %d.%d.%d (expected: minimal version(%d.%d.%d))",
+              MAJOR, MINOR, PATCH, version.minor(), version.minor(), version.patch()));
+    }
+  }
 
   static boolean isValidVersion(Version version) {
     if (version == null) {

@@ -1,6 +1,5 @@
 package pcap.jdk7.internal;
 
-import com.sun.jna.Pointer;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.UUID;
@@ -50,12 +49,16 @@ public class DefaultPcapDumperTest extends BaseTest {
                 Assertions.assertNull(args);
                 Assertions.assertNotNull(header);
                 Assertions.assertNotNull(buffer);
-                //                Assertions.assertTrue(header.timestamp().second() > 0);
-                //                Assertions.assertTrue(header.timestamp().microSecond() > 0);
                 Assertions.assertTrue(header.captureLength() > 0);
                 Assertions.assertTrue(header.length() > 0);
                 Assertions.assertTrue(buffer.capacity() > 0);
                 dumper.dump(header, buffer);
+
+                DefaultPacketHeader hdr = new DefaultPacketHeader(null);
+                DefaultPacketBuffer buf = new DefaultPacketBuffer(null, null, 1L, 0L, 0L);
+                dumper.dump(header, buf);
+                dumper.dump(hdr, buffer);
+                dumper.dump(hdr, buf);
                 dumper.flush();
                 Assertions.assertTrue(dumper.position() > 0);
 
@@ -64,46 +67,9 @@ public class DefaultPcapDumperTest extends BaseTest {
                     new Executable() {
                       @Override
                       public void execute() throws Throwable {
-                        dumper.dump(header, new DefaultPacketBuffer());
+                        dumper.dump(header, new DefaultPacketBuffer(null, null, 0L, 0L, 0L));
                       }
                     });
-              }
-            },
-            null);
-        try (Dumper append = live.dumpOpenAppend(newFile)) {
-          //
-        } catch (UnsatisfiedLinkError e) {
-
-        }
-      } catch (BreakException | ErrorException e) {
-
-      }
-    }
-  }
-
-  @Test
-  void negativeDump()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException {
-    Interface source = loopbackInterface(service);
-    try (Pcap live = service.live(source, new DefaultLiveOptions())) {
-      try (final Dumper dumper = live.dumpOpen(file.concat(UUID.randomUUID().toString()))) {
-        live.loop(
-            1,
-            new PacketHandler<Dumper>() {
-              @Override
-              public void gotPacket(
-                  final Dumper args, final PacketHeader header, final PacketBuffer buffer) {
-                Assertions.assertNull(args);
-                Assertions.assertNotNull(header);
-                Assertions.assertNotNull(buffer);
-                //                Assertions.assertTrue(header.timestamp().second() > 0);
-                //                Assertions.assertTrue(header.timestamp().microSecond() > 0);
-                Assertions.assertTrue(header.captureLength() > 0);
-                Assertions.assertTrue(header.length() > 0);
-                Assertions.assertTrue(buffer.capacity() > 0);
                 Assertions.assertThrows(
                     IllegalArgumentException.class,
                     new Executable() {
@@ -128,28 +94,14 @@ public class DefaultPcapDumperTest extends BaseTest {
                         dumper.dump(null, null);
                       }
                     });
-                Assertions.assertThrows(
-                    IllegalArgumentException.class,
-                    new Executable() {
-                      @Override
-                      public void execute() throws Throwable {
-                        dumper.dump(header, new DefaultPacketBuffer());
-                      }
-                    });
-                Assertions.assertThrows(
-                    IllegalArgumentException.class,
-                    new Executable() {
-                      @Override
-                      public void execute() throws Throwable {
-                        dumper.dump(
-                            header,
-                            new DefaultPacketBuffer(
-                                new Pointer(0), PacketBuffer.ByteOrder.NATIVE, 0, 0, 0));
-                      }
-                    });
               }
             },
             null);
+        try (Dumper append = live.dumpOpenAppend(newFile)) {
+          //
+        } catch (UnsatisfiedLinkError e) {
+
+        }
       } catch (BreakException | ErrorException e) {
 
       }

@@ -1,7 +1,10 @@
 package pcap.codec.tcp;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import pcap.codec.AbstractPacket;
 import pcap.common.util.Strings;
-import pcap.spi.Packet;
+import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
 
@@ -31,7 +34,7 @@ import pcap.spi.annotation.Incubating;
  * @since 1.0.0
  */
 @Incubating
-public class Tcp extends Packet.Abstract {
+public final class Tcp extends AbstractPacket {
 
   public static final int TYPE = 6;
 
@@ -47,7 +50,7 @@ public class Tcp extends Packet.Abstract {
 
   private final long maxDataOffset;
 
-  public Tcp(PacketBuffer buffer) {
+  private Tcp(PacketBuffer buffer) {
     super(buffer);
     this.sourcePort = offset;
     this.destinationPort = sourcePort + 2;
@@ -59,6 +62,14 @@ public class Tcp extends Packet.Abstract {
     this.urgentPointer = checksum + 2;
     this.options = urgentPointer + 2;
     this.maxDataOffset = dataOffset;
+  }
+
+  public static Tcp newInstance(int size, PacketBuffer buffer) {
+    Validate.notIllegalArgument(
+        size >= 20 && size <= 60 && buffer.readableBytes() >= 20, "buffer size is not sufficient.");
+    int flags = buffer.getShort(buffer.readerIndex() + 12) & 0x1FF;
+    buffer.setShort(buffer.readerIndex() + 12, flags & 0x1FF | (size >> 2) << 12);
+    return new Tcp(buffer);
   }
 
   public int sourcePort() {
@@ -210,11 +221,11 @@ public class Tcp extends Packet.Abstract {
     return this;
   }
 
-  public int windowsSize() {
+  public int windowSize() {
     return buffer.getShort(windowSize) & 0xFFFF;
   }
 
-  public Tcp windowsSize(int value) {
+  public Tcp windowSize(int value) {
     buffer.setShort(windowSize, value & 0xFFFF);
     return this;
   }
@@ -226,6 +237,14 @@ public class Tcp extends Packet.Abstract {
   public Tcp checksum(int value) {
     buffer.setShort(checksum, value & 0xFFFF);
     return this;
+  }
+
+  public int calculateChecksum(InetAddress srcAddr, InetAddress dstAddr, int payloadLength) {
+    return Checksum.calculate(buffer, offset, srcAddr, dstAddr, TYPE, size(), payloadLength);
+  }
+
+  public boolean isValidChecksum(Inet4Address src, Inet4Address dst, int payloadLength) {
+    return calculateChecksum(src, dst, payloadLength) == 0;
   }
 
   public int urgentPointer() {
@@ -245,42 +264,17 @@ public class Tcp extends Packet.Abstract {
 
   public Tcp options(byte[] value) {
     int maxLength = (dataOffset() - 5) << 2;
-    if (value.length < maxLength) {
-      buffer.setBytes(options, value, 0, value.length);
-    } else {
-      buffer.setBytes(options, value, 0, maxLength);
-    }
+    buffer.setBytes(options, value, 0, Math.min(value.length, maxLength));
     return this;
   }
 
   private short getShortFlags() {
+    int val = buffer.getShort(dataOffset) & 0x1FF;
     short flags = 0;
-    if (ns()) {
-      flags += 256;
-    }
-    if (cwr()) {
-      flags += 128;
-    }
-    if (ece()) {
-      flags += 64;
-    }
-    if (urg()) {
-      flags += 32;
-    }
-    if (ack()) {
-      flags += 16;
-    }
-    if (psh()) {
-      flags += 8;
-    }
-    if (rst()) {
-      flags += 4;
-    }
-    if (syn()) {
-      flags += 2;
-    }
-    if (fin()) {
-      flags += 1;
+    for (int i = 8; i >= 0; i--) {
+      if (((val >> i) & 0x1) == 1) {
+        flags += 1 << i;
+      }
     }
     return flags;
   }
@@ -293,9 +287,7 @@ public class Tcp extends Packet.Abstract {
   @Override
   public int size() {
     if (maxDataOffset == 0) {
-      if (buffer.readableBytes() < 20) {
-        throw new IllegalStateException("buffer size is not sufficient.");
-      }
+      Validate.notIllegalState(buffer.readableBytes() >= 20, "buffer size is not sufficient.");
       return ((buffer.getShort(buffer.readerIndex() + 12) >> 12) & 0xF) << 2;
     }
     return dataOffset() << 2;
@@ -309,7 +301,7 @@ public class Tcp extends Packet.Abstract {
         .add("sequenceNumber", sequenceNumber())
         .add("acknowledgmentNumber", acknowledgmentNumber())
         .add("dataOffset", dataOffset())
-        .add("urg", ns())
+        .add("ns", ns())
         .add("cwr", cwr())
         .add("ece", ece())
         .add("urg", urg())
@@ -318,8 +310,8 @@ public class Tcp extends Packet.Abstract {
         .add("rst", rst())
         .add("syn", syn())
         .add("fin", fin())
-        .add("windowsSize", windowsSize())
-        .add("checksum", checksum())
+        .add("windowsSize", windowSize())
+        .add("checksum", "0x" + Integer.toHexString(checksum()))
         .add("urgentPointer", urgentPointer())
         .add("options", "0x" + Strings.hex(options()))
         .toString();

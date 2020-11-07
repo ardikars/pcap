@@ -2,6 +2,7 @@ package pcap.codec.ethernet;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.common.net.MacAddress;
@@ -33,6 +34,10 @@ public class EthernetTest {
       buffer.writeBytes(BYTES);
 
       final Ethernet ethernet = buffer.cast(Ethernet.class);
+      final Ethernet comparison = Ethernet.newInstance(14, buffer);
+      Assertions.assertEquals(ethernet, comparison);
+
+      System.out.println(ethernet);
 
       Assertions.assertEquals(MacAddress.valueOf("d8:0d:17:26:9c:ee"), ethernet.destination());
       Assertions.assertEquals(MacAddress.valueOf("8c:85:90:c3:0b:33"), ethernet.source());
@@ -50,6 +55,24 @@ public class EthernetTest {
 
       // to string
       Assertions.assertNotNull(ethernet.toString());
+
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              Ethernet.newInstance(0, buffer);
+            }
+          });
+
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              Ethernet.newInstance(14, buffer.setIndex(0, 0));
+            }
+          });
 
       // release buffer
       buffer.release();
