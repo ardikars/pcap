@@ -54,9 +54,10 @@
                                 pcap.common.util,
                                 pcap.common.net
                             </packages>
-                            <requires>
-                                pcap.spi
-                            </requires>
+                            <static-requires>
+                                org.apache.logging.log4j,
+                                org.slf4j
+                            </static-requires>
                             <exports>
                                 pcap.common.logging,
                                 pcap.common.util,

@@ -50,17 +50,21 @@
                             <name>pcap.common</name>
                             <multirelease>false</multirelease>
                             <packages>
-                                pcap.common.logging,
-                                pcap.common.util,
-                                pcap.common.net
+                                pcap.codec.ethernet,
+                                pcap.codec.ip,
+                                pcap.codec.tcp,
+                                pcap.codec.udp,
+                                pcap.codec
                             </packages>
                             <requires>
                                 pcap.spi
                             </requires>
                             <exports>
-                                pcap.common.logging,
-                                pcap.common.util,
-                                pcap.common.net
+                                pcap.codec.ethernet,
+                                pcap.codec.ip,
+                                pcap.codec.tcp,
+                                pcap.codec.udp,
+                                pcap.codec
                             </exports>
                         </configuration>
                     </plugin>
