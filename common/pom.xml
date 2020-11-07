@@ -6,7 +6,7 @@
     <parent>
         <artifactId>pcap</artifactId>
         <groupId>com.ardikars.pcap</groupId>
-        <version>0.8.1</version>
+        <version>0.8.2</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -56,7 +56,7 @@
                             </packages>
                             <static-requires>
                                 org.apache.logging.log4j,
-                                org.slf4j
+                                slf4j.api
                             </static-requires>
                             <exports>
                                 pcap.common.logging,
