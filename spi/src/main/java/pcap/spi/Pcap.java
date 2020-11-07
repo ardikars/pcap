@@ -240,6 +240,14 @@ public interface Pcap extends AutoCloseable {
   void setNonBlock(boolean blocking) throws ErrorException;
 
   /**
+   * Get link-layer header type for for both {@link Service#live(Interface, Service.LiveOptions)}
+   * and {@link Service#offline(String, Service.OfflineOptions)}.
+   *
+   * @return returns the link-layer header type.
+   */
+  int datalink();
+
+  /**
    * Close {@code PcapLive} or {@code PcapOffline}.
    *
    * @since 1.0.0

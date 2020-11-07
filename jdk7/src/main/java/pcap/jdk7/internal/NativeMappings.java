@@ -155,6 +155,8 @@ class NativeMappings {
 
   static native int pcap_is_swapped(Pointer p);
 
+  static native int pcap_datalink(Pointer p);
+
   static InetAddress inetAddress(sockaddr sockaddr) {
     if (sockaddr == null) {
       return null;

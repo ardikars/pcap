@@ -786,6 +786,21 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
+  void datalink()
+      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException {
+    Interface lo = loopbackInterface(service);
+    try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
+      Assertions.assertTrue(live.datalink() >= 0);
+    }
+    try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
+      Assertions.assertTrue(offline.datalink() >= 0);
+    }
+  }
+
+  @Test
   void allocate()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
