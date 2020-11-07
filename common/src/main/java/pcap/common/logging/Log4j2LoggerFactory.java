@@ -28,6 +28,6 @@ final class Log4j2LoggerFactory extends LoggerFactory {
   }
 
   static {
-    HAS_LOG4J2 = hasClass("org.apache.logging.log4j.core.Version");
+    HAS_LOG4J2 = hasClass("org.apache.logging.log4j.LogManager");
   }
 }
