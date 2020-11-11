@@ -46,8 +46,9 @@ public final class Ip6 extends AbstractPacket {
   }
 
   public Ip6 version(int value) {
+    int v = buffer.getInt(version);
     buffer.setInt(
-        version, (value & 0xF) << 28 | (trafficClass() & 0xFF) << 20 | flowLabel() & 0xFFFFF);
+        version, (value & 0xF) << 28 | ((v >> 20) & 0xFF) << 20 | v & 0xFFFFF);
     return this;
   }
 
@@ -56,7 +57,8 @@ public final class Ip6 extends AbstractPacket {
   }
 
   public Ip6 trafficClass(int value) {
-    buffer.setInt(version, (version() & 0xF) << 28 | (value & 0xFF) << 20 | flowLabel() & 0xFFFFF);
+    int v = buffer.getInt(version);
+    buffer.setInt(version, ((v >> 28) & 0xF) << 28 | (value & 0xFF) << 20 | v & 0xFFFFF);
     return this;
   }
 
@@ -65,8 +67,9 @@ public final class Ip6 extends AbstractPacket {
   }
 
   public Ip6 flowLabel(int value) {
+    int v = buffer.getInt(version);
     buffer.setInt(
-        version, (version() & 0xF) << 28 | (trafficClass() & 0xFF) << 20 | value & 0xFFFFF);
+        version, ((v >> 28) & 0xF) << 28 | ((v >> 20) & 0xFF) << 20 | value & 0xFFFFF);
     return this;
   }
 

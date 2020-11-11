@@ -84,7 +84,7 @@ public final class Ip4 extends AbstractPacket {
   }
 
   public Ip4 version(int value) {
-    buffer.setByte(version, (value & 0xF) << 4 | ihl() & 0xF);
+    buffer.setByte(version, (value & 0xF) << 4 | ihl());
     return this;
   }
 
@@ -97,7 +97,7 @@ public final class Ip4 extends AbstractPacket {
       throw new IllegalArgumentException(
           String.format("value: %d (expected: 5 >= value <= %d)", value, maxIhl));
     }
-    buffer.setByte(version, (version() & 0xF) << 4 | value & 0xF);
+    buffer.setByte(version, version() << 4 | value & 0xF);
     return this;
   }
 
@@ -106,7 +106,7 @@ public final class Ip4 extends AbstractPacket {
   }
 
   public Ip4 dscp(int value) {
-    buffer.setByte(dscp, ((value << 2) & 0x3F) | (ecn() & 0x3));
+    buffer.setByte(dscp, (value & 0x3F) << 2 | ecn());
     return this;
   }
 
@@ -115,7 +115,7 @@ public final class Ip4 extends AbstractPacket {
   }
 
   public Ip4 ecn(int value) {
-    buffer.setByte(dscp, ((dscp() << 2) & 0x3F) | (value & 0x3));
+    buffer.setByte(dscp, dscp() << 2 | value & 0x3);
     return this;
   }
 
@@ -142,7 +142,7 @@ public final class Ip4 extends AbstractPacket {
   }
 
   public Ip4 flags(int value) {
-    buffer.setShort(flags, (value & 0x7) << 13 | fragmentOffset() & 0x1FFF);
+    buffer.setShort(flags, (value & 0x7) << 13 | fragmentOffset());
     return this;
   }
 

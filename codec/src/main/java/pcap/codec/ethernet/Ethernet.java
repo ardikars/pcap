@@ -56,7 +56,7 @@ public final class Ethernet extends AbstractPacket {
   }
 
   public Ethernet type(int value) {
-    buffer.setShort(type, value);
+    buffer.setShort(type, value & 0xFFFF);
     return this;
   }
 

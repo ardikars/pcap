@@ -62,7 +62,7 @@ public class Ip4Test {
       newBuffer.setByte(0, (4 & 0xF) << 4 | 6 & 0xF);
 
       final Ip4 newIpv4 = newBuffer.cast(Ip4.class);
-      newIpv4.version(4);
+      newIpv4.version(5);
       newIpv4.ihl(6);
       newIpv4.dscp(ipv4.dscp());
       newIpv4.ecn(ipv4.ecn());
@@ -77,7 +77,7 @@ public class Ip4Test {
       newIpv4.options(new byte[] {127, 0, 0, 1});
       newIpv4.checksum(newIpv4.calculateChecksum());
 
-      Assertions.assertEquals(4, newIpv4.version());
+      Assertions.assertEquals(5, newIpv4.version());
       Assertions.assertEquals(6, newIpv4.ihl());
       Assertions.assertEquals(ipv4.dscp(), newIpv4.dscp());
       Assertions.assertEquals(ipv4.ecn(), newIpv4.ecn());

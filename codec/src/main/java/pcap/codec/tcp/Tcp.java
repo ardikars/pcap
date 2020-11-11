@@ -77,7 +77,7 @@ public final class Tcp extends AbstractPacket {
   }
 
   public Tcp sourcePort(int value) {
-    buffer.setShort(sourcePort, value);
+    buffer.setShort(sourcePort, value & 0xFFFF);
     return this;
   }
 
@@ -86,7 +86,7 @@ public final class Tcp extends AbstractPacket {
   }
 
   public Tcp destinationPort(int value) {
-    buffer.setShort(destinationPort, value);
+    buffer.setShort(destinationPort, value & 0xFFFF);
     return this;
   }
 
@@ -117,7 +117,7 @@ public final class Tcp extends AbstractPacket {
       throw new IllegalArgumentException(
           String.format("value: %d (expected: 5 >= value <= %d)", value, maxDataOffset));
     }
-    int val = getShortFlags() & 0x1FF | value << 12;
+    int val = getShortFlags() & 0x1FF | (value & 0xF) << 12;
     buffer.setShort(dataOffset, val);
     return this;
   }
