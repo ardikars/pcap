@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
@@ -20,6 +21,9 @@ class DefaultPacketBuffer implements PacketBuffer {
 
   private static final boolean LEAK_DETECTION =
       System.getProperty("pcap.leakDetection", "false").equals("true");
+
+  private static final ConcurrentHashMap<Class<?>, Constructor<?>> CACHE =
+      new ConcurrentHashMap<Class<?>, Constructor<?>>();
 
   private static final int BYTE_SIZE = 1;
   private static final int SHORT_SIZE = 2;
@@ -976,9 +980,13 @@ class DefaultPacketBuffer implements PacketBuffer {
   @Override
   public <T extends Packet.Abstract> T cast(Class<T> type) {
     try {
-      Constructor<T> constructor = type.getDeclaredConstructor(PacketBuffer.class);
-      constructor.setAccessible(true);
-      return constructor.newInstance(this);
+      Constructor<?> constructor = CACHE.get(type);
+      if (constructor == null) {
+        constructor = type.getDeclaredConstructor(PacketBuffer.class);
+        constructor.setAccessible(true);
+        CACHE.put(type, constructor);
+      }
+      return (T) constructor.newInstance(this);
     } catch (Exception e) {
       return checkCastThrowable(type, e);
     }
