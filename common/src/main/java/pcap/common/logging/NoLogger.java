@@ -44,7 +44,7 @@ final class NoLogger implements Logger {
   }
 
   @Override
-  public void log(LogLevel level, String message) {
+  public void log(LogLevel level, Object message) {
     if (level == LogLevel.UNKNOWN) {
       throw new Error(AbstractLogger.UNKNOWN_LOG_LEVEL);
     }
@@ -86,7 +86,7 @@ final class NoLogger implements Logger {
   }
 
   @Override
-  public void debug(String message) {}
+  public void debug(Object message) {}
 
   @Override
   public void debug(Throwable throwable) {}
@@ -104,7 +104,7 @@ final class NoLogger implements Logger {
   public void debug(String message, Throwable throwable) {}
 
   @Override
-  public void info(String message) {}
+  public void info(Object message) {}
 
   @Override
   public void info(Throwable throwable) {}
@@ -122,7 +122,7 @@ final class NoLogger implements Logger {
   public void info(String message, Throwable throwable) {}
 
   @Override
-  public void warn(String message) {}
+  public void warn(Object message) {}
 
   @Override
   public void warn(Throwable throwable) {}
@@ -140,7 +140,7 @@ final class NoLogger implements Logger {
   public void warn(String message, Throwable throwable) {}
 
   @Override
-  public void error(String message) {}
+  public void error(Object message) {}
 
   @Override
   public void error(Throwable throwable) {}

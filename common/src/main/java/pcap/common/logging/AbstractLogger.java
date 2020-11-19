@@ -50,7 +50,7 @@ abstract class AbstractLogger implements Logger {
   }
 
   @Override
-  public void log(LogLevel level, String format) {
+  public void log(LogLevel level, Object format) {
     switch (level) {
       case DEBUG:
         debug(format);
@@ -170,7 +170,7 @@ abstract class AbstractLogger implements Logger {
   }
 
   @Override
-  public void debug(String message) {
+  public void debug(Object message) {
     debug(DEFAULT_FORMAT, message);
   }
 
@@ -180,7 +180,7 @@ abstract class AbstractLogger implements Logger {
   }
 
   @Override
-  public void info(String message) {
+  public void info(Object message) {
     info(DEFAULT_FORMAT, message);
   }
 
@@ -190,7 +190,7 @@ abstract class AbstractLogger implements Logger {
   }
 
   @Override
-  public void warn(String message) {
+  public void warn(Object message) {
     warn(DEFAULT_FORMAT, message);
   }
 
@@ -200,7 +200,7 @@ abstract class AbstractLogger implements Logger {
   }
 
   @Override
-  public void error(String message) {
+  public void error(Object message) {
     error(DEFAULT_FORMAT, message);
   }
 

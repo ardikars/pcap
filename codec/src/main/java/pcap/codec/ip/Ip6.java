@@ -1,13 +1,12 @@
 package pcap.codec.ip;
 
+import java.net.Inet6Address;
 import pcap.codec.AbstractPacket;
 import pcap.common.net.InetAddresses;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
-
-import java.net.Inet6Address;
 
 /**
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
@@ -47,8 +46,7 @@ public final class Ip6 extends AbstractPacket {
 
   public Ip6 version(int value) {
     int v = buffer.getInt(version);
-    buffer.setInt(
-        version, (value & 0xF) << 28 | ((v >> 20) & 0xFF) << 20 | v & 0xFFFFF);
+    buffer.setInt(version, (value & 0xF) << 28 | ((v >> 20) & 0xFF) << 20 | v & 0xFFFFF);
     return this;
   }
 
@@ -68,8 +66,7 @@ public final class Ip6 extends AbstractPacket {
 
   public Ip6 flowLabel(int value) {
     int v = buffer.getInt(version);
-    buffer.setInt(
-        version, ((v >> 28) & 0xF) << 28 | ((v >> 20) & 0xFF) << 20 | value & 0xFFFFF);
+    buffer.setInt(version, ((v >> 28) & 0xF) << 28 | ((v >> 20) & 0xFF) << 20 | value & 0xFFFFF);
     return this;
   }
 

@@ -33,7 +33,7 @@ final class Log4j2Logger extends ExtendedLoggerWrapper implements Logger {
   }
 
   @Override
-  public void log(LogLevel level, String message) {
+  public void log(LogLevel level, Object message) {
     switch (level) {
       case DEBUG:
         super.debug(message);

@@ -33,7 +33,7 @@ public interface Logger {
 
   boolean isErrorEnabled();
 
-  void log(LogLevel level, String message);
+  void log(LogLevel level, Object message);
 
   void log(LogLevel level, String format, Object arg1);
 
@@ -45,7 +45,7 @@ public interface Logger {
 
   void log(LogLevel level, String message, Throwable throwable);
 
-  void debug(String message);
+  void debug(Object message);
 
   void debug(Throwable throwable);
 
@@ -57,7 +57,7 @@ public interface Logger {
 
   void debug(String message, Throwable throwable);
 
-  void info(String message);
+  void info(Object message);
 
   void info(Throwable throwable);
 
@@ -69,7 +69,7 @@ public interface Logger {
 
   void info(String message, Throwable throwable);
 
-  void warn(String message);
+  void warn(Object message);
 
   void warn(Throwable throwable);
 
@@ -81,7 +81,7 @@ public interface Logger {
 
   void warn(String message, Throwable throwable);
 
-  void error(String message);
+  void error(Object message);
 
   void error(Throwable throwable);
 
