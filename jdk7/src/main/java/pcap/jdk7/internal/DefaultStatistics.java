@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 Pcap <contact@pcap.ardikars.com>
+ * SPDX-License-Identifier: MIT
+ */
 package pcap.jdk7.internal;
 
 import pcap.spi.Statistics;

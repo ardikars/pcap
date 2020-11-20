@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2020 Pcap <contact@pcap.ardikars.com>
+# SPDX-License-Identifier: MIT
+
 #!/bin/bash
 
 # Run from root project $ ./.mvn/install-local.sh

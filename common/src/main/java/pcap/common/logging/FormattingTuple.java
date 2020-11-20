@@ -1,6 +1,8 @@
 /**
  * Copyright (c) 2004-2011 QOS.ch All rights reserved.
  *
+ * <p>SPDX-License-Identifier: MIT
+ *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -20,9 +22,9 @@ package pcap.common.logging;
 
 final class FormattingTuple {
 
-  private String message;
-  private Throwable throwable;
-  private Object[] argArray;
+  private final String message;
+  private final Throwable throwable;
+  private final Object[] argArray;
 
   public FormattingTuple(String message) {
     this(message, null, null);

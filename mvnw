@@ -1,3 +1,6 @@
+# Copyright 2007-present the original author or authors.
+# SPDX-License-Identifier: Apache-2.0
+
 #!/bin/sh
 # ----------------------------------------------------------------------------
 # Licensed to the Apache Software Foundation (ASF) under one

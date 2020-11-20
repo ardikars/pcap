@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 Pcap <contact@pcap.ardikars.com>
+ * SPDX-License-Identifier: MIT
+ */
 package pcap.codec.ip;
 
 import java.net.Inet6Address;

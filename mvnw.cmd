@@ -1,3 +1,6 @@
+@REM Copyright 2007-present the original author or authors.
+@REM SPDX-License-Identifier: Apache-2.0
+
 @REM ----------------------------------------------------------------------------
 @REM Licensed to the Apache Software Foundation (ASF) under one
 @REM or more contributor license agreements.  See the NOTICE file

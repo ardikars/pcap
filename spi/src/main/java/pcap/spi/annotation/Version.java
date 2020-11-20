@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 Pcap <contact@pcap.ardikars.com>
+ * SPDX-License-Identifier: MIT
+ */
 package pcap.spi.annotation;
 
 import java.lang.annotation.ElementType;

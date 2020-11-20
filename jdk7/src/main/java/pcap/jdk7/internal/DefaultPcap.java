@@ -1,14 +1,17 @@
+/*
+ * Copyright (c) 2020 Pcap <contact@pcap.ardikars.com>
+ * SPDX-License-Identifier: MIT
+ */
 package pcap.jdk7.internal;
 
 import com.sun.jna.Pointer;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import pcap.spi.*;
 import pcap.spi.annotation.Version;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.BreakException;
 import pcap.spi.exception.error.NotActivatedException;
-
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 class DefaultPcap implements Pcap {
 

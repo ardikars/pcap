@@ -12,7 +12,8 @@
 #   JAVA_HOME is set to the extracted JDK directory
 #   PATH is prepended with ${JAVA_HOME}/bin
 #
-# (C) 2020 Christian Stein
+# Copyright (c) 2020 Christian Stein
+# SPDX-License-Identifier: Apache-2.0
 #
 # https://github.com/sormuras/bach/blob/master/install-jdk.sh
 #

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2020 2020 Pcap <contact@pcap.ardikars.com>
+# SPDX-License-Identifier: MIT
+
 *.iml
 .idea
 *.jar
@@ -5,7 +8,6 @@
 *.log
 *.trc
 *.dmp
-*.txt
 
 .gnupg/*.gpg-agent*
 .gnupg/private-keys*

@@ -1,4 +1,7 @@
-/** This code is licenced under the GPL version 2. */
+/*
+ * Copyright (c) 2020 Pcap <contact@pcap.ardikars.com>
+ * SPDX-License-Identifier: MIT
+ */
 package pcap.spi.exception;
 
 /**

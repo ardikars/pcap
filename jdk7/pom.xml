@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2020 Pcap <contact@pcap.ardikars.com>
+SPDX-License-Identifier: MIT
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -6,7 +10,7 @@
     <parent>
         <artifactId>pcap</artifactId>
         <groupId>com.ardikars.pcap</groupId>
-        <version>0.10.0</version>
+        <version>1.0.0-alpha</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -20,6 +24,7 @@
     <properties>
         <jdk.version>${java.jdk7.version}</jdk.version>
         <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
+        <pcap.leakDetection>true</pcap.leakDetection>
     </properties>
 
     <dependencies>
