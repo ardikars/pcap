@@ -1,13 +1,14 @@
 package pcap.jdk7.internal;
 
 import com.sun.jna.Pointer;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import pcap.spi.*;
 import pcap.spi.annotation.Version;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.BreakException;
 import pcap.spi.exception.error.NotActivatedException;
+
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 class DefaultPcap implements Pcap {
 
@@ -112,7 +113,7 @@ class DefaultPcap implements Pcap {
                   DefaultPacketBuffer packetBuffer =
                       new DefaultPacketBuffer(
                           packet,
-                          PacketBuffer.ByteOrder.NATIVE,
+                          PacketBuffer.ByteOrder.BIG_ENDIAN,
                           packetHeader.captureLength(),
                           0,
                           packetHeader.captureLength());
@@ -148,7 +149,7 @@ class DefaultPcap implements Pcap {
                   packetBuffer[0] =
                       new DefaultPacketBuffer(
                           packet,
-                          PacketBuffer.ByteOrder.NATIVE,
+                          PacketBuffer.ByteOrder.BIG_ENDIAN,
                           packetHeader[0].captureLength(),
                           0,
                           packetHeader[0].captureLength());
@@ -206,7 +207,7 @@ class DefaultPcap implements Pcap {
                   DefaultPacketBuffer packetBuffer =
                       new DefaultPacketBuffer(
                           packet,
-                          PacketBuffer.ByteOrder.NATIVE,
+                          PacketBuffer.ByteOrder.BIG_ENDIAN,
                           packetHeader.captureLength(),
                           0,
                           packetHeader.captureLength());
@@ -402,7 +403,9 @@ class DefaultPcap implements Pcap {
       if (cls.isAssignableFrom(PacketHeader.class)) {
         return (T) new DefaultPacketHeader();
       } else if (cls.isAssignableFrom(PacketBuffer.class)) {
-        return (T) new DefaultPacketBuffer();
+        DefaultPacketBuffer buffer = new DefaultPacketBuffer();
+        buffer.reverse = PacketBuffer.ByteOrder.NATIVE != PacketBuffer.ByteOrder.BIG_ENDIAN;
+        return (T) buffer;
       }
     } finally {
       readLock.unlock();

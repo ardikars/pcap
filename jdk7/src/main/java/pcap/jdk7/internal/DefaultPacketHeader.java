@@ -53,4 +53,16 @@ class DefaultPacketHeader implements PacketHeader {
       return 0;
     }
   }
+
+  @Override
+  public String toString() {
+    String format = "[%s] => [second: %d, microSecond: %d, captureLength: %d, length: %d]";
+    return String.format(
+        format,
+        getClass().getSimpleName(),
+        timestamp().second(),
+        timestamp().microSecond(),
+        captureLength(),
+        length());
+  }
 }
