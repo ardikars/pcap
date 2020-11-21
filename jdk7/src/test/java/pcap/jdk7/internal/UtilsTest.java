@@ -24,11 +24,12 @@ public class UtilsTest {
   @Test
   public void blankTest() {
     Assertions.assertTrue(Utils.blank(" "));
+    Assertions.assertTrue(Utils.blank(""));
     Assertions.assertTrue(Utils.blank(null));
     Assertions.assertTrue(Utils.blank("\t "));
     Assertions.assertTrue(Utils.blank("\r "));
     Assertions.assertTrue(Utils.blank("\n "));
-    Assertions.assertTrue(Utils.blank("\0 "));
+    Assertions.assertFalse(Utils.blank("\0 "));
     Assertions.assertFalse(Utils.blank("abc"));
   }
 

@@ -159,11 +159,10 @@ class Utils {
     }
     int length = charSequence.length();
     for (int i = 0; i < length; i++) {
-      char ch = charSequence.charAt(i);
-      if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' || ch == '\0') {
-        return true;
+      if (!Character.isWhitespace(charSequence.charAt(i))) {
+        return false;
       }
     }
-    return false;
+    return true;
   }
 }
