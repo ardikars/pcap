@@ -37,21 +37,6 @@ public class Application {
       for (int i = 0; i < 10; i++) {
         try {
           live.nextEx(packetHeader, packetBuffer);
-          System.out.println("[ PacketHeader:");
-          System.out.println("\tTimestamp -> Second        : " + packetHeader.timestamp().second());
-          System.out.println(
-              "\tTimestamp -> Micro second  : " + packetHeader.timestamp().microSecond());
-          System.out.println("\tCapture length             : " + packetHeader.captureLength());
-          System.out.println("\tLength                     : " + packetHeader.length());
-          System.out.println("]");
-          System.out.println();
-          Statistics statistics = live.stats();
-          System.out.println("[ Statistics:");
-          System.out.println("\tReceived                   : " + statistics.received());
-          System.out.println("\tDropped                    : " + statistics.dropped());
-          System.out.println("\tDropped by interface       : " + statistics.droppedByInterface());
-          System.out.println("]");
-          System.out.println();
           Ethernet ethernet =
               packetBuffer.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN).cast(Ethernet.class);
           System.out.println(ethernet);

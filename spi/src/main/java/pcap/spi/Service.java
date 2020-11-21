@@ -319,6 +319,21 @@ public interface Service {
    */
   class Creator {
 
+    private static Service[] PROVIDERS = new Service[0];
+
+    static {
+      ServiceLoader<Service> services =
+          ServiceLoader.load(Service.class, Service.class.getClassLoader());
+      Iterator<Service> iterator = services.iterator();
+      while (iterator.hasNext()) {
+        Service service = iterator.next();
+        Service[] newServices = new Service[PROVIDERS.length + 1];
+        System.arraycopy(PROVIDERS, 0, newServices, 0, PROVIDERS.length);
+        newServices[PROVIDERS.length] = service;
+        PROVIDERS = newServices;
+      }
+    }
+
     private Creator() {}
 
     /**
@@ -330,12 +345,9 @@ public interface Service {
      * @since 1.0.0
      */
     public static Service create(String name) throws ErrorException {
-      ServiceLoader<Service> loader = ServiceLoader.load(Service.class);
-      Iterator<Service> iterator = loader.iterator();
-      while (iterator.hasNext()) {
-        Service service = iterator.next();
-        if (service.name().equals(name)) {
-          return service;
+      for (int i = 0; i < PROVIDERS.length; i++) {
+        if (PROVIDERS[i].name().equals(name)) {
+          return PROVIDERS[i];
         }
       }
       throw new ErrorException("No service provider implementation for (" + name + ").");

@@ -17,7 +17,7 @@ import pcap.common.util.Bytes;
  * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
-public class InetAddresses {
+public final class InetAddresses {
 
   private InetAddresses() {
     //
