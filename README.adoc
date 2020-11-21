@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2020 Pcap <contact@pcap.ardikars.com>
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT OR Apache-2.0
 
 == Pcap
 
@@ -24,3 +24,12 @@ image:https://javadoc.io/badge2/com.ardikars.pcap/pcap-spi/javadoc.svg["Javadoc"
 Provides JVM network packet processing library for rapid development.
 
 https://pcap.ardikars.com[*Documentation*]
+
+
+=== License
+
+Pcap is primarily distributed under the terms of both the MIT license and the Apache License (Version 2.0).
+
+```
+SPDX-License-Identifier: MIT OR Apache-2.0
+```

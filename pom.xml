@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Copyright (c) 2020 Pcap <contact@pcap.ardikars.com>
-SPDX-License-Identifier: MIT
+SPDX-License-Identifier: MIT OR Apache-2.0
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -11,7 +11,7 @@ SPDX-License-Identifier: MIT
     <groupId>com.ardikars.pcap</groupId>
     <artifactId>pcap</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0-alpha</version>
+    <version>1.0.0-alpha.1</version>
 
     <modules>
         <module>spi</module>
@@ -28,7 +28,7 @@ SPDX-License-Identifier: MIT
     <developers>
         <developer>
             <name>Ardika Rommy Sanjaya</name>
-            <email>contact@ardikars.com</email>
+            <email>contact@pcap.ardikars.com</email>
             <organization>ardikars</organization>
             <organizationUrl>https://pcap.ardikars.com</organizationUrl>
         </developer>
@@ -51,7 +51,13 @@ SPDX-License-Identifier: MIT
             <url>https://opensource.org/licenses/MIT</url>
             <distribution>repo</distribution>
         </license>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
     </licenses>
+
+    <inceptionYear>2020</inceptionYear>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -284,6 +290,24 @@ SPDX-License-Identifier: MIT
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>${maven.resources.plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>copy-resources</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${basedir}/target/classes/META-INF/LICENSES</outputDirectory>
+                                <resources>
+                                    <resource>
+                                        <directory>${basedir}/../LICENSES</directory>
+                                        <filtering>true</filtering>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -327,6 +351,15 @@ SPDX-License-Identifier: MIT
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>${maven.jar.plugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <addMavenDescriptor>false</addMavenDescriptor>
+                            <manifest>
+                                <addDefaultEntries>false</addDefaultEntries>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            </manifest>
+                        </archive>
+                    </configuration>
                 </plugin>
                 <!-- Required plugins for deployment -->
                 <plugin>
@@ -451,7 +484,15 @@ SPDX-License-Identifier: MIT
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -549,7 +590,15 @@ SPDX-License-Identifier: MIT
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -573,6 +622,12 @@ SPDX-License-Identifier: MIT
                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-toolchains-plugin</artifactId>
+                        <version>${maven.toolchains.plugin.version}</version>
                     </plugin>
                 </plugins>
             </build>

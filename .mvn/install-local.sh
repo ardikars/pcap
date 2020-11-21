@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2020 Pcap <contact@pcap.ardikars.com>
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: MIT OR Apache-2.0
 
 #!/bin/bash
 
