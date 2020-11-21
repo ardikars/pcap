@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2020 Pcap <contact@pcap.ardikars.com>
+Copyright (c) 2020 Pcap Project
 SPDX-License-Identifier: MIT OR Apache-2.0
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -28,16 +28,9 @@ SPDX-License-Identifier: MIT OR Apache-2.0
     <developers>
         <developer>
             <name>Ardika Rommy Sanjaya</name>
-            <email>contact@pcap.ardikars.com</email>
-            <organization>ardikars</organization>
-            <organizationUrl>https://pcap.ardikars.com</organizationUrl>
+            <email>pcap@ardikars.com</email>
         </developer>
     </developers>
-
-    <organization>
-        <name>ardikars</name>
-        <url>https://pcap.ardikars.com</url>
-    </organization>
 
     <scm>
         <connection>scm:git:git@github.com:ardikars/pcap.git</connection>

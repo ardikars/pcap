@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Pcap <contact@pcap.ardikars.com>
+ * Copyright (c) 2020 Pcap Project
  * SPDX-License-Identifier: MIT OR Apache-2.0
  */
 package pcap.common.util;
