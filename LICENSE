@@ -2,11 +2,11 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 
 The Pcap Project is dual-licensed under MIT and Apache 2.0 terms.
 
+See LICENSES/MIT.txt, and LICENSES/Apache-2.0.txt for details.
+
 The Pcap Project includes libraries written by third parties.
 The following third party packages are included, and carry
 their own copyright notices and license terms:
-
-See LICENSES/MIT.txt, and LICENSES/Apache-2.0.txt for details.
 
 * JNA (Java Native Access)
 
