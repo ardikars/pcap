@@ -288,7 +288,8 @@ public class DefaultService implements Service {
 
   NativeMappings.ErrorBuffer errbuf(boolean clear) {
     if (clear) {
-      errbuf.clear();
+      errbuf.getPointer().setMemory(0, errbuf.buf.length, (byte) '\0');
+      errbuf.buf[0] = '\0'; // force set to empty string
     }
     return errbuf;
   }
