@@ -159,7 +159,8 @@ class Utils {
     }
     int length = charSequence.length();
     for (int i = 0; i < length; i++) {
-      if (!Character.isWhitespace(charSequence.charAt(i))) {
+      char character = charSequence.charAt(i);
+      if (!Character.isWhitespace(character) && character != '\0') {
         return false;
       }
     }

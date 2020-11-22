@@ -29,7 +29,7 @@ public class UtilsTest {
     Assertions.assertTrue(Utils.blank("\t "));
     Assertions.assertTrue(Utils.blank("\r "));
     Assertions.assertTrue(Utils.blank("\n "));
-    Assertions.assertFalse(Utils.blank("\0 "));
+    Assertions.assertTrue(Utils.blank("\0 "));
     Assertions.assertFalse(Utils.blank("abc"));
   }
 

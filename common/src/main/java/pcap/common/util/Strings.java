@@ -43,11 +43,11 @@ public final class Strings {
     int length = charSequence.length();
     for (int i = 0; i < length; i++) {
       char ch = charSequence.charAt(i);
-      if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' || ch == '\0') {
-        return true;
+      if (!Character.isWhitespace(ch) && ch != '\0') {
+        return false;
       }
     }
-    return false;
+    return true;
   }
 
   /**
