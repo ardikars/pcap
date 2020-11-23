@@ -381,7 +381,14 @@ class DefaultPcap implements Pcap {
 
   @Override
   public int datalink() {
-    return NativeMappings.pcap_datalink(pointer);
+    tryReadLock();
+    int linktype;
+    try {
+      linktype = NativeMappings.pcap_datalink(pointer);
+    } finally {
+      readLock.unlock();
+    }
+    return linktype;
   }
 
   @Override
