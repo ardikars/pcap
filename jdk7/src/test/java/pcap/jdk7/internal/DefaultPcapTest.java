@@ -616,8 +616,6 @@ public class DefaultPcapTest extends BaseTest {
         offline.sendPacket(buffer);
       } catch (ErrorException e) {
         //
-      } finally {
-        Assertions.assertTrue(buffer.release());
       }
     }
   }

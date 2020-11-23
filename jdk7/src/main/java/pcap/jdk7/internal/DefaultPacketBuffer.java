@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
+import pcap.spi.exception.MemoryAccessException;
 import pcap.spi.exception.MemoryLeakException;
 
 class DefaultPacketBuffer implements PacketBuffer {
@@ -965,12 +966,6 @@ class DefaultPacketBuffer implements PacketBuffer {
 
   @Override
   public boolean release() {
-    if (this instanceof FinalizablePacketBuffer) {
-      FinalizablePacketBuffer packetBuffer = (FinalizablePacketBuffer) this;
-      Native.free(packetBuffer.phantomReference.address.get());
-      packetBuffer.phantomReference.address.set(0L);
-      return true;
-    }
     return false;
   }
 
@@ -1014,6 +1009,11 @@ class DefaultPacketBuffer implements PacketBuffer {
     public DefaultPacketBuffer unSlice() {
       return prev;
     }
+
+    @Override
+    public boolean release() {
+      return prev.release();
+    }
   }
 
   static final class FinalizablePacketBuffer extends DefaultPacketBuffer {
@@ -1023,6 +1023,25 @@ class DefaultPacketBuffer implements PacketBuffer {
     public FinalizablePacketBuffer(
         Pointer buffer, ByteOrder byteOrder, long capacity, long readerIndex, long writerIndex) {
       super(buffer, byteOrder, capacity, readerIndex, writerIndex);
+    }
+
+    @Override
+    public boolean release() {
+      if (phantomReference.address.get() > 0) {
+        Native.free(phantomReference.address.get());
+        phantomReference.address.set(0L);
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    @Override
+    void checkIndex(long index, long fieldLength) {
+      if (phantomReference.address.get() == 0L) {
+        throw new MemoryAccessException("Accessing closed buffer is prohibited.");
+      }
+      super.checkIndex(index, fieldLength);
     }
   }
 

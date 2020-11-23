@@ -16,6 +16,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
+import pcap.spi.exception.MemoryAccessException;
 import pcap.spi.exception.MemoryLeakException;
 
 @RunWith(JUnitPlatform.class)
@@ -3534,6 +3535,20 @@ public class DefaultPacketBufferTest {
   }
 
   @Test
+  public void slicedRelease() {
+    final PacketBuffer smallBuffer = DefaultPacketBuffer.PacketBufferManager.allocate(SHORT_BYTES);
+    final PacketBuffer slicedSmallBuffer = smallBuffer.slice();
+    Assertions.assertTrue(slicedSmallBuffer.release());
+    Assertions.assertFalse(smallBuffer.release());
+
+    final PacketBuffer mediumBuffer =
+        DefaultPacketBuffer.PacketBufferManager.allocate(INTEGER_BYTES);
+    final PacketBuffer slicedMediumBuffer = mediumBuffer.slice();
+    Assertions.assertTrue(mediumBuffer.release());
+    Assertions.assertFalse(slicedMediumBuffer.release());
+  }
+
+  @Test
   void clear() {
     final PacketBuffer smallBuffer = DefaultPacketBuffer.PacketBufferManager.allocate(SHORT_BYTES);
     final PacketBuffer mediumBuffer =
@@ -3565,14 +3580,14 @@ public class DefaultPacketBufferTest {
         DefaultPacketBuffer.PacketBufferManager.allocate(INTEGER_BYTES);
     final PacketBuffer largeBuffer = DefaultPacketBuffer.PacketBufferManager.allocate(LONG_BYTES);
 
-    Assertions.assertFalse(smallBuffer.slice().release());
-    Assertions.assertFalse(mediumBuffer.slice().release());
-    Assertions.assertFalse(largeBuffer.slice().release());
+    Assertions.assertTrue(smallBuffer.slice().release());
+    Assertions.assertTrue(mediumBuffer.slice().release());
+    Assertions.assertTrue(largeBuffer.slice().release());
     Assertions.assertFalse(new DefaultPacketBuffer().release());
 
-    Assertions.assertTrue(smallBuffer.release());
-    Assertions.assertTrue(mediumBuffer.release());
-    Assertions.assertTrue(largeBuffer.release());
+    Assertions.assertFalse(smallBuffer.release());
+    Assertions.assertFalse(mediumBuffer.release());
+    Assertions.assertFalse(largeBuffer.release());
   }
 
   @Test
@@ -3582,37 +3597,16 @@ public class DefaultPacketBufferTest {
         DefaultPacketBuffer.PacketBufferManager.allocate(INTEGER_BYTES);
     final PacketBuffer largeBuffer = DefaultPacketBuffer.PacketBufferManager.allocate(LONG_BYTES);
 
-    Assertions.assertThrows(
-        IllegalStateException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            smallBuffer.slice().close();
-          }
-        });
-    Assertions.assertThrows(
-        IllegalStateException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            mediumBuffer.slice().close();
-          }
-        });
-    Assertions.assertThrows(
-        IllegalStateException.class,
-        new Executable() {
-          @Override
-          public void execute() throws Throwable {
-            largeBuffer.slice().close();
-          }
-        });
+    smallBuffer.slice().close();
+    mediumBuffer.slice().close();
+    largeBuffer.slice().close();
     try (PacketBuffer buf = DefaultPacketBuffer.PacketBufferManager.allocate(BYTE_BYTES)) {
       Assertions.assertEquals(BYTE_BYTES, buf.capacity());
     }
 
-    Assertions.assertTrue(smallBuffer.release());
-    Assertions.assertTrue(mediumBuffer.release());
-    Assertions.assertTrue(largeBuffer.release());
+    Assertions.assertFalse(smallBuffer.release());
+    Assertions.assertFalse(mediumBuffer.release());
+    Assertions.assertFalse(largeBuffer.release());
   }
 
   @Test
@@ -3649,6 +3643,30 @@ public class DefaultPacketBufferTest {
           @Override
           public void execute() throws Throwable {
             DefaultPacketBuffer.PacketBufferManager.checkLeak(bufRef, true);
+          }
+        });
+  }
+
+  @Test
+  public void doubleFree() {
+    final PacketBuffer buf = DefaultPacketBuffer.PacketBufferManager.allocate(4);
+    Assertions.assertTrue(buf.release());
+    Assertions.assertFalse(buf.release());
+  }
+
+  @Test
+  public void illegalAccess() {
+    final DefaultPacketBuffer.FinalizablePacketBuffer buf =
+        DefaultPacketBuffer.PacketBufferManager.allocate(4);
+    buf.setInt(0, 10);
+    Assertions.assertEquals(10, buf.getInt(0));
+    Assertions.assertTrue(buf.release());
+    Assertions.assertThrows(
+        MemoryAccessException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Assertions.assertEquals(10, buf.getInt(0));
           }
         });
   }
