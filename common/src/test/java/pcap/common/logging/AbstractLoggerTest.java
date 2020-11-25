@@ -7,7 +7,7 @@ package pcap.common.logging;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.function.Executable;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/** */
 abstract class AbstractLoggerTest {
 
   private static final String DEFAULT_NAME = "LoggeTest";

@@ -12,7 +12,6 @@ import java.lang.annotation.Target;
 /**
  * Required minimal native pcap library version for specific functions.
  *
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
 @Incubating

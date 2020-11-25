@@ -16,7 +16,6 @@ import pcap.spi.PacketHeader;
  * pcap.spi.Pcap#next(PacketHeader)} is capable to perform non-blocking I/O. The device must be put
  * in non-blocking mode with a call to {@link pcap.spi.Pcap#setNonBlock(boolean)} ({@code true}).
  *
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
 @Target(ElementType.METHOD)

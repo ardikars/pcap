@@ -4,7 +4,11 @@
  */
 package pcap.common.util;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Shorts utils.
+ *
+ * @since 1.0.0
+ */
 public final class Shorts {
 
   private Shorts() {

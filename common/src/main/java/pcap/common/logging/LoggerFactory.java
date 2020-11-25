@@ -4,7 +4,11 @@
  */
 package pcap.common.logging;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Logger factory.
+ *
+ * @since 1.0.0
+ */
 public abstract class LoggerFactory {
 
   static LoggerFactory DEFAULT_LOGGER_FACTORY;

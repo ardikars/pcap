@@ -12,7 +12,8 @@ import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Incubating;
 
 /**
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ * Ethernet header.
+ *
  * @since 1.0.0
  */
 @Incubating

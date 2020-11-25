@@ -8,7 +8,11 @@ import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.List;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Array utils.
+ *
+ * @since 1.0.0
+ */
 public final class Arrays {
 
   private Arrays() {}

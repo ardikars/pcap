@@ -31,14 +31,13 @@ import pcap.spi.annotation.Incubating;
  * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  */
 /**
- *
+ * IPv4
  *
  * <ul>
  *   <li>https://tools.ietf.org/html/rfc791
  *   <li>https://tools.ietf.org/html/rfc3168
  * </ul>
  *
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
 @Incubating

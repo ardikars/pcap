@@ -9,7 +9,6 @@ import pcap.spi.annotation.Incubating;
 /**
  * Memory leak detected.
  *
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
 @Incubating

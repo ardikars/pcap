@@ -13,7 +13,6 @@ import pcap.common.util.Validate;
 /**
  * Wrapper for raw mac address.
  *
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
 public final class MacAddress implements Serializable {

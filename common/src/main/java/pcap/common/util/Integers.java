@@ -4,7 +4,11 @@
  */
 package pcap.common.util;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Integer utils.
+ *
+ * @since 1.0.0
+ */
 public final class Integers {
 
   private Integers() {

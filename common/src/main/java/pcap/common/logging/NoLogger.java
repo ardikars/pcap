@@ -4,7 +4,11 @@
  */
 package pcap.common.logging;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * No logger implementation.
+ *
+ * @since 1.0.0
+ */
 final class NoLogger implements Logger {
 
   private final String name;

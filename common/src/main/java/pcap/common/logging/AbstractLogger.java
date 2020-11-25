@@ -7,7 +7,6 @@ package pcap.common.logging;
 /**
  * Abstract logger.
  *
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
 abstract class AbstractLogger implements Logger {

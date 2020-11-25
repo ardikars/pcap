@@ -8,7 +8,11 @@ import pcap.spi.Service;
 import pcap.spi.Timestamp;
 import pcap.spi.annotation.Version;
 
-/** {@inheritDoc} */
+/**
+ * {@inheritDoc}
+ *
+ * @since 1.0.0
+ */
 public class DefaultOfflineOptions implements Service.OfflineOptions {
 
   private Timestamp.Precision timestampPrecision;

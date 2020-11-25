@@ -6,6 +6,11 @@ package pcap.common.util;
 
 import java.util.regex.Pattern;
 
+/**
+ * Hex utils.
+ *
+ * @since 1.0.0
+ */
 public final class Hexs {
 
   static final char[] HEXDUMP_TABLE;

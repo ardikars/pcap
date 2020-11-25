@@ -4,6 +4,11 @@
  */
 package pcap.common.util;
 
+/**
+ * Validation utils.
+ *
+ * @since 1.0.0
+ */
 public final class Validate {
 
   private static final String ARRAY_IS_EMPTY = "Array is empty.";

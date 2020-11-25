@@ -4,7 +4,11 @@
  */
 package pcap.common.logging;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * No logger factory.
+ *
+ * @since 1.0.0
+ */
 final class NoLoggerFactory extends LoggerFactory {
 
   private static final LoggerFactory INSTANCE = new NoLoggerFactory();

@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
 /**
  * No such device exists ({@code -5}).
  *
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
 @RunWith(JUnitPlatform.class)

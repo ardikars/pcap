@@ -12,7 +12,6 @@ import pcap.spi.exception.error.*;
 /**
  * Pcap service.
  *
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
 public interface Service {

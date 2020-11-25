@@ -37,8 +37,7 @@ public class Application {
       for (int i = 0; i < 10; i++) {
         try {
           live.nextEx(packetHeader, packetBuffer);
-          Ethernet ethernet =
-              packetBuffer.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN).cast(Ethernet.class);
+          Ethernet ethernet = packetBuffer.cast(Ethernet.class);
           System.out.println(ethernet);
           if (ethernet.type() == Ip4.TYPE) {
             Ip4 ip4 = packetBuffer.readerIndex(ethernet.size()).cast(Ip4.class);

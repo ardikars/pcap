@@ -10,7 +10,8 @@ import java.nio.ByteBuffer;
 import pcap.spi.PacketBuffer;
 
 /**
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ * Abstract packet
+ *
  * @since 1.0.0
  */
 public abstract class AbstractPacket extends pcap.spi.Packet.Abstract {

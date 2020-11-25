@@ -7,7 +7,6 @@ package pcap.spi;
 /**
  * Specify a time interval (elapsed time).
  *
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
 public interface Timestamp {

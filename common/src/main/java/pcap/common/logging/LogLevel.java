@@ -4,7 +4,11 @@
  */
 package pcap.common.logging;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Log level.
+ *
+ * @since 1.0.0
+ */
 public enum LogLevel {
   DEBUG,
   INFO,

@@ -7,7 +7,6 @@ package pcap.spi;
 /**
  * Item in a list of interfaces.
  *
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
 public interface Interface extends Iterable<Interface> {

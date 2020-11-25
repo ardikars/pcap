@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
 /**
  * The operation can't be performed on already activated captures.
  *
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
  * @since 1.0.0
  */
 @RunWith(JUnitPlatform.class)

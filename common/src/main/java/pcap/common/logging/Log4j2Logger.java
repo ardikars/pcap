@@ -7,7 +7,11 @@ package pcap.common.logging;
 import org.apache.logging.log4j.spi.ExtendedLogger;
 import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Log4j2 implementation.
+ *
+ * @since 1.0.0
+ */
 final class Log4j2Logger extends ExtendedLoggerWrapper implements Logger {
 
   public Log4j2Logger(org.apache.logging.log4j.Logger logger) {

@@ -10,7 +10,11 @@ import pcap.spi.Timestamp;
 import pcap.spi.annotation.Incubating;
 import pcap.spi.annotation.Version;
 
-/** {@inheritDoc} */
+/**
+ * {@inheritDoc}
+ *
+ * @since 1.0.0
+ */
 public class DefaultLiveOptions implements Service.LiveOptions {
 
   private int snapshotLength;

@@ -34,7 +34,8 @@ import pcap.spi.annotation.Incubating;
   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 */
 /**
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
+ * TCP
+ *
  * @since 1.0.0
  */
 @Incubating

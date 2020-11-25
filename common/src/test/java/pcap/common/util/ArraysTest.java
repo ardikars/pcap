@@ -11,10 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
-/**
- * @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a>
- * @since 1.0.0
- */
+/** @since 1.0.0 */
 @RunWith(JUnitPlatform.class)
 public class ArraysTest {
 

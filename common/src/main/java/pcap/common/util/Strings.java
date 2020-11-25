@@ -4,7 +4,11 @@
  */
 package pcap.common.util;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * String utils.
+ *
+ * @since 1.0.0
+ */
 public final class Strings {
 
   private Strings() {

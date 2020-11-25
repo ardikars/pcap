@@ -6,7 +6,11 @@ package pcap.common.logging;
 
 import org.apache.logging.log4j.LogManager;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Log4j2 logger factory.
+ *
+ * @since 1.0.0
+ */
 final class Log4j2LoggerFactory extends LoggerFactory {
 
   private static final LoggerFactory INSTANCE = new Log4j2LoggerFactory();

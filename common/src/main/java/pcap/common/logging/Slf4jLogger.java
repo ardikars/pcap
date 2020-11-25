@@ -6,7 +6,11 @@ package pcap.common.logging;
 
 import org.slf4j.Logger;
 
-/** @author <a href="mailto:contact@ardikars.com">Ardika Rommy Sanjaya</a> */
+/**
+ * Slf4j implementation.
+ *
+ * @since 1.0.0
+ */
 final class Slf4jLogger extends AbstractLogger {
 
   private final Logger logger;
