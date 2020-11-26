@@ -4,14 +4,11 @@
  */
 package pcap.spi.exception;
 
-import pcap.spi.annotation.Incubating;
-
 /**
  * Memory leak detected.
  *
  * @since 1.0.0
  */
-@Incubating
 public class MemoryLeakException extends RuntimeException {
 
   public MemoryLeakException(String message) {

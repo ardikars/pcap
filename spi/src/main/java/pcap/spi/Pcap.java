@@ -4,7 +4,6 @@
  */
 package pcap.spi;
 
-import pcap.spi.annotation.Incubating;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.BreakException;
@@ -108,7 +107,6 @@ public interface Pcap extends AutoCloseable {
    * @throws BreakException {@link Pcap#breakLoop()} is called.
    * @throws ErrorException Generic error.
    */
-  @Incubating
   <T> void dispatch(int count, PacketHandler<T> handler, T args)
       throws BreakException, ErrorException, TimeoutException;
 
