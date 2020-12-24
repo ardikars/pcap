@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2020 Pcap Project
+SPDX-License-Identifier: MIT OR Apache-2.0
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <artifactId>pcap</artifactId>
+        <groupId>com.ardikars.pcap</groupId>
+        <version>1.0.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>pcap-codec</artifactId>
+
+    <name>Pcap Codec</name>
+    <description>Packet Codec</description>
+    <url>https://pcap.ardikars.com</url>
+
+    <properties>
+        <jdk.version>${java.jdk7.version}</jdk.version>
+        <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>pcap-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>pcap-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>pcap-jdk7</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>legacy-support</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>codes.rafael.modulemaker</groupId>
+                        <artifactId>modulemaker-maven-plugin</artifactId>
+                        <configuration>
+                            <name>pcap.codec</name>
+                            <multirelease>false</multirelease>
+                            <packages>
+                                pcap.codec.ethernet,
+                                pcap.codec.ip,
+                                pcap.codec.tcp,
+                                pcap.codec.udp,
+                                pcap.codec
+                            </packages>
+                            <requires>
+                                pcap.spi,
+                                pcap.common
+                            </requires>
+                            <opens>
+                                pcap.codec.ethernet,
+                                pcap.codec.ip,
+                                pcap.codec.tcp,
+                                pcap.codec.udp
+                            </opens>
+                            <exports>
+                                pcap.codec.ethernet,
+                                pcap.codec.ip,
+                                pcap.codec.tcp,
+                                pcap.codec.udp,
+                                pcap.codec
+                            </exports>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

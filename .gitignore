@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: 2020 Pcap Project
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+*.iml
+.idea
+*.jar
+*.class
+*.log
+*.trc
+*.dmp
+
+.gnupg/*.gpg-agent*
+.gnupg/private-keys*
+.gnupg/.gpg*
+.gnupg/secring.gpg
+
+.mvn/*settings.xml
+
+api/target
+codec/target
+common/target
+tests/target
+spring-boot-starter/target
+spring-boot-starter-example/target
+spi/target
+docs/target
+target

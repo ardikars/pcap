@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2020 Pcap Project
+SPDX-License-Identifier: MIT OR Apache-2.0
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <artifactId>pcap</artifactId>
+        <groupId>com.ardikars.pcap</groupId>
+        <version>1.0.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>pcap-spi</artifactId>
+
+    <name>Pcap SPI</name>
+    <description>Pcap API specification</description>
+    <url>https://pcap.ardikars.com</url>
+
+    <properties>
+        <jdk.version>${java.jdk7.version}</jdk.version>
+        <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>legacy-support</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>codes.rafael.modulemaker</groupId>
+                        <artifactId>modulemaker-maven-plugin</artifactId>
+                        <configuration>
+                            <name>pcap.spi</name>
+                            <multirelease>false</multirelease>
+                            <packages>
+                                pcap.spi,
+                                pcap.spi.option,
+                                pcap.spi.annotation,
+                                pcap.spi.exception,
+                                pcap.spi.exception.warn,
+                                pcap.spi.exception.error
+                            </packages>
+                            <exports>
+                                pcap.spi,
+                                pcap.spi.option,
+                                pcap.spi.annotation,
+                                pcap.spi.exception,
+                                pcap.spi.exception.warn,
+                                pcap.spi.exception.error
+                            </exports>
+                            <uses>
+                                pcap.spi.Service
+                            </uses>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

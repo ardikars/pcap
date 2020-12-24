@@ -1,0 +1,59 @@
+# Copyright (c) 2020 Pcap Project
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+name: Release
+
+on:
+  push:
+    branches:
+      - production
+  pull_request:
+    branches:
+      - production
+
+jobs:
+  deployment:
+    name: Deployment
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-16.04]
+        java: [7]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: REUSE Compliance Check
+        uses: fsfe/reuse-action@v1
+        if: matrix.os == 'ubuntu-16.04'
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+          architecture: x64
+
+      - name: Setting up deployment
+        run: |
+          echo "${{ secrets.mvn_settings_base64 }}" | base64 --decode > .mvn/release-settings.xml
+          gpg --keyserver keyserver.ubuntu.com --recv 3941ec75119f398a
+          echo "${{ secrets.gpg_secring_base64 }}" | base64 --decode > ~/.gnupg/secring.gpg
+
+
+      - name: Deploy modules
+        run: |
+          export JAVA_HOME_JDK7=${JAVA_HOME}
+          ./.github/scripts/install-jdk.sh -f 11 -t .mvn/toolchains
+          export JAVA_HOME=$(pwd)/.mvn/toolchains
+          echo "JAVA_HOME = $JAVA_HOME"
+          echo "JAVA_HOME_JDK7 = $JAVA_HOME_JDK7"
+          ./mvnw -B -t .mvn/toolchains.xml -s .mvn/release-settings.xml deploy -Plegacy-support -Prelease

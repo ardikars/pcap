@@ -1,0 +1,26 @@
+<!--
+Copyright (c) 2020 Pcap Project
+SPDX-License-Identifier: MIT OR Apache-2.0
+-->
+<toolchains>
+    <toolchain>
+        <type>jdk</type>
+        <provides>
+            <id>Java11</id>
+            <version>11</version>
+        </provides>
+        <configuration>
+            <jdkHome>${env.JAVA_HOME}</jdkHome>
+        </configuration>
+    </toolchain>
+    <toolchain>
+        <type>jdk</type>
+        <provides>
+            <id>Java7</id>
+            <version>1.7</version>
+        </provides>
+        <configuration>
+            <jdkHome>${env.JAVA_HOME_JDK7}</jdkHome>
+        </configuration>
+    </toolchain>
+</toolchains>
