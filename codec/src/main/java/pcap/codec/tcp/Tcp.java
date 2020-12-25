@@ -67,7 +67,7 @@ public final class Tcp extends AbstractPacket {
     this.checksum = windowSize + 2;
     this.urgentPointer = checksum + 2;
     this.options = urgentPointer + 2;
-    this.maxDataOffset = dataOffset;
+    this.maxDataOffset = dataOffset();
   }
 
   /**
