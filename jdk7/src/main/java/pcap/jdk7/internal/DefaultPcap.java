@@ -93,7 +93,7 @@ class DefaultPcap implements Pcap {
     int rc;
     NativeMappings.bpf_program fp = new NativeMappings.bpf_program();
 
-    if (Utils.MAJOR > 1 || (Utils.MAJOR == 1 && Utils.MINOR >= 8)) {
+    if (Utils.isSupported(1, 8, 0)) {
       // in libpcap 1.8.0 and later is newly thread-safe.
       rc = NativeMappings.pcap_compile(pointer, fp, filter, optimize ? 1 : 0, netmask);
     } else {

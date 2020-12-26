@@ -169,4 +169,13 @@ class Utils {
     }
     return true;
   }
+
+  static boolean isSupported(int major, int minor, int patch) {
+    if (Utils.MAJOR > major
+        || (Utils.MAJOR == major && Utils.MINOR > minor)
+        || (Utils.MAJOR == major && Utils.MINOR == minor && Utils.PATCH >= patch)) {
+      return true;
+    }
+    return false;
+  }
 }
