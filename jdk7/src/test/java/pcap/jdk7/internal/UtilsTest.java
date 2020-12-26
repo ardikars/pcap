@@ -72,6 +72,17 @@ public class UtilsTest {
     Assertions.assertFalse(Utils.isSupported(Utils.MAJOR, Utils.MINOR, Utils.PATCH + 1));
   }
 
+  @Test
+  public void warn() {
+    Utils.warn("");
+  }
+
+  @Test
+  public void doLog() {
+    Utils.doLog(false, "");
+    Utils.doLog(true, "");
+  }
+
   @Version(major = Integer.MAX_VALUE, minor = 0, patch = 0)
   public void testAnnotation() {}
 }

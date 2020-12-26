@@ -161,7 +161,7 @@ public class DefaultServiceTest extends BaseTest {
             new DefaultOfflineOptions().timestampPrecision(Timestamp.Precision.MICRO))) {
       Assertions.assertNotNull(offline);
     } catch (ErrorException e) {
-      System.err.println(e.getMessage()); // pcap 1.2.1
+      Utils.warn(e.getMessage()); // pcap 1.2.1
     }
     try (Pcap offline =
         service.offline(
@@ -169,14 +169,14 @@ public class DefaultServiceTest extends BaseTest {
             new DefaultOfflineOptions().timestampPrecision(Timestamp.Precision.NANO))) {
       Assertions.assertNotNull(offline);
     } catch (ErrorException e) {
-      System.err.println(e.getMessage()); // pcap 1.2.1
+      Utils.warn(e.getMessage()); // pcap 1.2.1
     }
     try (Pcap offline =
         service.offline(
             SAMPLE_NANOSECOND_PCAP, new DefaultOfflineOptions().timestampPrecision(null))) {
       Assertions.assertNotNull(offline);
     } catch (ErrorException e) {
-      System.err.println(e.getMessage()); // pcap 1.2.1
+      Utils.warn(e.getMessage()); // pcap 1.2.1
     }
   }
 

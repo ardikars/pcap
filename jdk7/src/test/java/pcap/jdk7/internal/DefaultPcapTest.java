@@ -81,7 +81,7 @@ public class DefaultPcapTest extends BaseTest {
             });
       }
     } catch (ErrorException e) {
-      System.err.println(e.getMessage());
+      Utils.warn(e.getMessage());
     }
   }
 
@@ -140,7 +140,7 @@ public class DefaultPcapTest extends BaseTest {
             }
           });
     } catch (ErrorException e) {
-      System.err.println(e.getMessage());
+      Utils.warn(e.getMessage());
     }
   }
 
@@ -1202,5 +1202,44 @@ public class DefaultPcapTest extends BaseTest {
   public void timestampPrecision() {
     Assertions.assertEquals(Timestamp.Precision.MICRO, DefaultPcap.timestampPrecision(0));
     Assertions.assertEquals(Timestamp.Precision.NANO, DefaultPcap.timestampPrecision(1));
+  }
+
+  @Test
+  public void checkBuffer()
+      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException {
+    Interface lo = loopbackInterface(service);
+    try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
+      final PacketBuffer buffer = live.allocate(PacketBuffer.class).capacity(8);
+      final DefaultPcap pcap = (DefaultPcap) live;
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              pcap.checkBuffer(null);
+            }
+          });
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              buffer.setIndex(buffer.capacity(), buffer.capacity());
+              pcap.checkBuffer(buffer);
+            }
+          });
+      Assertions.assertTrue(buffer.release());
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              pcap.checkBuffer(new DefaultPacketBuffer(null, null, -1, 8, 8));
+            }
+          });
+    }
   }
 }

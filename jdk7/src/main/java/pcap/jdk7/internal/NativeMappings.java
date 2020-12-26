@@ -34,16 +34,33 @@ class NativeMappings {
 
     // for interface mapping
     final Map<String, String> funcMap = new HashMap<String, String>();
+    // since 1.7.2 and not available on Windows, only for Unix like system.
     funcMap.put("pcap_dump_open_append", "pcap_dump_open_append");
+    // since 1.5.1 and not available on Windows, only for Unix like system.
     funcMap.put("pcap_get_tstamp_precision", "pcap_get_tstamp_precision");
+    // since 1.2.1 and not available on Windows, only for Unix like system.
     funcMap.put("pcap_set_tstamp_type", "pcap_set_tstamp_type");
+    // not available on Windows, only for Unix like system.
     funcMap.put("pcap_set_rfmon", "pcap_set_rfmon");
+    // since 1.5.1 and not available on Windows, only for Unix like system.
     funcMap.put(
         "pcap_open_offline_with_tstamp_precision", "pcap_open_offline_with_tstamp_precision");
+    // since 1.5.1 and not available on Windows, only for Unix like system.
     funcMap.put("pcap_set_tstamp_precision", "pcap_set_tstamp_precision");
+    // since 1.5.0 and not available on Windows, only for Unix like system.
+    // On Windows, immediate mode must be turned on by calling pcap_setmintocopy() with a size of 0.
     funcMap.put("pcap_set_immediate_mode", "pcap_set_immediate_mode");
+    // Only for Windows, not available on Unix like system.
+    // On Unix like system, please use pcap_set_immediate_mode instead.
+    funcMap.put("pcap_setmintocopy", "pcap_setmintocopy");
+    // Only for Unix like system, not available on Windows.
     funcMap.put("pcap_get_selectable_fd", "pcap_get_selectable_fd");
+    // since 1.9.1 and not available on Windows, only for Unix like system.
+    funcMap.put("pcap_get_required_select_timeout", "pcap_get_required_select_timeout");
+    // Only for Windows, not available on Unix like system.
     funcMap.put("pcap_getevent", "pcap_getevent");
+    // Only for Unix like system, not available on Windows.
+    funcMap.put("pcap_statustostr", "pcap_statustostr");
 
     NATIVE_LOAD_LIBRARY_OPTIONS.put(
         Library.OPTION_FUNCTION_MAPPER,
@@ -208,7 +225,11 @@ class NativeMappings {
 
     int pcap_set_immediate_mode(Pointer p, int immediate_mode);
 
+    int pcap_setmintocopy(Pointer p, int size);
+
     int pcap_get_selectable_fd(Pointer p);
+
+    Pointer pcap_get_required_select_timeout(Pointer p);
 
     long pcap_getevent(Pointer p);
   }
@@ -224,7 +245,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_can_set_rfmon(p);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        System.err.println("pcap_can_set_frmon: Function doesn't exist.");
+        Utils.warn("pcap_can_set_frmon: Function doesn't exist.");
         return 0;
       }
     }
@@ -243,7 +264,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_dump_open_append(p, fname);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        System.err.println("pcap_dump_open_append: Function doesn't exist.");
+        Utils.warn("pcap_dump_open_append: Function doesn't exist.");
         return null;
       }
     }
@@ -253,7 +274,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_set_tstamp_type(p, tstampType);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        System.err.println("pcap_set_tstamp_type: Function doesn't exist.");
+        Utils.warn("pcap_set_tstamp_type: Function doesn't exist.");
         return 0;
       }
     }
@@ -263,7 +284,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_get_tstamp_precision(p);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        System.err.println("pcap_get_tstamp_precision: Function doesn't exist.");
+        Utils.warn("pcap_get_tstamp_precision: Function doesn't exist.");
         return Timestamp.Precision.MICRO.value();
       }
     }
@@ -273,7 +294,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_set_rfmon(p, rfmon);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        System.err.println("pcap_set_rfmon: Function doesn't exist.");
+        Utils.warn("pcap_set_rfmon: Function doesn't exist.");
         return 0;
       }
     }
@@ -284,7 +305,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_open_offline_with_tstamp_precision(fname, precision, errbuf);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        System.err.println("pcap_open_offline_with_tstamp_precision: Function doesn't exist.");
+        Utils.warn("pcap_open_offline_with_tstamp_precision: Function doesn't exist.");
         return null;
       }
     }
@@ -294,7 +315,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_set_tstamp_precision(p, tstamp_precision);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        System.err.println("pcap_set_tstamp_precision: Function doesn't exist.");
+        Utils.warn("pcap_set_tstamp_precision: Function doesn't exist.");
         return 0;
       }
     }
@@ -304,7 +325,23 @@ class NativeMappings {
       try {
         return NATIVE.pcap_set_immediate_mode(p, immediate_mode);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        System.err.println("pcap_set_immediate_mode: Function doesn't exist.");
+        String message = "pcap_set_immediate_mode: Function doesn't exist.";
+        if (immediate_mode == 1 && Platform.isWindows()) {
+          Utils.warn(message + " Try calling pcap_setmintocopy.");
+          return pcap_setmintocopy(p, 0);
+        } else {
+          Utils.warn(message);
+          return 0;
+        }
+      }
+    }
+
+    @Override
+    public int pcap_setmintocopy(Pointer p, int size) {
+      try {
+        return NATIVE.pcap_setmintocopy(p, size);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        Utils.warn("pcap_setmintocopy: Function doesn't exist.");
         return 0;
       }
     }
@@ -314,8 +351,18 @@ class NativeMappings {
       try {
         return NATIVE.pcap_get_selectable_fd(p);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        System.err.println("pcap_get_selectable_fd: Function doesn't exist.");
+        Utils.warn("pcap_get_selectable_fd: Function doesn't exist.");
         return -1;
+      }
+    }
+
+    @Override
+    public Pointer pcap_get_required_select_timeout(Pointer p) {
+      try {
+        return NATIVE.pcap_get_required_select_timeout(p);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        Utils.warn("pcap_get_required_select_timeout: Function doesn't exist.");
+        return null;
       }
     }
 
@@ -324,7 +371,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_getevent(p);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        System.err.println("pcap_getevent: Function doesn't exist.");
+        Utils.warn("pcap_getevent: Function doesn't exist.");
         return -1;
       }
     }
