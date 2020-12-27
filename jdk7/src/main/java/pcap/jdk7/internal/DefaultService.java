@@ -144,8 +144,7 @@ public class DefaultService implements Service {
         if (result < 0) {
           throw new ErrorException(NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
         } else {
-          System.err.println(
-              "pcap_can_set_rfmon: " + NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
+          Utils.warn(NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
         }
       }
     }
@@ -179,7 +178,7 @@ public class DefaultService implements Service {
       throw new InterfaceNotSupportTimestampTypeException(
           "Error occurred when set timestamp type.");
     } else if (result == 3) {
-      System.err.println(
+      Utils.warn(
           "pcap_set_tstamp_type: " + NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
     }
   }
@@ -226,11 +225,9 @@ public class DefaultService implements Service {
     if (result == 2) {
       throw new PromiscuousModeNotSupported(NativeMappings.pcap_geterr(pointer).getString(0));
     } else if (result == 3) {
-      System.err.println(
-          "pcap_activate: " + NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
+      Utils.warn("pcap_activate: " + NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
     } else if (result == 1) {
-      System.err.println(
-          "pcap_activate: " + NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
+      Utils.warn("pcap_activate: " + NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
     } else if (result == -4) {
       throw new ActivatedException("Error occurred when activate a handle.");
     } else if (result == -5) {

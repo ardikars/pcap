@@ -9,8 +9,14 @@ import pcap.spi.annotation.Version;
 import pcap.spi.exception.ErrorException;
 
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Logger;
 
 class Utils {
+
+  private static final Logger LOGGER = Logger.getLogger("PcapService");
+
+  private static final boolean VERBOSE =
+      Boolean.parseBoolean(System.getProperty("pcap.verbose", "true"));
 
   static final int MAJOR;
   static final int MINOR;
@@ -168,5 +174,21 @@ class Utils {
       }
     }
     return true;
+  }
+
+  static boolean isSupported(int major, int minor, int patch) {
+    return Utils.MAJOR > major
+        || (Utils.MAJOR == major && Utils.MINOR > minor)
+        || (Utils.MAJOR == major && Utils.MINOR == minor && Utils.PATCH >= patch);
+  }
+
+  static void warn(String message) {
+    doLog(VERBOSE, message);
+  }
+
+  static void doLog(boolean verbose, String message) {
+    if (verbose) {
+      LOGGER.warning(message);
+    }
   }
 }

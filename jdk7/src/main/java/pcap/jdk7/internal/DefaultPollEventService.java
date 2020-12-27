@@ -105,25 +105,13 @@ class DefaultPollEventService extends AbstractEventService implements Invocation
     }
     int timeout =
         normalizeTimeout(
-            async.timeout(), UnixMapping.pcap_get_required_select_timeout(pcap.pointer));
+            async.timeout(),
+            NativeMappings.PLATFORM_DEPENDENT.pcap_get_required_select_timeout(pcap.pointer));
     int rc;
     do {
       rc = poll(pfds, 1, timeout);
     } while (rc < 0 && EINTR == com.sun.jna.Native.getLastError());
     return invokeOnReady(normalizeREvents(rc, pfds), 0, 1, pcapMethod, args);
-  }
-
-  static final class UnixMapping {
-
-    static {
-      com.sun.jna.Native.register(
-          UnixMapping.class,
-          NativeLibrary.getInstance(NativeMappings.libName(Platform.isWindows())));
-    }
-
-    private UnixMapping() {}
-
-    static native Pointer pcap_get_required_select_timeout(Pointer p);
   }
 
   static final class PollReference extends PhantomReference<DefaultPollEventService> {

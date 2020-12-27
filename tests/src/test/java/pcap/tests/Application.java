@@ -16,7 +16,12 @@ import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Application {
+
+  private static final Logger LOGGER = Logger.getLogger(Application.class.getSimpleName());
 
   public static void main(String[] args)
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
@@ -26,12 +31,11 @@ public class Application {
     Service service = Service.Creator.create("PcapService");
     Interface devices = service.interfaces();
     for (Interface device : devices) {
-      System.out.println(
-          "[*] Device name   : " + device.name() + " (" + device.description() + ")");
+      LOGGER.fine("[*] Device name   : " + device.name() + " (" + device.description() + ")");
     }
-    System.out.println();
-    System.out.println("[v] Chosen device : " + devices.name());
-    try (Pcap live = service.live(devices, new DefaultLiveOptions().proxy(PcapProxy.class))) {
+    LOGGER.fine("");
+    LOGGER.fine("[v] Chosen device : " + devices.name());
+    try (Pcap live = service.live(devices, new DefaultLiveOptions())) {
       PacketBuffer packetBuffer = live.allocate(PacketBuffer.class);
       PacketHeader packetHeader = live.allocate(PacketHeader.class);
       for (int i = 0; i < 10; i++) {
@@ -61,22 +65,14 @@ public class Application {
             }
           }
         } catch (TimeoutException e) {
-          System.err.println(e);
+          LOGGER.log(Level.WARNING, e.getMessage());
         } catch (BreakException e) {
-          System.err.println(e);
+          LOGGER.log(Level.WARNING, e.getMessage());
         }
       }
-      System.out.println(live.stats());
+      LOGGER.fine(live.stats().toString());
     } catch (ErrorException e) {
-      System.err.println(e);
+      LOGGER.log(Level.WARNING, e.getMessage());
     }
-  }
-
-  interface PcapProxy extends Pcap {
-
-    @Async(timeout = 5000)
-    @Override
-    void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
-        throws BreakException, ErrorException, TimeoutException;
   }
 }

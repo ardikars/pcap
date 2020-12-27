@@ -39,7 +39,7 @@ public class NativeMappingsTest {
       byte[] address_in = NativeMappings.inetAddress(sockaddr_in).getAddress();
       Assertions.assertArrayEquals(new byte[] {127, 0, 0, 1}, address_in);
     } catch (NullPointerException e) {
-      System.err.println("AF_INET6: " + NativeMappings.AF_INET6);
+      Utils.warn("AF_INET6: " + NativeMappings.AF_INET6);
     }
 
     NativeMappings.sockaddr sockaddr_in6 = new NativeMappings.sockaddr();
@@ -50,7 +50,7 @@ public class NativeMappingsTest {
       Assertions.assertArrayEquals(
           new byte[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, address_in6);
     } catch (NullPointerException e) {
-      System.err.println("AF_INET6: " + NativeMappings.AF_INET6);
+      Utils.warn("AF_INET6: " + NativeMappings.AF_INET6);
     }
 
     NativeMappings.sockaddr sockaddr_err = new NativeMappings.sockaddr();

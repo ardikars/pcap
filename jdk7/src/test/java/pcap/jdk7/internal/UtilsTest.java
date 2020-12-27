@@ -4,6 +4,7 @@
  */
 package pcap.jdk7.internal;
 
+import jdk.jshell.execution.Util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -56,6 +57,30 @@ public class UtilsTest {
   @Test
   public void isValidVersion() {
     Assertions.assertTrue(true);
+  }
+
+  @Test
+  public void isSupported() {
+    Assertions.assertTrue(Utils.isSupported(Utils.MAJOR, Utils.MINOR, Utils.PATCH));
+
+    Assertions.assertTrue(Utils.isSupported(Utils.MAJOR - 1, 0, 0));
+    Assertions.assertTrue(Utils.isSupported(Utils.MAJOR, Utils.MINOR - 1, 0));
+    Assertions.assertTrue(Utils.isSupported(Utils.MAJOR, Utils.MINOR, Utils.PATCH - 1));
+
+    Assertions.assertFalse(Utils.isSupported(Utils.MAJOR + 1, 0, 0));
+    Assertions.assertFalse(Utils.isSupported(Utils.MAJOR, Utils.MINOR + 1, 0));
+    Assertions.assertFalse(Utils.isSupported(Utils.MAJOR, Utils.MINOR, Utils.PATCH + 1));
+  }
+
+  @Test
+  public void warn() {
+    Utils.warn("");
+  }
+
+  @Test
+  public void doLog() {
+    Utils.doLog(false, "");
+    Utils.doLog(true, "");
   }
 
   @Version(major = Integer.MAX_VALUE, minor = 0, patch = 0)
