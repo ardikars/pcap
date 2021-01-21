@@ -1,20 +1,21 @@
 /*
- * Copyright (c) 2020 Pcap Project
+ * Copyright (c) 2020-2021 Pcap Project
  * SPDX-License-Identifier: MIT OR Apache-2.0
  */
 package pcap.jdk7.internal;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.PointerByReference;
+import pcap.spi.Address;
+import pcap.spi.Interface;
+import pcap.spi.Timestamp;
+
 import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.nio.ByteOrder;
 import java.util.*;
-import pcap.spi.Address;
-import pcap.spi.Interface;
-import pcap.spi.Timestamp;
 
 class NativeMappings {
 
@@ -61,6 +62,8 @@ class NativeMappings {
     funcMap.put("pcap_getevent", "pcap_getevent");
     // Only for Unix like system, not available on Windows.
     funcMap.put("pcap_statustostr", "pcap_statustostr");
+    //
+    funcMap.put("pcap_inject", "pcap_inject");
 
     NATIVE_LOAD_LIBRARY_OPTIONS.put(
         Library.OPTION_FUNCTION_MAPPER,
@@ -137,8 +140,6 @@ class NativeMappings {
   static native int pcap_dispatch(Pointer p, int cnt, pcap_handler callback, Pointer user);
 
   static native int pcap_sendpacket(Pointer p, Pointer buf, int size);
-
-  static native int pcap_inject(Pointer p, Pointer buf, int size);
 
   static native int pcap_compile(Pointer p, bpf_program fp, String str, int optimize, int netmask);
 
@@ -232,6 +233,8 @@ class NativeMappings {
     Pointer pcap_get_required_select_timeout(Pointer p);
 
     long pcap_getevent(Pointer p);
+
+    int pcap_inject(Pointer p, Pointer buf, int size);
   }
 
   static final class DefaultPlatformDependent implements PlatformDependent {
@@ -374,6 +377,11 @@ class NativeMappings {
         Utils.warn("pcap_getevent: Function doesn't exist.");
         return -1;
       }
+    }
+
+    @Override
+    public int pcap_inject(Pointer p, Pointer buf, int size) {
+      return NATIVE.pcap_inject(p, buf, size);
     }
   }
 

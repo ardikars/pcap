@@ -1,23 +1,24 @@
 /*
- * Copyright (c) 2020 Pcap Project
+ * Copyright (c) 2020-2021 Pcap Project
  * SPDX-License-Identifier: MIT OR Apache-2.0
  */
 package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import java.lang.ref.PhantomReference;
-import java.lang.ref.Reference;
-import java.lang.ref.ReferenceQueue;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import pcap.spi.*;
 import pcap.spi.annotation.Version;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.BreakException;
 import pcap.spi.exception.error.NotActivatedException;
+
+import java.lang.ref.PhantomReference;
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 class DefaultPcap implements Pcap {
 
@@ -243,7 +244,7 @@ class DefaultPcap implements Pcap {
     checkBuffer(directBuffer);
     DefaultPacketBuffer buffer = (DefaultPacketBuffer) directBuffer;
     int rc =
-        NativeMappings.pcap_inject(
+        NativeMappings.PLATFORM_DEPENDENT.pcap_inject(
             pointer, buffer.buffer.share(buffer.readerIndex()), (int) directBuffer.readableBytes());
     injectCheck(rc);
     return rc;
