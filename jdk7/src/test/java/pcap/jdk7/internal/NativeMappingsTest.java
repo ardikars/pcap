@@ -5,10 +5,12 @@
 package pcap.jdk7.internal;
 
 import com.sun.jna.Platform;
+import com.sun.jna.Pointer;
 import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
@@ -146,5 +148,24 @@ public class NativeMappingsTest {
       System.setProperty("pcap.af.inet6", "0");
       Assertions.assertEquals(0, NativeMappings.defaultAfInet6());
     }
+  }
+
+  @Test
+  void handleTest() {
+    final Pointer p = new Pointer(1);
+    final NativeMappings.HANDLE handle1 = new NativeMappings.HANDLE();
+    final NativeMappings.HANDLE handle2 = new NativeMappings.HANDLE(p);
+    Assertions.assertFalse(handle1.equals(handle2));
+    Assertions.assertTrue(handle1.equals(handle1));
+    Assertions.assertThrows(
+        UnsupportedOperationException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            handle2.setPointer(p);
+          }
+        });
+    Assertions.assertNotNull(handle1.toString());
+    Assertions.assertNotNull(handle1.hashCode());
   }
 }

@@ -4,17 +4,14 @@
  */
 package pcap.jdk7.internal;
 
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 import java.net.Inet4Address;
-import pcap.spi.Address;
-import pcap.spi.Interface;
-import pcap.spi.Pcap;
-import pcap.spi.Service;
+import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 import pcap.spi.exception.warn.PromiscuousModeNotSupported;
-import pcap.spi.option.DefaultLiveOptions;
 
 public class DefaultService implements Service {
 
@@ -84,16 +81,16 @@ public class DefaultService implements Service {
     // end of platform dependent
 
     checkActivate(pointer, NativeMappings.pcap_activate(pointer));
+    return new DefaultPcap(pointer, netmask(source));
+  }
 
-    DefaultPcap pcap = new DefaultPcap(pointer, netmask(source));
-    if (options instanceof DefaultLiveOptions) {
-      DefaultLiveOptions opt = (DefaultLiveOptions) options;
-      Class<? extends Pcap> proxy = opt.proxy();
-      if (proxy != null) {
-        return EventService.Creator.create().open(pcap, proxy);
-      }
+  @Override
+  public Selector selector() {
+    if (Platform.isWindows()) {
+      return new DefaultWaitForMultipleObjectsSelector();
+    } else {
+      return new DefaultPollSelector();
     }
-    return pcap;
   }
 
   Pointer setOfflineWithTimestampPrecisionIfPossible(String source, OfflineOptions options) {

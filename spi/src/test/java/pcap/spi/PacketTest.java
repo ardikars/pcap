@@ -12,10 +12,10 @@ import org.junit.runner.RunWith;
 
 /** */
 @RunWith(JUnitPlatform.class)
-public class PacketTest {
+class PacketTest {
 
   @Test
-  public void newConstract() {
+  void newConstract() {
     BadBuffer badBuffer = new BadBuffer(14);
     BadPacket badPacket = new BadPacket(badBuffer);
     Assertions.assertNotNull(badPacket);

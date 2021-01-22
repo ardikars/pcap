@@ -6,16 +6,15 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.PointerByReference;
-import pcap.spi.Address;
-import pcap.spi.Interface;
-import pcap.spi.Timestamp;
-
 import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.nio.ByteOrder;
 import java.util.*;
+import pcap.spi.Address;
+import pcap.spi.Interface;
+import pcap.spi.Timestamp;
 
 class NativeMappings {
 
@@ -232,7 +231,7 @@ class NativeMappings {
 
     Pointer pcap_get_required_select_timeout(Pointer p);
 
-    long pcap_getevent(Pointer p);
+    NativeMappings.HANDLE pcap_getevent(Pointer p);
 
     int pcap_inject(Pointer p, Pointer buf, int size);
   }
@@ -370,12 +369,12 @@ class NativeMappings {
     }
 
     @Override
-    public long pcap_getevent(Pointer p) {
+    public NativeMappings.HANDLE pcap_getevent(Pointer p) {
       try {
         return NATIVE.pcap_getevent(p);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
         Utils.warn("pcap_getevent: Function doesn't exist.");
-        return -1;
+        return HANDLE.INVALID_HANDLE_VALUE;
       }
     }
 
@@ -597,5 +596,54 @@ class NativeMappings {
     }
 
     public static final class ByReference extends pcap_addr implements Structure.ByReference {}
+  }
+
+  public static class HANDLE extends PointerType {
+
+    static HANDLE INVALID_HANDLE_VALUE =
+        new HANDLE(Pointer.createConstant(Native.POINTER_SIZE == 8 ? -1 : 0xFFFFFFFFL));
+
+    private boolean immutable;
+
+    public HANDLE() {}
+
+    public HANDLE(Pointer p) {
+      setPointer(p);
+      immutable = true;
+    }
+
+    /** Override to the appropriate object for INVALID_HANDLE_VALUE. */
+    @Override
+    public Object fromNative(Object nativeValue, FromNativeContext context) {
+      Object o = super.fromNative(nativeValue, context);
+      if (HANDLE.INVALID_HANDLE_VALUE.equals(o)) {
+        return HANDLE.INVALID_HANDLE_VALUE;
+      }
+      return o;
+    }
+
+    @Override
+    public void setPointer(Pointer p) {
+      if (immutable) {
+        throw new UnsupportedOperationException("immutable reference");
+      }
+      super.setPointer(p);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      HANDLE handle = (HANDLE) o;
+      return Pointer.nativeValue(getPointer()) == Pointer.nativeValue(handle.getPointer());
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(Pointer.nativeValue(getPointer()));
+    }
+
+    @Override
+    public String toString() {
+      return String.valueOf(getPointer());
+    }
   }
 }

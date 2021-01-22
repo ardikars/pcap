@@ -329,6 +329,8 @@ public final class Arrays {
    *
    * <p>Use java.util.Array.toString(..) instead.
    *
+   * <p>This method will removed on 1.2.x
+   *
    * @param objs objs.
    * @return returns {@link String}.
    * @since 1.0.0

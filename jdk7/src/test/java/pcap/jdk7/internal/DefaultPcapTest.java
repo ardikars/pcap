@@ -461,6 +461,7 @@ public class DefaultPcapTest extends BaseTest {
         Assertions.assertTrue(dropped >= 0);
         Assertions.assertTrue(droppedByInterface >= 0);
         Assertions.assertTrue(received >= 0);
+        Assertions.assertNotNull(statistics.toString());
       } catch (BreakException | ErrorException | TimeoutException e) {
       }
     }

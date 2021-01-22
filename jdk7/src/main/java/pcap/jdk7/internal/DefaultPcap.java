@@ -6,19 +6,18 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import pcap.spi.*;
-import pcap.spi.annotation.Version;
-import pcap.spi.exception.ErrorException;
-import pcap.spi.exception.TimeoutException;
-import pcap.spi.exception.error.BreakException;
-import pcap.spi.exception.error.NotActivatedException;
-
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import pcap.spi.*;
+import pcap.spi.annotation.Version;
+import pcap.spi.exception.ErrorException;
+import pcap.spi.exception.TimeoutException;
+import pcap.spi.exception.error.BreakException;
+import pcap.spi.exception.error.NotActivatedException;
 
 class DefaultPcap implements Pcap {
 
@@ -33,6 +32,8 @@ class DefaultPcap implements Pcap {
   final int netmask;
   final DefaultStatistics statistics;
   final PcapReference reference;
+
+  AbstractSelector<?> selector;
 
   DefaultPcap(Pointer pointer, int netmask) {
     this.pointer = pointer;
@@ -313,6 +314,9 @@ class DefaultPcap implements Pcap {
 
   @Override
   public void close() {
+    if (selector != null) {
+      selector.cancel(this);
+    }
     NativeMappings.pcap_close(pointer);
     com.sun.jna.Native.free(com.sun.jna.Pointer.nativeValue(statistics.pointer));
     reference.pcap = 0L;

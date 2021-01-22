@@ -6,10 +6,10 @@ name: Build and Test
 on:
   push:
     branches:
-      - 1.0
+      - 1.1
   pull_request:
     branches:
-      - 1.0
+      - 1.1
 
 jobs:
   build-and-test:

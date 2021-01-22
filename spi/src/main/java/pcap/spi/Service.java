@@ -79,6 +79,14 @@ public interface Service {
           TimestampPrecisionNotSupportedException;
 
   /**
+   * Opens a new {@link Selector}.
+   *
+   * @return returns new {@link Selector}.
+   * @since 1.1.0
+   */
+  Selector selector();
+
+  /**
    * Options for opening {@code savefile} by {@link Service#offline(String, OfflineOptions)}.
    *
    * @since 1.0.0

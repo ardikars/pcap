@@ -22,6 +22,7 @@ public class DefaultPacketHeaderTest {
     Assertions.assertEquals(0, packetHeader.timestamp().microSecond());
     Assertions.assertEquals(0, packetHeader.captureLength());
     Assertions.assertEquals(0, packetHeader.length());
+    Assertions.assertNotNull(packetHeader.toString());
 
     Pointer pointer = new Pointer(Native.malloc(DefaultPacketHeader.SIZEOF));
     pointer.setNativeLong(DefaultTimestamp.TV_SEC_OFFSET, new NativeLong(1L));

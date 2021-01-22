@@ -4,20 +4,19 @@
  */
 package pcap.tests;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import pcap.codec.ethernet.Ethernet;
 import pcap.codec.ip.Ip4;
 import pcap.codec.ip.Ip6;
 import pcap.codec.tcp.Tcp;
 import pcap.codec.udp.Udp;
 import pcap.spi.*;
-import pcap.spi.annotation.Async;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import pcap.spi.util.DefaultTimeout;
 
 public class Application {
 
@@ -33,14 +32,24 @@ public class Application {
     for (Interface device : devices) {
       LOGGER.fine("[*] Device name   : " + device.name() + " (" + device.description() + ")");
     }
+    Interface dev1 = devices;
+    Interface dev2 = devices.next().next();
     LOGGER.fine("");
-    LOGGER.fine("[v] Chosen device : " + devices.name());
-    try (Pcap live = service.live(devices, new DefaultLiveOptions())) {
-      PacketBuffer packetBuffer = live.allocate(PacketBuffer.class);
-      PacketHeader packetHeader = live.allocate(PacketHeader.class);
-      for (int i = 0; i < 10; i++) {
-        try {
-          live.nextEx(packetHeader, packetBuffer);
+    System.out.println("[v] Chosen device : " + dev1.name() + " : " + dev2.name());
+    Pcap live1 = service.live(dev1, new DefaultLiveOptions().immediate(false));
+    Pcap live2 = service.live(dev2, new DefaultLiveOptions().immediate(false));
+    PacketBuffer packetBuffer = live1.allocate(PacketBuffer.class);
+    PacketHeader packetHeader = live1.allocate(PacketHeader.class);
+    Timeout timeout = new DefaultTimeout(1000000L, Timeout.Precision.MICRO);
+    Selector selector = service.selector();
+    selector.register(live2);
+    selector.register(live1);
+    for (int i = 0; i < 10; i++) {
+      try {
+        Iterable<Selectable> select = selector.select(timeout);
+        for (Selectable selectable : select) {
+          Pcap pcap = (Pcap) selectable;
+          pcap.nextEx(packetHeader, packetBuffer);
           Ethernet ethernet = packetBuffer.cast(Ethernet.class);
           System.out.println(ethernet);
           if (ethernet.type() == Ip4.TYPE) {
@@ -64,15 +73,12 @@ public class Application {
               System.out.println(udp);
             }
           }
-        } catch (TimeoutException e) {
-          LOGGER.log(Level.WARNING, e.getMessage());
-        } catch (BreakException e) {
-          LOGGER.log(Level.WARNING, e.getMessage());
         }
+      } catch (TimeoutException e) {
+        LOGGER.log(Level.WARNING, e.getMessage());
+      } catch (BreakException e) {
+        LOGGER.log(Level.WARNING, e.getMessage());
       }
-      LOGGER.fine(live.stats().toString());
-    } catch (ErrorException e) {
-      LOGGER.log(Level.WARNING, e.getMessage());
     }
   }
 }

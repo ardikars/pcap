@@ -4,7 +4,6 @@
  */
 package pcap.jdk7.internal;
 
-import jdk.jshell.execution.Util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;

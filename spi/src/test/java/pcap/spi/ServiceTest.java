@@ -99,5 +99,10 @@ public class ServiceTest {
             TimestampPrecisionNotSupportedException {
       throw new ErrorException("No API implementation.");
     }
+
+    @Override
+    public Selector selector() {
+      throw new RuntimeException("No API implementation.");
+    }
   }
 }

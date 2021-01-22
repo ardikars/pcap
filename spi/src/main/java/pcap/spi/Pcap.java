@@ -14,7 +14,7 @@ import pcap.spi.exception.error.NotActivatedException;
  *
  * @since 1.0.0
  */
-public interface Pcap extends AutoCloseable {
+public interface Pcap extends Selectable {
 
   /**
    * Open {@link Dumper} handler for writing the packets to {@code savefile} (Create/Override
@@ -305,26 +305,5 @@ public interface Pcap extends AutoCloseable {
      * @since 1.0.0
      */
     PCAP_D_OUT;
-
-    private static final Direction[] VALUES = values();
-
-    /**
-     * This function will removed on 1.1.x and above.
-     *
-     * <p>Get pcap direction from string.
-     *
-     * @param value string value.
-     * @return returns {@link Direction}.
-     * @since 1.0.0
-     */
-    @Deprecated
-    public static Direction fromString(String value) {
-      for (int i = 0; i < VALUES.length; i++) {
-        if (VALUES[i].name().equals(value)) {
-          return VALUES[i];
-        }
-      }
-      return PCAP_D_INOUT;
-    }
   }
 }

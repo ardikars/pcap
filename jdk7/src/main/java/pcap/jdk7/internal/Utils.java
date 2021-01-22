@@ -4,12 +4,11 @@
  */
 package pcap.jdk7.internal;
 
+import java.nio.charset.StandardCharsets;
+import java.util.logging.Logger;
 import pcap.spi.PacketBuffer;
 import pcap.spi.annotation.Version;
 import pcap.spi.exception.ErrorException;
-
-import java.nio.charset.StandardCharsets;
-import java.util.logging.Logger;
 
 class Utils {
 
