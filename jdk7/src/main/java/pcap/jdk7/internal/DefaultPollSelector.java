@@ -66,7 +66,7 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
   }
 
   Iterable<Selectable> toIterable(int rc, int timeout) throws TimeoutException {
-    if (rc < 0 || rc >= registered.size()) {
+    if (rc < 0 || rc > registered.size()) {
       return Collections.EMPTY_LIST;
     }
     if (rc == 0) {
