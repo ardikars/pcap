@@ -19,3 +19,9 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 * Only synchronize pcap_compile for before libpcap version 1.8.0
 * Backward compatibility for immediate mode on Windows
 * Backward compatibility for non blocking I/O 
+
+
+## Version 1.0.3
+
+* Fix pcap_inject on Windows
+* Update spdx header copyright
