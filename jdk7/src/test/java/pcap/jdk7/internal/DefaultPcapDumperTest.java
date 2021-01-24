@@ -56,15 +56,21 @@ public class DefaultPcapDumperTest extends BaseTest {
                 Assertions.assertTrue(header.captureLength() > 0);
                 Assertions.assertTrue(header.length() > 0);
                 Assertions.assertTrue(buffer.capacity() > 0);
-                dumper.dump(header, buffer);
-
-                DefaultPacketHeader hdr = new DefaultPacketHeader(null);
-                DefaultPacketBuffer buf = new DefaultPacketBuffer(null, null, 1L, 0L, 0L);
-                dumper.dump(header, buf);
-                dumper.dump(hdr, buffer);
-                dumper.dump(hdr, buf);
-                dumper.flush();
                 Assertions.assertTrue(dumper.position() > 0);
+                dumper.dump(header, buffer);
+                dumper.flush();
+
+                final DefaultPacketBuffer packetBuffer = (DefaultPacketBuffer) buffer;
+                Assertions.assertThrows(
+                    IllegalArgumentException.class,
+                    new Executable() {
+                      @Override
+                      public void execute() throws Throwable {
+                        packetBuffer.readerIndex(packetBuffer.readerIndex() + 1);
+                        dumper.dump(header, buffer);
+                      }
+                    });
+                packetBuffer.readerIndex(packetBuffer.readerIndex() - 1);
 
                 Assertions.assertThrows(
                     IllegalArgumentException.class,

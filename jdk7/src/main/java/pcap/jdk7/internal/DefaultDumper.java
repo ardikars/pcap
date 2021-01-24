@@ -5,6 +5,7 @@
 package pcap.jdk7.internal;
 
 import com.sun.jna.Pointer;
+import java.util.Objects;
 import pcap.spi.Dumper;
 import pcap.spi.PacketBuffer;
 import pcap.spi.PacketHeader;
@@ -31,11 +32,18 @@ class DefaultDumper implements Dumper {
               "buffer.capacity: %d (expected: buffer.capacity(%d) > 0)",
               buffer.capacity(), buffer.capacity()));
     }
+    if (buffer.readableBytes() < header.length()) {
+      throw new IllegalArgumentException(
+          String.format(
+              "buffer.readableBytes(): %d (expected: buffer.readableBytes(%d) >= header.length(%d))",
+              buffer.readableBytes(), buffer.readableBytes(), header.length()));
+    }
     DefaultPacketHeader packetHeader = (DefaultPacketHeader) header;
     DefaultPacketBuffer packetBuffer = (DefaultPacketBuffer) buffer;
-    if (packetHeader.pointer != null && packetBuffer.buffer != null) {
-      NativeMappings.pcap_dump(pointer, packetHeader.pointer, packetBuffer.buffer);
-    }
+    Objects.requireNonNull(packetHeader.pointer);
+    Objects.requireNonNull(packetBuffer.buffer);
+    NativeMappings.pcap_dump(
+        pointer, packetHeader.pointer, packetBuffer.buffer.share(packetBuffer.writerIndex()));
   }
 
   @Override
