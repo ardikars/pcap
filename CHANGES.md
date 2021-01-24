@@ -25,3 +25,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 
 * Fix pcap_inject on Windows
 * Update spdx header copyright
+
+## Version 1.0.4
+
+* Validate packet header and buffer size on pcap_dump
