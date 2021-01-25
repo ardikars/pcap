@@ -6,15 +6,16 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.PointerByReference;
+import pcap.spi.Address;
+import pcap.spi.Interface;
+import pcap.spi.Timestamp;
+
 import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.nio.ByteOrder;
 import java.util.*;
-import pcap.spi.Address;
-import pcap.spi.Interface;
-import pcap.spi.Timestamp;
 
 class NativeMappings {
 
@@ -632,6 +633,12 @@ class NativeMappings {
 
     @Override
     public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       HANDLE handle = (HANDLE) o;
       return Pointer.nativeValue(getPointer()) == Pointer.nativeValue(handle.getPointer());
     }
