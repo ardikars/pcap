@@ -62,8 +62,6 @@ class DefaultPollSelectorTest extends AbstractSelectorTest {
     Iterator<Selectable> iterator2 = selected2.iterator();
     Assertions.assertFalse(iterator2.hasNext());
 
-    Assertions.assertFalse(pollSelector.toIterable(0, 0).iterator().hasNext());
-
     Assertions.assertThrows(
         TimeoutException.class,
         new Executable() {
