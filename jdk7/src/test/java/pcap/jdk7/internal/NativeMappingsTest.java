@@ -6,7 +6,6 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
-import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,8 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+
+import java.util.Arrays;
 
 @RunWith(JUnitPlatform.class)
 public class NativeMappingsTest {
@@ -166,6 +167,6 @@ public class NativeMappingsTest {
           }
         });
     Assertions.assertNotNull(handle1.toString());
-    Assertions.assertNotNull(handle1.hashCode());
+    Assertions.assertTrue(handle1.hashCode() > 0 || handle1.hashCode() <= 0);
   }
 }
