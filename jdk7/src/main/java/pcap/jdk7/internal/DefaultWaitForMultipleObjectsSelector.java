@@ -24,7 +24,7 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
 
   @Override
   public Iterable<Selectable> select(Timeout timeout) throws TimeoutException {
-    if (registered.isEmpty()) {
+    if (registered.isEmpty() || timeout == null || timeout.microSecond() < 1000) {
       return Collections.EMPTY_LIST;
     }
     int ts = (int) timeout.microSecond() / 1000;
@@ -49,6 +49,13 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
 
   @Override
   public Selector register(Selectable pcap) {
+    if (!(pcap instanceof DefaultPcap)) {
+      return this;
+    }
+    DefaultPcap defaultPcap = (DefaultPcap) pcap;
+    if (defaultPcap.netmask == 0) { // offline is not supported
+      return this;
+    }
     if (!registered.isEmpty()) {
       // Ensure haven't registered yet.
       Iterator<DefaultPcap> iterator = registered.values().iterator();
@@ -59,12 +66,10 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
         }
       }
       // register new pcap
-      DefaultPcap defaultPcap = (DefaultPcap) pcap;
       NativeMappings.HANDLE[] newHandles = add(defaultPcap, handles.length + 1);
       System.arraycopy(handles, 0, newHandles, 0, handles.length);
       this.handles = newHandles;
     } else {
-      DefaultPcap defaultPcap = (DefaultPcap) pcap;
       this.handles = add(defaultPcap, 1);
     }
     return this;

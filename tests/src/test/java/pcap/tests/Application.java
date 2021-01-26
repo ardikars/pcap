@@ -15,7 +15,7 @@ import java.util.Iterator;
 
 public class Application {
 
-  public static void main(String[] _args)
+  public static void main(String[] pargs)
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,

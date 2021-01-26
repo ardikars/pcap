@@ -65,9 +65,7 @@ class DefaultPcap implements Pcap {
 
   @Override
   public DefaultDumper dumpOpen(String file) throws ErrorException {
-    if (Utils.blank(file)) {
-      throw new IllegalArgumentException("file: null (expected: file != null && notBlank(file))");
-    }
+    Utils.requireNonBlank(file, "file: null (expected: file != null && notBlank(file))");
     Pointer dumper = NativeMappings.pcap_dump_open(pointer, file);
     nullCheck(dumper);
     return new DefaultDumper(dumper);
@@ -76,9 +74,7 @@ class DefaultPcap implements Pcap {
   @Override
   @Version(major = 1, minor = 7, patch = 2)
   public DefaultDumper dumpOpenAppend(String file) throws ErrorException {
-    if (Utils.blank(file)) {
-      throw new IllegalArgumentException("file: null (expected: file != null && notBlank(file))");
-    }
+    Utils.requireNonBlank(file, "file: null (expected: file != null && notBlank(file))");
     Version version = Utils.getVersion(DefaultPcap.class, "dumpOpenAppend", String.class);
     Utils.validateVersion(version);
     Pointer dumper = NativeMappings.PLATFORM_DEPENDENT.pcap_dump_open_append(pointer, file);
@@ -88,10 +84,7 @@ class DefaultPcap implements Pcap {
 
   @Override
   public void setFilter(String filter, boolean optimize) throws ErrorException {
-    if (Utils.blank(filter)) {
-      throw new IllegalArgumentException(
-          "filter: null (expected: filter != null && notBlank(filter))");
-    }
+    Utils.requireNonBlank(filter, "filter: null (expected: filter != null && notBlank(filter))");
     int rc;
     NativeMappings.bpf_program fp = new NativeMappings.bpf_program();
 
@@ -114,9 +107,7 @@ class DefaultPcap implements Pcap {
   @Override
   public <T> void loop(int count, final PacketHandler<T> handler, final T args)
       throws BreakException, ErrorException {
-    if (handler == null) {
-      throw new IllegalArgumentException("handler: null (expected: handler != null)");
-    }
+    Utils.requireNonNull(handler, "handler: null (expected: handler != null)");
     int rc =
         NativeMappings.pcap_loop(
             pointer,
@@ -141,9 +132,7 @@ class DefaultPcap implements Pcap {
 
   @Override
   public PacketBuffer next(PacketHeader header) {
-    if (header == null) {
-      throw new IllegalArgumentException("header: null (expected: header != null)");
-    }
+    Utils.requireNonNull(header, "header: null (expected: header != null)");
     PacketBuffer buffer;
     final DefaultPacketHeader[] packetHeader = new DefaultPacketHeader[1];
     packetHeader[0] = (DefaultPacketHeader) header;
@@ -178,12 +167,8 @@ class DefaultPcap implements Pcap {
   @Override
   public void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
       throws BreakException, ErrorException, TimeoutException {
-    if (packetHeader == null) {
-      throw new IllegalArgumentException("header: null (expected: header != null)");
-    }
-    if (packetBuffer == null) {
-      throw new IllegalArgumentException("buffer: null (expected: buffer != null)");
-    }
+    Utils.requireNonNull(packetHeader, "header: null (expected: header != null)");
+    Utils.requireNonNull(packetBuffer, "buffer: null (expected: buffer != null)");
     DefaultPacketHeader header = (DefaultPacketHeader) packetHeader;
     DefaultPacketBuffer buffer = (DefaultPacketBuffer) packetBuffer;
     int rc = NativeMappings.pcap_next_ex(pointer, header.reference, buffer.reference);
@@ -193,9 +178,7 @@ class DefaultPcap implements Pcap {
   @Override
   public <T> void dispatch(int count, final PacketHandler<T> handler, final T args)
       throws BreakException, ErrorException, TimeoutException {
-    if (handler == null) {
-      throw new IllegalArgumentException("handler: null (expected: handler != null)");
-    }
+    Utils.requireNonNull(handler, "handler: null (expected: handler != null)");
     int rc =
         NativeMappings.pcap_dispatch(
             pointer,
@@ -253,9 +236,7 @@ class DefaultPcap implements Pcap {
 
   @Override
   public void setDirection(Direction direction) throws ErrorException {
-    if (direction == null) {
-      throw new IllegalArgumentException("direction: null (expected: direction != null)");
-    }
+    Utils.requireNonNull(direction, "direction: null (expected: direction != null)");
     int result;
     if (Direction.PCAP_D_IN == direction) {
       result = NativeMappings.pcap_setdirection(pointer, 1);
@@ -443,9 +424,7 @@ class DefaultPcap implements Pcap {
   }
 
   void checkBuffer(PacketBuffer directBuffer) {
-    if (directBuffer == null) {
-      throw new IllegalArgumentException("buffer: null (expected: buffer != null)");
-    }
+    Utils.requireNonNull(directBuffer, "buffer: null (expected: buffer != null)");
     if (directBuffer.readableBytes() <= 0) {
       throw new IllegalArgumentException(
           "cannot send empty buffer (buffer is not readable/readable bytes is 0)");
