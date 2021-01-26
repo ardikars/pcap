@@ -609,7 +609,7 @@ class NativeMappings {
     public HANDLE() {}
 
     public HANDLE(Pointer p) {
-      setPointer(p);
+      super(p);
       immutable = true;
     }
 
