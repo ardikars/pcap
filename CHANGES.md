@@ -29,3 +29,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 ## Version 1.0.4
 
 * Validate packet header and buffer size on pcap_dump
+
+## Version 1.0.5
+
+* Backward compatibility for pcap_setmintocopy(..) and update error message
