@@ -5,7 +5,6 @@
 package pcap.jdk7.internal;
 
 import com.sun.jna.Platform;
-import java.util.Iterator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -19,6 +18,9 @@ import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 @RunWith(JUnitPlatform.class)
 class DefaultPollSelectorTest extends AbstractSelectorTest {
@@ -40,14 +42,34 @@ class DefaultPollSelectorTest extends AbstractSelectorTest {
   void pollfdTest() {
     DefaultPollSelector.pollfd pollfd1 = new DefaultPollSelector.pollfd();
     DefaultPollSelector.pollfd pollfd2 = new DefaultPollSelector.pollfd();
-    Assertions.assertEquals(pollfd1, pollfd2);
+    Assertions.assertTrue(pollfd1.equals(pollfd1));
+    Assertions.assertTrue(pollfd1.equals(pollfd2));
+    Assertions.assertFalse(pollfd1.equals(new ArrayList<String>()));
     pollfd1.fd = 1;
-    Assertions.assertNotEquals(pollfd1, pollfd2);
+    Assertions.assertFalse(pollfd1.equals(pollfd2));
     Assertions.assertTrue(pollfd1.hashCode() > 0);
   }
 
   @Test
-  void notRegistered() throws ErrorException, TimeoutException {
+  void doWhile() throws ErrorException {
+    if (!isUnix()) {
+      Assertions.assertFalse(isUnix());
+      return;
+    }
+    final Service service = Service.Creator.create("PcapService");
+    final Selector selector = service.selector();
+    DefaultPollSelector pollSelector = (DefaultPollSelector) selector;
+    Assertions.assertFalse(pollSelector.doWhile(0, DefaultPollSelector.EINTR));
+    Assertions.assertFalse(pollSelector.doWhile(-1, DefaultPollSelector.EINTR + 1));
+    Assertions.assertTrue(pollSelector.doWhile(-1, DefaultPollSelector.EINTR));
+  }
+
+  @Test
+  void toIterable()
+      throws ErrorException, TimeoutException, PermissionDeniedException,
+          PromiscuousModePermissionDeniedException, TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException, NoSuchDeviceException, ActivatedException,
+          InterfaceNotUpException, InterfaceNotSupportTimestampTypeException {
     if (!isUnix()) {
       Assertions.assertFalse(isUnix());
       return;
@@ -61,6 +83,13 @@ class DefaultPollSelectorTest extends AbstractSelectorTest {
     Iterable<Selectable> selected2 = pollSelector.toIterable(10, 0);
     Iterator<Selectable> iterator2 = selected2.iterator();
     Assertions.assertFalse(iterator2.hasNext());
+    Pcap pcap = service.live(service.interfaces(), new DefaultLiveOptions());
+    pollSelector.register(pcap);
+    SelectableList<Selectable> selectables = new SelectableList<>();
+    pollSelector.addToList(pollSelector.pfds[0].fd, 0, selectables);
+    Assertions.assertNull(selectables.head);
+    pollSelector.addToList(pollSelector.pfds[0].fd, DefaultPollSelector.POLLIN, selectables);
+    Assertions.assertTrue(selectables.head != null);
 
     Assertions.assertThrows(
         TimeoutException.class,
@@ -73,6 +102,7 @@ class DefaultPollSelectorTest extends AbstractSelectorTest {
             }
           }
         });
+    pcap.close();
   }
 
   @Test
@@ -82,5 +112,14 @@ class DefaultPollSelectorTest extends AbstractSelectorTest {
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     doubleRegisterTest();
+  }
+
+  @Test
+  void badArgs()
+      throws TimeoutException, InterfaceNotSupportTimestampTypeException, InterfaceNotUpException,
+          RadioFrequencyModeNotSupportedException, ActivatedException, PermissionDeniedException,
+          NoSuchDeviceException, PromiscuousModePermissionDeniedException, ErrorException,
+          TimestampPrecisionNotSupportedException {
+    badArgsTest();
   }
 }

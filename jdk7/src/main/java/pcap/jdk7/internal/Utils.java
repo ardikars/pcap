@@ -12,14 +12,12 @@ import pcap.spi.exception.ErrorException;
 
 class Utils {
 
-  private static final Logger LOGGER = Logger.getLogger("PcapService");
-
-  private static final boolean VERBOSE =
-      Boolean.parseBoolean(System.getProperty("pcap.verbose", "true"));
-
   static final int MAJOR;
   static final int MINOR;
   static final int PATCH;
+  private static final Logger LOGGER = Logger.getLogger("PcapService");
+  private static final boolean VERBOSE =
+      Boolean.parseBoolean(System.getProperty("pcap.verbose", "true"));
 
   static {
     String version = NativeMappings.pcap_lib_version();
@@ -173,6 +171,18 @@ class Utils {
       }
     }
     return true;
+  }
+
+  static void requireNonBlank(CharSequence charSequence, String message) {
+    if (blank(charSequence)) {
+      throw new IllegalArgumentException(message);
+    }
+  }
+
+  static void requireNonNull(Object obj, String message) {
+    if (obj == null) {
+      throw new IllegalArgumentException(message);
+    }
   }
 
   static boolean isSupported(int major, int minor, int patch) {

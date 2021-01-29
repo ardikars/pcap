@@ -102,7 +102,7 @@ public class ServiceTest {
 
     @Override
     public Selector selector() {
-      throw new RuntimeException("No API implementation.");
+      throw new UnsupportedOperationException();
     }
   }
 }

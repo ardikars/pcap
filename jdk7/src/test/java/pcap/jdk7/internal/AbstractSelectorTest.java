@@ -4,14 +4,16 @@
  */
 package pcap.jdk7.internal;
 
-import java.util.Iterator;
 import org.junit.jupiter.api.Assertions;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
+import pcap.spi.option.DefaultOfflineOptions;
 import pcap.spi.util.DefaultTimeout;
+
+import java.util.Iterator;
 
 abstract class AbstractSelectorTest extends BaseTest {
 
@@ -33,6 +35,17 @@ abstract class AbstractSelectorTest extends BaseTest {
       Assertions.assertFalse(select.iterator().hasNext());
       selector.register(live1);
       selector.register(live2);
+      selector.register(
+          new Selectable() {
+            @Override
+            public void close() throws Exception {
+              //
+            }
+          }); // invalid
+      selector.register(
+          service.offline(
+              "src/test/resources/sample_microsecond.pcap",
+              new DefaultOfflineOptions())); // invalid
       Iterable<Selectable> selected = selector.select(timeout);
       Iterator<Selectable> iterator = selected.iterator();
       PacketHandler<String> handler =
@@ -64,5 +77,21 @@ abstract class AbstractSelectorTest extends BaseTest {
     selector.register(live);
     selector.register(live);
     live.close();
+  }
+
+  protected void badArgsTest()
+      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException, TimeoutException {
+    Service service = Service.Creator.create("PcapService");
+    Selector selector = service.selector();
+    Assertions.assertFalse(
+        selector.select(new DefaultTimeout(1000, Timeout.Precision.MICRO)).iterator().hasNext());
+    Pcap pcap = service.live(service.interfaces(), new DefaultLiveOptions());
+    selector.register(pcap);
+    Assertions.assertFalse(selector.select(null).iterator().hasNext());
+    Assertions.assertFalse(
+        selector.select(new DefaultTimeout(1, Timeout.Precision.MICRO)).iterator().hasNext());
   }
 }

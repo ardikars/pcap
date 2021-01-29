@@ -40,6 +40,7 @@ public class DefaultService implements Service {
 
   @Override
   public Pcap offline(String source, OfflineOptions options) throws ErrorException {
+    Utils.requireNonNull(source, "source: null (expected: source != null or !blank).");
     Pointer pointer;
 
     if (options.timestampPrecision() == null) {
@@ -58,6 +59,7 @@ public class DefaultService implements Service {
           RadioFrequencyModeNotSupportedException, ActivatedException, PermissionDeniedException,
           NoSuchDeviceException, PromiscuousModePermissionDeniedException, ErrorException,
           TimestampPrecisionNotSupportedException {
+    Utils.requireNonNull(source, "source: null (expected: source != null).");
     Pointer pointer = NativeMappings.pcap_create(source.name(), errbuf(true));
     nullCheck(pointer);
     checkSetSnaplen(NativeMappings.pcap_set_snaplen(pointer, options.snapshotLength()));

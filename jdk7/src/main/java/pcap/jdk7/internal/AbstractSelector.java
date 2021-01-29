@@ -4,9 +4,10 @@
  */
 package pcap.jdk7.internal;
 
+import pcap.spi.Selector;
+
 import java.util.HashMap;
 import java.util.Map;
-import pcap.spi.Selector;
 
 abstract class AbstractSelector<T> implements Selector {
 

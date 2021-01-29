@@ -50,7 +50,7 @@ class AbstractPacketTest {
       Udp udp = Udp.newInstance(8, ethernetBuffer);
 
       Assertions.assertFalse(udp.equals(ethernet));
-      Assertions.assertFalse(ethernet.equals(""));
+      Assertions.assertFalse(ethernet.equals(ETHERNET));
       Assertions.assertFalse(ethernet.equals(ethernet2));
       Assertions.assertTrue(ethernet.equals(ethernet));
       Assertions.assertTrue(ethernet.hashCode() >= 0 || ethernet.hashCode() < 0);

@@ -4,6 +4,7 @@
  */
 package pcap.tests;
 
+import java.util.Iterator;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
@@ -11,11 +12,9 @@ import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.util.DefaultTimeout;
 
-import java.util.Iterator;
-
 public class Application {
 
-  public static void main(String[] _args)
+  public static void main(String[] pargs)
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,

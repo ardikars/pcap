@@ -17,40 +17,50 @@ import java.util.*;
 
 class DefaultPollSelector extends AbstractSelector<Integer> {
 
-  private static final short POLLIN = 1;
+  static final int POLLIN = 1;
 
-  private static final int EINTR = 4;
+  static final int EINTR = 4;
 
   pollfd[] pfds = new pollfd[0];
 
   @Override
   public Iterable<Selectable> select(Timeout timeout) throws TimeoutException {
-    if (registered.isEmpty()) {
+    if (registered.isEmpty() || timeout == null || timeout.microSecond() < 1000) {
       return Collections.EMPTY_LIST;
     }
     int ts = (int) timeout.microSecond() / 1000;
     int rc;
     do {
       rc = LibC.INSTANCE.poll(pfds, registered.size(), ts);
-    } while (rc < 0 && EINTR == Native.getLastError());
+    } while (doWhile(rc, Native.getLastError()));
     return toIterable(rc, ts);
+  }
+
+  boolean doWhile(int rc, int lastError) {
+    return rc < 0 && EINTR == lastError;
   }
 
   @Override
   public Selector register(Selectable pcap) {
+    if (!(pcap instanceof DefaultPcap)) {
+      return this;
+    }
+    DefaultPcap defaultPcap = (DefaultPcap) pcap;
+    if (defaultPcap.netmask == 0) { // offline is not supported
+      return this;
+    }
     if (!registered.isEmpty()) {
       // Ensure haven't registered yet.
       for (int i = 0; i < registered.entrySet().size(); i++) {
         Iterator<DefaultPcap> iterator = registered.values().iterator();
         while (iterator.hasNext()) {
           DefaultPcap next = iterator.next();
-          if (next.equals(pcap)) {
+          if (next.equals(defaultPcap)) {
             return this;
           }
         }
       }
       // register new pcap
-      DefaultPcap defaultPcap = (DefaultPcap) pcap;
       pollfd[] newPfds = add(defaultPcap, pfds.length + 1);
       for (int i = 0; i < pfds.length; i++) {
         newPfds[i].fd = pfds[i].fd;
@@ -60,7 +70,6 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
       }
       this.pfds = newPfds;
     } else {
-      DefaultPcap defaultPcap = (DefaultPcap) pcap;
       this.pfds = add(defaultPcap, 1);
     }
     return this;
@@ -73,15 +82,18 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
     if (rc == 0) {
       throw new TimeoutException("Timeout: " + timeout + ".");
     }
-    final List<Selectable> selected = new ArrayList<Selectable>(rc);
+    final SelectableList<Selectable> selected = new SelectableList<Selectable>();
     for (int i = 0; i < registered.size(); i++) {
       pfds[i].read();
-      short rEvents = pfds[i].revents;
-      if ((rEvents & POLLIN) != 0) {
-        selected.add(registered.get(pfds[i].fd));
-      }
+      addToList(pfds[i].fd, pfds[i].revents, selected);
     }
     return selected;
+  }
+
+  void addToList(int fd, int rEvents, SelectableList<Selectable> selected) {
+    if ((rEvents & POLLIN) != 0) {
+      selected.add(registered.get(fd));
+    }
   }
 
   private pollfd[] add(DefaultPcap pcap, int size) {
