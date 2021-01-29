@@ -7,14 +7,13 @@ package pcap.jdk7.internal;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 import pcap.spi.Selectable;
 import pcap.spi.Selector;
 import pcap.spi.Timeout;
 import pcap.spi.exception.TimeoutException;
+
+import java.util.Collections;
+import java.util.Iterator;
 
 class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappings.HANDLE> {
 
@@ -42,9 +41,7 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
       }
       return Collections.EMPTY_LIST;
     }
-    final List<Selectable> selected = new ArrayList<Selectable>(rc);
-    selected.add(registered.get(handles[rc]));
-    return selected;
+    return new SelectableList<Selectable>(registered.get(handles[rc]));
   }
 
   @Override

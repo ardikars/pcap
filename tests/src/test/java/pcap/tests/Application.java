@@ -4,14 +4,13 @@
  */
 package pcap.tests;
 
+import java.util.Iterator;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.util.DefaultTimeout;
-
-import java.util.Iterator;
 
 public class Application {
 

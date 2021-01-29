@@ -21,7 +21,6 @@ import pcap.spi.option.DefaultLiveOptions;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 @RunWith(JUnitPlatform.class)
 class DefaultPollSelectorTest extends AbstractSelectorTest {
@@ -86,11 +85,11 @@ class DefaultPollSelectorTest extends AbstractSelectorTest {
     Assertions.assertFalse(iterator2.hasNext());
     Pcap pcap = service.live(service.interfaces(), new DefaultLiveOptions());
     pollSelector.register(pcap);
-    List<Selectable> selectables = new ArrayList<>();
+    SelectableList<Selectable> selectables = new SelectableList<>();
     pollSelector.addToList(pollSelector.pfds[0].fd, 0, selectables);
-    Assertions.assertTrue(selectables.isEmpty());
+    Assertions.assertNull(selectables.head);
     pollSelector.addToList(pollSelector.pfds[0].fd, DefaultPollSelector.POLLIN, selectables);
-    Assertions.assertTrue(selectables.size() > 0);
+    Assertions.assertTrue(selectables.head != null);
 
     Assertions.assertThrows(
         TimeoutException.class,

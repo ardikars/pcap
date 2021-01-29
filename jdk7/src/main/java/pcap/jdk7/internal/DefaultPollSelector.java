@@ -82,7 +82,7 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
     if (rc == 0) {
       throw new TimeoutException("Timeout: " + timeout + ".");
     }
-    final List<Selectable> selected = new ArrayList<Selectable>(rc);
+    final SelectableList<Selectable> selected = new SelectableList<Selectable>();
     for (int i = 0; i < registered.size(); i++) {
       pfds[i].read();
       addToList(pfds[i].fd, pfds[i].revents, selected);
@@ -90,7 +90,7 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
     return selected;
   }
 
-  void addToList(int fd, int rEvents, List<Selectable> selected) {
+  void addToList(int fd, int rEvents, SelectableList<Selectable> selected) {
     if ((rEvents & POLLIN) != 0) {
       selected.add(registered.get(fd));
     }
