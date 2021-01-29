@@ -6,15 +6,16 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.PointerByReference;
+import pcap.spi.Address;
+import pcap.spi.Interface;
+import pcap.spi.Timestamp;
+
 import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.nio.ByteOrder;
 import java.util.*;
-import pcap.spi.Address;
-import pcap.spi.Interface;
-import pcap.spi.Timestamp;
 
 class NativeMappings {
 
@@ -327,14 +328,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_set_immediate_mode(p, immediate_mode);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        String message = "pcap_set_immediate_mode: Function doesn't exist.";
-        if (immediate_mode == 1 && Platform.isWindows()) {
-          Utils.warn(message + " Try calling pcap_setmintocopy.");
-          return pcap_setmintocopy(p, 0);
-        } else {
-          Utils.warn(message);
-          return 0;
-        }
+        return 0; // ignore immediate mode for libpcap version before 1.5.0
       }
     }
 
@@ -353,8 +347,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_get_selectable_fd(p);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_get_selectable_fd: Function doesn't exist.");
-        return -1;
+        throw new UnsupportedOperationException("pcap_get_selectable_fd: Function doesn't exist.");
       }
     }
 
@@ -373,8 +366,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_getevent(p);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_getevent: Function doesn't exist.");
-        return HANDLE.INVALID_HANDLE_VALUE;
+        throw new UnsupportedOperationException("pcap_getevent: Function doesn't exist.");
       }
     }
 
