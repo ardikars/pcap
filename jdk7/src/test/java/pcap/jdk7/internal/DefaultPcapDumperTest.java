@@ -4,9 +4,8 @@
  */
 package pcap.jdk7.internal;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.UUID;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +16,10 @@ import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.UUID;
 
 @RunWith(JUnitPlatform.class)
 public class DefaultPcapDumperTest extends BaseTest {
@@ -116,5 +119,16 @@ public class DefaultPcapDumperTest extends BaseTest {
 
       }
     }
+  }
+
+  @Test
+  void phantomReferenceAndSetNativeLong() {
+    long address = Native.malloc(16);
+    Pointer pointer = new Pointer(address);
+    DefaultDumper.setNativeLong(pointer, 0L, 0L, 8);
+    DefaultDumper.setNativeLong(pointer, 8L, 0L, 4);
+    DefaultDumper dumper = new DefaultDumper(pointer);
+    dumper = null;
+    System.gc();
   }
 }

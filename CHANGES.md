@@ -14,6 +14,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 
 * Fix TCP maximum data offset value
 
+
 ## Version 1.0.2
 
 * Only synchronize pcap_compile for before libpcap version 1.8.0
@@ -26,10 +27,17 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 * Fix pcap_inject on Windows
 * Update spdx header copyright
 
+
 ## Version 1.0.4
 
 * Validate packet header and buffer size on pcap_dump
 
+
 ## Version 1.0.5
 
 * Backward compatibility for pcap_setmintocopy(..) and update error message
+
+
+## Version 1.0.6
+
+* Fix dumper
