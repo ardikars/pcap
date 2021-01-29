@@ -69,17 +69,21 @@ class Utils {
     if (version == null) {
       return true;
     }
-    if (MAJOR < version.major()) {
+    return isValidVersion(version.major(), version.minor(), version.patch());
+  }
+
+  static boolean isValidVersion(int major, int minor, int patch) {
+    if (MAJOR < major) {
       return false;
-    } else if (MAJOR > version.major()) {
+    } else if (MAJOR > major) {
       return true;
     } else {
-      if (MINOR < version.minor()) {
+      if (MINOR < minor) {
         return false;
-      } else if (MINOR > version.minor()) {
+      } else if (MINOR > minor) {
         return true;
       } else {
-        return PATCH >= version.patch();
+        return PATCH >= patch;
       }
     }
   }

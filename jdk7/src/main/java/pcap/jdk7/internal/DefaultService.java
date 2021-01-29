@@ -7,11 +7,12 @@ package pcap.jdk7.internal;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
-import java.net.Inet4Address;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 import pcap.spi.exception.warn.PromiscuousModeNotSupported;
+
+import java.net.Inet4Address;
 
 public class DefaultService implements Service {
 
@@ -78,11 +79,18 @@ public class DefaultService implements Service {
     if (options.timestampPrecision() != null) {
       setTimestampPrecisionIfPossible(pointer, options);
     }
-    setRfMonIfPossible(pointer, options.isRfmon(), canSetRfmon);
-    setImmediateModeIfPossible(pointer, options);
-    // end of platform dependent
 
-    checkActivate(pointer, NativeMappings.pcap_activate(pointer));
+    setRfMonIfPossible(pointer, options.isRfmon(), canSetRfmon);
+    if ((Platform.isWindows() || Platform.isWindowsCE()) && options.isImmediate()) {
+      if (NativeMappings.PLATFORM_DEPENDENT.pcap_setmintocopy(pointer, 0) == -3) {
+        checkActivate(pointer, NativeMappings.pcap_activate(pointer));
+        checkSetImmediateMode(NativeMappings.PLATFORM_DEPENDENT.pcap_setmintocopy(pointer, 0));
+      }
+    } else {
+      setImmediateModeIfPossible(pointer, options);
+      checkActivate(pointer, NativeMappings.pcap_activate(pointer));
+    }
+
     return new DefaultPcap(pointer, netmask(source));
   }
 
@@ -113,13 +121,15 @@ public class DefaultService implements Service {
 
   void checkSetSnaplen(int result) throws ActivatedException {
     if (result != NativeMappings.OK) {
-      throw new ActivatedException("Error occurred when set snapshot length.");
+      throw new ActivatedException(
+          statusToString(result, "Error occurred when set snapshot length"));
     }
   }
 
   void checkSetPromisc(int result) throws ActivatedException {
     if (result != NativeMappings.OK) {
-      throw new ActivatedException("Error occurred when set promiscuous mode.");
+      throw new ActivatedException(
+          statusToString(result, "Error occurred when set promiscuous mode"));
     }
   }
 
@@ -132,18 +142,19 @@ public class DefaultService implements Service {
 
   boolean canSetRfmon(Pointer pointer, int result)
       throws ActivatedException, NoSuchDeviceException, ErrorException {
+    String message = "Error occurred when set radio frequency monitor mode";
     if (result == -4) {
-      throw new ActivatedException("Error occurred when set radio frequency monitor mode.");
+      throw new ActivatedException(statusToString(result, message));
     } else if (result == -5) {
-      throw new NoSuchDeviceException("Error occurred when set radio frequency monitor mode.");
+      throw new NoSuchDeviceException(statusToString(result, message));
     } else {
       if (result == -1) {
         throw new ErrorException(NativeMappings.pcap_geterr(pointer).getString(0));
       } else {
         if (result < 0) {
-          throw new ErrorException(NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
+          throw new ErrorException(statusToString(result, message));
         } else {
-          Utils.warn(NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
+          Utils.warn(statusToString(result, message));
         }
       }
     }
@@ -152,13 +163,14 @@ public class DefaultService implements Service {
 
   void checkSetRfmon(int result) throws ActivatedException {
     if (result != NativeMappings.OK) {
-      throw new ActivatedException("Error occurred when set radio frequency monitor mode.");
+      throw new ActivatedException(
+          statusToString(result, "Error occurred when set radio frequency monitor mode"));
     }
   }
 
   void checkSetTimeout(int result) throws ActivatedException {
     if (result != NativeMappings.OK) {
-      throw new ActivatedException("Error occurred when set timeout.");
+      throw new ActivatedException(statusToString(result, "Error occurred when set timeout"));
     }
   }
 
@@ -171,14 +183,13 @@ public class DefaultService implements Service {
 
   void checkSetTimestampType(int result)
       throws ActivatedException, InterfaceNotSupportTimestampTypeException {
+    String message = "Error occurred when set timestamp type";
     if (result == -4) {
-      throw new ActivatedException("Error occurred when set timestamp type.");
+      throw new ActivatedException(statusToString(result, message));
     } else if (result == -10) {
-      throw new InterfaceNotSupportTimestampTypeException(
-          "Error occurred when set timestamp type.");
+      throw new InterfaceNotSupportTimestampTypeException(statusToString(result, message));
     } else if (result == 3) {
-      Utils.warn(
-          "pcap_set_tstamp_type: " + NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
+      Utils.warn(statusToString(result, message));
     }
   }
 
@@ -190,13 +201,14 @@ public class DefaultService implements Service {
 
   void checkSetImmediateMode(int result) throws ActivatedException {
     if (result != NativeMappings.OK) {
-      throw new ActivatedException("Error occurred when set immediate mode.");
+      throw new ActivatedException(
+          statusToString(result, "Error occurred when set immediate mode"));
     }
   }
 
   void checkSetBufferSize(int result) throws ActivatedException {
     if (result != NativeMappings.OK) {
-      throw new ActivatedException("Error occurred when set buffer size.");
+      throw new ActivatedException(statusToString(result, "Error occurred when set buffer size"));
     }
   }
 
@@ -209,11 +221,11 @@ public class DefaultService implements Service {
 
   void checkSetTimestampPrecision(int result)
       throws TimestampPrecisionNotSupportedException, ActivatedException {
+    String message = "Error occurred when set timestamp procision";
     if (result == -12) {
-      throw new TimestampPrecisionNotSupportedException(
-          "Error occurred when set timestamp procision.");
+      throw new TimestampPrecisionNotSupportedException(statusToString(result, message));
     } else if (result == -4) {
-      throw new ActivatedException("Error occurred when set timestamp procision.");
+      throw new ActivatedException(statusToString(result, message));
     }
   }
 
@@ -221,24 +233,38 @@ public class DefaultService implements Service {
       throws PromiscuousModePermissionDeniedException, RadioFrequencyModeNotSupportedException,
           InterfaceNotUpException, NoSuchDeviceException, ActivatedException,
           PermissionDeniedException {
+    String message = "Error occurred when activate a handle";
     if (result == 2) {
       throw new PromiscuousModeNotSupported(NativeMappings.pcap_geterr(pointer).getString(0));
     } else if (result == 3) {
-      Utils.warn("pcap_activate: " + NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
+      Utils.warn(statusToString(result, message));
     } else if (result == 1) {
-      Utils.warn("pcap_activate: " + NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(result));
+      Utils.warn(statusToString(result, message));
     } else if (result == -4) {
-      throw new ActivatedException("Error occurred when activate a handle.");
+      throw new ActivatedException(statusToString(result, message));
     } else if (result == -5) {
       throw new NoSuchDeviceException(NativeMappings.pcap_geterr(pointer).getString(0));
     } else if (result == -8) {
       throw new PermissionDeniedException(NativeMappings.pcap_geterr(pointer).getString(0));
     } else if (result == -11) {
-      throw new PromiscuousModePermissionDeniedException("Error occurred when activate a handle.");
+      throw new PromiscuousModePermissionDeniedException(statusToString(result, message));
     } else if (result == -6) {
-      throw new RadioFrequencyModeNotSupportedException("Error occurred when activate a handle.");
+      throw new RadioFrequencyModeNotSupportedException(statusToString(result, message));
     } else if (result == -9) {
-      throw new InterfaceNotUpException("Error occurred when activate a handle.");
+      throw new InterfaceNotUpException(statusToString(result, message));
+    }
+  }
+
+  String statusToString(int rc, String fallback) {
+    try {
+      return NativeMappings.PLATFORM_DEPENDENT.pcap_statustostr(rc);
+    } catch (NullPointerException | UnsatisfiedLinkError e) {
+      StringBuilder sb = new StringBuilder();
+      sb.append(fallback);
+      sb.append(" (");
+      sb.append(rc);
+      sb.append(").");
+      return sb.toString();
     }
   }
 
