@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
     <parent>
         <artifactId>pcap</artifactId>
         <groupId>com.ardikars.pcap</groupId>
-        <version>1.1.0-beta.2</version>
+        <version>1.1.0-beta.3</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -36,7 +36,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
                         <artifactId>modulemaker-maven-plugin</artifactId>
                         <configuration>
                             <name>pcap.spi</name>
-                            <multirelease>true</multirelease>
+                            <multirelease>false</multirelease>
                             <packages>
                                 pcap.spi,
                                 pcap.spi.annotation,

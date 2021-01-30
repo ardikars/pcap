@@ -4,7 +4,6 @@
  */
 package pcap.spi;
 
-import pcap.spi.annotation.Incubating;
 import pcap.spi.exception.TimeoutException;
 
 /**
@@ -12,8 +11,7 @@ import pcap.spi.exception.TimeoutException;
  *
  * @since 1.1.0
  */
-@Incubating
-public interface Selector {
+public interface Selector extends AutoCloseable {
 
   /**
    * Selects a set of registered objects whose corresponding {@link Selectable} are ready for I/O
@@ -22,11 +20,11 @@ public interface Selector {
    * <p>This method performs a blocking selection operation. It returns only after at least one
    * {@link Selectable} is selected or timeout reached.
    *
+   * @param timeout timeout.
    * @return returns {@link Selectable} objects whose ready to perform I/O operations.
    * @throws TimeoutException If an I/O timeout occurs.
    * @since 1.1.0
    */
-  @Incubating
   Iterable<Selectable> select(Timeout timeout) throws TimeoutException;
 
   /**
@@ -36,6 +34,5 @@ public interface Selector {
    * @return returns this {@link Selector}.
    * @since 1.1.0
    */
-  @Incubating
   Selector register(Selectable selectable);
 }

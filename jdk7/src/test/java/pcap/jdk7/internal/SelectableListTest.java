@@ -4,15 +4,14 @@
  */
 package pcap.jdk7.internal;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.spi.Selectable;
-
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 @RunWith(JUnitPlatform.class)
 class SelectableListTest {

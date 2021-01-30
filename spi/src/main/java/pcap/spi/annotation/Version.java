@@ -14,7 +14,6 @@ import java.lang.annotation.Target;
  *
  * @since 1.0.0
  */
-@Incubating
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Version {

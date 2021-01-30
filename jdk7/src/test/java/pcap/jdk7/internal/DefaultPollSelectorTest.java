@@ -5,6 +5,8 @@
 package pcap.jdk7.internal;
 
 import com.sun.jna.Platform;
+import java.util.ArrayList;
+import java.util.Iterator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -18,9 +20,6 @@ import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 @RunWith(JUnitPlatform.class)
 class DefaultPollSelectorTest extends AbstractSelectorTest {

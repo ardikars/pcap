@@ -6,16 +6,15 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import pcap.spi.Dumper;
-import pcap.spi.PacketBuffer;
-import pcap.spi.PacketHeader;
-
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import pcap.spi.Dumper;
+import pcap.spi.PacketBuffer;
+import pcap.spi.PacketHeader;
 
 class DefaultDumper implements Dumper {
 

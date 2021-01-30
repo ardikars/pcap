@@ -4,14 +4,11 @@
  */
 package pcap.spi;
 
-import pcap.spi.annotation.Incubating;
-
 /**
  * Timeout.
  *
  * @since 1.1.0
  */
-@Incubating
 public interface Timeout {
 
   /**
@@ -20,7 +17,6 @@ public interface Timeout {
    * @return returns second.
    * @since 1.1.0
    */
-  @Incubating
   long second();
 
   /**
@@ -29,7 +25,6 @@ public interface Timeout {
    * @return returns microsecond.
    * @since 1.1.0
    */
-  @Incubating
   long microSecond();
 
   /**
@@ -37,21 +32,18 @@ public interface Timeout {
    *
    * @since 1.1.0
    */
-  @Incubating
   enum Precision {
     /**
      * Use timeout with microsecond precision.
      *
      * @since 1.1.0
      */
-    @Incubating
     MICRO(0),
     /**
      * Use timeout with nanosecond precision.
      *
      * @since 1.1.0
      */
-    @Incubating
     NANO(1);
 
     private final int value;
@@ -65,7 +57,6 @@ public interface Timeout {
      *
      * @return returns precision ID.
      */
-    @Incubating
     public int value() {
       return value;
     }

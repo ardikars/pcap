@@ -8,12 +8,11 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.Structure;
+import java.util.*;
 import pcap.spi.Selectable;
 import pcap.spi.Selector;
 import pcap.spi.Timeout;
 import pcap.spi.exception.TimeoutException;
-
-import java.util.*;
 
 class DefaultPollSelector extends AbstractSelector<Integer> {
 
