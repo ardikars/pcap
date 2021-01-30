@@ -11,7 +11,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
     <groupId>com.ardikars.pcap</groupId>
     <artifactId>pcap</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
 
     <modules>
         <module>spi</module>
