@@ -5,19 +5,24 @@
 package pcap.spi.util;
 
 import pcap.spi.Timeout;
-import pcap.spi.annotation.Incubating;
 
 /**
  * Default timeout.
  *
  * @since 1.1.0
  */
-@Incubating
 public class DefaultTimeout implements Timeout {
 
   private final long second;
   private final long microSecond;
 
+  /**
+   * Create timeout instance.
+   *
+   * @param timeout timeout.
+   * @param precision precision.
+   * @since 1.1.0
+   */
   public DefaultTimeout(long timeout, Timeout.Precision precision) {
     if (precision != null) {
       if (precision == Precision.MICRO) {

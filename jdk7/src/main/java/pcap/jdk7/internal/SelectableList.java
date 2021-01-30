@@ -4,10 +4,9 @@
  */
 package pcap.jdk7.internal;
 
-import pcap.spi.Selectable;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import pcap.spi.Selectable;
 
 /**
  * Selectable list.

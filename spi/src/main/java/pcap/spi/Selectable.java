@@ -4,14 +4,11 @@
  */
 package pcap.spi;
 
-import pcap.spi.annotation.Incubating;
-
 /**
  * Object that can be multiplexed via a {@link Selector}.
  *
  * @since 1.1.0
  */
-@Incubating
 public interface Selectable extends AutoCloseable {
 
   /**

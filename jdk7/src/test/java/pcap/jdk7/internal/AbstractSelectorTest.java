@@ -5,6 +5,7 @@
 package pcap.jdk7.internal;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
@@ -93,5 +94,18 @@ abstract class AbstractSelectorTest extends BaseTest {
     Assertions.assertFalse(selector.select(null).iterator().hasNext());
     Assertions.assertFalse(
         selector.select(new DefaultTimeout(1, Timeout.Precision.MICRO)).iterator().hasNext());
+  }
+
+  @Test
+  void autoClose() throws Exception {
+    Service service = Service.Creator.create("PcapService");
+    try (Selector selector = service.selector()) {
+      Assertions.assertNotNull(selector);
+    }
+    Selector selector1 = service.selector();
+    selector1.close();
+    Selector selector2 = service.selector();
+    selector2.register(service.live(service.interfaces(), new DefaultLiveOptions()));
+    selector2.close();
   }
 }

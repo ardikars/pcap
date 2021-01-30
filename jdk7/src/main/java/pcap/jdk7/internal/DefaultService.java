@@ -7,12 +7,11 @@ package pcap.jdk7.internal;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
+import java.net.Inet4Address;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 import pcap.spi.exception.warn.PromiscuousModeNotSupported;
-
-import java.net.Inet4Address;
 
 public class DefaultService implements Service {
 
