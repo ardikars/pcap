@@ -8,7 +8,10 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.Structure;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import pcap.spi.Selectable;
 import pcap.spi.Selector;
 import pcap.spi.Timeout;
@@ -41,24 +44,8 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
 
   @Override
   public Selector register(Selectable pcap) {
-    if (!(pcap instanceof DefaultPcap)) {
-      return this;
-    }
-    DefaultPcap defaultPcap = (DefaultPcap) pcap;
-    if (defaultPcap.netmask == 0) { // offline is not supported
-      return this;
-    }
+    DefaultPcap defaultPcap = validate(pcap);
     if (!registered.isEmpty()) {
-      // Ensure haven't registered yet.
-      for (int i = 0; i < registered.entrySet().size(); i++) {
-        Iterator<DefaultPcap> iterator = registered.values().iterator();
-        while (iterator.hasNext()) {
-          DefaultPcap next = iterator.next();
-          if (next.equals(defaultPcap)) {
-            return this;
-          }
-        }
-      }
       // register new pcap
       pollfd[] newPfds = add(defaultPcap, pfds.length + 1);
       for (int i = 0; i < pfds.length; i++) {

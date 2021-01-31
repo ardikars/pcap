@@ -14,9 +14,7 @@ import org.junit.runner.RunWith;
 import pcap.spi.Selectable;
 import pcap.spi.Selector;
 import pcap.spi.Service;
-import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
-import pcap.spi.exception.error.*;
 
 @RunWith(JUnitPlatform.class)
 class DefaultWaitForMultipleObjectsTest extends AbstractSelectorTest {
@@ -26,16 +24,7 @@ class DefaultWaitForMultipleObjectsTest extends AbstractSelectorTest {
   }
 
   @Test
-  void register()
-      throws InterfaceNotSupportTimestampTypeException, InterfaceNotUpException,
-          RadioFrequencyModeNotSupportedException, ActivatedException, PermissionDeniedException,
-          BreakException, NoSuchDeviceException, PromiscuousModePermissionDeniedException,
-          ErrorException, TimestampPrecisionNotSupportedException {
-    registerTest();
-  }
-
-  @Test
-  void notRegistered() throws ErrorException, TimeoutException {
+  void notRegistered() throws Exception {
     if (!isWindows()) {
       Assertions.assertFalse(isWindows());
       return;
@@ -59,23 +48,6 @@ class DefaultWaitForMultipleObjectsTest extends AbstractSelectorTest {
             objectsSelector.toIterable(0x00000102, 0);
           }
         });
-  }
-
-  @Test
-  void doubleRegister()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException {
-    doubleRegisterTest();
-  }
-
-  @Test
-  void badArgs()
-      throws TimeoutException, InterfaceNotSupportTimestampTypeException, InterfaceNotUpException,
-          RadioFrequencyModeNotSupportedException, ActivatedException, PermissionDeniedException,
-          NoSuchDeviceException, PromiscuousModePermissionDeniedException, ErrorException,
-          TimestampPrecisionNotSupportedException {
-    badArgsTest();
+    selector.close();
   }
 }

@@ -8,6 +8,7 @@ import com.sun.jna.Pointer;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -1242,5 +1243,16 @@ public class DefaultPcapTest extends BaseTest {
             }
           });
     }
+  }
+
+  @Test
+  void equalsAndHasCode() throws ErrorException {
+    Pcap offline1 = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions());
+    Pcap offline2 = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions());
+    Assertions.assertFalse(offline1.equals(offline2));
+    Assertions.assertFalse(offline1.equals(new ArrayList<>()));
+    Assertions.assertFalse(offline1.equals(null));
+    Assertions.assertTrue(offline1.equals(offline1));
+    Assertions.assertTrue(offline1.hashCode() > 0 || offline1.hashCode() < 0);
   }
 }

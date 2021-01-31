@@ -4,49 +4,58 @@
  */
 package pcap.jdk7.internal;
 
+import java.util.Iterator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import pcap.spi.*;
-import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
-import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.option.DefaultOfflineOptions;
 import pcap.spi.util.DefaultTimeout;
 
-import java.util.Iterator;
-
 abstract class AbstractSelectorTest extends BaseTest {
 
-  protected void registerTest()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException, BreakException {
-    Service service = Service.Creator.create("PcapService");
+  @Test
+  void registerTest() throws Exception {
+    final Service service = Service.Creator.create("PcapService");
     Interface interfaces = service.interfaces();
     Interface dev1 = interfaces;
     Interface dev2 = loopbackInterface(service);
-    Pcap live1 = service.live(dev1, new DefaultLiveOptions().immediate(false));
-    Pcap live2 = service.live(dev2, new DefaultLiveOptions().immediate(false));
+    Pcap live1 = service.live(dev1, new DefaultLiveOptions());
+    Pcap live2 = service.live(dev2, new DefaultLiveOptions());
     Timeout timeout = new DefaultTimeout(1000000L * 10, Timeout.Precision.MICRO);
-    Selector selector = service.selector();
+    final Selector selector = service.selector();
     try {
       Iterable<Selectable> select = selector.select(timeout);
       Assertions.assertFalse(select.iterator().hasNext());
       selector.register(live1);
       selector.register(live2);
-      selector.register(
-          new Selectable() {
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
             @Override
-            public void close() throws Exception {
-              //
+            public void execute() throws Throwable {
+              selector.register(
+                  new Selectable() {
+                    @Override
+                    public void close() throws Exception {
+                      //
+                    }
+                  }); // invalid
             }
-          }); // invalid
-      selector.register(
-          service.offline(
-              "src/test/resources/sample_microsecond.pcap",
-              new DefaultOfflineOptions())); // invalid
+          });
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              selector.register(
+                  service.offline(
+                      "src/test/resources/sample_microsecond.pcap",
+                      new DefaultOfflineOptions())); // invalid
+            }
+          });
       Iterable<Selectable> selected = selector.select(timeout);
       Iterator<Selectable> iterator = selected.iterator();
       PacketHandler<String> handler =
@@ -64,27 +73,33 @@ abstract class AbstractSelectorTest extends BaseTest {
     }
     live1.close();
     live2.close();
+    selector.close();
   }
 
-  protected void doubleRegisterTest()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException {
+  @Test
+  void doubleRegisterTest() throws Exception {
     Service service = Service.Creator.create("PcapService");
     Interface interfaces = service.interfaces();
-    Pcap live = service.live(interfaces, new DefaultLiveOptions().immediate(false));
-    Selector selector = service.selector();
-    selector.register(live);
-    selector.register(live);
-    live.close();
+    final Pcap live1 = service.live(interfaces, new DefaultLiveOptions());
+    final Pcap live2 = service.live(interfaces.next(), new DefaultLiveOptions());
+    final Selector selector = service.selector();
+    selector.register(live1);
+    selector.register(live2);
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            selector.register(live1);
+          }
+        });
+    live1.close();
+    live2.close();
+    selector.close();
   }
 
-  protected void badArgsTest()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException, TimeoutException {
+  @Test
+  void badArgsTest() throws Exception {
     Service service = Service.Creator.create("PcapService");
     Selector selector = service.selector();
     Assertions.assertFalse(
@@ -94,6 +109,7 @@ abstract class AbstractSelectorTest extends BaseTest {
     Assertions.assertFalse(selector.select(null).iterator().hasNext());
     Assertions.assertFalse(
         selector.select(new DefaultTimeout(1, Timeout.Precision.MICRO)).iterator().hasNext());
+    selector.close();
   }
 
   @Test

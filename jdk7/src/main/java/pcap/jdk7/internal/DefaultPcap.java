@@ -11,6 +11,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import pcap.spi.*;
 import pcap.spi.annotation.Version;
@@ -319,6 +320,23 @@ class DefaultPcap implements Pcap {
     }
 
     throw new IllegalArgumentException("Class: " + cls + " is unsupported.");
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    DefaultPcap that = (DefaultPcap) o;
+    return pointer.equals(that.pointer);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(Pointer.nativeValue(pointer));
   }
 
   void nullCheck(Pointer newPointer) throws ErrorException {
