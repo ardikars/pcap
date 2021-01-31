@@ -31,8 +31,7 @@ class AbstractPacketTest {
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Service service = Service.Creator.create("PcapService");
-    try (final Pcap pcap =
-        service.live(service.interfaces(), new DefaultLiveOptions().immediate(false))) {
+    try (final Pcap pcap = service.live(service.interfaces(), new DefaultLiveOptions())) {
       final PacketBuffer ethernetBuffer =
           pcap.allocate(PacketBuffer.class)
               .capacity(ETHERNET.length)

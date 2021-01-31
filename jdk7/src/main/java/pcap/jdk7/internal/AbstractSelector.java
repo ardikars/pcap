@@ -7,6 +7,7 @@ package pcap.jdk7.internal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import pcap.spi.Selectable;
 import pcap.spi.Selector;
 
 abstract class AbstractSelector<T> implements Selector {
@@ -19,7 +20,24 @@ abstract class AbstractSelector<T> implements Selector {
   public void close() throws Exception {
     Iterator<DefaultPcap> iterator = registered.values().iterator();
     while (iterator.hasNext()) {
-      cancel(iterator.next());
+      iterator.next().selector = null;
+      iterator.remove();
     }
+  }
+
+  protected DefaultPcap validate(Selectable pcap) {
+    Utils.requireNonNull(pcap, "selectable: null (expected: selectable != null).");
+    if (!(pcap instanceof DefaultPcap)) {
+      throw new IllegalArgumentException(pcap.getClass().getSimpleName() + " is not supperted.");
+    }
+    DefaultPcap defaultPcap = (DefaultPcap) pcap;
+    if (defaultPcap.selector != null) {
+      throw new IllegalArgumentException(
+          "Selectable is already registered on this or another selector.");
+    }
+    if (defaultPcap.netmask == 0) {
+      throw new IllegalArgumentException("Offline selectable is not supported.");
+    }
+    return defaultPcap;
   }
 }

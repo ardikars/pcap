@@ -497,10 +497,11 @@ public interface PacketBuffer extends AutoCloseable {
   /**
    * Gets a {@link CharSequence} with the given length at the given index.
    *
-   * @throws IndexOutOfBoundsException if {@code length} is greater than {@code this.readableBytes}
+   * @param index index.
    * @param length the length to read
    * @param charset that should be used
    * @return a string from buffer.
+   * @throws IndexOutOfBoundsException if {@code length} is greater than {@code this.readableBytes}
    * @since 1.0.0
    */
   CharSequence getCharSequence(long index, long length, Charset charset);

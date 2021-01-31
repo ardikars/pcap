@@ -8,7 +8,6 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import java.util.Collections;
-import java.util.Iterator;
 import pcap.spi.Selectable;
 import pcap.spi.Selector;
 import pcap.spi.Timeout;
@@ -45,22 +44,8 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
 
   @Override
   public Selector register(Selectable pcap) {
-    if (!(pcap instanceof DefaultPcap)) {
-      return this;
-    }
-    DefaultPcap defaultPcap = (DefaultPcap) pcap;
-    if (defaultPcap.netmask == 0) { // offline is not supported
-      return this;
-    }
+    DefaultPcap defaultPcap = validate(pcap);
     if (!registered.isEmpty()) {
-      // Ensure haven't registered yet.
-      Iterator<DefaultPcap> iterator = registered.values().iterator();
-      while (iterator.hasNext()) {
-        DefaultPcap next = iterator.next();
-        if (next.equals(pcap)) {
-          return this;
-        }
-      }
       // register new pcap
       NativeMappings.HANDLE[] newHandles = add(defaultPcap, handles.length + 1);
       System.arraycopy(handles, 0, newHandles, 0, handles.length);

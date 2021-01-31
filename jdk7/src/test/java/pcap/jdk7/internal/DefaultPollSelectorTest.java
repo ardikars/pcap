@@ -16,9 +16,7 @@ import pcap.spi.Pcap;
 import pcap.spi.Selectable;
 import pcap.spi.Selector;
 import pcap.spi.Service;
-import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
-import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 
 @RunWith(JUnitPlatform.class)
@@ -29,28 +27,20 @@ class DefaultPollSelectorTest extends AbstractSelectorTest {
   }
 
   @Test
-  void register()
-      throws InterfaceNotSupportTimestampTypeException, InterfaceNotUpException,
-          RadioFrequencyModeNotSupportedException, ActivatedException, PermissionDeniedException,
-          BreakException, NoSuchDeviceException, PromiscuousModePermissionDeniedException,
-          ErrorException, TimestampPrecisionNotSupportedException {
-    registerTest();
-  }
-
-  @Test
   void pollfdTest() {
     DefaultPollSelector.pollfd pollfd1 = new DefaultPollSelector.pollfd();
     DefaultPollSelector.pollfd pollfd2 = new DefaultPollSelector.pollfd();
     Assertions.assertTrue(pollfd1.equals(pollfd1));
     Assertions.assertTrue(pollfd1.equals(pollfd2));
     Assertions.assertFalse(pollfd1.equals(new ArrayList<String>()));
+    Assertions.assertFalse(pollfd1.equals(null));
     pollfd1.fd = 1;
     Assertions.assertFalse(pollfd1.equals(pollfd2));
     Assertions.assertTrue(pollfd1.hashCode() > 0);
   }
 
   @Test
-  void doWhile() throws ErrorException {
+  void doWhile() throws Exception {
     if (!isUnix()) {
       Assertions.assertFalse(isUnix());
       return;
@@ -61,14 +51,11 @@ class DefaultPollSelectorTest extends AbstractSelectorTest {
     Assertions.assertFalse(pollSelector.doWhile(0, DefaultPollSelector.EINTR));
     Assertions.assertFalse(pollSelector.doWhile(-1, DefaultPollSelector.EINTR + 1));
     Assertions.assertTrue(pollSelector.doWhile(-1, DefaultPollSelector.EINTR));
+    selector.close();
   }
 
   @Test
-  void toIterable()
-      throws ErrorException, TimeoutException, PermissionDeniedException,
-          PromiscuousModePermissionDeniedException, TimestampPrecisionNotSupportedException,
-          RadioFrequencyModeNotSupportedException, NoSuchDeviceException, ActivatedException,
-          InterfaceNotUpException, InterfaceNotSupportTimestampTypeException {
+  void toIterable() throws Exception {
     if (!isUnix()) {
       Assertions.assertFalse(isUnix());
       return;
@@ -101,24 +88,7 @@ class DefaultPollSelectorTest extends AbstractSelectorTest {
             }
           }
         });
+    selector.close();
     pcap.close();
-  }
-
-  @Test
-  void doubleRegister()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException {
-    doubleRegisterTest();
-  }
-
-  @Test
-  void badArgs()
-      throws TimeoutException, InterfaceNotSupportTimestampTypeException, InterfaceNotUpException,
-          RadioFrequencyModeNotSupportedException, ActivatedException, PermissionDeniedException,
-          NoSuchDeviceException, PromiscuousModePermissionDeniedException, ErrorException,
-          TimestampPrecisionNotSupportedException {
-    badArgsTest();
   }
 }
