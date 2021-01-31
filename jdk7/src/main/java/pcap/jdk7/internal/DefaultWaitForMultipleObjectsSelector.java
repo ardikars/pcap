@@ -19,11 +19,13 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
 
   private NativeMappings.HANDLE[] handles = new NativeMappings.HANDLE[0];
 
+  DefaultWaitForMultipleObjectsSelector() {
+    super.isClosed = false;
+  }
+
   @Override
   public Iterable<Selectable> select(Timeout timeout) throws TimeoutException {
-    if (registered.isEmpty() || timeout == null || timeout.microSecond() < 1000) {
-      return Collections.EMPTY_LIST;
-    }
+    validateSelect(timeout);
     int ts = (int) timeout.microSecond() / 1000;
     int rc;
     do {
@@ -44,7 +46,7 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
 
   @Override
   public Selector register(Selectable pcap) {
-    DefaultPcap defaultPcap = validate(pcap);
+    DefaultPcap defaultPcap = validateRegister(pcap);
     if (!registered.isEmpty()) {
       // register new pcap
       NativeMappings.HANDLE[] newHandles = add(defaultPcap, handles.length + 1);
