@@ -25,11 +25,13 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
 
   pollfd[] pfds = new pollfd[0];
 
+  DefaultPollSelector() {
+    super.isClosed = false;
+  }
+
   @Override
   public Iterable<Selectable> select(Timeout timeout) throws TimeoutException {
-    if (registered.isEmpty() || timeout == null || timeout.microSecond() < 1000) {
-      return Collections.EMPTY_LIST;
-    }
+    validateSelect(timeout);
     int ts = (int) timeout.microSecond() / 1000;
     int rc;
     do {
@@ -44,7 +46,7 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
 
   @Override
   public Selector register(Selectable pcap) {
-    DefaultPcap defaultPcap = validate(pcap);
+    DefaultPcap defaultPcap = validateRegister(pcap);
     if (!registered.isEmpty()) {
       // register new pcap
       pollfd[] newPfds = add(defaultPcap, pfds.length + 1);

@@ -5,6 +5,7 @@
 package pcap.jdk7.internal;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -24,11 +25,17 @@ abstract class AbstractSelectorTest extends BaseTest {
     Interface dev2 = loopbackInterface(service);
     Pcap live1 = service.live(dev1, new DefaultLiveOptions());
     Pcap live2 = service.live(dev2, new DefaultLiveOptions());
-    Timeout timeout = new DefaultTimeout(1000000L * 10, Timeout.Precision.MICRO);
+    final Timeout timeout = new DefaultTimeout(1000000L * 10, Timeout.Precision.MICRO);
     final Selector selector = service.selector();
     try {
-      Iterable<Selectable> select = selector.select(timeout);
-      Assertions.assertFalse(select.iterator().hasNext());
+      Assertions.assertThrows(
+          NoSuchElementException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              selector.select(timeout);
+            }
+          });
       selector.register(live1);
       selector.register(live2);
       Assertions.assertThrows(
@@ -101,14 +108,33 @@ abstract class AbstractSelectorTest extends BaseTest {
   @Test
   void badArgsTest() throws Exception {
     Service service = Service.Creator.create("PcapService");
-    Selector selector = service.selector();
-    Assertions.assertFalse(
-        selector.select(new DefaultTimeout(1000, Timeout.Precision.MICRO)).iterator().hasNext());
+    final Selector selector = service.selector();
+    Assertions.assertThrows(
+        NoSuchElementException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            selector.select(new DefaultTimeout(1000, Timeout.Precision.MICRO));
+          }
+        });
     Pcap pcap = service.live(service.interfaces(), new DefaultLiveOptions());
     selector.register(pcap);
-    Assertions.assertFalse(selector.select(null).iterator().hasNext());
-    Assertions.assertFalse(
-        selector.select(new DefaultTimeout(1, Timeout.Precision.MICRO)).iterator().hasNext());
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            selector.select(null);
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            selector.select(new DefaultTimeout(1, Timeout.Precision.MICRO));
+          }
+        });
     selector.close();
   }
 
@@ -123,5 +149,28 @@ abstract class AbstractSelectorTest extends BaseTest {
     Selector selector2 = service.selector();
     selector2.register(service.live(service.interfaces(), new DefaultLiveOptions()));
     selector2.close();
+  }
+
+  @Test
+  void accessClosedSelector() throws Exception {
+    Service service = Service.Creator.create("PcapService");
+    final Selector selector = service.selector();
+    selector.close();
+    Assertions.assertThrows(
+        IllegalStateException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            selector.register(null);
+          }
+        });
+    Assertions.assertThrows(
+        IllegalStateException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            selector.select(null);
+          }
+        });
   }
 }

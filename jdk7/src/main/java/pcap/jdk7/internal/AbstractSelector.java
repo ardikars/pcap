@@ -7,12 +7,16 @@ package pcap.jdk7.internal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import pcap.spi.Selectable;
 import pcap.spi.Selector;
+import pcap.spi.Timeout;
 
 abstract class AbstractSelector<T> implements Selector {
 
   protected final Map<T, DefaultPcap> registered = new HashMap<T, DefaultPcap>();
+
+  protected boolean isClosed;
 
   abstract void cancel(DefaultPcap pcap);
 
@@ -23,9 +27,28 @@ abstract class AbstractSelector<T> implements Selector {
       iterator.next().selector = null;
       iterator.remove();
     }
+    isClosed = true;
   }
 
-  protected DefaultPcap validate(Selectable pcap) {
+  protected void validateSelect(Timeout timeout) {
+    if (isClosed) {
+      throw new IllegalStateException("Selector is closed.");
+    }
+    if (registered.isEmpty()) {
+      throw new NoSuchElementException(
+          "No such \"selectable\" has been registered on this selector.");
+    }
+    if (timeout == null || timeout.microSecond() < 1000) {
+      throw new IllegalArgumentException(
+          String.format(
+              "timeout: %s (expected: timeout != null && timeout >= 1000 microseconds).", timeout));
+    }
+  }
+
+  protected DefaultPcap validateRegister(Selectable pcap) {
+    if (isClosed) {
+      throw new IllegalStateException("Selector is closed.");
+    }
     Utils.requireNonNull(pcap, "selectable: null (expected: selectable != null).");
     if (!(pcap instanceof DefaultPcap)) {
       throw new IllegalArgumentException(pcap.getClass().getSimpleName() + " is not supperted.");
