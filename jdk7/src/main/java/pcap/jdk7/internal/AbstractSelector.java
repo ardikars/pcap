@@ -7,10 +7,10 @@ package pcap.jdk7.internal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import pcap.spi.Selectable;
 import pcap.spi.Selector;
 import pcap.spi.Timeout;
+import pcap.spi.exception.NoSuchSelectableException;
 
 abstract class AbstractSelector<T> implements Selector {
 
@@ -35,7 +35,7 @@ abstract class AbstractSelector<T> implements Selector {
       throw new IllegalStateException("Selector is closed.");
     }
     if (registered.isEmpty()) {
-      throw new NoSuchElementException(
+      throw new NoSuchSelectableException(
           "No such \"selectable\" has been registered on this selector.");
     }
     if (timeout == null || timeout.microSecond() < 1000) {

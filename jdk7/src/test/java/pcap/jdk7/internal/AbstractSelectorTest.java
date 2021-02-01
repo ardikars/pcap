@@ -5,11 +5,11 @@
 package pcap.jdk7.internal;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import pcap.spi.*;
+import pcap.spi.exception.NoSuchSelectableException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.option.DefaultOfflineOptions;
@@ -29,7 +29,7 @@ abstract class AbstractSelectorTest extends BaseTest {
     final Selector selector = service.selector();
     try {
       Assertions.assertThrows(
-          NoSuchElementException.class,
+          NoSuchSelectableException.class,
           new Executable() {
             @Override
             public void execute() throws Throwable {
@@ -110,7 +110,7 @@ abstract class AbstractSelectorTest extends BaseTest {
     Service service = Service.Creator.create("PcapService");
     final Selector selector = service.selector();
     Assertions.assertThrows(
-        NoSuchElementException.class,
+        NoSuchSelectableException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {

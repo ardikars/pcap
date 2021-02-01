@@ -4,6 +4,7 @@
  */
 package pcap.spi;
 
+import pcap.spi.exception.NoSuchSelectableException;
 import pcap.spi.exception.TimeoutException;
 
 /**
@@ -20,19 +21,27 @@ public interface Selector extends AutoCloseable {
    * <p>This method performs a blocking selection operation. It returns only after at least one
    * {@link Selectable} is selected or timeout reached.
    *
-   * @param timeout timeout.
+   * @param timeout a {@link Timeout}.
    * @return returns {@link Selectable} objects whose ready to perform I/O operations.
    * @throws TimeoutException If an I/O timeout occurs.
+   * @throws NoSuchSelectableException no {@link Selectable} registered on this {@link Selector}.
+   * @throws IllegalStateException this {@link Selectable} might be closed.
+   * @throws IllegalArgumentException {@link Timeout} is not sufficient.
    * @since 1.1.0
    */
-  Iterable<Selectable> select(Timeout timeout) throws TimeoutException;
+  Iterable<Selectable> select(Timeout timeout)
+      throws TimeoutException, NoSuchSelectableException, IllegalStateException,
+          IllegalArgumentException;
 
   /**
    * Register given {@link Selectable} object to this {@link Selector}.
    *
-   * @param selectable selectable object.
+   * @param selectable {@link Selectable} object.
    * @return returns this {@link Selector}.
+   * @throws IllegalStateException this {@link Selectable} might be closed.
+   * @throws IllegalArgumentException given {@link Selectable} is null, not supported, or already
+   *     registered on this {@link Selector}.
    * @since 1.1.0
    */
-  Selector register(Selectable selectable);
+  Selector register(Selectable selectable) throws IllegalArgumentException, IllegalStateException;
 }

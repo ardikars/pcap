@@ -15,6 +15,7 @@ import java.util.Objects;
 import pcap.spi.Selectable;
 import pcap.spi.Selector;
 import pcap.spi.Timeout;
+import pcap.spi.exception.NoSuchSelectableException;
 import pcap.spi.exception.TimeoutException;
 
 class DefaultPollSelector extends AbstractSelector<Integer> {
@@ -30,7 +31,9 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
   }
 
   @Override
-  public Iterable<Selectable> select(Timeout timeout) throws TimeoutException {
+  public Iterable<Selectable> select(Timeout timeout)
+      throws TimeoutException, NoSuchSelectableException, IllegalStateException,
+          IllegalArgumentException {
     validateSelect(timeout);
     int ts = (int) timeout.microSecond() / 1000;
     int rc;
@@ -45,7 +48,7 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
   }
 
   @Override
-  public Selector register(Selectable pcap) {
+  public Selector register(Selectable pcap) throws IllegalArgumentException, IllegalStateException {
     DefaultPcap defaultPcap = validateRegister(pcap);
     if (!registered.isEmpty()) {
       // register new pcap

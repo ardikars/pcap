@@ -43,6 +43,12 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 * Fix dumper
 
 
-## Version 1.1.0 (2021-02-01)
+## Version 1.1.0 (2021-02-01) - Skip this version
 
 * I/O multiplexor
+
+
+## Version 1.2.0 (2021-02-01)
+
+* Add NoSuchSelectableException
+* Use NoSuchSelectableException on Selector#select(..) instead of NoSuchElementException.
