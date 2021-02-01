@@ -43,7 +43,6 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 * Fix dumper
 
 
-## Version 1.1.0
+## Version 1.1.0 (2021-02-01)
 
 * I/O multiplexor
-* Multi release jars
