@@ -41,3 +41,8 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 ## Version 1.0.6
 
 * Fix dumper
+
+
+## Version 1.0.7 (2021-03-12)
+
+* Remove object reference if the object is GC'ed.

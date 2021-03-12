@@ -5,6 +5,9 @@
 package pcap.jdk7.internal;
 
 import com.sun.jna.*;
+import pcap.spi.Pcap;
+import pcap.spi.annotation.Async;
+
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -13,8 +16,6 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import pcap.spi.Pcap;
-import pcap.spi.annotation.Async;
 
 class DefaultPollEventService extends AbstractEventService implements InvocationHandler {
 
@@ -48,6 +49,7 @@ class DefaultPollEventService extends AbstractEventService implements Invocation
     PollReference ref;
     while ((ref = (PollReference) RQ.poll()) != null) {
       Native.free(Pointer.nativeValue(ref.pfds));
+      REFS.remove(ref);
     }
   }
 
