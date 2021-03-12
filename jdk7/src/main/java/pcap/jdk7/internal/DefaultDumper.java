@@ -38,6 +38,7 @@ class DefaultDumper implements Dumper {
       if (ref.address > 0L) {
         Native.free(ref.address);
         ref.address = 0L;
+        REFS.remove(ref);
       }
     }
   }

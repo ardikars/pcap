@@ -50,6 +50,7 @@ class DefaultPcap implements Pcap {
       if (ref.pcap > 0 && ref.stats > 0) {
         NativeMappings.pcap_close(new com.sun.jna.Pointer(ref.pcap));
         Native.free(ref.stats);
+        REFS.remove(ref);
       }
     }
   }
