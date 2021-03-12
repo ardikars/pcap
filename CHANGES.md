@@ -18,14 +18,14 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 ## Version 1.0.2 (2020-12-27)
 
 * Only synchronize pcap_compile for before libpcap version 1.8.0
-* Backward compatibility for immediate mode on Windows
+* Backward compatibility for immediate mode on Windows (pcap_setmintocopy)
 * Backward compatibility for non blocking I/O 
 
 
 ## Version 1.0.3 (2021-01-23)
 
 * Fix pcap_inject on Windows
-* Update spdx header copyright
+* Update SPDX header copyright
 
 
 ## Version 1.0.4 (2021-01-24)
@@ -50,5 +50,11 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 
 ## Version 1.2.0 (2021-02-01)
 
+* I/O multiplexor
 * Add NoSuchSelectableException
 * Use NoSuchSelectableException on Selector#select(..) instead of NoSuchElementException.
+
+
+## Version 1.2.1 (2021-03-12)
+
+* Remove object reference if the object is GC'ed.

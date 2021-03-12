@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import pcap.spi.*;
-import pcap.spi.annotation.Version;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.BreakException;
@@ -52,6 +51,7 @@ class DefaultPcap implements Pcap {
       if (ref.pcap > 0 && ref.stats > 0) {
         NativeMappings.pcap_close(new com.sun.jna.Pointer(ref.pcap));
         Native.free(ref.stats);
+        REFS.remove(ref);
       }
     }
   }
@@ -73,11 +73,9 @@ class DefaultPcap implements Pcap {
   }
 
   @Override
-  @Version(major = 1, minor = 7, patch = 2)
   public DefaultDumper dumpOpenAppend(String file) throws ErrorException {
+    Utils.validateVersion(1, 7, 0);
     Utils.requireNonBlank(file, "file: null (expected: file != null && notBlank(file))");
-    Version version = Utils.getVersion(DefaultPcap.class, "dumpOpenAppend", String.class);
-    Utils.validateVersion(version);
     Pointer dumper = NativeMappings.PLATFORM_DEPENDENT.pcap_dump_open_append(pointer, file);
     nullCheck(dumper);
     return new DefaultDumper(dumper);
