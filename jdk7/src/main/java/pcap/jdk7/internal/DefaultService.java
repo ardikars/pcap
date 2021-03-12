@@ -8,9 +8,20 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 import java.net.Inet4Address;
-import pcap.spi.*;
+import pcap.spi.Address;
+import pcap.spi.Interface;
+import pcap.spi.Pcap;
+import pcap.spi.Selector;
+import pcap.spi.Service;
 import pcap.spi.exception.ErrorException;
-import pcap.spi.exception.error.*;
+import pcap.spi.exception.error.ActivatedException;
+import pcap.spi.exception.error.InterfaceNotSupportTimestampTypeException;
+import pcap.spi.exception.error.InterfaceNotUpException;
+import pcap.spi.exception.error.NoSuchDeviceException;
+import pcap.spi.exception.error.PermissionDeniedException;
+import pcap.spi.exception.error.PromiscuousModePermissionDeniedException;
+import pcap.spi.exception.error.RadioFrequencyModeNotSupportedException;
+import pcap.spi.exception.error.TimestampPrecisionNotSupportedException;
 import pcap.spi.exception.warn.PromiscuousModeNotSupported;
 
 public class DefaultService implements Service {

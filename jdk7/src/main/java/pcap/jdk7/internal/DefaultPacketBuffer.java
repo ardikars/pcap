@@ -1168,6 +1168,7 @@ class DefaultPacketBuffer implements PacketBuffer {
       PacketBufferReference ref;
       while ((ref = (PacketBufferReference) RQ.poll()) != null) {
         checkLeak(ref, LEAK_DETECTION);
+        REFS.remove(ref);
       }
       return buffer;
     }

@@ -7,7 +7,6 @@ package pcap.jdk7.internal;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 import pcap.spi.PacketBuffer;
-import pcap.spi.annotation.Version;
 import pcap.spi.exception.ErrorException;
 
 class Utils {
@@ -55,47 +54,6 @@ class Utils {
   }
 
   private Utils() {}
-
-  static void validateVersion(Version version) throws ErrorException {
-    if (!isValidVersion(version)) {
-      throw new ErrorException(
-          String.format(
-              "version: %d.%d.%d (expected: minimal version(%d.%d.%d))",
-              MAJOR, MINOR, PATCH, version.minor(), version.minor(), version.patch()));
-    }
-  }
-
-  static boolean isValidVersion(Version version) {
-    if (version == null) {
-      return true;
-    }
-    return isValidVersion(version.major(), version.minor(), version.patch());
-  }
-
-  static boolean isValidVersion(int major, int minor, int patch) {
-    if (MAJOR < major) {
-      return false;
-    } else if (MAJOR > major) {
-      return true;
-    } else {
-      if (MINOR < minor) {
-        return false;
-      } else if (MINOR > minor) {
-        return true;
-      } else {
-        return PATCH >= patch;
-      }
-    }
-  }
-
-  static Version getVersion(Class cls, String name, Class... params) {
-    try {
-      Version version = cls.getMethod(name, params).getAnnotation(Version.class);
-      return version;
-    } catch (NoSuchMethodException e) {
-      return null;
-    }
-  }
 
   // this method copied from netty-buffer code.
   // see at:
@@ -186,6 +144,15 @@ class Utils {
   static void requireNonNull(Object obj, String message) {
     if (obj == null) {
       throw new IllegalArgumentException(message);
+    }
+  }
+
+  static void validateVersion(int major, int minor, int patch) throws ErrorException {
+    if (!isSupported(major, major, patch)) {
+      throw new ErrorException(
+          String.format(
+              "version: %d.%d.%d (expected: minimal version(%d.%d.%d))",
+              MAJOR, MINOR, PATCH, major, minor, patch));
     }
   }
 

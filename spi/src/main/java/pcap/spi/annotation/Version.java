@@ -40,5 +40,5 @@ public @interface Version {
    * @return returns minimal required patch version.
    * @since 1.0.0
    */
-  int patch();
+  int patch() default 0;
 }

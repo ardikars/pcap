@@ -34,28 +34,16 @@ public class UtilsTest {
   }
 
   @Test
-  public void getVersion() {
-    Assertions.assertNotNull(Utils.getVersion(UtilsTest.class, "testAnnotation"));
-    Assertions.assertNull(Utils.getVersion(UtilsTest.class, "testAnnotations"));
-  }
-
-  @Test
-  public void validateVersion() throws ErrorException {
-    Utils.validateVersion(null);
-    final Version version = Utils.getVersion(UtilsTest.class, "testAnnotation");
+  public void isValidVersion() throws ErrorException {
     Assertions.assertThrows(
         ErrorException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            Utils.validateVersion(version);
+            Utils.validateVersion(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
           }
         });
-  }
-
-  @Test
-  public void isValidVersion() {
-    Assertions.assertTrue(true);
+    Utils.validateVersion(0, 0, 0);
   }
 
   @Test

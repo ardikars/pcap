@@ -15,6 +15,7 @@ import java.util.*;
 import pcap.spi.Address;
 import pcap.spi.Interface;
 import pcap.spi.Timestamp;
+import pcap.spi.annotation.Version;
 
 class NativeMappings {
 
@@ -34,34 +35,19 @@ class NativeMappings {
 
     // for interface mapping
     final Map<String, String> funcMap = new HashMap<String, String>();
-    // since 1.7.2 and not available on Windows, only for Unix like system.
     funcMap.put("pcap_dump_open_append", "pcap_dump_open_append");
-    // since 1.5.1 and not available on Windows, only for Unix like system.
     funcMap.put("pcap_get_tstamp_precision", "pcap_get_tstamp_precision");
-    // since 1.2.1 and not available on Windows, only for Unix like system.
     funcMap.put("pcap_set_tstamp_type", "pcap_set_tstamp_type");
-    // not available on Windows, only for Unix like system.
     funcMap.put("pcap_set_rfmon", "pcap_set_rfmon");
-    // since 1.5.1 and not available on Windows, only for Unix like system.
     funcMap.put(
         "pcap_open_offline_with_tstamp_precision", "pcap_open_offline_with_tstamp_precision");
-    // since 1.5.1 and not available on Windows, only for Unix like system.
     funcMap.put("pcap_set_tstamp_precision", "pcap_set_tstamp_precision");
-    // since 1.5.0 and not available on Windows, only for Unix like system.
-    // On Windows, immediate mode must be turned on by calling pcap_setmintocopy() with a size of 0.
     funcMap.put("pcap_set_immediate_mode", "pcap_set_immediate_mode");
-    // Only for Windows, not available on Unix like system.
-    // On Unix like system, please use pcap_set_immediate_mode instead.
     funcMap.put("pcap_setmintocopy", "pcap_setmintocopy");
-    // Only for Unix like system, not available on Windows.
     funcMap.put("pcap_get_selectable_fd", "pcap_get_selectable_fd");
-    // since 1.9.1 and not available on Windows, only for Unix like system.
     funcMap.put("pcap_get_required_select_timeout", "pcap_get_required_select_timeout");
-    // Only for Windows, not available on Unix like system.
     funcMap.put("pcap_getevent", "pcap_getevent");
-    // Only for Unix like system, not available on Windows.
     funcMap.put("pcap_statustostr", "pcap_statustostr");
-    //
     funcMap.put("pcap_inject", "pcap_inject");
 
     NATIVE_LOAD_LIBRARY_OPTIONS.put(
@@ -112,72 +98,172 @@ class NativeMappings {
     return af_inet6;
   }
 
+  @NativeSignature(
+      signature = "const char *pcap_lib_version(void)",
+      since = @Version(major = 0, minor = 8))
   static native String pcap_lib_version();
 
+  @NativeSignature(
+      signature = "char *pcap_geterr(pcap_t *p)",
+      since = @Version(major = 0, minor = 4))
   static native Pointer pcap_geterr(Pointer p);
 
+  @NativeSignature(
+      signature = "void pcap_freealldevs(pcap_if_t *alldevs)",
+      since = @Version(major = 0, minor = 7))
   static native int pcap_findalldevs(PointerByReference alldevsp, ErrorBuffer errbuf);
 
+  @NativeSignature(
+      signature = "void pcap_freealldevs(pcap_if_t *alldevs)",
+      since = @Version(major = 0, minor = 7))
   static native void pcap_freealldevs(Pointer p);
 
+  @NativeSignature(
+      signature = "pcap_t *pcap_open_offline(const char *fname, char *errbuf)",
+      since = @Version(major = 0, minor = 4))
   static native Pointer pcap_open_offline(String fname, ErrorBuffer errbuf);
 
+  @NativeSignature(
+      signature = "pcap_t *pcap_create(const char *source, char *errbuf)",
+      since = @Version(major = 1, minor = 0))
   static native Pointer pcap_create(String device, ErrorBuffer errbuf);
 
+  @NativeSignature(
+      signature = "int pcap_set_snaplen(pcap_t *p, int snaplen)",
+      since = @Version(major = 1, minor = 0))
   static native int pcap_set_snaplen(Pointer p, int snaplen);
 
+  @NativeSignature(
+      signature = "int pcap_set_promisc(pcap_t *p, int promisc)",
+      since = @Version(major = 1, minor = 0))
   static native int pcap_set_promisc(Pointer p, int promisc);
 
+  @NativeSignature(
+      signature = "int pcap_set_timeout(pcap_t *p, int to_ms)",
+      since = @Version(major = 1, minor = 0))
   static native int pcap_set_timeout(Pointer p, int timeout);
 
+  @NativeSignature(
+      signature = "int pcap_set_buffer_size(pcap_t *p, int buffer_size)",
+      since = @Version(major = 1, minor = 0))
   static native int pcap_set_buffer_size(Pointer p, int bufferSize);
 
+  @NativeSignature(
+      signature = "int pcap_activate(pcap_t *p)",
+      since = @Version(major = 1, minor = 0))
   static native int pcap_activate(Pointer p);
 
+  @NativeSignature(
+      signature = "int pcap_loop(pcap_t *p, int cnt, pcap_handler callback, u_char *user)",
+      since = @Version(major = 0, minor = 4))
   static native int pcap_loop(Pointer p, int cnt, pcap_handler callback, Pointer user);
 
+  @NativeSignature(
+      signature = "int pcap_dispatch(pcap_t *p, int cnt, pcap_handler callback, u_char *user)",
+      since = @Version(major = 0, minor = 4))
   static native int pcap_dispatch(Pointer p, int cnt, pcap_handler callback, Pointer user);
 
+  @NativeSignature(
+      signature = "int pcap_sendpacket(pcap_t *p, const u_char *buf, int size)",
+      since = @Version(major = 0, minor = 8))
   static native int pcap_sendpacket(Pointer p, Pointer buf, int size);
 
+  @NativeSignature(
+      signature =
+          "int pcap_compile(pcap_t *p, struct bpf_program *fp, const char *str, int optimize, bpf_u_int32 netmask)",
+      since = @Version(major = 0, minor = 4))
   static native int pcap_compile(Pointer p, bpf_program fp, String str, int optimize, int netmask);
 
+  @NativeSignature(
+      signature = "int pcap_setfilter(pcap_t *p, struct bpf_program *fp)",
+      since = @Version(major = 0, minor = 4))
   static native int pcap_setfilter(Pointer p, bpf_program fp);
 
+  @NativeSignature(
+      signature = "void pcap_freecode(struct bpf_program *)",
+      since = @Version(major = 0, minor = 6))
   static native void pcap_freecode(bpf_program fp);
 
+  @NativeSignature(signature = "void pcap_close(pcap_t *p)", since = @Version(major = 0, minor = 4))
   static native void pcap_close(Pointer p);
 
+  @NativeSignature(signature = "pcap_breakloop", since = @Version(major = 0, minor = 8))
   static native void pcap_breakloop(Pointer p);
 
+  @NativeSignature(
+      signature =
+          "int pcap_next_ex(pcap_t *p, struct pcap_pkthdr **pkt_header, const u_char **pkt_data)",
+      since = @Version(major = 0, minor = 8))
   static native int pcap_next_ex(Pointer p, PointerByReference h, PointerByReference data);
 
+  @NativeSignature(
+      signature = "pcap_dumper_t *pcap_dump_open(pcap_t *p, const char *fname)",
+      since = @Version(major = 0, minor = 4))
   static native Pointer pcap_dump_open(Pointer p, String fname);
 
+  @NativeSignature(
+      signature = "void pcap_dump(u_char *user, struct pcap_pkthdr *h, u_char *sp)",
+      since = @Version(major = 0, minor = 4))
   static native void pcap_dump(Pointer user, Pointer header, Pointer packet);
 
+  @NativeSignature(
+      signature = "int pcap_dump_flush(pcap_dumper_t *p)",
+      since = @Version(major = 0, minor = 8))
   static native int pcap_dump_flush(Pointer p);
 
+  @NativeSignature(
+      signature = "long pcap_dump_ftell(pcap_dumper_t *p)",
+      since = @Version(major = 0, minor = 9))
   static native NativeLong pcap_dump_ftell(Pointer dumper);
 
+  @NativeSignature(
+      signature = "void pcap_dump_close(pcap_dumper_t *p)",
+      since = @Version(major = 0, minor = 4))
   static native void pcap_dump_close(Pointer p);
 
+  @NativeSignature(
+      signature = "int pcap_stats(pcap_t *p, struct pcap_stat *ps)",
+      since = @Version(major = 0, minor = 4))
   static native int pcap_stats(Pointer p, Pointer ps);
 
+  @NativeSignature(
+      signature = "int pcap_setdirection(pcap_t *p, pcap_direction_t d)",
+      since = @Version(major = 0, minor = 9))
   static native int pcap_setdirection(Pointer p, int pcap_direction);
 
+  @NativeSignature(
+      signature = "int pcap_setnonblock(pcap_t *p, int nonblock, char *errbuf)",
+      since = @Version(major = 0, minor = 7))
   static native int pcap_setnonblock(Pointer p, int nonblock, ErrorBuffer errbuf);
 
+  @NativeSignature(
+      signature = "int pcap_getnonblock(pcap_t *p, char *errbuf)",
+      since = @Version(major = 0, minor = 7))
   static native int pcap_getnonblock(Pointer p, ErrorBuffer errbuf);
 
+  @NativeSignature(
+      signature = "int pcap_minor_version(pcap_t *p)",
+      since = @Version(major = 0, minor = 4))
   static native int pcap_minor_version(Pointer p);
 
+  @NativeSignature(
+      signature = "int pcap_snapshot(pcap_t *p)",
+      since = @Version(major = 0, minor = 4))
   static native int pcap_snapshot(Pointer p);
 
+  @NativeSignature(
+      signature = "int pcap_major_version(pcap_t *p)",
+      since = @Version(major = 0, minor = 4))
   static native int pcap_major_version(Pointer p);
 
+  @NativeSignature(
+      signature = "int pcap_is_swapped(pcap_t *p)",
+      since = @Version(major = 0, minor = 4))
   static native int pcap_is_swapped(Pointer p);
 
+  @NativeSignature(
+      signature = "int pcap_datalink(pcap_t *p)",
+      since = @Version(major = 0, minor = 4))
   static native int pcap_datalink(Pointer p);
 
   static InetAddress inetAddress(sockaddr sockaddr) {
@@ -206,34 +292,85 @@ class NativeMappings {
 
   interface PlatformDependent extends Library {
 
+    @NativeSignature(
+        signature = "int pcap_can_set_rfmon(pcap_t *p)",
+        since = @Version(major = 1, minor = 0))
     int pcap_can_set_rfmon(Pointer p);
 
+    @NativeSignature(
+        signature = "const char *pcap_statustostr(int error)",
+        since = @Version(major = 1, minor = 0))
     String pcap_statustostr(int error);
 
+    @NativeSignature(
+        signature = "pcap_dumper_t *pcap_dump_open_append(pcap_t *p, const char *fname)",
+        since = @Version(major = 1, minor = 7))
     Pointer pcap_dump_open_append(Pointer p, String fname);
 
+    @NativeSignature(
+        signature = "int pcap_set_tstamp_type(pcap_t *p, int tstamp_type)",
+        since = @Version(major = 1, minor = 2))
     int pcap_set_tstamp_type(Pointer p, int tstampType);
 
+    @NativeSignature(
+        signature = "int pcap_get_tstamp_precision(pcap_t *p)",
+        since = @Version(major = 1, minor = 5))
     int pcap_get_tstamp_precision(Pointer p);
 
+    @NativeSignature(
+        signature = "int pcap_set_rfmon(pcap_t *p, int rfmon)",
+        since = @Version(major = 1, minor = 0))
     int pcap_set_rfmon(Pointer p, int rfmon);
 
+    @NativeSignature(
+        signature =
+            "pcap_t *pcap_open_offline_with_tstamp_precision(const char *fname, u_int precision, char *errbuf)",
+        since = @Version(major = 1, minor = 5))
     Pointer pcap_open_offline_with_tstamp_precision(
         String fname, int precision, ErrorBuffer errbuf);
 
+    @NativeSignature(
+        signature = "int pcap_set_tstamp_precision(pcap_t *p, int tstamp_precision)",
+        since = @Version(major = 1, minor = 5))
     int pcap_set_tstamp_precision(Pointer p, int tstamp_precision);
 
+    @NativeSignature(
+        signature = "int pcap_set_immediate_mode(pcap_t *p, int immediate_mode)",
+        since = @Version(major = 1, minor = 5))
     int pcap_set_immediate_mode(Pointer p, int immediate_mode);
 
-    int pcap_setmintocopy(Pointer p, int size);
+    @NativeSignature(
+        signature = "int pcap_inject(pcap_t *p, const void *buf, size_t size)",
+        since = @Version(major = 0, minor = 9))
+    int pcap_inject(Pointer p, Pointer buf, int size);
 
+    @NativeSignature(
+        signature = "int pcap_get_selectable_fd(pcap_t *p)",
+        since = @Version(major = 0, minor = 8),
+        description = "Only available on Unix system.",
+        portable = false)
     int pcap_get_selectable_fd(Pointer p);
 
+    @NativeSignature(
+        signature = "int pcap_get_required_select_timeout(pcap_t *p)",
+        since = @Version(major = 1, minor = 9),
+        description = "Only available on Unix system.",
+        portable = false)
     Pointer pcap_get_required_select_timeout(Pointer p);
 
+    @NativeSignature(
+        signature = "HANDLE pcap_getevent(pcap_t *p)",
+        since = @Version(major = 0, minor = 4),
+        description = "Only available on Windows system.",
+        portable = false)
     NativeMappings.HANDLE pcap_getevent(Pointer p);
 
-    int pcap_inject(Pointer p, Pointer buf, int size);
+    @NativeSignature(
+        signature = "int pcap_setmintocopy(pcap_t *p, int size)",
+        since = @Version(major = 0, minor = 4),
+        description = "Only available on Windows system.",
+        portable = false)
+    int pcap_setmintocopy(Pointer p, int size);
   }
 
   static final class DefaultPlatformDependent implements PlatformDependent {
