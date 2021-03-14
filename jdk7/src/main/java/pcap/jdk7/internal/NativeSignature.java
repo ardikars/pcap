@@ -38,5 +38,11 @@ public @interface NativeSignature {
    */
   String description() default "";
 
+  /**
+   * Indicate this function is compatible for different platform.
+   *
+   * @return returns {@code true} if portable, {@code false} otherwise.
+   * @since 1.2.1
+   */
   boolean portable() default true;
 }

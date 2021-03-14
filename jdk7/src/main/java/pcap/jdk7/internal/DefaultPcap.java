@@ -26,8 +26,6 @@ class DefaultPcap implements Pcap {
 
   static final ReferenceQueue<DefaultPcap> RQ = new ReferenceQueue<DefaultPcap>();
 
-  private static final Object LOCK = new Object();
-
   final Pointer pointer;
   final int netmask;
   final DefaultStatistics statistics;
@@ -91,7 +89,7 @@ class DefaultPcap implements Pcap {
       // in libpcap 1.8.0 and later is newly thread-safe.
       rc = NativeMappings.pcap_compile(pointer, fp, filter, optimize ? 1 : 0, netmask);
     } else {
-      synchronized (LOCK) {
+      synchronized (this) {
         rc = NativeMappings.pcap_compile(pointer, fp, filter, optimize ? 1 : 0, netmask);
       }
     }
@@ -238,11 +236,11 @@ class DefaultPcap implements Pcap {
     Utils.requireNonNull(direction, "direction: null (expected: direction != null)");
     int result;
     if (Direction.PCAP_D_IN == direction) {
-      result = NativeMappings.pcap_setdirection(pointer, 1);
+      result = NativeMappings.PLATFORM_DEPENDENT.pcap_setdirection(pointer, 1);
     } else if (Direction.PCAP_D_OUT == direction) {
-      result = NativeMappings.pcap_setdirection(pointer, 2);
+      result = NativeMappings.PLATFORM_DEPENDENT.pcap_setdirection(pointer, 2);
     } else {
-      result = NativeMappings.pcap_setdirection(pointer, 0);
+      result = NativeMappings.PLATFORM_DEPENDENT.pcap_setdirection(pointer, 0);
     }
     directionCheck(result);
   }

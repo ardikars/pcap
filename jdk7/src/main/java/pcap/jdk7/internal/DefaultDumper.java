@@ -83,7 +83,7 @@ class DefaultDumper implements Dumper {
 
   @Override
   public long position() {
-    return NativeMappings.pcap_dump_ftell(pointer).longValue();
+    return NativeMappings.PLATFORM_DEPENDENT.pcap_dump_ftell(pointer).longValue();
   }
 
   @Override

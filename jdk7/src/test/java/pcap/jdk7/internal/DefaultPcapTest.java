@@ -777,7 +777,7 @@ public class DefaultPcapTest extends BaseTest {
       Assertions.assertFalse(live.getNonBlock());
     }
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
-      if (!NativeMappings.isWinPcap) {
+      if (!NativeMappings.IS_WIN_PCAP) {
         Assertions.assertThrows(
             ErrorException.class,
             new Executable() {
