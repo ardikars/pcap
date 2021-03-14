@@ -23,6 +23,8 @@ class DefaultDumper implements Dumper {
       Collections.synchronizedSet(new HashSet<Reference<DefaultDumper>>());
   static final ReferenceQueue<DefaultDumper> RQ = new ReferenceQueue<DefaultDumper>();
 
+  private static final boolean IS_DUMP_FTELL_SUPPORTED = Utils.isSupported(0, 9, 0);
+
   private final Pointer pointer;
   private final Pointer hdrPtr; // for copying header
   private final DumperReference reference;
@@ -83,7 +85,11 @@ class DefaultDumper implements Dumper {
 
   @Override
   public long position() {
-    return NativeMappings.PLATFORM_DEPENDENT.pcap_dump_ftell(pointer).longValue();
+    if (IS_DUMP_FTELL_SUPPORTED) {
+      return NativeMappings.pcap_dump_ftell(pointer).longValue();
+    } else {
+      return 0L;
+    }
   }
 
   @Override

@@ -26,6 +26,8 @@ class DefaultPcap implements Pcap {
 
   static final ReferenceQueue<DefaultPcap> RQ = new ReferenceQueue<DefaultPcap>();
 
+  private static final boolean IS_INJECT_SUPPORTED = Utils.isSupported(0, 9, 0);
+
   final Pointer pointer;
   final int netmask;
   final DefaultStatistics statistics;
@@ -224,10 +226,20 @@ class DefaultPcap implements Pcap {
   public int inject(PacketBuffer directBuffer) throws ErrorException {
     checkBuffer(directBuffer);
     DefaultPacketBuffer buffer = (DefaultPacketBuffer) directBuffer;
-    int rc =
-        NativeMappings.PLATFORM_DEPENDENT.pcap_inject(
-            pointer, buffer.buffer.share(buffer.readerIndex()), (int) directBuffer.readableBytes());
-    injectCheck(rc);
+    final int readableBytes = (int) directBuffer.readableBytes();
+    int rc;
+    if (IS_INJECT_SUPPORTED) {
+      rc =
+          NativeMappings.pcap_inject(
+              pointer, buffer.buffer.share(buffer.readerIndex()), readableBytes);
+      injectCheck(rc);
+    } else {
+      rc =
+          NativeMappings.pcap_sendpacket(
+              pointer, buffer.buffer.share(buffer.readerIndex()), readableBytes);
+      injectCheck(rc);
+      rc = readableBytes;
+    }
     return rc;
   }
 

@@ -240,6 +240,16 @@ class NativeMappings {
       since = @Version(major = 0, minor = 4))
   static native int pcap_datalink(Pointer p);
 
+  @NativeSignature(
+      signature = "int pcap_inject(pcap_t *p, const void *buf, size_t size)",
+      since = @Version(major = 0, minor = 9))
+  static native int pcap_inject(Pointer p, Pointer buf, int size);
+
+  @NativeSignature(
+      signature = "long pcap_dump_ftell(pcap_dumper_t *p)",
+      since = @Version(major = 0, minor = 9))
+  static native NativeLong pcap_dump_ftell(Pointer dumper);
+
   static InetAddress inetAddress(sockaddr sockaddr) {
     if (sockaddr == null) {
       return null;
@@ -265,11 +275,6 @@ class NativeMappings {
   }
 
   interface PlatformDependent extends Library {
-
-    @NativeSignature(
-        signature = "long pcap_dump_ftell(pcap_dumper_t *p)",
-        since = @Version(major = 0, minor = 9))
-    NativeLong pcap_dump_ftell(Pointer dumper);
 
     @NativeSignature(
         signature = "int pcap_setdirection(pcap_t *p, pcap_direction_t d)",
@@ -354,11 +359,6 @@ class NativeMappings {
     int pcap_set_immediate_mode(Pointer p, int immediate_mode);
 
     @NativeSignature(
-        signature = "int pcap_inject(pcap_t *p, const void *buf, size_t size)",
-        since = @Version(major = 0, minor = 9))
-    int pcap_inject(Pointer p, Pointer buf, int size);
-
-    @NativeSignature(
         signature = "int pcap_get_selectable_fd(pcap_t *p)",
         since = @Version(major = 0, minor = 8),
         description = "Only available on Unix system.",
@@ -389,21 +389,9 @@ class NativeMappings {
 
   static final class DefaultPlatformDependent implements PlatformDependent {
 
-    private static final NativeLong ZERO = new NativeLong(0);
-
     private static final PlatformDependent NATIVE =
         com.sun.jna.Native.load(
             libName(Platform.isWindows()), PlatformDependent.class, NATIVE_LOAD_LIBRARY_OPTIONS);
-
-    @Override
-    public NativeLong pcap_dump_ftell(Pointer dumper) {
-      try {
-        return NATIVE.pcap_dump_ftell(dumper);
-      } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_dump_ftell: Function doesn't exist.");
-        return ZERO;
-      }
-    }
 
     @Override
     public int pcap_setdirection(Pointer p, int pcap_direction) {
@@ -600,11 +588,6 @@ class NativeMappings {
       } catch (NullPointerException | UnsatisfiedLinkError e) {
         throw new UnsupportedOperationException("pcap_getevent: Function doesn't exist.");
       }
-    }
-
-    @Override
-    public int pcap_inject(Pointer p, Pointer buf, int size) {
-      return NATIVE.pcap_inject(p, buf, size);
     }
   }
 
