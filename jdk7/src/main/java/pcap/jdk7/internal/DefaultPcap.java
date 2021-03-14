@@ -464,5 +464,22 @@ class DefaultPcap implements Pcap {
       this.pcap = pcapRef;
       this.stats = statsRef;
     }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PcapReference reference = (PcapReference) o;
+      return hashCode() == reference.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(pcap, stats);
+    }
   }
 }

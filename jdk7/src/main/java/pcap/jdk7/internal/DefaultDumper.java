@@ -11,6 +11,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import pcap.spi.Dumper;
 import pcap.spi.PacketBuffer;
@@ -102,6 +103,23 @@ class DefaultDumper implements Dumper {
     DumperReference(long address, DefaultDumper referent, ReferenceQueue<? super DefaultDumper> q) {
       super(referent, q);
       this.address = address;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      DumperReference that = (DumperReference) o;
+      return hashCode() == that.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(address);
     }
   }
 }

@@ -11,9 +11,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
@@ -1145,6 +1143,23 @@ class DefaultPacketBuffer implements PacketBuffer {
       if (enabled) {
         stackTraceElements = Thread.currentThread().getStackTrace();
       }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PacketBufferReference that = (PacketBufferReference) o;
+      return hashCode() == that.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hashCode(address);
     }
   }
 
