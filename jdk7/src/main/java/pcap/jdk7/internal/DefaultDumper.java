@@ -11,6 +11,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import pcap.spi.Dumper;
 import pcap.spi.PacketBuffer;
@@ -22,6 +23,12 @@ class DefaultDumper implements Dumper {
       Collections.synchronizedSet(new HashSet<Reference<DefaultDumper>>());
   static final ReferenceQueue<DefaultDumper> RQ = new ReferenceQueue<DefaultDumper>();
 
+  private static final boolean IS_FTELL_SUPPORTED;
+
+  static {
+    IS_FTELL_SUPPORTED = Utils.isSupported(0, 9, 0);
+  }
+
   private final Pointer pointer;
   private final Pointer hdrPtr; // for copying header
   private final DumperReference reference;
@@ -30,13 +37,15 @@ class DefaultDumper implements Dumper {
     this.pointer = pointer;
     long address = Native.malloc(DefaultPacketHeader.SIZEOF);
     this.hdrPtr = new Pointer(address);
-    this.reference = new DumperReference(address, this, RQ);
+    this.reference = new DumperReference(Pointer.nativeValue(pointer), address, this, RQ);
     REFS.add(reference);
     DumperReference ref;
     while ((ref = (DumperReference) RQ.poll()) != null) {
-      if (ref.address > 0L) {
-        Native.free(ref.address);
-        ref.address = 0L;
+      if (ref.pktHdrAddr > 0L && ref.dumperAddr > 0L) {
+        NativeMappings.pcap_dump_close(new Pointer(ref.dumperAddr));
+        Native.free(ref.pktHdrAddr);
+        ref.dumperAddr = 0L;
+        ref.pktHdrAddr = 0L;
         REFS.remove(ref);
       }
     }
@@ -82,7 +91,11 @@ class DefaultDumper implements Dumper {
 
   @Override
   public long position() {
-    return NativeMappings.pcap_dump_ftell(pointer).longValue();
+    if (IS_FTELL_SUPPORTED) {
+      return NativeMappings.pcap_dump_ftell(pointer).longValue();
+    } else {
+      return 0L;
+    }
   }
 
   @Override
@@ -97,11 +110,34 @@ class DefaultDumper implements Dumper {
 
   static final class DumperReference extends PhantomReference<DefaultDumper> {
 
-    long address;
+    long pktHdrAddr;
+    long dumperAddr;
 
-    DumperReference(long address, DefaultDumper referent, ReferenceQueue<? super DefaultDumper> q) {
+    DumperReference(
+        long dumperAddr,
+        long pktHdrAddr,
+        DefaultDumper referent,
+        ReferenceQueue<? super DefaultDumper> q) {
       super(referent, q);
-      this.address = address;
+      this.dumperAddr = dumperAddr;
+      this.pktHdrAddr = pktHdrAddr;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      DumperReference that = (DumperReference) o;
+      return hashCode() == that.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(dumperAddr, pktHdrAddr);
     }
   }
 }

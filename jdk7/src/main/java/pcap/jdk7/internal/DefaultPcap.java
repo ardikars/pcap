@@ -26,7 +26,11 @@ class DefaultPcap implements Pcap {
 
   static final ReferenceQueue<DefaultPcap> RQ = new ReferenceQueue<DefaultPcap>();
 
-  private static final Object LOCK = new Object();
+  private static final boolean IS_INJECT_SUPPORTED;
+
+  static {
+    IS_INJECT_SUPPORTED = Utils.isSupported(0, 9, 0);
+  }
 
   final Pointer pointer;
   final int netmask;
@@ -91,7 +95,7 @@ class DefaultPcap implements Pcap {
       // in libpcap 1.8.0 and later is newly thread-safe.
       rc = NativeMappings.pcap_compile(pointer, fp, filter, optimize ? 1 : 0, netmask);
     } else {
-      synchronized (LOCK) {
+      synchronized (this) {
         rc = NativeMappings.pcap_compile(pointer, fp, filter, optimize ? 1 : 0, netmask);
       }
     }
@@ -226,10 +230,20 @@ class DefaultPcap implements Pcap {
   public int inject(PacketBuffer directBuffer) throws ErrorException {
     checkBuffer(directBuffer);
     DefaultPacketBuffer buffer = (DefaultPacketBuffer) directBuffer;
-    int rc =
-        NativeMappings.PLATFORM_DEPENDENT.pcap_inject(
-            pointer, buffer.buffer.share(buffer.readerIndex()), (int) directBuffer.readableBytes());
-    injectCheck(rc);
+    int readableBytes = (int) directBuffer.readableBytes();
+    int rc;
+    if (IS_INJECT_SUPPORTED) {
+      rc =
+          NativeMappings.pcap_inject(
+              pointer, buffer.buffer.share(buffer.readerIndex()), readableBytes);
+      injectCheck(rc);
+    } else {
+      rc =
+          NativeMappings.pcap_sendpacket(
+              pointer, buffer.buffer.share(buffer.readerIndex()), readableBytes);
+      injectCheck(rc);
+      rc = readableBytes;
+    }
     return rc;
   }
 
@@ -238,11 +252,11 @@ class DefaultPcap implements Pcap {
     Utils.requireNonNull(direction, "direction: null (expected: direction != null)");
     int result;
     if (Direction.PCAP_D_IN == direction) {
-      result = NativeMappings.pcap_setdirection(pointer, 1);
+      result = NativeMappings.PLATFORM_DEPENDENT.pcap_setdirection(pointer, 1);
     } else if (Direction.PCAP_D_OUT == direction) {
-      result = NativeMappings.pcap_setdirection(pointer, 2);
+      result = NativeMappings.PLATFORM_DEPENDENT.pcap_setdirection(pointer, 2);
     } else {
-      result = NativeMappings.pcap_setdirection(pointer, 0);
+      result = NativeMappings.PLATFORM_DEPENDENT.pcap_setdirection(pointer, 0);
     }
     directionCheck(result);
   }
@@ -463,6 +477,23 @@ class DefaultPcap implements Pcap {
       super(referent, q);
       this.pcap = pcapRef;
       this.stats = statsRef;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PcapReference that = (PcapReference) o;
+      return hashCode() == that.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(pcap, stats);
     }
   }
 }

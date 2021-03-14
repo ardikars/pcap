@@ -71,37 +71,55 @@ public class DefaultService implements Service {
           NoSuchDeviceException, PromiscuousModePermissionDeniedException, ErrorException,
           TimestampPrecisionNotSupportedException {
     Utils.requireNonNull(source, "source: null (expected: source != null).");
-    Pointer pointer = NativeMappings.pcap_create(source.name(), errbuf(true));
-    nullCheck(pointer);
-    checkSetSnaplen(NativeMappings.pcap_set_snaplen(pointer, options.snapshotLength()));
-    checkSetPromisc(NativeMappings.pcap_set_promisc(pointer, options.isPromiscuous() ? 1 : 0));
-    checkSetTimeout(NativeMappings.pcap_set_timeout(pointer, options.timeout()));
-    if (options.bufferSize() >= 0) {
-      checkSetBufferSize(NativeMappings.pcap_set_buffer_size(pointer, options.bufferSize()));
-    }
-    boolean canSetRfmon =
-        canSetRfmon(pointer, NativeMappings.PLATFORM_DEPENDENT.pcap_can_set_rfmon(pointer));
-
-    //  platform dependent
-    if (options.timestampType() != null) {
-      setTimestampTypeIfPossible(pointer, options);
-    }
-    if (options.timestampPrecision() != null) {
-      setTimestampPrecisionIfPossible(pointer, options);
-    }
-
-    setRfMonIfPossible(pointer, options.isRfmon(), canSetRfmon);
-    if ((Platform.isWindows() || Platform.isWindowsCE()) && options.isImmediate()) {
-      if (NativeMappings.PLATFORM_DEPENDENT.pcap_setmintocopy(pointer, 0) == -3) {
-        checkActivate(pointer, NativeMappings.pcap_activate(pointer));
-        checkSetImmediateMode(NativeMappings.PLATFORM_DEPENDENT.pcap_setmintocopy(pointer, 0));
+    if (Utils.isSupported(1, 0, 0)) {
+      Pointer pointer = NativeMappings.PLATFORM_DEPENDENT.pcap_create(source.name(), errbuf(true));
+      nullCheck(pointer);
+      checkSetSnaplen(
+          NativeMappings.PLATFORM_DEPENDENT.pcap_set_snaplen(pointer, options.snapshotLength()));
+      checkSetPromisc(
+          NativeMappings.PLATFORM_DEPENDENT.pcap_set_promisc(
+              pointer, options.isPromiscuous() ? 1 : 0));
+      checkSetTimeout(
+          NativeMappings.PLATFORM_DEPENDENT.pcap_set_timeout(pointer, options.timeout()));
+      if (options.bufferSize() >= 0) {
+        checkSetBufferSize(
+            NativeMappings.PLATFORM_DEPENDENT.pcap_set_buffer_size(pointer, options.bufferSize()));
       }
-    } else {
-      setImmediateModeIfPossible(pointer, options);
-      checkActivate(pointer, NativeMappings.pcap_activate(pointer));
-    }
+      boolean canSetRfmon =
+          canSetRfmon(pointer, NativeMappings.PLATFORM_DEPENDENT.pcap_can_set_rfmon(pointer));
 
-    return new DefaultPcap(pointer, netmask(source));
+      //  platform dependent
+      if (options.timestampType() != null) {
+        setTimestampTypeIfPossible(pointer, options);
+      }
+      if (options.timestampPrecision() != null) {
+        setTimestampPrecisionIfPossible(pointer, options);
+      }
+
+      setRfMonIfPossible(pointer, options.isRfmon(), canSetRfmon);
+      if ((Platform.isWindows() || Platform.isWindowsCE()) && options.isImmediate()) {
+        if (NativeMappings.PLATFORM_DEPENDENT.pcap_setmintocopy(pointer, 0) == -3) {
+          checkActivate(pointer, NativeMappings.PLATFORM_DEPENDENT.pcap_activate(pointer));
+          checkSetImmediateMode(NativeMappings.PLATFORM_DEPENDENT.pcap_setmintocopy(pointer, 0));
+        }
+      } else {
+        setImmediateModeIfPossible(pointer, options);
+        checkActivate(pointer, NativeMappings.PLATFORM_DEPENDENT.pcap_activate(pointer));
+      }
+
+      return new DefaultPcap(pointer, netmask(source));
+    } else {
+      Pointer pointer =
+          NativeMappings.pcap_open_live(
+              source.name(),
+              options.snapshotLength(),
+              options.isPromiscuous() ? 1 : 0,
+              options.timeout(),
+              errbuf(true));
+      nullCheck(pointer);
+
+      return new DefaultPcap(pointer, netmask(source));
+    }
   }
 
   @Override
