@@ -6,6 +6,12 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import pcap.spi.*;
+import pcap.spi.exception.ErrorException;
+import pcap.spi.exception.TimeoutException;
+import pcap.spi.exception.error.BreakException;
+import pcap.spi.exception.error.NotActivatedException;
+
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -13,11 +19,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import pcap.spi.*;
-import pcap.spi.exception.ErrorException;
-import pcap.spi.exception.TimeoutException;
-import pcap.spi.exception.error.BreakException;
-import pcap.spi.exception.error.NotActivatedException;
 
 class DefaultPcap implements Pcap {
 
@@ -25,8 +26,6 @@ class DefaultPcap implements Pcap {
       Collections.synchronizedSet(new HashSet<Reference<DefaultPcap>>());
 
   static final ReferenceQueue<DefaultPcap> RQ = new ReferenceQueue<DefaultPcap>();
-
-  private static final boolean IS_INJECT_SUPPORTED = Utils.isSupported(0, 9, 0);
 
   final Pointer pointer;
   final int netmask;
@@ -227,19 +226,10 @@ class DefaultPcap implements Pcap {
     checkBuffer(directBuffer);
     DefaultPacketBuffer buffer = (DefaultPacketBuffer) directBuffer;
     final int readableBytes = (int) directBuffer.readableBytes();
-    int rc;
-    if (IS_INJECT_SUPPORTED) {
-      rc =
-          NativeMappings.pcap_inject(
-              pointer, buffer.buffer.share(buffer.readerIndex()), readableBytes);
-      injectCheck(rc);
-    } else {
-      rc =
-          NativeMappings.pcap_sendpacket(
-              pointer, buffer.buffer.share(buffer.readerIndex()), readableBytes);
-      injectCheck(rc);
-      rc = readableBytes;
-    }
+    int rc =
+        NativeMappings.PLATFORM_DEPENDENT.pcap_inject(
+            pointer, buffer.buffer.share(buffer.readerIndex()), readableBytes);
+    injectCheck(rc);
     return rc;
   }
 

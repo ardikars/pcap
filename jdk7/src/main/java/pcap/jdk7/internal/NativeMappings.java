@@ -6,16 +6,18 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.PointerByReference;
+import pcap.spi.Address;
+import pcap.spi.Interface;
+import pcap.spi.Timestamp;
+import pcap.spi.annotation.Version;
+
 import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.nio.ByteOrder;
 import java.util.*;
-import pcap.spi.Address;
-import pcap.spi.Interface;
-import pcap.spi.Timestamp;
-import pcap.spi.annotation.Version;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 class NativeMappings {
 
@@ -49,7 +51,7 @@ class NativeMappings {
     funcMap.put("pcap_getevent", "pcap_getevent");
     funcMap.put("pcap_statustostr", "pcap_statustostr");
     funcMap.put("pcap_inject", "pcap_inject");
-
+    funcMap.put("pcap_dump_ftell", "pcap_dump_ftell");
     funcMap.put("pcap_setdirection", "pcap_setdirection");
     funcMap.put("pcap_create", "pcap_create");
     funcMap.put("pcap_set_snaplen", "pcap_set_snaplen");
@@ -240,16 +242,6 @@ class NativeMappings {
       since = @Version(major = 0, minor = 4))
   static native int pcap_datalink(Pointer p);
 
-  @NativeSignature(
-      signature = "int pcap_inject(pcap_t *p, const void *buf, size_t size)",
-      since = @Version(major = 0, minor = 9))
-  static native int pcap_inject(Pointer p, Pointer buf, int size);
-
-  @NativeSignature(
-      signature = "long pcap_dump_ftell(pcap_dumper_t *p)",
-      since = @Version(major = 0, minor = 9))
-  static native NativeLong pcap_dump_ftell(Pointer dumper);
-
   static InetAddress inetAddress(sockaddr sockaddr) {
     if (sockaddr == null) {
       return null;
@@ -275,6 +267,16 @@ class NativeMappings {
   }
 
   interface PlatformDependent extends Library {
+
+    @NativeSignature(
+        signature = "int pcap_inject(pcap_t *p, const void *buf, size_t size)",
+        since = @Version(major = 0, minor = 9))
+    int pcap_inject(Pointer p, Pointer buf, int size);
+
+    @NativeSignature(
+        signature = "long pcap_dump_ftell(pcap_dumper_t *p)",
+        since = @Version(major = 0, minor = 9))
+    NativeLong pcap_dump_ftell(Pointer dumper);
 
     @NativeSignature(
         signature = "int pcap_setdirection(pcap_t *p, pcap_direction_t d)",
@@ -389,9 +391,45 @@ class NativeMappings {
 
   static final class DefaultPlatformDependent implements PlatformDependent {
 
+    private static final NativeLong ZERO = new NativeLong(0);
+
     private static final PlatformDependent NATIVE =
         com.sun.jna.Native.load(
             libName(Platform.isWindows()), PlatformDependent.class, NATIVE_LOAD_LIBRARY_OPTIONS);
+
+    private final AtomicBoolean injectIsSupported = new AtomicBoolean(true);
+    private final AtomicBoolean dumpFtellIsSupported = new AtomicBoolean(true);
+
+    @Override
+    public int pcap_inject(Pointer p, Pointer buf, int size) {
+      if (injectIsSupported.get()) {
+        try {
+          return NATIVE.pcap_inject(p, buf, size);
+        } catch (NullPointerException | UnsatisfiedLinkError e) {
+          Utils.warn("pcap_inject: Function doesn't exist, use pcap_sendpacket.");
+          injectIsSupported.compareAndSet(true, false);
+        }
+      }
+      int rc = NativeMappings.pcap_sendpacket(p, buf, size);
+      if (rc < 0) {
+        return rc;
+      } else {
+        return size;
+      }
+    }
+
+    @Override
+    public NativeLong pcap_dump_ftell(Pointer dumper) {
+      if (dumpFtellIsSupported.get()) {
+        try {
+          return NATIVE.pcap_dump_ftell(dumper);
+        } catch (NullPointerException | UnsatisfiedLinkError e) {
+          Utils.warn("pcap_dump_ftell: Function doesn't exist.");
+          dumpFtellIsSupported.compareAndSet(true, false);
+        }
+      }
+      return ZERO;
+    }
 
     @Override
     public int pcap_setdirection(Pointer p, int pcap_direction) {

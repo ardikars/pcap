@@ -6,6 +6,10 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import pcap.spi.Dumper;
+import pcap.spi.PacketBuffer;
+import pcap.spi.PacketHeader;
+
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -13,17 +17,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import pcap.spi.Dumper;
-import pcap.spi.PacketBuffer;
-import pcap.spi.PacketHeader;
 
 class DefaultDumper implements Dumper {
 
   static final Set<Reference<DefaultDumper>> REFS =
       Collections.synchronizedSet(new HashSet<Reference<DefaultDumper>>());
   static final ReferenceQueue<DefaultDumper> RQ = new ReferenceQueue<DefaultDumper>();
-
-  private static final boolean IS_DUMP_FTELL_SUPPORTED = Utils.isSupported(0, 9, 0);
 
   private final Pointer pointer;
   private final Pointer hdrPtr; // for copying header
@@ -85,11 +84,7 @@ class DefaultDumper implements Dumper {
 
   @Override
   public long position() {
-    if (IS_DUMP_FTELL_SUPPORTED) {
-      return NativeMappings.pcap_dump_ftell(pointer).longValue();
-    } else {
-      return 0L;
-    }
+    return NativeMappings.PLATFORM_DEPENDENT.pcap_dump_ftell(pointer).longValue();
   }
 
   @Override
