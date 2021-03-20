@@ -1247,12 +1247,22 @@ public class DefaultPcapTest extends BaseTest {
 
   @Test
   void equalsAndHasCode() throws ErrorException {
-    Pcap offline1 = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions());
-    Pcap offline2 = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions());
+    DefaultPcap offline1 =
+        (DefaultPcap) service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions());
+    DefaultPcap offline2 =
+        (DefaultPcap) service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions());
     Assertions.assertFalse(offline1.equals(offline2));
     Assertions.assertFalse(offline1.equals(new ArrayList<>()));
     Assertions.assertFalse(offline1.equals(null));
     Assertions.assertTrue(offline1.equals(offline1));
-    Assertions.assertTrue(offline1.hashCode() > 0 || offline1.hashCode() < 0);
+    Assertions.assertTrue(offline1.hashCode() >= 0 || offline1.hashCode() <= 0);
+    Assertions.assertFalse(offline1.hashCode() == offline2.hashCode());
+
+    Assertions.assertFalse(offline1.reference.equals(offline2.reference));
+    Assertions.assertFalse(offline1.reference.equals(new ArrayList<>(1)));
+    Assertions.assertFalse(offline1.reference.equals(null));
+    Assertions.assertTrue(offline1.reference.equals(offline1.reference));
+    Assertions.assertTrue(offline1.reference.hashCode() >= 0 || offline1.reference.hashCode() <= 0);
+    Assertions.assertFalse(offline1.reference.hashCode() == offline2.reference.hashCode());
   }
 }

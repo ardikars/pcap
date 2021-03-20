@@ -6,6 +6,7 @@ package pcap.jdk7.internal;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -115,6 +116,34 @@ public class DefaultPcapDumperTest extends BaseTest {
       } catch (BreakException | ErrorException e) {
 
       }
+    }
+  }
+
+  @Test
+  void equalsAndHashCode()
+      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException {
+    Interface source = loopbackInterface(service);
+    try (Pcap live = service.live(source, new DefaultLiveOptions())) {
+      String newFile = file.concat(UUID.randomUUID().toString());
+      String newFile1 = file.concat(UUID.randomUUID().toString());
+      final DefaultDumper dumper = (DefaultDumper) live.dumpOpen(newFile);
+      final DefaultDumper dumper1 = (DefaultDumper) live.dumpOpen(newFile1);
+      Assertions.assertTrue(dumper.equals(dumper));
+      Assertions.assertFalse(dumper.equals(dumper1));
+      Assertions.assertFalse(dumper.equals(null));
+      Assertions.assertFalse(dumper.equals(new ArrayList<>(1)));
+      Assertions.assertTrue(dumper.hashCode() >= 0 || dumper.hashCode() <= 0);
+      Assertions.assertTrue(dumper.hashCode() != dumper1.hashCode());
+
+      Assertions.assertTrue(dumper.reference.equals(dumper.reference));
+      Assertions.assertFalse(dumper.reference.equals(dumper1.reference));
+      Assertions.assertFalse(dumper.reference.equals(null));
+      Assertions.assertFalse(dumper.reference.equals(new ArrayList<>(1)));
+      Assertions.assertTrue(dumper.reference.hashCode() >= 0 || dumper.reference.hashCode() <= 0);
+      Assertions.assertTrue(dumper.reference.hashCode() != dumper1.reference.hashCode());
     }
   }
 }

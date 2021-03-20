@@ -6,11 +6,6 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.PointerByReference;
-import pcap.spi.Address;
-import pcap.spi.Interface;
-import pcap.spi.Timestamp;
-import pcap.spi.annotation.Version;
-
 import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -18,6 +13,10 @@ import java.net.InetAddress;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import pcap.spi.Address;
+import pcap.spi.Interface;
+import pcap.spi.Timestamp;
+import pcap.spi.annotation.Version;
 
 class NativeMappings {
 

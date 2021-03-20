@@ -6,10 +6,6 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import pcap.spi.Dumper;
-import pcap.spi.PacketBuffer;
-import pcap.spi.PacketHeader;
-
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -17,16 +13,18 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import pcap.spi.Dumper;
+import pcap.spi.PacketBuffer;
+import pcap.spi.PacketHeader;
 
 class DefaultDumper implements Dumper {
 
   static final Set<Reference<DefaultDumper>> REFS =
       Collections.synchronizedSet(new HashSet<Reference<DefaultDumper>>());
   static final ReferenceQueue<DefaultDumper> RQ = new ReferenceQueue<DefaultDumper>();
-
+  final DumperReference reference;
   private final Pointer pointer;
   private final Pointer hdrPtr; // for copying header
-  private final DumperReference reference;
 
   DefaultDumper(Pointer pointer) {
     this.pointer = pointer;
@@ -97,6 +95,20 @@ class DefaultDumper implements Dumper {
     NativeMappings.pcap_dump_close(pointer);
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    DefaultDumper that = (DefaultDumper) o;
+    return Pointer.nativeValue(pointer) == Pointer.nativeValue(that.pointer);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(Pointer.nativeValue(pointer));
+  }
+
   static final class DumperReference extends PhantomReference<DefaultDumper> {
 
     long address;
@@ -108,9 +120,6 @@ class DefaultDumper implements Dumper {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
       if (o == null || getClass() != o.getClass()) {
         return false;
       }
