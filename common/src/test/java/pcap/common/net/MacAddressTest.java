@@ -4,6 +4,7 @@
  */
 package pcap.common.net;
 
+import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -142,7 +143,7 @@ public class MacAddressTest {
     Assertions.assertTrue(macAddress.equals(MacAddress.ZERO));
     Assertions.assertFalse(macAddress.equals(macAddressCmp));
     Assertions.assertFalse(macAddress.hashCode() == macAddressCmp.hashCode());
-    Assertions.assertFalse(macAddress.equals(""));
+    Assertions.assertFalse(macAddress.equals(new ArrayList<>(1)));
     Assertions.assertFalse(macAddress.equals(null));
   }
 }

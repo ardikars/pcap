@@ -52,7 +52,7 @@ class AbstractPacketTest {
       Assertions.assertFalse(ethernet.equals(ETHERNET));
       Assertions.assertFalse(ethernet.equals(ethernet2));
       Assertions.assertTrue(ethernet.equals(ethernet));
-      Assertions.assertTrue(ethernet.hashCode() >= 0 || ethernet.hashCode() < 0);
+      Assertions.assertTrue(ethernet.hashCode() >= 0 || ethernet.hashCode() <= 0);
 
       ethernetBuffer.release();
       ethernet2Buffer.release();

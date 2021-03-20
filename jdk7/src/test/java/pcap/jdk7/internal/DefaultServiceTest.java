@@ -227,7 +227,7 @@ public class DefaultServiceTest extends BaseTest {
     final DefaultService defaultService = (DefaultService) service;
     Interface lo = loopbackInterface(defaultService);
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
-    final Pointer pointer = NativeMappings.pcap_create(lo.name(), errbuf);
+    final Pointer pointer = NativeMappings.PLATFORM_DEPENDENT.pcap_create(lo.name(), errbuf);
     defaultService.nullCheck(pointer);
     Assertions.assertThrows(
         ErrorException.class,
@@ -245,7 +245,7 @@ public class DefaultServiceTest extends BaseTest {
     final DefaultService defaultService = (DefaultService) service;
     Interface lo = loopbackInterface(defaultService);
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
-    final Pointer pointer = NativeMappings.pcap_create(lo.name(), errbuf);
+    final Pointer pointer = NativeMappings.PLATFORM_DEPENDENT.pcap_create(lo.name(), errbuf);
     Assertions.assertNotNull(pointer);
     int rc = NativeMappings.PLATFORM_DEPENDENT.pcap_can_set_rfmon(pointer);
     Assertions.assertThrows(
@@ -396,9 +396,9 @@ public class DefaultServiceTest extends BaseTest {
     final DefaultService defaultService = (DefaultService) service;
     Interface lo = loopbackInterface(defaultService);
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
-    final Pointer pointer = NativeMappings.pcap_create(lo.name(), errbuf);
+    final Pointer pointer = NativeMappings.PLATFORM_DEPENDENT.pcap_create(lo.name(), errbuf);
     Assertions.assertNotNull(pointer);
-    int rc = NativeMappings.pcap_activate(pointer);
+    int rc = NativeMappings.PLATFORM_DEPENDENT.pcap_activate(pointer);
     Assertions.assertThrows(
         PromiscuousModeNotSupported.class,
         new Executable() {
@@ -502,12 +502,15 @@ public class DefaultServiceTest extends BaseTest {
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
 
     Interface lo = loopbackInterface(defaultService);
-    final Pointer pointer = NativeMappings.pcap_create(lo.name(), errbuf);
+    final Pointer pointer = NativeMappings.PLATFORM_DEPENDENT.pcap_create(lo.name(), errbuf);
 
-    if (NativeMappings.pcap_set_snaplen(pointer, options.snapshotLength()) == NativeMappings.OK) {
-      if (NativeMappings.pcap_set_promisc(pointer, options.isPromiscuous() ? 1 : 0)
+    if (NativeMappings.PLATFORM_DEPENDENT.pcap_set_snaplen(pointer, options.snapshotLength())
+        == NativeMappings.OK) {
+      if (NativeMappings.PLATFORM_DEPENDENT.pcap_set_promisc(
+              pointer, options.isPromiscuous() ? 1 : 0)
           == NativeMappings.OK) {
-        if (NativeMappings.pcap_set_timeout(pointer, options.timeout()) == NativeMappings.OK) {
+        if (NativeMappings.PLATFORM_DEPENDENT.pcap_set_timeout(pointer, options.timeout())
+            == NativeMappings.OK) {
           defaultService.setRfMonIfPossible(pointer, true, true);
           defaultService.setRfMonIfPossible(pointer, false, true);
           defaultService.setRfMonIfPossible(pointer, true, false);

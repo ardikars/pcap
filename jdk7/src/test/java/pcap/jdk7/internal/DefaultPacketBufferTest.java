@@ -9,6 +9,7 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import java.lang.ref.ReferenceQueue;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -3639,13 +3640,15 @@ public class DefaultPacketBufferTest {
 
   @Test
   void equalsAndHashCode() {
-    PacketBuffer memory1 = DefaultPacketBuffer.PacketBufferManager.allocate(SHORT_BYTES);
-    PacketBuffer memory2 = DefaultPacketBuffer.PacketBufferManager.allocate(SHORT_BYTES);
+    DefaultPacketBuffer.FinalizablePacketBuffer memory1 =
+        DefaultPacketBuffer.PacketBufferManager.allocate(SHORT_BYTES);
+    DefaultPacketBuffer.FinalizablePacketBuffer memory2 =
+        DefaultPacketBuffer.PacketBufferManager.allocate(SHORT_BYTES);
     memory1.setShort(0, 0xFF);
     memory2.setShort(0, 0xFF);
 
     Assertions.assertFalse(memory1.equals(null));
-    Assertions.assertFalse(memory1.equals(""));
+    Assertions.assertFalse(memory1.equals(new ArrayList<>(0)));
     Assertions.assertFalse(memory1.writerIndex(0).equals(memory2.writerIndex(1)));
     Assertions.assertFalse(memory1.writerIndex(1).equals(memory2.writerIndex(0)));
     Assertions.assertFalse(memory1.writerIndex(1).equals(memory2.writerIndex(2)));
@@ -3659,6 +3662,11 @@ public class DefaultPacketBufferTest {
     Assertions.assertNotEquals(memory1.hashCode(), memory2.hashCode());
 
     Assertions.assertEquals(0, memory1.writerIndex(0).hashCode());
+
+    Assertions.assertTrue(memory1.phantomReference.equals(memory1.phantomReference));
+    Assertions.assertFalse(memory1.phantomReference.equals(memory2.phantomReference));
+    Assertions.assertFalse(memory1.phantomReference.equals(null));
+    Assertions.assertFalse(memory1.phantomReference.equals(""));
   }
 
   static final class TestPacket extends Packet.Abstract {

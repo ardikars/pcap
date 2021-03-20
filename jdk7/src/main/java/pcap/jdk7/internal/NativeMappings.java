@@ -12,6 +12,7 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import pcap.spi.Address;
 import pcap.spi.Interface;
 import pcap.spi.Timestamp;
@@ -25,7 +26,7 @@ class NativeMappings {
   static final short AF_INET;
   static final short AF_INET6;
   static final DefaultPlatformDependent PLATFORM_DEPENDENT;
-  static final boolean isWinPcap;
+  static final boolean IS_WIN_PCAP;
   private static final Map<String, Object> NATIVE_LOAD_LIBRARY_OPTIONS =
       new HashMap<String, Object>();
 
@@ -49,6 +50,14 @@ class NativeMappings {
     funcMap.put("pcap_getevent", "pcap_getevent");
     funcMap.put("pcap_statustostr", "pcap_statustostr");
     funcMap.put("pcap_inject", "pcap_inject");
+    funcMap.put("pcap_dump_ftell", "pcap_dump_ftell");
+    funcMap.put("pcap_setdirection", "pcap_setdirection");
+    funcMap.put("pcap_create", "pcap_create");
+    funcMap.put("pcap_set_snaplen", "pcap_set_snaplen");
+    funcMap.put("pcap_set_promisc", "pcap_set_promisc");
+    funcMap.put("pcap_set_timeout", "pcap_set_timeout");
+    funcMap.put("pcap_set_buffer_size", "pcap_set_buffer_size");
+    funcMap.put("pcap_activate", "pcap_activate");
 
     NATIVE_LOAD_LIBRARY_OPTIONS.put(
         Library.OPTION_FUNCTION_MAPPER,
@@ -59,7 +68,7 @@ class NativeMappings {
           }
         });
     PLATFORM_DEPENDENT = new DefaultPlatformDependent();
-    isWinPcap = NativeMappings.pcap_lib_version().toLowerCase().contains("winpcap");
+    IS_WIN_PCAP = NativeMappings.pcap_lib_version().toLowerCase().contains("winpcap");
 
     AF_INET = 2;
     AF_INET6 = defaultAfInet6();
@@ -121,37 +130,13 @@ class NativeMappings {
   @NativeSignature(
       signature = "pcap_t *pcap_open_offline(const char *fname, char *errbuf)",
       since = @Version(major = 0, minor = 4))
+  static native Pointer pcap_open_live(
+      String device, int snaplen, int promisc, int toMs, ErrorBuffer errbuf);
+
+  @NativeSignature(
+      signature = "pcap_t *pcap_open_offline(const char *fname, char *errbuf)",
+      since = @Version(major = 0, minor = 4))
   static native Pointer pcap_open_offline(String fname, ErrorBuffer errbuf);
-
-  @NativeSignature(
-      signature = "pcap_t *pcap_create(const char *source, char *errbuf)",
-      since = @Version(major = 1, minor = 0))
-  static native Pointer pcap_create(String device, ErrorBuffer errbuf);
-
-  @NativeSignature(
-      signature = "int pcap_set_snaplen(pcap_t *p, int snaplen)",
-      since = @Version(major = 1, minor = 0))
-  static native int pcap_set_snaplen(Pointer p, int snaplen);
-
-  @NativeSignature(
-      signature = "int pcap_set_promisc(pcap_t *p, int promisc)",
-      since = @Version(major = 1, minor = 0))
-  static native int pcap_set_promisc(Pointer p, int promisc);
-
-  @NativeSignature(
-      signature = "int pcap_set_timeout(pcap_t *p, int to_ms)",
-      since = @Version(major = 1, minor = 0))
-  static native int pcap_set_timeout(Pointer p, int timeout);
-
-  @NativeSignature(
-      signature = "int pcap_set_buffer_size(pcap_t *p, int buffer_size)",
-      since = @Version(major = 1, minor = 0))
-  static native int pcap_set_buffer_size(Pointer p, int bufferSize);
-
-  @NativeSignature(
-      signature = "int pcap_activate(pcap_t *p)",
-      since = @Version(major = 1, minor = 0))
-  static native int pcap_activate(Pointer p);
 
   @NativeSignature(
       signature = "int pcap_loop(pcap_t *p, int cnt, pcap_handler callback, u_char *user)",
@@ -212,11 +197,6 @@ class NativeMappings {
   static native int pcap_dump_flush(Pointer p);
 
   @NativeSignature(
-      signature = "long pcap_dump_ftell(pcap_dumper_t *p)",
-      since = @Version(major = 0, minor = 9))
-  static native NativeLong pcap_dump_ftell(Pointer dumper);
-
-  @NativeSignature(
       signature = "void pcap_dump_close(pcap_dumper_t *p)",
       since = @Version(major = 0, minor = 4))
   static native void pcap_dump_close(Pointer p);
@@ -225,11 +205,6 @@ class NativeMappings {
       signature = "int pcap_stats(pcap_t *p, struct pcap_stat *ps)",
       since = @Version(major = 0, minor = 4))
   static native int pcap_stats(Pointer p, Pointer ps);
-
-  @NativeSignature(
-      signature = "int pcap_setdirection(pcap_t *p, pcap_direction_t d)",
-      since = @Version(major = 0, minor = 9))
-  static native int pcap_setdirection(Pointer p, int pcap_direction);
 
   @NativeSignature(
       signature = "int pcap_setnonblock(pcap_t *p, int nonblock, char *errbuf)",
@@ -293,6 +268,51 @@ class NativeMappings {
   interface PlatformDependent extends Library {
 
     @NativeSignature(
+        signature = "int pcap_inject(pcap_t *p, const void *buf, size_t size)",
+        since = @Version(major = 0, minor = 9))
+    int pcap_inject(Pointer p, Pointer buf, int size);
+
+    @NativeSignature(
+        signature = "long pcap_dump_ftell(pcap_dumper_t *p)",
+        since = @Version(major = 0, minor = 9))
+    NativeLong pcap_dump_ftell(Pointer dumper);
+
+    @NativeSignature(
+        signature = "int pcap_setdirection(pcap_t *p, pcap_direction_t d)",
+        since = @Version(major = 0, minor = 9))
+    int pcap_setdirection(Pointer p, int pcap_direction);
+
+    @NativeSignature(
+        signature = "pcap_t *pcap_create(const char *source, char *errbuf)",
+        since = @Version(major = 1, minor = 0))
+    Pointer pcap_create(String device, ErrorBuffer errbuf);
+
+    @NativeSignature(
+        signature = "int pcap_set_snaplen(pcap_t *p, int snaplen)",
+        since = @Version(major = 1, minor = 0))
+    int pcap_set_snaplen(Pointer p, int snaplen);
+
+    @NativeSignature(
+        signature = "int pcap_set_promisc(pcap_t *p, int promisc)",
+        since = @Version(major = 1, minor = 0))
+    int pcap_set_promisc(Pointer p, int promisc);
+
+    @NativeSignature(
+        signature = "int pcap_set_timeout(pcap_t *p, int to_ms)",
+        since = @Version(major = 1, minor = 0))
+    int pcap_set_timeout(Pointer p, int timeout);
+
+    @NativeSignature(
+        signature = "int pcap_set_buffer_size(pcap_t *p, int buffer_size)",
+        since = @Version(major = 1, minor = 0))
+    int pcap_set_buffer_size(Pointer p, int bufferSize);
+
+    @NativeSignature(
+        signature = "int pcap_activate(pcap_t *p)",
+        since = @Version(major = 1, minor = 0))
+    int pcap_activate(Pointer p);
+
+    @NativeSignature(
         signature = "int pcap_can_set_rfmon(pcap_t *p)",
         since = @Version(major = 1, minor = 0))
     int pcap_can_set_rfmon(Pointer p);
@@ -340,11 +360,6 @@ class NativeMappings {
     int pcap_set_immediate_mode(Pointer p, int immediate_mode);
 
     @NativeSignature(
-        signature = "int pcap_inject(pcap_t *p, const void *buf, size_t size)",
-        since = @Version(major = 0, minor = 9))
-    int pcap_inject(Pointer p, Pointer buf, int size);
-
-    @NativeSignature(
         signature = "int pcap_get_selectable_fd(pcap_t *p)",
         since = @Version(major = 0, minor = 8),
         description = "Only available on Unix system.",
@@ -375,9 +390,115 @@ class NativeMappings {
 
   static final class DefaultPlatformDependent implements PlatformDependent {
 
+    private static final NativeLong ZERO = new NativeLong(0);
+
     private static final PlatformDependent NATIVE =
         com.sun.jna.Native.load(
             libName(Platform.isWindows()), PlatformDependent.class, NATIVE_LOAD_LIBRARY_OPTIONS);
+
+    private final AtomicBoolean injectIsSupported = new AtomicBoolean(true);
+    private final AtomicBoolean dumpFtellIsSupported = new AtomicBoolean(true);
+
+    @Override
+    public int pcap_inject(Pointer p, Pointer buf, int size) {
+      if (injectIsSupported.get()) {
+        try {
+          return NATIVE.pcap_inject(p, buf, size);
+        } catch (NullPointerException | UnsatisfiedLinkError e) {
+          Utils.warn("pcap_inject: Function doesn't exist, use pcap_sendpacket.");
+          injectIsSupported.compareAndSet(true, false);
+        }
+      }
+      int rc = NativeMappings.pcap_sendpacket(p, buf, size);
+      if (rc < 0) {
+        return rc;
+      } else {
+        return size;
+      }
+    }
+
+    @Override
+    public NativeLong pcap_dump_ftell(Pointer dumper) {
+      if (dumpFtellIsSupported.get()) {
+        try {
+          return NATIVE.pcap_dump_ftell(dumper);
+        } catch (NullPointerException | UnsatisfiedLinkError e) {
+          Utils.warn("pcap_dump_ftell: Function doesn't exist.");
+          dumpFtellIsSupported.compareAndSet(true, false);
+        }
+      }
+      return ZERO;
+    }
+
+    @Override
+    public int pcap_setdirection(Pointer p, int pcap_direction) {
+      try {
+        return NATIVE.pcap_setdirection(p, pcap_direction);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        Utils.warn("pcap_setdirection: Function doesn't exist.");
+        return 0;
+      }
+    }
+
+    @Override
+    public Pointer pcap_create(String device, ErrorBuffer errbuf) {
+      try {
+        return NATIVE.pcap_create(device, errbuf);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        Utils.warn("pcap_create: Function doesn't exist.");
+        return null;
+      }
+    }
+
+    @Override
+    public int pcap_set_snaplen(Pointer p, int snaplen) {
+      try {
+        return NATIVE.pcap_set_snaplen(p, snaplen);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        Utils.warn("pcap_set_snaplen: Function doesn't exist.");
+        return 0;
+      }
+    }
+
+    @Override
+    public int pcap_set_promisc(Pointer p, int promisc) {
+      try {
+        return NATIVE.pcap_set_promisc(p, promisc);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        Utils.warn("pcap_set_promisc: Function doesn't exist.");
+        return 0;
+      }
+    }
+
+    @Override
+    public int pcap_set_timeout(Pointer p, int timeout) {
+      try {
+        return NATIVE.pcap_set_timeout(p, timeout);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        Utils.warn("pcap_set_timeout: Function doesn't exist.");
+        return 0;
+      }
+    }
+
+    @Override
+    public int pcap_set_buffer_size(Pointer p, int bufferSize) {
+      try {
+        return NATIVE.pcap_set_buffer_size(p, bufferSize);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        Utils.warn("pcap_set_buffer_size: Function doesn't exist.");
+        return 0;
+      }
+    }
+
+    @Override
+    public int pcap_activate(Pointer p) {
+      try {
+        return NATIVE.pcap_activate(p);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        Utils.warn("pcap_activate: Function doesn't exist.");
+        return -1;
+      }
+    }
 
     @Override
     public int pcap_can_set_rfmon(Pointer p) {
@@ -504,11 +625,6 @@ class NativeMappings {
       } catch (NullPointerException | UnsatisfiedLinkError e) {
         throw new UnsupportedOperationException("pcap_getevent: Function doesn't exist.");
       }
-    }
-
-    @Override
-    public int pcap_inject(Pointer p, Pointer buf, int size) {
-      return NATIVE.pcap_inject(p, buf, size);
     }
   }
 

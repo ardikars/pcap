@@ -26,8 +26,6 @@ class DefaultPcap implements Pcap {
 
   static final ReferenceQueue<DefaultPcap> RQ = new ReferenceQueue<DefaultPcap>();
 
-  private static final Object LOCK = new Object();
-
   final Pointer pointer;
   final int netmask;
   final DefaultStatistics statistics;
@@ -91,7 +89,7 @@ class DefaultPcap implements Pcap {
       // in libpcap 1.8.0 and later is newly thread-safe.
       rc = NativeMappings.pcap_compile(pointer, fp, filter, optimize ? 1 : 0, netmask);
     } else {
-      synchronized (LOCK) {
+      synchronized (this) {
         rc = NativeMappings.pcap_compile(pointer, fp, filter, optimize ? 1 : 0, netmask);
       }
     }
@@ -226,9 +224,10 @@ class DefaultPcap implements Pcap {
   public int inject(PacketBuffer directBuffer) throws ErrorException {
     checkBuffer(directBuffer);
     DefaultPacketBuffer buffer = (DefaultPacketBuffer) directBuffer;
+    final int readableBytes = (int) directBuffer.readableBytes();
     int rc =
         NativeMappings.PLATFORM_DEPENDENT.pcap_inject(
-            pointer, buffer.buffer.share(buffer.readerIndex()), (int) directBuffer.readableBytes());
+            pointer, buffer.buffer.share(buffer.readerIndex()), readableBytes);
     injectCheck(rc);
     return rc;
   }
@@ -238,11 +237,11 @@ class DefaultPcap implements Pcap {
     Utils.requireNonNull(direction, "direction: null (expected: direction != null)");
     int result;
     if (Direction.PCAP_D_IN == direction) {
-      result = NativeMappings.pcap_setdirection(pointer, 1);
+      result = NativeMappings.PLATFORM_DEPENDENT.pcap_setdirection(pointer, 1);
     } else if (Direction.PCAP_D_OUT == direction) {
-      result = NativeMappings.pcap_setdirection(pointer, 2);
+      result = NativeMappings.PLATFORM_DEPENDENT.pcap_setdirection(pointer, 2);
     } else {
-      result = NativeMappings.pcap_setdirection(pointer, 0);
+      result = NativeMappings.PLATFORM_DEPENDENT.pcap_setdirection(pointer, 0);
     }
     directionCheck(result);
   }
@@ -322,9 +321,6 @@ class DefaultPcap implements Pcap {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
@@ -463,6 +459,20 @@ class DefaultPcap implements Pcap {
       super(referent, q);
       this.pcap = pcapRef;
       this.stats = statsRef;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PcapReference reference = (PcapReference) o;
+      return hashCode() == reference.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(pcap, stats);
     }
   }
 }
