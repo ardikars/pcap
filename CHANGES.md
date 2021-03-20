@@ -63,3 +63,10 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 ## Version 1.2.1 (2021-03-12)
 
 * Remove object reference if the object is GC'ed.
+
+
+## Version 1.2.2 (2021-03-20)
+
+* Use function mapping (method proxy) for some native method instead of direct mapping for backward compatibility.
+
+* Add equals() and hashCode() to reference objects.
