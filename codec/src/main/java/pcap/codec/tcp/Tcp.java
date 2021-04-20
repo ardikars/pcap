@@ -4,13 +4,13 @@
  */
 package pcap.codec.tcp;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import pcap.codec.AbstractPacket;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
-import pcap.spi.annotation.Incubating;
+
+import java.net.Inet4Address;
+import java.net.InetAddress;
 
 /*
    0                   1                   2                   3
@@ -36,9 +36,8 @@ import pcap.spi.annotation.Incubating;
 /**
  * TCP
  *
- * @since 1.0.0 (incubating)
+ * @since 1.0.0
  */
-@Incubating
 public final class Tcp extends AbstractPacket {
 
   public static final int TYPE = 6;
@@ -76,9 +75,8 @@ public final class Tcp extends AbstractPacket {
    * @param size {@link Tcp} header size.
    * @param buffer buffer.
    * @return returns {@link Tcp} instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public static Tcp newInstance(int size, PacketBuffer buffer) {
     Validate.notIllegalArgument(
         size >= 20 && size <= 60 && buffer.readableBytes() >= 20, "buffer size is not sufficient.");
@@ -91,9 +89,8 @@ public final class Tcp extends AbstractPacket {
    * Get source port.
    *
    * @return returns source port.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int sourcePort() {
     return buffer.getShort(sourcePort) & 0xFFFF;
   }
@@ -103,9 +100,8 @@ public final class Tcp extends AbstractPacket {
    *
    * @param value source port.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Tcp sourcePort(int value) {
     buffer.setShort(sourcePort, value & 0xFFFF);
     return this;
@@ -115,9 +111,8 @@ public final class Tcp extends AbstractPacket {
    * Get destination port.
    *
    * @return returns destination port.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int destinationPort() {
     return buffer.getShort(destinationPort) & 0xFFFF;
   }
@@ -127,9 +122,8 @@ public final class Tcp extends AbstractPacket {
    *
    * @param value destination port.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Tcp destinationPort(int value) {
     buffer.setShort(destinationPort, value & 0xFFFF);
     return this;
@@ -139,9 +133,8 @@ public final class Tcp extends AbstractPacket {
    * Get sequence number.
    *
    * @return returns sequence number.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public long sequenceNumber() {
     return buffer.getUnsignedInt(sequenceNumber);
   }
@@ -151,9 +144,8 @@ public final class Tcp extends AbstractPacket {
    *
    * @param value sequence number.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Tcp sequenceNumber(int value) {
     buffer.setInt(sequenceNumber, value);
     return this;
@@ -163,21 +155,19 @@ public final class Tcp extends AbstractPacket {
    * Get acknowledgment number.
    *
    * @return returns acknowledgment number.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public long acknowledgmentNumber() {
     return buffer.getUnsignedInt(acknowledgmentNumber);
   }
 
   /**
-   * Set ackowledgment number.
+   * Set acknowledgment number.
    *
    * @param value acknowledgment number.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Tcp acknowledgmentNumber(int value) {
     buffer.setInt(acknowledgmentNumber, value);
     return this;
@@ -187,9 +177,8 @@ public final class Tcp extends AbstractPacket {
    * Get data offset.
    *
    * @return returns data offset.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int dataOffset() {
     return (buffer.getShort(dataOffset) >> 12) & 0xF;
   }
@@ -199,9 +188,8 @@ public final class Tcp extends AbstractPacket {
    *
    * @param value data offset.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Tcp dataOffset(int value) {
     if (value < 5 || value > maxDataOffset) {
       throw new IllegalArgumentException(
@@ -216,10 +204,9 @@ public final class Tcp extends AbstractPacket {
    * Get NS flag.
    *
    * @return returns {@code true} if is set, {@code false} otherwise.
-   * @since 1.0.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
-  public boolean ns() {
+  public boolean isNs() {
     return (((buffer.getShort(dataOffset) & 0x1FF) >> 8) & 0x1) == 1;
   }
 
@@ -228,11 +215,10 @@ public final class Tcp extends AbstractPacket {
    *
    * @param value {@code true} for set NS flag, {@code false} otherwise.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Tcp ns(boolean value) {
-    if (ns() != value) {
+    if (isNs() != value) {
       setShortFlags(value ? 256 : -256);
     }
     return this;
@@ -242,10 +228,9 @@ public final class Tcp extends AbstractPacket {
    * Get CWR flag.
    *
    * @return returns {@code true} if is set, {@code false} otherwise.
-   * @since 1.0.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
-  public boolean cwr() {
+  public boolean isCwr() {
     return (((buffer.getShort(dataOffset) & 0x1FF) >> 7) & 0x1) == 1;
   }
 
@@ -254,11 +239,10 @@ public final class Tcp extends AbstractPacket {
    *
    * @param value {@code true} for set CWR flag, {@code false} otherwise.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Tcp cwr(boolean value) {
-    if (cwr() != value) {
+    if (isCwr() != value) {
       setShortFlags(value ? 128 : -128);
     }
     return this;
@@ -268,10 +252,9 @@ public final class Tcp extends AbstractPacket {
    * Get ECE flag.
    *
    * @return returns {@code true} if is set, {@code false} otherwise.
-   * @since 1.0.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
-  public boolean ece() {
+  public boolean isEce() {
     return (((buffer.getShort(dataOffset) & 0x1FF) >> 6) & 0x1) == 1;
   }
 
@@ -280,11 +263,10 @@ public final class Tcp extends AbstractPacket {
    *
    * @param value {@code true} for set ECE flag, {@code false} otherwise.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Tcp ece(boolean value) {
-    if (ece() != value) {
+    if (isEce() != value) {
       setShortFlags(value ? 64 : -64);
     }
     return this;
@@ -294,10 +276,9 @@ public final class Tcp extends AbstractPacket {
    * Get URG flag.
    *
    * @return returns {@code true} if is set, {@code false} otherwise.
-   * @since 1.0.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
-  public boolean urg() {
+  public boolean isUrg() {
     return (((buffer.getShort(dataOffset) & 0x1FF) >> 5) & 0x1) == 1;
   }
 
@@ -306,11 +287,10 @@ public final class Tcp extends AbstractPacket {
    *
    * @param value {@code true} for set URG flag, {@code false} otherwise.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Tcp urg(boolean value) {
-    if (urg() != value) {
+    if (isUrg() != value) {
       setShortFlags(value ? 32 : -32);
     }
     return this;
@@ -320,10 +300,9 @@ public final class Tcp extends AbstractPacket {
    * Get ACK flag.
    *
    * @return returns {@code true} if is set, {@code false} otherwise.
-   * @since 1.0.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
-  public boolean ack() {
+  public boolean isAck() {
     return (((buffer.getShort(dataOffset) & 0x1FF) >> 4) & 0x1) == 1;
   }
 
@@ -332,11 +311,10 @@ public final class Tcp extends AbstractPacket {
    *
    * @param value {@code true} for set ACK flag, {@code false} otherwise.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Tcp ack(boolean value) {
-    if (ack() != value) {
+    if (isAck() != value) {
       setShortFlags(value ? 16 : -16);
     }
     return this;
@@ -346,10 +324,9 @@ public final class Tcp extends AbstractPacket {
    * Get PSH flag.
    *
    * @return returns {@code true} if is set, {@code false} otherwise.
-   * @since 1.0.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
-  public boolean psh() {
+  public boolean isPsh() {
     return (((buffer.getShort(dataOffset) & 0x1FF) >> 3) & 0x1) == 1;
   }
 
@@ -358,11 +335,10 @@ public final class Tcp extends AbstractPacket {
    *
    * @param value {@code true} for set PSH flag, {@code false} otherwise.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Tcp psh(boolean value) {
-    if (psh() != value) {
+    if (isPsh() != value) {
       setShortFlags(value ? 8 : -8);
     }
     return this;
@@ -372,10 +348,9 @@ public final class Tcp extends AbstractPacket {
    * Get RST flag.
    *
    * @return returns {@code true} if is set, {@code false} otherwise.
-   * @since 1.0.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
-  public boolean rst() {
+  public boolean isRst() {
     return (((buffer.getShort(dataOffset) & 0x1FF) >> 2) & 0x1) == 1;
   }
 
@@ -384,11 +359,10 @@ public final class Tcp extends AbstractPacket {
    *
    * @param value {@code true} for set RST flag, {@code false} otherwise.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Tcp rst(boolean value) {
-    if (rst() != value) {
+    if (isRst() != value) {
       setShortFlags(value ? 4 : -4);
     }
     return this;
@@ -398,10 +372,9 @@ public final class Tcp extends AbstractPacket {
    * Get SYN flag.
    *
    * @return returns {@code true} if is set, {@code false} otherwise.
-   * @since 1.0.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
-  public boolean syn() {
+  public boolean isSyn() {
     return (((buffer.getShort(dataOffset) & 0x1FF) >> 1) & 0x1) == 1;
   }
 
@@ -410,11 +383,10 @@ public final class Tcp extends AbstractPacket {
    *
    * @param value {@code true} for set SYN flag, {@code false} otherwise.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Tcp syn(boolean value) {
-    if (syn() != value) {
+    if (isSyn() != value) {
       setShortFlags(value ? 2 : -2);
     }
     return this;
@@ -424,10 +396,9 @@ public final class Tcp extends AbstractPacket {
    * Get FIN flag.
    *
    * @return returns {@code true} if is set, {@code false} otherwise.
-   * @since 1.0.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
-  public boolean fin() {
+  public boolean isFin() {
     return ((buffer.getShort(dataOffset) & 0x1FF) & 0x1) == 1;
   }
 
@@ -436,11 +407,10 @@ public final class Tcp extends AbstractPacket {
    *
    * @param value {@code true} for set FIN flag, {@code false} otherwise.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Tcp fin(boolean value) {
-    if (fin() != value) {
+    if (isFin() != value) {
       setShortFlags(value ? 1 : -1);
     }
     return this;
@@ -452,7 +422,6 @@ public final class Tcp extends AbstractPacket {
    * @return returns window size.
    * @since 1.0.0
    */
-  @Incubating
   public int windowSize() {
     return buffer.getShort(windowSize) & 0xFFFF;
   }
@@ -464,7 +433,6 @@ public final class Tcp extends AbstractPacket {
    * @return returns this instance.
    * @since 1.0.0
    */
-  @Incubating
   public Tcp windowSize(int value) {
     buffer.setShort(windowSize, value & 0xFFFF);
     return this;
@@ -476,7 +444,6 @@ public final class Tcp extends AbstractPacket {
    * @return returns checksum.
    * @since 1.0.0
    */
-  @Incubating
   public int checksum() {
     return buffer.getShort(checksum) & 0xFFFF;
   }
@@ -489,7 +456,6 @@ public final class Tcp extends AbstractPacket {
    * @return returns this instance.
    * @since 1.0.0
    */
-  @Incubating
   public Tcp checksum(int value) {
     buffer.setShort(checksum, value & 0xFFFF);
     return this;
@@ -504,7 +470,6 @@ public final class Tcp extends AbstractPacket {
    * @return returns checksum.
    * @since 1.0.0
    */
-  @Incubating
   public int calculateChecksum(InetAddress srcAddr, InetAddress dstAddr, int payloadLength) {
     return Checksum.calculate(buffer, offset, srcAddr, dstAddr, TYPE, size(), payloadLength);
   }
@@ -518,7 +483,6 @@ public final class Tcp extends AbstractPacket {
    * @return returns {@code true} if valid, {@code false} otherwise.
    * @since 1.0.0
    */
-  @Incubating
   public boolean isValidChecksum(Inet4Address src, Inet4Address dst, int payloadLength) {
     return calculateChecksum(src, dst, payloadLength) == 0;
   }
@@ -529,7 +493,6 @@ public final class Tcp extends AbstractPacket {
    * @return returns urgent pointer.
    * @since 1.0.0
    */
-  @Incubating
   public int urgentPointer() {
     return buffer.getShort(urgentPointer) & 0xFFFF;
   }
@@ -541,7 +504,6 @@ public final class Tcp extends AbstractPacket {
    * @return returns this instance.
    * @since 1.0.0
    */
-  @Incubating
   public Tcp urgentPointer(int value) {
     buffer.setShort(urgentPointer, value & 0xFFFF);
     return this;
@@ -553,7 +515,6 @@ public final class Tcp extends AbstractPacket {
    * @return returns header options.
    * @since 1.0.0
    */
-  @Incubating
   public byte[] options() {
     byte[] data = new byte[(dataOffset() << 2) - 20];
     buffer.getBytes(options, data, 0, data.length);
@@ -567,7 +528,6 @@ public final class Tcp extends AbstractPacket {
    * @return returns this instance.
    * @since 1.0.0
    */
-  @Incubating
   public Tcp options(byte[] value) {
     int maxLength = (dataOffset() - 5) << 2;
     buffer.setBytes(options, value, 0, Math.min(value.length, maxLength));

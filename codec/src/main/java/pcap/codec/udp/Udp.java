@@ -4,20 +4,19 @@
  */
 package pcap.codec.udp;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import pcap.codec.AbstractPacket;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
-import pcap.spi.annotation.Incubating;
+
+import java.net.Inet4Address;
+import java.net.InetAddress;
 
 /**
  * UDP
  *
- * @since 1.0.0 (incubating)
+ * @since 1.0.0
  */
-@Incubating
 public final class Udp extends AbstractPacket {
 
   public static final int TYPE = 17;
@@ -42,9 +41,8 @@ public final class Udp extends AbstractPacket {
    * @param size {@link Udp} header size.
    * @param buffer buffer.
    * @return returns {@link Udp} instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public static Udp newInstance(int size, PacketBuffer buffer) {
     Validate.notIllegalArgument(
         size >= 8 && size <= 65535 && buffer.readableBytes() >= 8,
@@ -56,9 +54,8 @@ public final class Udp extends AbstractPacket {
    * Get source port.
    *
    * @return returns source port.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int sourcePort() {
     return buffer.getShort(sourcePort) & 0xFFFF;
   }
@@ -68,9 +65,8 @@ public final class Udp extends AbstractPacket {
    *
    * @param value source port.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Udp sourcePort(int value) {
     buffer.setShort(sourcePort, value & 0xFFFF);
     return this;
@@ -80,9 +76,8 @@ public final class Udp extends AbstractPacket {
    * Get destination port.
    *
    * @return returns destination port.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int destinationPort() {
     return buffer.getShort(destinationPort) & 0xFFFF;
   }
@@ -92,9 +87,8 @@ public final class Udp extends AbstractPacket {
    *
    * @param value destination port.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Udp destinationPort(int value) {
     buffer.setShort(destinationPort, value & 0xFFFF);
     return this;
@@ -104,9 +98,8 @@ public final class Udp extends AbstractPacket {
    * Get length.
    *
    * @return returns length.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int length() {
     return buffer.getShort(length) & 0xFFFF;
   }
@@ -116,9 +109,8 @@ public final class Udp extends AbstractPacket {
    *
    * @param value length.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Udp length(int value) {
     buffer.setShort(length, value & 0xFFFF);
     return this;
@@ -128,9 +120,8 @@ public final class Udp extends AbstractPacket {
    * Get checksum.
    *
    * @return returns checksum.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int checksum() {
     return buffer.getShort(checksum) & 0xFFFF;
   }
@@ -140,9 +131,8 @@ public final class Udp extends AbstractPacket {
    *
    * @param value checksum.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Udp checksum(int value) {
     buffer.setShort(checksum, value & 0xFFFF);
     return this;
@@ -154,9 +144,8 @@ public final class Udp extends AbstractPacket {
    * @param srcAddr source IP address.
    * @param dstAddr destination IP address.
    * @return returns checksum.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int calculateChecksum(InetAddress srcAddr, InetAddress dstAddr) {
     return Checksum.calculate(buffer, offset, srcAddr, dstAddr, TYPE, size(), length() - size());
   }
@@ -167,9 +156,8 @@ public final class Udp extends AbstractPacket {
    * @param src source IP address.
    * @param dst destination IP address.
    * @return returns {@code true} if valid, {@code false} otherwis.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public boolean isValidChecksum(Inet4Address src, Inet4Address dst) {
     return calculateChecksum(src, dst) == 0;
   }

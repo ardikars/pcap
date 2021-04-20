@@ -9,14 +9,12 @@ import pcap.common.net.MacAddress;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
-import pcap.spi.annotation.Incubating;
 
 /**
  * Ethernet header.
  *
- * @since 1.0.0 (incubating)
+ * @since 1.0.0
  */
-@Incubating
 public final class Ethernet extends AbstractPacket {
 
   public static final int TYPE = 1;
@@ -39,9 +37,8 @@ public final class Ethernet extends AbstractPacket {
    * @param size ethernet size.
    * @param buffer buffer.
    * @return returns {@link Ethernet} instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public static Ethernet newInstance(int size, PacketBuffer buffer) {
     Validate.notIllegalArgument(
         size == 14 && buffer.readableBytes() >= 14, "buffer size is not sufficient.");
@@ -52,9 +49,8 @@ public final class Ethernet extends AbstractPacket {
    * Get destination hardware address ({@link MacAddress}.
    *
    * @return returns {@link MacAddress}.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public MacAddress destination() {
     return MacAddress.valueOf((buffer.getLong(destination) >> 16) & 0xffffffffffffL);
   }
@@ -64,9 +60,8 @@ public final class Ethernet extends AbstractPacket {
    *
    * @param macAddress mac address.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ethernet destination(MacAddress macAddress) {
     buffer.setBytes(destination, macAddress.address());
     return this;
@@ -76,9 +71,8 @@ public final class Ethernet extends AbstractPacket {
    * Get source hardware address ({@link MacAddress}).
    *
    * @return returns {@link MacAddress}.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public MacAddress source() {
     return MacAddress.valueOf((buffer.getLong(source) >> 16) & 0xffffffffffffL);
   }
@@ -88,9 +82,8 @@ public final class Ethernet extends AbstractPacket {
    *
    * @param macAddress mac address.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ethernet source(MacAddress macAddress) {
     buffer.setBytes(source, macAddress.address());
     return this;
@@ -100,9 +93,8 @@ public final class Ethernet extends AbstractPacket {
    * Get ethernet type.
    *
    * @return returns ethernet type.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int type() {
     return buffer.getShort(type) & 0xFFFF;
   }
@@ -112,9 +104,8 @@ public final class Ethernet extends AbstractPacket {
    *
    * @param value ethernet type.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ethernet type(int value) {
     buffer.setShort(type, value & 0xFFFF);
     return this;

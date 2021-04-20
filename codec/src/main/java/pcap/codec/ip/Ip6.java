@@ -4,20 +4,19 @@
  */
 package pcap.codec.ip;
 
-import java.net.Inet6Address;
 import pcap.codec.AbstractPacket;
 import pcap.common.net.InetAddresses;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
-import pcap.spi.annotation.Incubating;
+
+import java.net.Inet6Address;
 
 /**
  * IPv6
  *
- * @since 1.0.0 (incubating)
+ * @since 1.0.0
  */
-@Incubating
 public final class Ip6 extends AbstractPacket {
 
   public static final int TYPE = 0x86dd;
@@ -46,7 +45,7 @@ public final class Ip6 extends AbstractPacket {
    * @param size {@link Ip6} header size.
    * @param buffer buffer.
    * @return returns {@link Ip6} instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public static Ip6 newInstance(int size, PacketBuffer buffer) {
     Validate.notIllegalArgument(
@@ -58,7 +57,7 @@ public final class Ip6 extends AbstractPacket {
    * Get IP version number (6).
    *
    * @return returns IP version number (6).
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public int version() {
     return (buffer.getInt(version) >> 28) & 0xF;
@@ -69,7 +68,7 @@ public final class Ip6 extends AbstractPacket {
    *
    * @param value IP version number (6).
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public Ip6 version(int value) {
     int v = buffer.getInt(version);
@@ -81,7 +80,7 @@ public final class Ip6 extends AbstractPacket {
    * Get traffic class.
    *
    * @return returns traffic class.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public int trafficClass() {
     return (buffer.getInt(version) >> 20) & 0xFF;
@@ -92,7 +91,7 @@ public final class Ip6 extends AbstractPacket {
    *
    * @param value traffic class.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public Ip6 trafficClass(int value) {
     int v = buffer.getInt(version);
@@ -104,7 +103,7 @@ public final class Ip6 extends AbstractPacket {
    * Flow label.
    *
    * @return returns flow label.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public int flowLabel() {
     return (buffer.getInt(version) & 0xFFFFF);
@@ -115,7 +114,7 @@ public final class Ip6 extends AbstractPacket {
    *
    * @param value flow label.
    * @return flow label.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public Ip6 flowLabel(int value) {
     int v = buffer.getInt(version);
@@ -127,7 +126,7 @@ public final class Ip6 extends AbstractPacket {
    * Get payload length.
    *
    * @return returns payload length.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public int payloadLength() {
     return buffer.getShort(payloadLength) & 0xFFFF;
@@ -138,7 +137,7 @@ public final class Ip6 extends AbstractPacket {
    *
    * @param value payload length.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public Ip6 payloadLength(int value) {
     buffer.setShort(payloadLength, value & 0xFFFF);
@@ -149,7 +148,7 @@ public final class Ip6 extends AbstractPacket {
    * Get next header type.
    *
    * @return returns next header type.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public int nextHeader() {
     return buffer.getByte(nextHeader) & 0xFF;
@@ -160,7 +159,7 @@ public final class Ip6 extends AbstractPacket {
    *
    * @param value next header type.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public Ip6 nextHeader(int value) {
     buffer.setByte(nextHeader, value & 0xFF);
@@ -171,7 +170,7 @@ public final class Ip6 extends AbstractPacket {
    * Get hop limit.
    *
    * @return returns hop limit.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public int hopLimit() {
     return buffer.getByte(hopLimit) & 0xFF;
@@ -182,7 +181,7 @@ public final class Ip6 extends AbstractPacket {
    *
    * @param value hop limit.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public Ip6 hopLimit(int value) {
     buffer.setByte(hopLimit, value & 0xFF);
@@ -193,7 +192,7 @@ public final class Ip6 extends AbstractPacket {
    * Get source IP ({@link Inet6Address}.
    *
    * @return returns source IP ({@link Inet6Address}).
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public Inet6Address source() {
     return getInet6Address(source);
@@ -204,7 +203,7 @@ public final class Ip6 extends AbstractPacket {
    *
    * @param value source IP ({@link Inet6Address}).
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public Ip6 source(Inet6Address value) {
     buffer.setBytes(source, value.getAddress());
@@ -215,7 +214,7 @@ public final class Ip6 extends AbstractPacket {
    * Get destination IP ({@link Inet6Address}).
    *
    * @return returns destination IP ({@link Inet6Address}).
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public Inet6Address destination() {
     return getInet6Address(destination);
@@ -226,7 +225,7 @@ public final class Ip6 extends AbstractPacket {
    *
    * @param value destination IP ({@link Inet6Address}).
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
   public Ip6 destination(Inet6Address value) {
     buffer.setBytes(destination, value.getAddress());

@@ -4,30 +4,32 @@
  */
 package pcap.codec;
 
+import pcap.spi.PacketBuffer;
+import pcap.spi.annotation.Internal;
+
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
-import pcap.spi.PacketBuffer;
-import pcap.spi.annotation.Incubating;
 
 /**
  * Abstract packet
  *
- * @since 1.0.0 (incubating)
+ * @since 1.0.0
  */
-@Incubating
 public abstract class AbstractPacket extends pcap.spi.Packet.Abstract {
 
   protected AbstractPacket(PacketBuffer buffer) {
     super(buffer);
   }
 
+  @Internal
   protected static final class Checksum {
 
     private Checksum() {
       //
     }
 
+    @Internal
     public static int sum(final PacketBuffer buffer, final long offset, final int length) {
       int accumulation = 0;
       long size = offset + (length % 2 == 0 ? length : length - 1);
@@ -40,6 +42,7 @@ public abstract class AbstractPacket extends pcap.spi.Packet.Abstract {
       return accumulation;
     }
 
+    @Internal
     public static int calculate(
         PacketBuffer buffer,
         long offset,

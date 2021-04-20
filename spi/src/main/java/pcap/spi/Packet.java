@@ -4,14 +4,11 @@
  */
 package pcap.spi;
 
-import pcap.spi.annotation.Incubating;
-
 /**
  * Used by {@link PacketBuffer#cast(Class)}.
  *
  * @since 1.0.0
  */
-@Incubating
 public interface Packet {
 
   /**
@@ -20,7 +17,6 @@ public interface Packet {
    * @return returns packet buffer.
    * @since 1.0.0
    */
-  @Incubating
   PacketBuffer buffer();
 
   /**
@@ -28,7 +24,6 @@ public interface Packet {
    *
    * @since 1.0.0
    */
-  @Incubating
   abstract class Abstract implements Packet {
 
     protected final PacketBuffer buffer;

@@ -50,15 +50,15 @@ public class TcpTest {
       Assertions.assertEquals(4084406310L, tcp.sequenceNumber());
       Assertions.assertEquals(961351515, tcp.acknowledgmentNumber());
       Assertions.assertEquals(8, tcp.dataOffset());
-      Assertions.assertFalse(tcp.ns());
-      Assertions.assertFalse(tcp.cwr());
-      Assertions.assertFalse(tcp.ece());
-      Assertions.assertFalse(tcp.urg());
-      Assertions.assertTrue(tcp.ack());
-      Assertions.assertTrue(tcp.psh());
-      Assertions.assertFalse(tcp.rst());
-      Assertions.assertFalse(tcp.syn());
-      Assertions.assertFalse(tcp.fin());
+      Assertions.assertFalse(tcp.isNs());
+      Assertions.assertFalse(tcp.isCwr());
+      Assertions.assertFalse(tcp.isEce());
+      Assertions.assertFalse(tcp.isUrg());
+      Assertions.assertTrue(tcp.isAck());
+      Assertions.assertTrue(tcp.isPsh());
+      Assertions.assertFalse(tcp.isRst());
+      Assertions.assertFalse(tcp.isSyn());
+      Assertions.assertFalse(tcp.isFin());
       Assertions.assertEquals(2048, tcp.windowSize());
       Assertions.assertEquals(3929, tcp.checksum());
       Assertions.assertEquals(0, tcp.urgentPointer());
@@ -98,15 +98,15 @@ public class TcpTest {
       Assertions.assertEquals(1, tcp.sequenceNumber());
       Assertions.assertEquals(1, tcp.acknowledgmentNumber());
       Assertions.assertEquals(6, tcp.dataOffset());
-      Assertions.assertTrue(tcp.ns());
-      Assertions.assertTrue(tcp.cwr());
-      Assertions.assertTrue(tcp.ece());
-      Assertions.assertTrue(tcp.urg());
-      Assertions.assertFalse(tcp.ack());
-      Assertions.assertFalse(tcp.psh());
-      Assertions.assertTrue(tcp.rst());
-      Assertions.assertTrue(tcp.syn());
-      Assertions.assertTrue(tcp.fin());
+      Assertions.assertTrue(tcp.isNs());
+      Assertions.assertTrue(tcp.isCwr());
+      Assertions.assertTrue(tcp.isEce());
+      Assertions.assertTrue(tcp.isUrg());
+      Assertions.assertFalse(tcp.isAck());
+      Assertions.assertFalse(tcp.isPsh());
+      Assertions.assertTrue(tcp.isRst());
+      Assertions.assertTrue(tcp.isSyn());
+      Assertions.assertTrue(tcp.isFin());
       Assertions.assertEquals(4096, tcp.windowSize());
       Assertions.assertEquals(2, tcp.checksum());
       Assertions.assertEquals(0, tcp.urgentPointer());
@@ -197,15 +197,15 @@ public class TcpTest {
       tcp.syn(true);
       tcp.fin(true);
 
-      Assertions.assertTrue(tcp.ns());
-      Assertions.assertTrue(tcp.cwr());
-      Assertions.assertTrue(tcp.ece());
-      Assertions.assertTrue(tcp.urg());
-      Assertions.assertTrue(tcp.ack());
-      Assertions.assertTrue(tcp.psh());
-      Assertions.assertTrue(tcp.rst());
-      Assertions.assertTrue(tcp.syn());
-      Assertions.assertTrue(tcp.fin());
+      Assertions.assertTrue(tcp.isNs());
+      Assertions.assertTrue(tcp.isCwr());
+      Assertions.assertTrue(tcp.isEce());
+      Assertions.assertTrue(tcp.isUrg());
+      Assertions.assertTrue(tcp.isAck());
+      Assertions.assertTrue(tcp.isPsh());
+      Assertions.assertTrue(tcp.isRst());
+      Assertions.assertTrue(tcp.isSyn());
+      Assertions.assertTrue(tcp.isFin());
 
       Assertions.assertNotNull(tcp.toString());
 
@@ -219,15 +219,15 @@ public class TcpTest {
       tcp.syn(false);
       tcp.fin(false);
 
-      Assertions.assertFalse(tcp.ns());
-      Assertions.assertFalse(tcp.cwr());
-      Assertions.assertFalse(tcp.ece());
-      Assertions.assertFalse(tcp.urg());
-      Assertions.assertFalse(tcp.ack());
-      Assertions.assertFalse(tcp.psh());
-      Assertions.assertFalse(tcp.rst());
-      Assertions.assertFalse(tcp.syn());
-      Assertions.assertFalse(tcp.fin());
+      Assertions.assertFalse(tcp.isNs());
+      Assertions.assertFalse(tcp.isCwr());
+      Assertions.assertFalse(tcp.isEce());
+      Assertions.assertFalse(tcp.isUrg());
+      Assertions.assertFalse(tcp.isAck());
+      Assertions.assertFalse(tcp.isPsh());
+      Assertions.assertFalse(tcp.isRst());
+      Assertions.assertFalse(tcp.isSyn());
+      Assertions.assertFalse(tcp.isFin());
 
       Assertions.assertNotNull(tcp.toString());
 
@@ -241,15 +241,15 @@ public class TcpTest {
       tcp.syn(true);
       tcp.fin(true);
 
-      Assertions.assertTrue(tcp.ns());
-      Assertions.assertTrue(tcp.cwr());
-      Assertions.assertTrue(tcp.ece());
-      Assertions.assertTrue(tcp.urg());
-      Assertions.assertTrue(tcp.ack());
-      Assertions.assertTrue(tcp.psh());
-      Assertions.assertTrue(tcp.rst());
-      Assertions.assertTrue(tcp.syn());
-      Assertions.assertTrue(tcp.fin());
+      Assertions.assertTrue(tcp.isNs());
+      Assertions.assertTrue(tcp.isCwr());
+      Assertions.assertTrue(tcp.isEce());
+      Assertions.assertTrue(tcp.isUrg());
+      Assertions.assertTrue(tcp.isAck());
+      Assertions.assertTrue(tcp.isPsh());
+      Assertions.assertTrue(tcp.isRst());
+      Assertions.assertTrue(tcp.isSyn());
+      Assertions.assertTrue(tcp.isFin());
 
       Assertions.assertNotNull(tcp.toString());
 
@@ -263,15 +263,15 @@ public class TcpTest {
       tcp.syn(true);
       tcp.fin(true);
 
-      Assertions.assertTrue(tcp.ns());
-      Assertions.assertTrue(tcp.cwr());
-      Assertions.assertTrue(tcp.ece());
-      Assertions.assertTrue(tcp.urg());
-      Assertions.assertTrue(tcp.ack());
-      Assertions.assertTrue(tcp.psh());
-      Assertions.assertTrue(tcp.rst());
-      Assertions.assertTrue(tcp.syn());
-      Assertions.assertTrue(tcp.fin());
+      Assertions.assertTrue(tcp.isNs());
+      Assertions.assertTrue(tcp.isCwr());
+      Assertions.assertTrue(tcp.isEce());
+      Assertions.assertTrue(tcp.isUrg());
+      Assertions.assertTrue(tcp.isAck());
+      Assertions.assertTrue(tcp.isPsh());
+      Assertions.assertTrue(tcp.isRst());
+      Assertions.assertTrue(tcp.isSyn());
+      Assertions.assertTrue(tcp.isFin());
 
       Assertions.assertNotNull(tcp.toString());
 
@@ -285,15 +285,15 @@ public class TcpTest {
       tcp.syn(false);
       tcp.fin(false);
 
-      Assertions.assertFalse(tcp.ns());
-      Assertions.assertFalse(tcp.cwr());
-      Assertions.assertFalse(tcp.ece());
-      Assertions.assertFalse(tcp.urg());
-      Assertions.assertFalse(tcp.ack());
-      Assertions.assertFalse(tcp.psh());
-      Assertions.assertFalse(tcp.rst());
-      Assertions.assertFalse(tcp.syn());
-      Assertions.assertFalse(tcp.fin());
+      Assertions.assertFalse(tcp.isNs());
+      Assertions.assertFalse(tcp.isCwr());
+      Assertions.assertFalse(tcp.isEce());
+      Assertions.assertFalse(tcp.isUrg());
+      Assertions.assertFalse(tcp.isAck());
+      Assertions.assertFalse(tcp.isPsh());
+      Assertions.assertFalse(tcp.isRst());
+      Assertions.assertFalse(tcp.isSyn());
+      Assertions.assertFalse(tcp.isFin());
 
       Assertions.assertNotNull(tcp.toString());
 
@@ -307,15 +307,15 @@ public class TcpTest {
       tcp.syn(false);
       tcp.fin(false);
 
-      Assertions.assertFalse(tcp.ns());
-      Assertions.assertFalse(tcp.cwr());
-      Assertions.assertFalse(tcp.ece());
-      Assertions.assertFalse(tcp.urg());
-      Assertions.assertFalse(tcp.ack());
-      Assertions.assertFalse(tcp.psh());
-      Assertions.assertFalse(tcp.rst());
-      Assertions.assertFalse(tcp.syn());
-      Assertions.assertFalse(tcp.fin());
+      Assertions.assertFalse(tcp.isNs());
+      Assertions.assertFalse(tcp.isCwr());
+      Assertions.assertFalse(tcp.isEce());
+      Assertions.assertFalse(tcp.isUrg());
+      Assertions.assertFalse(tcp.isAck());
+      Assertions.assertFalse(tcp.isPsh());
+      Assertions.assertFalse(tcp.isRst());
+      Assertions.assertFalse(tcp.isSyn());
+      Assertions.assertFalse(tcp.isFin());
 
       Assertions.assertNotNull(tcp.toString());
 
