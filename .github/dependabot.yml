@@ -1,0 +1,33 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "22:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: org.mockito:mockito-junit-jupiter
+    versions:
+    - 3.7.7
+    - 3.8.0
+  - dependency-name: org.mockito:mockito-inline
+    versions:
+    - 3.7.7
+    - 3.8.0
+  - dependency-name: org.mockito:mockito-core
+    versions:
+    - 3.7.7
+    - 3.8.0
+  - dependency-name: org.openjdk.jmh:jmh-generator-annprocess
+    versions:
+    - "1.28"
+  - dependency-name: org.openjdk.jmh:jmh-core
+    versions:
+    - "1.28"
+  - dependency-name: org.apache.logging.log4j:log4j-api
+    versions:
+    - 2.14.1
+  - dependency-name: net.java.dev.jna:jna
+    versions:
+    - 5.7.0
