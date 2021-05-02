@@ -153,7 +153,16 @@ public final class Sll extends AbstractPacket {
   public Sll address(byte[] value) {
     int addrLen = addressLength();
     if (addrLen > 0 && addrLen <= SLL_ADDRLEN) {
-      buffer.setBytes(address, value, 0, addrLen);
+      if (value == null) {
+        buffer.setBytes(addrLen, new byte[addrLen], 0, addrLen);
+      } else {
+        buffer.setBytes(address, value, 0, addrLen);
+      }
+    } else {
+      throw new IllegalArgumentException(
+          String.format(
+              "addressLength: %d (expected: addressLength(%d) > 0 and addressLength(%d) <= 8)",
+              addrLen, addrLen, addrLen));
     }
     return this;
   }

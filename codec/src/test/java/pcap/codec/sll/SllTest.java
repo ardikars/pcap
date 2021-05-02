@@ -39,8 +39,8 @@ class SllTest {
               .capacity(BYTES.length)
               .byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN);
       buffer.writeBytes(BYTES);
-      Sll sll = buffer.cast(Sll.class);
-      Sll comparison = Sll.newInstance(sll.size(), buffer);
+      final Sll sll = buffer.cast(Sll.class);
+      final Sll comparison = Sll.newInstance(sll.size(), buffer);
       Assertions.assertEquals(sll, comparison);
 
       Assertions.assertEquals(0, sll.packetType());
@@ -70,9 +70,23 @@ class SllTest {
       Assertions.assertArrayEquals(new byte[8], sll.address());
 
       sll.addressLength(0);
-      sll.address(new byte[] {9, 9, 9, 9, 9, 9, 9, 9, 9});
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              sll.address(new byte[] {9, 9, 9, 9, 9, 9, 9, 9, 9});
+            }
+          });
       sll.addressLength(100);
-      sll.address(new byte[] {});
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              sll.address(new byte[] {});
+            }
+          });
 
       sll.protocol(Ip6.TYPE);
       Assertions.assertTrue(Ip6.TYPE == (sll.protocol() & 0xFFFF));
