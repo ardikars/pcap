@@ -2,14 +2,13 @@
  * Copyright (c) 2020-2021 Pcap Project
  * SPDX-License-Identifier: MIT OR Apache-2.0
  */
-package pcap.codec.ethernet;
+package pcap.codec.loopback;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import pcap.common.net.MacAddress;
 import pcap.common.util.Hexs;
 import pcap.spi.PacketBuffer;
 import pcap.spi.Pcap;
@@ -19,9 +18,11 @@ import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 
 @RunWith(JUnitPlatform.class)
-class EthernetTest {
+class LoopbackTest {
 
-  private static final byte[] BYTES = Hexs.parseHex("d80d17269cee8c8590c30b330800");
+  private static final byte[] BYTES =
+      Hexs.parseHex(
+          "0200000045000034dab64000800600007f0000017f00000108177629b6f6447f000000008002fffffd3300000204ffd70103030801010402");
 
   @Test
   void readWrite()
@@ -37,47 +38,37 @@ class EthernetTest {
               .byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN);
       buffer.writeBytes(BYTES);
 
-      final Ethernet ethernet = buffer.cast(Ethernet.class);
-      final Ethernet comparison = Ethernet.newInstance(14, buffer);
-      Assertions.assertEquals(ethernet, comparison);
+      final Loopback loopback = buffer.cast(Loopback.class);
+      final Loopback comparison = Loopback.newInstance(loopback.size(), buffer);
+      Assertions.assertEquals(loopback, comparison);
 
-      Assertions.assertEquals(MacAddress.valueOf("d8:0d:17:26:9c:ee"), ethernet.destination());
-      Assertions.assertEquals(MacAddress.valueOf("8c:85:90:c3:0b:33"), ethernet.source());
-      Assertions.assertEquals(0x0800, ethernet.type());
+      Assertions.assertEquals(Integer.reverseBytes(2), loopback.family());
 
-      // write
-      ethernet.destination(MacAddress.BROADCAST);
-      ethernet.source(MacAddress.DUMMY);
-      ethernet.type(0x0806);
+      loopback.family(Integer.reverseBytes(1));
+      Assertions.assertEquals(Integer.reverseBytes(1), loopback.family());
 
-      // read
-      Assertions.assertEquals(MacAddress.BROADCAST, ethernet.destination());
-      Assertions.assertEquals(MacAddress.DUMMY, ethernet.source());
-      Assertions.assertEquals(0x0806, ethernet.type());
-
-      // to string
-      Assertions.assertNotNull(ethernet.toString());
+      Assertions.assertTrue(loopback.toString() != null);
 
       Assertions.assertThrows(
           IllegalArgumentException.class,
           new Executable() {
             @Override
             public void execute() throws Throwable {
-              Ethernet.newInstance(0, buffer);
+              Loopback.newInstance(1, buffer);
             }
           });
-
       Assertions.assertThrows(
           IllegalArgumentException.class,
           new Executable() {
             @Override
             public void execute() throws Throwable {
-              Ethernet.newInstance(14, buffer.setIndex(0, 0));
+              long oldWriter = buffer.writerIndex();
+              long oldReader = buffer.readerIndex();
+              buffer.setIndex(oldWriter, oldWriter);
+              Loopback.newInstance(4, buffer);
+              buffer.setIndex(oldReader, oldWriter);
             }
           });
-
-      // release buffer
-      buffer.release();
     }
   }
 }

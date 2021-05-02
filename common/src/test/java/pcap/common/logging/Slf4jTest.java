@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 
 /** */
 @RunWith(JUnitPlatform.class)
-public class Slf4jTest extends AbstractLoggerTest {
+class Slf4jTest extends AbstractLoggerTest {
 
   @BeforeEach
   @Override

@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 
 /** */
 @RunWith(JUnitPlatform.class)
-public class ErrorExceptionTest {
+class ErrorExceptionTest {
 
   @Test
   void throwExceptionTest() {

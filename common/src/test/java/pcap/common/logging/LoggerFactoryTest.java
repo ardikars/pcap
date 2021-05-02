@@ -15,17 +15,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(JUnitPlatform.class)
-public class LoggerFactoryTest {
+class LoggerFactoryTest {
 
   @Test
-  public void hasClassTest() {
+  void hasClassTest() {
     Assertions.assertTrue(LoggerFactory.hasClass("org.apache.logging.log4j.LogManager"));
     Assertions.assertTrue(LoggerFactory.hasClass("org.slf4j.LoggerFactory"));
     Assertions.assertFalse(LoggerFactory.hasClass("pcap.LoggerFactory"));
   }
 
   @Test
-  public void sl4jLoggerTest() {
+  void sl4jLoggerTest() {
     Assertions.assertTrue(Slf4jLoggerFactory.hasSlf4j());
     Assertions.assertTrue(
         LoggerFactory.getLogger(LoggerFactory.class.getSimpleName()) instanceof Slf4jLogger);
@@ -34,7 +34,7 @@ public class LoggerFactoryTest {
   }
 
   @Test
-  public void log4j2LoggerTest() {
+  void log4j2LoggerTest() {
     try (MockedStatic<Slf4jLoggerFactory> theMock = Mockito.mockStatic(Slf4jLoggerFactory.class)) {
       theMock
           .when(
@@ -60,7 +60,7 @@ public class LoggerFactoryTest {
   }
 
   @Test
-  public void noLoggerTest() {
+  void noLoggerTest() {
     try (MockedStatic<Slf4jLoggerFactory> slf4jMock =
         Mockito.mockStatic(Slf4jLoggerFactory.class)) {
       try (MockedStatic<Log4j2LoggerFactory> log4j2Mock =

@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 
 /** */
 @RunWith(JUnitPlatform.class)
-public class StringsTest {
+class StringsTest {
 
   private static final byte[] byteData =
       new byte[] {(byte) 10, (byte) 43, (byte) 45, (byte) 2, (byte) 5};
@@ -29,7 +29,7 @@ public class StringsTest {
   private static final String stringData = "Rock The Party!";
 
   @Test
-  public void emptyTest() {
+  void emptyTest() {
     Assertions.assertTrue(Strings.empty(null));
     Assertions.assertTrue(Strings.empty(""));
     Assertions.assertEquals("OK", Strings.empty(null, "OK"));
@@ -38,7 +38,7 @@ public class StringsTest {
   }
 
   @Test
-  public void blankTest() {
+  void blankTest() {
     Assertions.assertTrue(Strings.blank(" "));
     Assertions.assertTrue(Strings.blank(null));
     Assertions.assertTrue(Strings.blank("\t "));
@@ -51,7 +51,7 @@ public class StringsTest {
   }
 
   @Test
-  public void lengthTest() {
+  void lengthTest() {
     Assertions.assertEquals(6, Strings.length(4, 1, 5));
     Assertions.assertEquals(5, Strings.length(5, 0, 5));
     Assertions.assertEquals(1, Strings.length(1, 1, 1));
@@ -59,28 +59,28 @@ public class StringsTest {
   }
 
   @Test
-  public void byteToHexString() {
+  void byteToHexString() {
     Assertions.assertEquals("0a", Strings.hex(byteData[0]));
   }
 
   @Test
-  public void emptyByteArrayToHexString() {
+  void emptyByteArrayToHexString() {
     Assertions.assertEquals("", Strings.hex(new byte[0]));
     Assertions.assertEquals("", Strings.hex(byteData, 0, 0));
   }
 
   @Test
-  public void byteArrayToHexString() {
+  void byteArrayToHexString() {
     Assertions.assertEquals("0a2b2d0205", Strings.hex(byteData));
   }
 
   @Test
-  public void byteArrayToHexStringWithRange() {
+  void byteArrayToHexStringWithRange() {
     Assertions.assertEquals("2b2d02", Strings.hex(byteData, 1, byteData.length - 2));
   }
 
   @Test
-  public void byteToPrettyHexString() {
+  void byteToPrettyHexString() {
     String expected =
         "         +-------------------------------------------------+\n"
             + "         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |\n"
@@ -91,7 +91,7 @@ public class StringsTest {
   }
 
   @Test
-  public void byteArrayToPrettyHexString() {
+  void byteArrayToPrettyHexString() {
     final byte[] bytes = new byte[] {(byte) 10, (byte) 43, (byte) 45, (byte) 2, (byte) 0xff};
     String expected =
         "         +-------------------------------------------------+\n"
@@ -103,7 +103,7 @@ public class StringsTest {
   }
 
   @Test
-  public void byteArrayToPrettyHexStringWithRange() {
+  void byteArrayToPrettyHexStringWithRange() {
     final byte[] bytes = new byte[] {(byte) 10, (byte) 43, (byte) 45, (byte) 2, (byte) 0xff};
     String expected =
         "         +-------------------------------------------------+\n"
@@ -115,7 +115,7 @@ public class StringsTest {
   }
 
   @Test
-  public void toStringBuilderTest() {
+  void toStringBuilderTest() {
     Assertions.assertNotNull(
         Strings.toStringJsonBuilder()
             .add("as", new byte[] {123})

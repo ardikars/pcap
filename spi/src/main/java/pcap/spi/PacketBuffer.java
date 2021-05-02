@@ -4,8 +4,6 @@
  */
 package pcap.spi;
 
-import pcap.spi.annotation.Incubating;
-
 /**
  * Used to wrap low-level memory address.
  *
@@ -1352,7 +1350,6 @@ public interface PacketBuffer extends AutoCloseable {
    * @param <T> type.
    * @return returns {@link Packet}.
    */
-  @Incubating
   <T extends Packet.Abstract> T cast(Class<T> t);
 
   /**

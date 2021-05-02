@@ -17,7 +17,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 @RunWith(JUnitPlatform.class)
-public class NativeMappingsTest {
+class NativeMappingsTest {
 
   @BeforeEach
   void setUp() {

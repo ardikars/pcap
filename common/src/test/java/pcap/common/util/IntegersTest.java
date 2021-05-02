@@ -11,10 +11,10 @@ import org.junit.runner.RunWith;
 
 /** */
 @RunWith(JUnitPlatform.class)
-public class IntegersTest {
+class IntegersTest {
 
   @Test
-  public void toIntegerTestBE() {
+  void toIntegerTestBE() {
     int intValue = 2147483647;
     byte[] bytes = Bytes.toByteArray(intValue);
     int actualValue = Integers.toInteger(bytes);
@@ -24,7 +24,7 @@ public class IntegersTest {
   }
 
   @Test
-  public void toIntegerTestLE() {
+  void toIntegerTestLE() {
     int intValue = 2147483647;
     byte[] bytes = Bytes.toByteArrayLE(intValue);
     int actualValue = Integers.toIntegerLE(bytes);

@@ -19,7 +19,7 @@ import pcap.spi.Service;
 import pcap.spi.exception.ErrorException;
 
 @RunWith(JUnitPlatform.class)
-public class DefaultInterfaceIteratorTest {
+class DefaultInterfaceIteratorTest {
 
   private Service service;
 

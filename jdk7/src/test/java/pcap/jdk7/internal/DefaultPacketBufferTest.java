@@ -21,7 +21,7 @@ import pcap.spi.exception.MemoryAccessException;
 import pcap.spi.exception.MemoryLeakException;
 
 @RunWith(JUnitPlatform.class)
-public class DefaultPacketBufferTest {
+class DefaultPacketBufferTest {
 
   private static final int BYTE_BYTES = 1;
   private static final int SHORT_BYTES = 2;
@@ -3149,7 +3149,7 @@ public class DefaultPacketBufferTest {
   }
 
   @Test
-  public void slicedRelease() {
+  void slicedRelease() {
     final PacketBuffer smallBuffer = DefaultPacketBuffer.PacketBufferManager.allocate(SHORT_BYTES);
     final PacketBuffer slicedSmallBuffer = smallBuffer.slice();
     Assertions.assertTrue(slicedSmallBuffer.release());
@@ -3249,7 +3249,7 @@ public class DefaultPacketBufferTest {
   }
 
   @Test
-  public void noLeak() {
+  void noLeak() {
     for (int i = 0; i < 100; i++) {
       System.gc();
       if (i % 2 == 0) {
@@ -3265,7 +3265,7 @@ public class DefaultPacketBufferTest {
   }
 
   @Test
-  public void checkLeakEnabled() {
+  void checkLeakEnabled() {
     ReferenceQueue<DefaultPacketBuffer.FinalizablePacketBuffer> RQ =
         new ReferenceQueue<DefaultPacketBuffer.FinalizablePacketBuffer>();
     int capacity = 4;
@@ -3287,14 +3287,14 @@ public class DefaultPacketBufferTest {
   }
 
   @Test
-  public void doubleFree() {
+  void doubleFree() {
     final PacketBuffer buf = DefaultPacketBuffer.PacketBufferManager.allocate(4);
     Assertions.assertTrue(buf.release());
     Assertions.assertFalse(buf.release());
   }
 
   @Test
-  public void illegalAccess() {
+  void illegalAccess() {
     final DefaultPacketBuffer.FinalizablePacketBuffer buf =
         DefaultPacketBuffer.PacketBufferManager.allocate(4);
     buf.setInt(0, 10);
@@ -3311,7 +3311,7 @@ public class DefaultPacketBufferTest {
   }
 
   @Test
-  public void checkLeakDisabled() {
+  void checkLeakDisabled() {
     ReferenceQueue<DefaultPacketBuffer.FinalizablePacketBuffer> RQ =
         new ReferenceQueue<DefaultPacketBuffer.FinalizablePacketBuffer>();
     int capacity = 4;
@@ -3326,7 +3326,7 @@ public class DefaultPacketBufferTest {
   }
 
   @Test
-  public void cast() {
+  void cast() {
     try (final DefaultPacketBuffer.FinalizablePacketBuffer buf =
         DefaultPacketBuffer.PacketBufferManager.allocate(4)) {
       Assertions.assertThrows(
@@ -3394,7 +3394,7 @@ public class DefaultPacketBufferTest {
   }
 
   @Test
-  public void forceUnalignForShortRE() {
+  void forceUnalignForShortRE() {
     PacketBuffer memory = DefaultPacketBuffer.PacketBufferManager.allocate(LONG_BYTES);
     memory.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN);
     memory.setShortRE(0, 10);
@@ -3423,7 +3423,7 @@ public class DefaultPacketBufferTest {
   }
 
   @Test
-  public void forceUnalignForInt() {
+  void forceUnalignForInt() {
     PacketBuffer memory = DefaultPacketBuffer.PacketBufferManager.allocate(LONG_BYTES);
 
     memory.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN);
@@ -3477,7 +3477,7 @@ public class DefaultPacketBufferTest {
   }
 
   @Test
-  public void forceUnalignForIntRE() {
+  void forceUnalignForIntRE() {
     PacketBuffer memory = DefaultPacketBuffer.PacketBufferManager.allocate(LONG_BYTES);
     memory.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN);
     memory.setIntRE(0, 10);
@@ -3530,7 +3530,7 @@ public class DefaultPacketBufferTest {
   }
 
   @Test
-  public void forceUnalignForLong() {
+  void forceUnalignForLong() {
     PacketBuffer memory = DefaultPacketBuffer.PacketBufferManager.allocate(LONG_BYTES * 2);
     memory.byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN);
     memory.setLong(0, 10);

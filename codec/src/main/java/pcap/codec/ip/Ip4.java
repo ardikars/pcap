@@ -11,7 +11,6 @@ import pcap.common.util.Bytes;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
-import pcap.spi.annotation.Incubating;
 
 /*
  *  0                   1                   2                   3
@@ -38,9 +37,8 @@ import pcap.spi.annotation.Incubating;
  *   <li>https://tools.ietf.org/html/rfc3168
  * </ul>
  *
- * @since 1.0.0 (incubating)
+ * @since 1.0.0
  */
-@Incubating
 public final class Ip4 extends AbstractPacket {
 
   public static final int TYPE = 0x0800;
@@ -82,9 +80,8 @@ public final class Ip4 extends AbstractPacket {
    * @param size {@link Ip4} header size.
    * @param buffer buffer.
    * @return returns {@link Ip4} instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public static Ip4 newInstance(int size, PacketBuffer buffer) {
     Validate.notIllegalArgument(
         size >= 20 && size <= 60 && buffer.readableBytes() >= 20, "buffer size is not sufficient.");
@@ -96,9 +93,8 @@ public final class Ip4 extends AbstractPacket {
    * Get IP version number (4).
    *
    * @return returns IP version number (4).
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int version() {
     return (buffer.getByte(version) >> 4) & 0xF;
   }
@@ -108,9 +104,8 @@ public final class Ip4 extends AbstractPacket {
    *
    * @param value version number (4).
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ip4 version(int value) {
     buffer.setByte(version, (value & 0xF) << 4 | ihl());
     return this;
@@ -120,9 +115,8 @@ public final class Ip4 extends AbstractPacket {
    * Get IHL.
    *
    * @return returns IHL.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int ihl() {
     return buffer.getByte(version) & 0xF;
   }
@@ -132,9 +126,8 @@ public final class Ip4 extends AbstractPacket {
    *
    * @param value IHL.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ip4 ihl(int value) {
     if (value < 5 || value > maxIhl) {
       throw new IllegalArgumentException(
@@ -148,9 +141,8 @@ public final class Ip4 extends AbstractPacket {
    * Get DSCP.
    *
    * @return returns DSCP.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int dscp() {
     return (buffer.getByte(dscp) >> 2) & 0x3F;
   }
@@ -160,9 +152,8 @@ public final class Ip4 extends AbstractPacket {
    *
    * @param value DSCP.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ip4 dscp(int value) {
     buffer.setByte(dscp, (value & 0x3F) << 2 | ecn());
     return this;
@@ -172,9 +163,8 @@ public final class Ip4 extends AbstractPacket {
    * Get ECN.
    *
    * @return returns ECN.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int ecn() {
     return buffer.getByte(dscp) & 0x3;
   }
@@ -184,9 +174,8 @@ public final class Ip4 extends AbstractPacket {
    *
    * @param value ECN.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ip4 ecn(int value) {
     buffer.setByte(dscp, dscp() << 2 | value & 0x3);
     return this;
@@ -196,9 +185,8 @@ public final class Ip4 extends AbstractPacket {
    * Get total length.
    *
    * @return returns total length.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int totalLength() {
     return buffer.getShort(totalLength) & 0xFFFF;
   }
@@ -208,9 +196,8 @@ public final class Ip4 extends AbstractPacket {
    *
    * @param value total length.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ip4 totalLength(int value) {
     buffer.setShort(totalLength, value & 0xFFFF);
     return this;
@@ -220,9 +207,8 @@ public final class Ip4 extends AbstractPacket {
    * Get identification.
    *
    * @return returns identification.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int identification() {
     return buffer.getShort(identification) & 0xFFFF;
   }
@@ -232,9 +218,8 @@ public final class Ip4 extends AbstractPacket {
    *
    * @param value identification.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ip4 identification(int value) {
     buffer.setShort(identification, value & 0xFFFF);
     return this;
@@ -244,9 +229,8 @@ public final class Ip4 extends AbstractPacket {
    * Get flags.
    *
    * @return returns flags.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int flags() {
     return (buffer.getShort(flags) >> 13) & 0x7;
   }
@@ -256,9 +240,8 @@ public final class Ip4 extends AbstractPacket {
    *
    * @param value flags.
    * @return this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ip4 flags(int value) {
     buffer.setShort(flags, (value & 0x7) << 13 | fragmentOffset());
     return this;
@@ -268,9 +251,8 @@ public final class Ip4 extends AbstractPacket {
    * Get fragment offset.
    *
    * @return returns fragment offset.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int fragmentOffset() {
     return buffer.getShort(flags) & 0x1FFF;
   }
@@ -280,9 +262,8 @@ public final class Ip4 extends AbstractPacket {
    *
    * @param value fragment offset.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ip4 fragmentOffset(int value) {
     buffer.setShort(flags, (flags() & 0x7) << 13 | value & 0x1FFF);
     return this;
@@ -292,9 +273,8 @@ public final class Ip4 extends AbstractPacket {
    * Get TTL.
    *
    * @return returns TTL.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int ttl() {
     return buffer.getByte(ttl) & 0xFFFF;
   }
@@ -304,9 +284,8 @@ public final class Ip4 extends AbstractPacket {
    *
    * @param value TTL.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ip4 ttl(int value) {
     buffer.setByte(ttl, value & 0xFFFF);
     return this;
@@ -316,9 +295,8 @@ public final class Ip4 extends AbstractPacket {
    * Get protocol.
    *
    * @return returns protocol.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int protocol() {
     return buffer.getByte(protocol) & 0xFF;
   }
@@ -328,9 +306,8 @@ public final class Ip4 extends AbstractPacket {
    *
    * @param value protocol.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ip4 protocol(int value) {
     buffer.setByte(protocol, value & 0xFF);
     return this;
@@ -340,9 +317,8 @@ public final class Ip4 extends AbstractPacket {
    * Get checksum.
    *
    * @return returns checksum.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int checksum() {
     return buffer.getShort(headerChecksum) & 0xFFFF;
   }
@@ -352,9 +328,8 @@ public final class Ip4 extends AbstractPacket {
    *
    * @param value checksum.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ip4 checksum(int value) {
     buffer.setShort(headerChecksum, value & 0xFFFF);
     return this;
@@ -364,9 +339,8 @@ public final class Ip4 extends AbstractPacket {
    * Calculate this IPv4 header checksum.
    *
    * @return returns this header checksum.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public int calculateChecksum() {
     int accumulation = Checksum.sum(buffer, offset, ihl() << 2);
     accumulation -= buffer.getShort(10) & 0xFFFF;
@@ -378,9 +352,8 @@ public final class Ip4 extends AbstractPacket {
    * Check if this header has valid checksum value.
    *
    * @return returns {@code true} if valid, {@code false} otherwis.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public boolean isValidChecksum() {
     return checksum() == calculateChecksum();
   }
@@ -389,9 +362,8 @@ public final class Ip4 extends AbstractPacket {
    * Get source IP ({@link Inet4Address}).
    *
    * @return returns source IP ({@link Inet4Address}).
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Inet4Address source() {
     return InetAddresses.fromBytesToInet4Address(Bytes.toByteArray(buffer.getInt(source)));
   }
@@ -401,9 +373,8 @@ public final class Ip4 extends AbstractPacket {
    *
    * @param address source IP ({@link Inet4Address}).
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ip4 source(Inet4Address address) {
     buffer.setBytes(source, address.getAddress());
     return this;
@@ -413,9 +384,8 @@ public final class Ip4 extends AbstractPacket {
    * Get destination IP ({@link Inet4Address}).
    *
    * @return returns destination IP ({@link Inet4Address}).
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Inet4Address destination() {
     return InetAddresses.fromBytesToInet4Address(Bytes.toByteArray(buffer.getInt(destination)));
   }
@@ -425,9 +395,8 @@ public final class Ip4 extends AbstractPacket {
    *
    * @param address destination IP ({@link Inet4Address}).
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ip4 destination(Inet4Address address) {
     buffer.setBytes(destination, address.getAddress());
     return this;
@@ -437,9 +406,8 @@ public final class Ip4 extends AbstractPacket {
    * Get IPv4 header options.
    *
    * @return returns header options.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public byte[] options() {
     byte[] data = new byte[(ihl() - 5) << 2];
     buffer.getBytes(options, data);
@@ -451,9 +419,8 @@ public final class Ip4 extends AbstractPacket {
    *
    * @param value options value.
    * @return returns this instance.
-   * @since 1.0.0 (incubating)
+   * @since 1.0.0
    */
-  @Incubating
   public Ip4 options(byte[] value) {
     int maxLength = (ihl() - 5) << 2;
     buffer.setBytes(options, value, 0, Math.min(value.length, maxLength));

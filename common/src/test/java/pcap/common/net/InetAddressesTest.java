@@ -13,7 +13,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitPlatform.class)
-public class InetAddressesTest {
+class InetAddressesTest {
 
   @Test
   void fromBytesToInet4Address() {

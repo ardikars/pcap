@@ -70,3 +70,12 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 * Use function mapping (method proxy) for some native method instead of direct mapping for backward compatibility.
 
 * Add equals() and hashCode() to reference objects.
+
+
+## Version 1.3.0 (2021-05-02)
+
+* Remove @Incubating (AbstractPacket, Ethernet, Ip4, Ip6, Udp, Tcp, PacketBuffer#cast)
+
+* Add SLL (incubating) and NULL/Loopback (incubating) codec 
+
+* Add @Incubating Selection

@@ -11,10 +11,10 @@ import org.junit.runner.RunWith;
 
 /** */
 @RunWith(JUnitPlatform.class)
-public class ShortsTest {
+class ShortsTest {
 
   @Test
-  public void toShortTestBE() {
+  void toShortTestBE() {
     short value = (short) 65533;
     byte[] bytes = Bytes.toByteArray(value);
     short actualValue = Shorts.toShort(bytes);
@@ -24,7 +24,7 @@ public class ShortsTest {
   }
 
   @Test
-  public void toShortTestLE() {
+  void toShortTestLE() {
     short shortValue = (short) 65533;
     byte[] bytes = Bytes.toByteArrayLE(shortValue);
     short actualValue = Shorts.toShortLE(bytes);

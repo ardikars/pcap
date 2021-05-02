@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 
 /** */
 @RunWith(JUnitPlatform.class)
-public class TimestampTest {
+class TimestampTest {
 
   @Test
   void typeTest() {

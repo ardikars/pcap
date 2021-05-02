@@ -4,19 +4,18 @@
  */
 package pcap.spi;
 
+import java.nio.channels.SelectionKey;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
-/** */
 @RunWith(JUnitPlatform.class)
-class PcapDirectionTest {
+class SelectionTest {
 
   @Test
-  void direction() {
-    Assertions.assertNotNull(Pcap.Direction.PCAP_D_IN);
-    Assertions.assertNotNull(Pcap.Direction.PCAP_D_OUT);
-    Assertions.assertNotNull(Pcap.Direction.PCAP_D_INOUT);
+  void readWrite() {
+    Assertions.assertEquals(SelectionKey.OP_READ, Selection.OPERATION_READ);
+    Assertions.assertEquals(SelectionKey.OP_WRITE, Selection.OPERATION_WRITE);
   }
 }

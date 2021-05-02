@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 
 /** */
 @RunWith(JUnitPlatform.class)
-public class TimestampTypeNotSupportedExceptionTest {
+class TimestampTypeNotSupportedExceptionTest {
 
   @Test
   void throwExceptionTest() {

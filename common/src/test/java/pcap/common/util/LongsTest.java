@@ -11,10 +11,10 @@ import org.junit.runner.RunWith;
 
 /** */
 @RunWith(JUnitPlatform.class)
-public class LongsTest {
+class LongsTest {
 
   @Test
-  public void toLongTestBE() {
+  void toLongTestBE() {
     long longValue = 9223372036854775807L;
     byte[] bytes = Bytes.toByteArray(longValue);
     long actualValue = Longs.toLong(bytes);
@@ -24,7 +24,7 @@ public class LongsTest {
   }
 
   @Test
-  public void toLongTestLE() {
+  void toLongTestLE() {
     long longValue = 9223372036854775807L;
     byte[] bytes = Bytes.toByteArrayLE(longValue);
     long actualValue = Longs.toLongLE(bytes);

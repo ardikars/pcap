@@ -18,7 +18,7 @@ import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 
 @RunWith(JUnitPlatform.class)
-public class Ip4Test {
+class Ip4Test {
 
   private static final byte[] BYTES = Hexs.parseHex("4500005b00004000400666acc0a8006d4a7dc85e");
 

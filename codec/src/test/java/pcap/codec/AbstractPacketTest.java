@@ -4,6 +4,9 @@
  */
 package pcap.codec;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -56,6 +59,28 @@ class AbstractPacketTest {
 
       ethernetBuffer.release();
       ethernet2Buffer.release();
+    }
+  }
+
+  @Test
+  void calculate()
+      throws UnknownHostException, ErrorException, PermissionDeniedException,
+          PromiscuousModePermissionDeniedException, TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException, NoSuchDeviceException, ActivatedException,
+          InterfaceNotUpException, InterfaceNotSupportTimestampTypeException {
+    InetAddress dstIp4 = Inet4Address.getByName("127.0.0.1");
+    InetAddress srcIp4 = Inet4Address.getByName("127.0.0.1");
+    InetAddress dstIp6 = Inet4Address.getByName("::1");
+    InetAddress srcIp6 = Inet4Address.getByName("::1");
+
+    Service service = Service.Creator.create("PcapService");
+    try (final Pcap pcap = service.live(service.interfaces(), new DefaultLiveOptions())) {
+      PacketBuffer buffer = pcap.allocate(PacketBuffer.class).capacity(40);
+      AbstractPacket.Checksum.calculate(buffer, 0, dstIp4, srcIp4, 0, 0, 0);
+      AbstractPacket.Checksum.calculate(buffer, 0, dstIp6, srcIp6, 0, 0, 0);
+      AbstractPacket.Checksum.calculate(buffer, 0, dstIp6, srcIp4, 0, 0, 0);
+      AbstractPacket.Checksum.calculate(buffer, 0, dstIp4, srcIp6, 0, 0, 0);
+      Assertions.assertTrue(buffer.release());
     }
   }
 }

@@ -13,7 +13,7 @@ import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.error.*;
 
 @RunWith(JUnitPlatform.class)
-public class ServiceTest {
+class ServiceTest {
 
   @Test
   void createTest() throws ErrorException {

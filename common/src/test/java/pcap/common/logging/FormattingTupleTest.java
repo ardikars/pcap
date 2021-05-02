@@ -10,10 +10,10 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitPlatform.class)
-public class FormattingTupleTest {
+class FormattingTupleTest {
 
   @Test
-  public void newInstanceTest() {
+  void newInstanceTest() {
     String message = "HELLO {}{}";
     Object[] values = new String[] {"WORLD", "!"};
     FormattingTuple singleArgs = new FormattingTuple(message);

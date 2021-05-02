@@ -21,7 +21,7 @@ import pcap.spi.Service;
 import pcap.spi.exception.ErrorException;
 
 @RunWith(JUnitPlatform.class)
-public class DefaultAddressIteratorTest {
+class DefaultAddressIteratorTest {
 
   private Service service;
 
