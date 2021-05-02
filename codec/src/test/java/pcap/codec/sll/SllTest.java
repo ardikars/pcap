@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020-2021 Pcap Project
+ * SPDX-License-Identifier: MIT OR Apache-2.0
+ */
 package pcap.codec.sll;
 
 import org.junit.jupiter.api.Assertions;
