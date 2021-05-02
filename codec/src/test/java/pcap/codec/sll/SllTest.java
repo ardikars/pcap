@@ -2,6 +2,7 @@ package pcap.codec.sll;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.codec.ip.Ip4;
@@ -73,6 +74,27 @@ public class SllTest {
       Assertions.assertTrue(Ip6.TYPE == (sll.protocol() & 0xFFFF));
 
       Assertions.assertTrue(sll.toString() != null);
+
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              Sll.newInstance(0, buffer);
+            }
+          });
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              long oldWriter = buffer.writerIndex();
+              long oldReader = buffer.readerIndex();
+              buffer.setIndex(oldWriter, oldWriter);
+              Sll.newInstance(16, buffer);
+              buffer.setIndex(oldReader, oldWriter);
+            }
+          });
     }
   }
 }

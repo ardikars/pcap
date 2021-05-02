@@ -4,13 +4,12 @@
  */
 package pcap.codec.ip;
 
+import java.net.Inet6Address;
 import pcap.codec.AbstractPacket;
 import pcap.common.net.InetAddresses;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
-
-import java.net.Inet6Address;
 
 /**
  * IPv6

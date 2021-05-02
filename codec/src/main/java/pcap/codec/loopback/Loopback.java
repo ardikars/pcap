@@ -13,7 +13,7 @@ import pcap.spi.annotation.Incubating;
 /**
  * Null/Loopback
  *
- * @since 1.3.0
+ * @since 1.3.0 (incubating)
  */
 @Incubating
 public final class Loopback extends AbstractPacket {
@@ -31,7 +31,7 @@ public final class Loopback extends AbstractPacket {
    * @param size {@link Loopback} header size.
    * @param buffer buffer.
    * @return returns {@link Loopback} instance.
-   * @since 1.3.0
+   * @since 1.3.0 (incubating)
    */
   @Incubating
   public static Loopback newInstance(int size, PacketBuffer buffer) {
@@ -44,7 +44,7 @@ public final class Loopback extends AbstractPacket {
    * Get protocol family.
    *
    * @return returns protocol family.
-   * @since 1.3.0
+   * @since 1.3.0 (incubating)
    */
   @Incubating
   public int family() {
@@ -56,7 +56,7 @@ public final class Loopback extends AbstractPacket {
    *
    * @param value protocol family.
    * @return returns this instance.
-   * @since 1.3.0
+   * @since 1.3.0 (incubating)
    */
   @Incubating
   public Loopback family(int value) {

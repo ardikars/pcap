@@ -1,5 +1,10 @@
+/*
+ * Copyright (c) 2020-2021 Pcap Project
+ * SPDX-License-Identifier: MIT OR Apache-2.0
+ */
 package pcap.spi;
 
+import java.nio.channels.SelectionKey;
 import pcap.spi.annotation.Incubating;
 
 /**
@@ -10,42 +15,37 @@ import pcap.spi.annotation.Incubating;
 @Incubating
 public interface Selection {
 
+  /** Operation-set bit for read operations. */
+  @Incubating int OPERATION_READ = SelectionKey.OP_READ;
+
+  /** Operation-set bit for write operations. */
+  @Incubating int OPERATION_WRITE = SelectionKey.OP_WRITE;
+
   /**
-   * Indicate the {@link Selectable} is ready to perform I/O read operation.
+   * Get ready I/O operations.
    *
-   * @return returns {@code true} if ready to perform I/O read operation, {@code false} otherwise.
+   * @return returns ready I/O operations.
    * @since 1.3.0 (incubating)
    */
   @Incubating
-  boolean isReadable();
+  int readyOperations();
 
   /**
-   * Indicate the {@link Selectable} is ready to perform I/O write operation.
+   * Get the interest I/O operations for next {@link Selector#select(Timeout)}.
    *
-   * @return returns {@code true} if ready to perform I/O write operation, {@code false} otherwise.
+   * @return returns interest I/O operations.
    * @since 1.3.0 (incubating)
    */
   @Incubating
-  boolean isWriteable();
+  int interestOperations();
 
   /**
-   * Set the interest I/O {@link Operation} for next {@link Selector#select(Timeout)}.
+   * Set the interest I/O operations for next {@link Selector#select(Timeout)}.
    *
-   * @param operation operation.
+   * @param interestOperations operations.
    * @return returns this instance.
    * @since 1.3.0 (incubating)
    */
   @Incubating
-  Selection interestOperation(Operation operation);
-
-  /**
-   * Interest operation.
-   *
-   * @since 1.3.0 (incubating)
-   */
-  @Incubating
-  enum Operation {
-    READ,
-    WRITE
-  }
+  Selection interestOperations(int interestOperations);
 }

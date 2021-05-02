@@ -4,12 +4,11 @@
  */
 package pcap.codec;
 
-import pcap.spi.PacketBuffer;
-import pcap.spi.annotation.Internal;
-
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
+import pcap.spi.PacketBuffer;
+import pcap.spi.annotation.Internal;
 
 /**
  * Abstract packet

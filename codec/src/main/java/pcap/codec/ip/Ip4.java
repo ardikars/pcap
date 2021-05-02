@@ -4,14 +4,13 @@
  */
 package pcap.codec.ip;
 
+import java.net.Inet4Address;
 import pcap.codec.AbstractPacket;
 import pcap.common.net.InetAddresses;
 import pcap.common.util.Bytes;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
-
-import java.net.Inet4Address;
 
 /*
  *  0                   1                   2                   3
