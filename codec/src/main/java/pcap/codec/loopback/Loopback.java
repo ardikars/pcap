@@ -16,7 +16,7 @@ import pcap.spi.annotation.Incubating;
  * @since 1.3.0
  */
 @Incubating
-public class Loopback extends AbstractPacket {
+public final class Loopback extends AbstractPacket {
 
   private final long family;
 

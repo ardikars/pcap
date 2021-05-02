@@ -13,7 +13,7 @@ import pcap.spi.annotation.Incubating;
  * @since 1.3.0 (incubating)
  */
 @Incubating
-public class Sll extends AbstractPacket {
+public final class Sll extends AbstractPacket {
 
   private static final int SLL_ADDRLEN = 8;
 
@@ -129,7 +129,7 @@ public class Sll extends AbstractPacket {
   @Incubating
   public byte[] address() {
     int addrLen = addressLength();
-    if (addrLen > 0) {
+    if (addrLen > 0 && addrLen <= SLL_ADDRLEN) {
       byte[] addr = new byte[addrLen];
       buffer.getBytes(address, addr);
       return addr;
@@ -148,7 +148,7 @@ public class Sll extends AbstractPacket {
   @Incubating
   public Sll address(byte[] value) {
     int addrLen = addressLength();
-    if (addrLen > 0) {
+    if (addrLen > 0 && addrLen <= SLL_ADDRLEN) {
       buffer.setBytes(address, value, 0, addrLen);
     }
     return this;
