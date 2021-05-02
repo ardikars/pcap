@@ -32,7 +32,7 @@ class PacketTest {
         });
   }
 
-  public static final class BadPacket extends Packet.Abstract {
+  static final class BadPacket extends Packet.Abstract {
 
     public BadPacket(PacketBuffer buffer) {
       super(buffer);
@@ -44,7 +44,7 @@ class PacketTest {
     }
   }
 
-  public static final class BadBuffer implements PacketBuffer {
+  static final class BadBuffer implements PacketBuffer {
 
     private final long readbleBytes;
 

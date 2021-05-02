@@ -20,7 +20,7 @@ import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 
 @RunWith(JUnitPlatform.class)
-public class DefaultPcapDumperTest extends BaseTest {
+class DefaultPcapDumperTest extends BaseTest {
 
   private Service service;
   private String file;

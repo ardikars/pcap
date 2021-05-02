@@ -21,7 +21,7 @@ import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 
 @RunWith(JUnitPlatform.class)
-public class TcpTest {
+class TcpTest {
 
   private static final byte[] BYTES =
       Hexs.parseHex(

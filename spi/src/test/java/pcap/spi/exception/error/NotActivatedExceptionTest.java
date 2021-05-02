@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
  * @since 1.0.0
  */
 @RunWith(JUnitPlatform.class)
-public class NotActivatedExceptionTest {
+class NotActivatedExceptionTest {
 
   @Test
   void throwExceptionTest() {

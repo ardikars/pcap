@@ -15,16 +15,16 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitPlatform.class)
-public class MessageFormatterTest {
+class MessageFormatterTest {
 
   @Test
-  public void newInstanceTest() {
+  void newInstanceTest() {
     MessageFormatter formatter = new MessageFormatter();
     Assertions.assertNotNull(formatter);
   }
 
   @Test
-  public void formatTest() {
+  void formatTest() {
     Object[] objects = new String[] {"World", "!"};
     FormattingTuple tuple;
     tuple = MessageFormatter.format(null, objects);
@@ -46,7 +46,7 @@ public class MessageFormatterTest {
   }
 
   @Test
-  public void getThrowableCandidateTest() {
+  void getThrowableCandidateTest() {
     Assertions.assertNull(MessageFormatter.getThrowableCandidate(null));
     Assertions.assertNull(MessageFormatter.getThrowableCandidate(new Object[0]));
     Assertions.assertNull(MessageFormatter.getThrowableCandidate(new String[] {"Hello"}));
@@ -55,7 +55,7 @@ public class MessageFormatterTest {
   }
 
   @Test
-  public void trimmedCopyTest() {
+  void trimmedCopyTest() {
     Assertions.assertThrows(
         IllegalStateException.class,
         new Executable() {
@@ -76,7 +76,7 @@ public class MessageFormatterTest {
   }
 
   @Test
-  public void arrayFormatTest() {
+  void arrayFormatTest() {
     Object[] objects = new String[] {"World", "!"};
     FormattingTuple tuple;
     tuple = MessageFormatter.arrayFormat("Hello {}{}", objects);
@@ -106,20 +106,20 @@ public class MessageFormatterTest {
   }
 
   @Test
-  public void isEscapedDelimeterTest() {
+  void isEscapedDelimeterTest() {
     Assertions.assertTrue(MessageFormatter.isEscapedDelimeter("\\", 1));
     Assertions.assertFalse(MessageFormatter.isEscapedDelimeter("\\", 0));
   }
 
   @Test
-  public void isDoubleEscapedTest() {
+  void isDoubleEscapedTest() {
     Assertions.assertTrue(MessageFormatter.isDoubleEscaped("\\", 2));
     Assertions.assertFalse(MessageFormatter.isDoubleEscaped("\\", 0));
     Assertions.assertFalse(MessageFormatter.isDoubleEscaped("HI", 2));
   }
 
   @Test
-  public void deeplyAppendParameterTest() {
+  void deeplyAppendParameterTest() {
     List<String> lists = Arrays.asList("Hello", "World", "!");
     Unsafe unsafe = new Unsafe();
     Object[] objects = new String[] {"Hello", "World", "!"};
@@ -197,7 +197,7 @@ public class MessageFormatterTest {
   }
 
   @Test
-  public void safeObjectAppendTest() {
+  void safeObjectAppendTest() {
     StringBuilder sb = new StringBuilder();
     List<String> value = Arrays.asList("Hello", "World", "!");
     MessageFormatter.safeObjectAppend(sb, value);
@@ -209,7 +209,7 @@ public class MessageFormatterTest {
   }
 
   @Test
-  public void objectArrayAppendTest() {
+  void objectArrayAppendTest() {
     StringBuilder sb = new StringBuilder();
     Map<Object[], Object> seenMap = new HashMap<>();
     Object[] value = new String[] {"Hello", "World", "!"};
@@ -223,7 +223,7 @@ public class MessageFormatterTest {
   }
 
   @Test
-  public void booleanArrayAppendTest() {
+  void booleanArrayAppendTest() {
     StringBuilder sb = new StringBuilder();
     boolean[] value = new boolean[] {true, true, true, false, false};
     MessageFormatter.booleanArrayAppend(sb, value);
@@ -231,7 +231,7 @@ public class MessageFormatterTest {
   }
 
   @Test
-  public void byteArrayAppendTest() {
+  void byteArrayAppendTest() {
     StringBuilder sb = new StringBuilder();
     byte[] value = new byte[] {0, 1, 2, 3, 4};
     MessageFormatter.byteArrayAppend(sb, value);
@@ -239,7 +239,7 @@ public class MessageFormatterTest {
   }
 
   @Test
-  public void charArrayAppendTest() {
+  void charArrayAppendTest() {
     StringBuilder sb = new StringBuilder();
     char[] value = new char[] {'a', 'b', 'c', 'd', 'e'};
     MessageFormatter.charArrayAppend(sb, value);
@@ -247,7 +247,7 @@ public class MessageFormatterTest {
   }
 
   @Test
-  public void shortArrayAppendTest() {
+  void shortArrayAppendTest() {
     StringBuilder sb = new StringBuilder();
     short[] value = new short[] {0, 1, 2, 3, 4};
     MessageFormatter.shortArrayAppend(sb, value);
@@ -255,7 +255,7 @@ public class MessageFormatterTest {
   }
 
   @Test
-  public void intArrayAppendTest() {
+  void intArrayAppendTest() {
     StringBuilder sb = new StringBuilder();
     int[] value = new int[] {0, 1, 2, 3, 4};
     MessageFormatter.intArrayAppend(sb, value);
@@ -263,7 +263,7 @@ public class MessageFormatterTest {
   }
 
   @Test
-  public void longArrayAppendTest() {
+  void longArrayAppendTest() {
     StringBuilder sb = new StringBuilder();
     long[] value = new long[] {0L, 1L, 2L, 3L, 4L};
     MessageFormatter.longArrayAppend(sb, value);
@@ -271,7 +271,7 @@ public class MessageFormatterTest {
   }
 
   @Test
-  public void floatArrayAppendTest() {
+  void floatArrayAppendTest() {
     StringBuilder sb = new StringBuilder();
     float[] value = new float[] {0.5F, 1.5F, 2.5F, 3.5F, 4.5F};
     MessageFormatter.floatArrayAppend(sb, value);
@@ -279,7 +279,7 @@ public class MessageFormatterTest {
   }
 
   @Test
-  public void doubleArrayAppendTest() {
+  void doubleArrayAppendTest() {
     StringBuilder sb = new StringBuilder();
     double[] value = new double[] {0.5D, 1.5D, 2.5D, 3.5D, 4.5D};
     MessageFormatter.doubleArrayAppend(sb, value);

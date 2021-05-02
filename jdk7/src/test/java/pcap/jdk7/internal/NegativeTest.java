@@ -12,7 +12,7 @@ import pcap.spi.exception.MemoryAccessException;
 
 // test for multi threaded, currently is not supported
 // @RunWith(JUnitPlatform.class)
-public class NegativeTest {
+class NegativeTest {
 
   //  @Test
   void multiThreadGuardTest() {

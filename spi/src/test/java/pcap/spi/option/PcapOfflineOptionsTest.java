@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import pcap.spi.Timestamp;
 
 @RunWith(JUnitPlatform.class)
-public class PcapOfflineOptionsTest {
+class PcapOfflineOptionsTest {
 
   @Test
   void setAndGetOptionsTest() {

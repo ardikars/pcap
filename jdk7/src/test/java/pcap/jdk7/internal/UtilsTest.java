@@ -16,13 +16,13 @@ import pcap.spi.exception.ErrorException;
 public class UtilsTest {
 
   @Test
-  public void emptyTest() {
+  void emptyTest() {
     Assertions.assertTrue(Utils.empty(null));
     Assertions.assertTrue(Utils.empty(""));
   }
 
   @Test
-  public void blankTest() {
+  void blankTest() {
     Assertions.assertTrue(Utils.blank(" "));
     Assertions.assertTrue(Utils.blank(""));
     Assertions.assertTrue(Utils.blank(null));
@@ -34,7 +34,7 @@ public class UtilsTest {
   }
 
   @Test
-  public void isValidVersion() throws ErrorException {
+  void isValidVersion() throws ErrorException {
     Assertions.assertThrows(
         ErrorException.class,
         new Executable() {
@@ -47,7 +47,7 @@ public class UtilsTest {
   }
 
   @Test
-  public void isSupported() {
+  void isSupported() {
     Assertions.assertTrue(Utils.isSupported(Utils.MAJOR, Utils.MINOR, Utils.PATCH));
 
     Assertions.assertTrue(Utils.isSupported(Utils.MAJOR - 1, 0, 0));
@@ -60,12 +60,12 @@ public class UtilsTest {
   }
 
   @Test
-  public void warn() {
+  void warn() {
     Utils.warn("");
   }
 
   @Test
-  public void doLog() {
+  void doLog() {
     Utils.doLog(false, "");
     Utils.doLog(true, "");
   }

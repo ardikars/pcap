@@ -4,9 +4,19 @@
  */
 package pcap.spi;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 /** */
 @RunWith(JUnitPlatform.class)
-public class PcapDirectionTest {}
+class PcapDirectionTest {
+
+  @Test
+  void direction() {
+    Assertions.assertNotNull(Pcap.Direction.PCAP_D_IN);
+    Assertions.assertNotNull(Pcap.Direction.PCAP_D_OUT);
+    Assertions.assertNotNull(Pcap.Direction.PCAP_D_INOUT);
+  }
+}

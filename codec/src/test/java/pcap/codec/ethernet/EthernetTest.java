@@ -19,7 +19,7 @@ import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 
 @RunWith(JUnitPlatform.class)
-public class EthernetTest {
+class EthernetTest {
 
   private static final byte[] BYTES = Hexs.parseHex("d80d17269cee8c8590c30b330800");
 

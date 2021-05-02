@@ -25,7 +25,7 @@ import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.option.DefaultOfflineOptions;
 
 @RunWith(JUnitPlatform.class)
-public class DefaultPcapTest extends BaseTest {
+class DefaultPcapTest extends BaseTest {
 
   private Service service;
   private String file;
@@ -1201,13 +1201,13 @@ public class DefaultPcapTest extends BaseTest {
   }
 
   @Test
-  public void timestampPrecision() {
+  void timestampPrecision() {
     Assertions.assertEquals(Timestamp.Precision.MICRO, DefaultPcap.timestampPrecision(0));
     Assertions.assertEquals(Timestamp.Precision.NANO, DefaultPcap.timestampPrecision(1));
   }
 
   @Test
-  public void checkBuffer()
+  void checkBuffer()
       throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
           TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
           NoSuchDeviceException, ActivatedException, InterfaceNotUpException,

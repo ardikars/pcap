@@ -12,14 +12,14 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitPlatform.class)
-public class MacAddressTest {
+class MacAddressTest {
 
   private static final String STRING_MAC_ADDRESS = MacAddress.DUMMY.toString();
   private static final long LONG_MAC_ADDRESS = MacAddress.DUMMY.toLong();
   private static final byte[] BYTES_MAC_ADDRESS = MacAddress.DUMMY.address();
 
   @Test
-  public void fromStringTest() {
+  void fromStringTest() {
     MacAddress macAddress = MacAddress.valueOf(STRING_MAC_ADDRESS);
     Assertions.assertNotNull(macAddress);
     Assertions.assertEquals(STRING_MAC_ADDRESS, macAddress.toString());
@@ -27,7 +27,7 @@ public class MacAddressTest {
   }
 
   @Test
-  public void fromBytesTest() {
+  void fromBytesTest() {
     MacAddress macAddress = MacAddress.valueOf(BYTES_MAC_ADDRESS);
     Assertions.assertNotNull(macAddress);
     Assertions.assertEquals(STRING_MAC_ADDRESS, macAddress.toString());
@@ -35,7 +35,7 @@ public class MacAddressTest {
   }
 
   @Test
-  public void fromLongTest() {
+  void fromLongTest() {
     MacAddress macAddress = MacAddress.valueOf(LONG_MAC_ADDRESS);
     Assertions.assertNotNull(macAddress);
     Assertions.assertEquals(STRING_MAC_ADDRESS, macAddress.toString());
@@ -43,7 +43,7 @@ public class MacAddressTest {
   }
 
   @Test
-  public void invalidMacAddressTest() {
+  void invalidMacAddressTest() {
     Assertions.assertThrows(
         IllegalArgumentException.class,
         new Executable() {
@@ -88,7 +88,7 @@ public class MacAddressTest {
   }
 
   @Test
-  public void buildTest() {
+  void buildTest() {
     MacAddress macAddress = MacAddress.DUMMY;
     Assertions.assertNotNull(macAddress);
     Assertions.assertEquals(macAddress.length(), MacAddress.MAC_ADDRESS_LENGTH);
@@ -105,7 +105,7 @@ public class MacAddressTest {
   }
 
   @Test
-  public void buildNegativeTest() {
+  void buildNegativeTest() {
     Assertions.assertThrows(
         IllegalArgumentException.class,
         new Executable() {
@@ -125,7 +125,7 @@ public class MacAddressTest {
   }
 
   @Test
-  public void validAddressNegativeTest() {
+  void validAddressNegativeTest() {
     Assertions.assertThrows(
         IllegalArgumentException.class,
         new Executable() {
@@ -137,7 +137,7 @@ public class MacAddressTest {
   }
 
   @Test
-  public void equalsAndHashCodeTest() {
+  void equalsAndHashCodeTest() {
     MacAddress macAddress = MacAddress.ZERO;
     MacAddress macAddressCmp = MacAddress.DUMMY;
     Assertions.assertTrue(macAddress.equals(MacAddress.ZERO));

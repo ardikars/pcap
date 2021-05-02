@@ -18,7 +18,7 @@ import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 
 @RunWith(JUnitPlatform.class)
-public class LoopbackTest {
+class LoopbackTest {
 
   private static final byte[] BYTES =
       Hexs.parseHex(

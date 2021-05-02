@@ -19,7 +19,7 @@ import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 
 @RunWith(JUnitPlatform.class)
-public class Ip6Test {
+class Ip6Test {
 
   private static final byte[] BYTES =
       Hexs.parseHex(

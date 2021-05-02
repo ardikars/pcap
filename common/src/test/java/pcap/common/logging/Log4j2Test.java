@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 
 /** */
 @RunWith(JUnitPlatform.class)
-public class Log4j2Test extends AbstractLoggerTest {
+class Log4j2Test extends AbstractLoggerTest {
 
   @BeforeEach
   @Override

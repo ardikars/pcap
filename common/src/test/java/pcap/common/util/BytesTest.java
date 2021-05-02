@@ -13,15 +13,15 @@ import org.junit.runner.RunWith;
 
 /** */
 @RunWith(JUnitPlatform.class)
-public class BytesTest {
+class BytesTest {
 
   @Test
-  public void toByteArray() {
+  void toByteArray() {
     Assertions.assertEquals(new byte[] {(byte) 253}[0], Bytes.toByteArray((byte) 253)[0]);
   }
 
   @Test
-  public void toByteArrayShortValueBE() {
+  void toByteArrayShortValueBE() {
     int byteSize = 2;
 
     short value = (short) 65533;
@@ -40,7 +40,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayShortValueLE() {
+  void toByteArrayShortValueLE() {
     int byteSize = 2;
 
     short value = (short) 65533;
@@ -59,7 +59,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayShortArrayValueBE() {
+  void toByteArrayShortArrayValueBE() {
     int byteSize = 2;
 
     short[] value = new short[] {(short) 3, (short) 65533};
@@ -83,7 +83,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayShortArrayValueBEWithOffsetAndLength() {
+  void toByteArrayShortArrayValueBEWithOffsetAndLength() {
     int byteSize = 2;
 
     short[] values =
@@ -110,7 +110,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayShortArrayValueLE() {
+  void toByteArrayShortArrayValueLE() {
     int byteSize = 2;
 
     short[] value = new short[] {(short) 3, (short) 65533};
@@ -134,7 +134,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayShortArrayValueLEWithOffsetAndLength() {
+  void toByteArrayShortArrayValueLEWithOffsetAndLength() {
     int byteSize = 2;
 
     short[] values =
@@ -161,7 +161,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayIntegerValueBE() {
+  void toByteArrayIntegerValueBE() {
     int byteSize = 4;
 
     int value = 2147483643;
@@ -180,7 +180,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayIntegerValueLE() {
+  void toByteArrayIntegerValueLE() {
     int byteSize = 4;
 
     int value = 2147483643;
@@ -199,7 +199,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayIntegerArrayValueBE() {
+  void toByteArrayIntegerArrayValueBE() {
     int byteSize = 4;
 
     int[] value = new int[] {3, 2147483643};
@@ -223,7 +223,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayIntArrayValueBEWithOffsetAndLength() {
+  void toByteArrayIntArrayValueBEWithOffsetAndLength() {
     int byteSize = 4;
 
     int[] values = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -247,7 +247,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayIntArrayValueLEWithOffsetAndLength() {
+  void toByteArrayIntArrayValueLEWithOffsetAndLength() {
     int byteSize = 4;
 
     int[] values = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -271,7 +271,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayIntegerArrayValueLE() {
+  void toByteArrayIntegerArrayValueLE() {
     int byteSize = 4;
 
     int[] value = new int[] {3, 2147483643};
@@ -295,7 +295,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayLongValueBE() {
+  void toByteArrayLongValueBE() {
     int byteSize = 8;
 
     long value = 9223372036854775805L;
@@ -314,7 +314,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayLongValueLE() {
+  void toByteArrayLongValueLE() {
     int byteSize = 8;
 
     long value = 9223372036854775805L;
@@ -333,7 +333,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayLongArrayValueBE() {
+  void toByteArrayLongArrayValueBE() {
     int byteSize = 8;
 
     long[] value = new long[] {3L, 9223372036854775805L};
@@ -357,7 +357,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayLongArrayValueBEWithOffsetAndLength() {
+  void toByteArrayLongArrayValueBEWithOffsetAndLength() {
     int byteSize = 8;
 
     long[] values = new long[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -381,7 +381,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayLongArrayValueLE() {
+  void toByteArrayLongArrayValueLE() {
     int byteSize = 8;
 
     long[] value = new long[] {3L, 9223372036854775805L};
@@ -405,7 +405,7 @@ public class BytesTest {
   }
 
   @Test
-  public void toByteArrayLongArrayValueLEWithOffsetAndLength() {
+  void toByteArrayLongArrayValueLEWithOffsetAndLength() {
     int byteSize = 8;
 
     long[] values = new long[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};

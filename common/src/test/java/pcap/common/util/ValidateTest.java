@@ -12,10 +12,10 @@ import org.junit.runner.RunWith;
 
 /** */
 @RunWith(JUnitPlatform.class)
-public class ValidateTest {
+class ValidateTest {
 
   @Test
-  public void nullPointerTest() {
+  void nullPointerTest() {
     Validate.nullPointer("");
     Assertions.assertThrows(
         NullPointerException.class,
@@ -39,7 +39,7 @@ public class ValidateTest {
   }
 
   @Test
-  public void notIllegalArgumentTest() {
+  void notIllegalArgumentTest() {
     Validate.notIllegalArgument(true);
     Assertions.assertThrows(
         IllegalArgumentException.class,
@@ -63,7 +63,7 @@ public class ValidateTest {
   }
 
   @Test
-  public void notIllegalStateTest() {
+  void notIllegalStateTest() {
     Validate.notIllegalState(true);
     Assertions.assertThrows(
         IllegalStateException.class,
@@ -87,7 +87,7 @@ public class ValidateTest {
   }
 
   @Test
-  public void notInBoundsTestBytes() {
+  void notInBoundsTestBytes() {
     final byte[] data = new byte[] {0, 1, 2, 3, 4};
     Assertions.assertThrows(
         ArrayIndexOutOfBoundsException.class,
@@ -153,7 +153,7 @@ public class ValidateTest {
   }
 
   @Test
-  public void notInBoundsTestChars() {
+  void notInBoundsTestChars() {
     final char[] data = new char[] {0, 1, 2, 3, 4};
     Assertions.assertThrows(
         ArrayIndexOutOfBoundsException.class,
@@ -219,7 +219,7 @@ public class ValidateTest {
   }
 
   @Test
-  public void notInBoundsTestShorts() {
+  void notInBoundsTestShorts() {
     final short[] data = new short[] {0, 1, 2, 3, 4};
     Assertions.assertThrows(
         ArrayIndexOutOfBoundsException.class,
@@ -285,7 +285,7 @@ public class ValidateTest {
   }
 
   @Test
-  public void notInBoundsTestInts() {
+  void notInBoundsTestInts() {
     final int[] data = new int[] {0, 1, 2, 3, 4};
     Assertions.assertThrows(
         ArrayIndexOutOfBoundsException.class,
@@ -351,7 +351,7 @@ public class ValidateTest {
   }
 
   @Test
-  public void notInBoundsTestFloats() {
+  void notInBoundsTestFloats() {
     final float[] data = new float[] {0, 1, 2, 3, 4};
     Assertions.assertThrows(
         ArrayIndexOutOfBoundsException.class,
@@ -417,7 +417,7 @@ public class ValidateTest {
   }
 
   @Test
-  public void notInBoundsTestLongs() {
+  void notInBoundsTestLongs() {
     final long[] data = new long[] {0, 1, 2, 3, 4};
     Assertions.assertThrows(
         ArrayIndexOutOfBoundsException.class,
@@ -483,7 +483,7 @@ public class ValidateTest {
   }
 
   @Test
-  public void notInBoundsTestDoubles() {
+  void notInBoundsTestDoubles() {
     final double[] data = new double[] {0, 1, 2, 3, 4};
     Assertions.assertThrows(
         ArrayIndexOutOfBoundsException.class,
@@ -549,7 +549,7 @@ public class ValidateTest {
   }
 
   @Test
-  public void notInBoundsTestObjects() {
+  void notInBoundsTestObjects() {
     final Object[] data = new Object[] {0, 1, 2, 3, 4};
     Assertions.assertThrows(
         ArrayIndexOutOfBoundsException.class,
@@ -615,7 +615,7 @@ public class ValidateTest {
   }
 
   @Test
-  public void notInBoundsTest() {
+  void notInBoundsTest() {
     final int data = 5;
     Assertions.assertThrows(
         ArrayIndexOutOfBoundsException.class,

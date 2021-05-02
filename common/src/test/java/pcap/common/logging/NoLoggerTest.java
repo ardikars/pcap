@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 
 /** */
 @RunWith(JUnitPlatform.class)
-public class NoLoggerTest extends AbstractLoggerTest {
+class NoLoggerTest extends AbstractLoggerTest {
 
   @BeforeEach
   @Override

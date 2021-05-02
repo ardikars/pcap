@@ -21,7 +21,7 @@ import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.option.DefaultOfflineOptions;
 
 @RunWith(JUnitPlatform.class)
-public class DefaultServiceTest extends BaseTest {
+class DefaultServiceTest extends BaseTest {
 
   private Service service;
 
