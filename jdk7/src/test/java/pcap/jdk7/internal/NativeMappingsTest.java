@@ -6,7 +6,6 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
-import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,12 +15,28 @@ import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.Arrays;
+
 @RunWith(JUnitPlatform.class)
 class NativeMappingsTest {
 
   @BeforeEach
   void setUp() {
     System.setProperty("pcap.af.inet6", "default");
+  }
+
+  @Test
+  void initLibrary() {
+    NativeMappings.initLibrary(null);
+    NativeMappings.initLibrary("LOCAL");
+    NativeMappings.initLibrary("UTF-8");
+  }
+
+  @Test
+  void eprint() {
+    NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
+    NativeMappings.eprint(0, errbuf);
+    NativeMappings.eprint(1, errbuf);
   }
 
   @Test
