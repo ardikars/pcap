@@ -6,6 +6,11 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.PointerByReference;
+import pcap.spi.Address;
+import pcap.spi.Interface;
+import pcap.spi.Timestamp;
+import pcap.spi.annotation.Version;
+
 import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -13,10 +18,6 @@ import java.net.InetAddress;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import pcap.spi.Address;
-import pcap.spi.Interface;
-import pcap.spi.Timestamp;
-import pcap.spi.annotation.Version;
 
 class NativeMappings {
 
@@ -72,9 +73,44 @@ class NativeMappings {
 
     AF_INET = 2;
     AF_INET6 = defaultAfInet6();
+
+    String characterEncoding = System.getProperty("pcap.character.encoding");
+    initLibrary(characterEncoding);
   }
 
   private NativeMappings() {}
+
+  static void initLibrary(String characterEncoding) {
+    if (characterEncoding != null) {
+      /*
+       * Initialization options.
+       * All bits not listed here are reserved for expansion.
+       *
+       * On UNIX-like systems, the local character encoding is assumed to be
+       * UTF-8, so no character encoding transformations are done.
+       *
+       * On Windows, the local character encoding is the local ANSI code page.
+       */
+      int PCAP_CHAR_ENC_LOCAL = 0x00000000; /* strings are in the local character encoding */
+      int PCAP_CHAR_ENC_UTF_8 = 0x00000001; /* strings are in UTF-8 */
+      int rc;
+      NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
+      errbuf.clear();
+      errbuf.buf[0] = '\0';
+      if (characterEncoding.equals("UTF-8")) {
+        rc = PLATFORM_DEPENDENT.pcap_init(PCAP_CHAR_ENC_UTF_8, errbuf);
+      } else {
+        rc = PLATFORM_DEPENDENT.pcap_init(PCAP_CHAR_ENC_LOCAL, errbuf);
+      }
+      eprint(rc, errbuf);
+    }
+  }
+
+  static void eprint(int rc, ErrorBuffer errbuf) {
+    if (rc != 0) {
+      Utils.warn(errbuf.toString());
+    }
+  }
 
   static String libName(boolean isWindows) {
     if (isWindows) {
@@ -386,6 +422,12 @@ class NativeMappings {
         description = "Only available on Windows system.",
         portable = false)
     int pcap_setmintocopy(Pointer p, int size);
+
+    @NativeSignature(
+        signature = "int pcap_init(unsigned int opts, char *errbuf)",
+        since = @Version(major = 1, minor = 10),
+        description = "Used to initialize the Packet Capture library")
+    int pcap_init(int opts, ErrorBuffer errbuf);
   }
 
   static final class DefaultPlatformDependent implements PlatformDependent {
@@ -595,6 +637,16 @@ class NativeMappings {
         return NATIVE.pcap_setmintocopy(p, size);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
         Utils.warn("pcap_setmintocopy: Function doesn't exist.");
+        return 0;
+      }
+    }
+
+    @Override
+    public int pcap_init(int opts, ErrorBuffer errbuf) {
+      try {
+        return NATIVE.pcap_init(opts, errbuf);
+      } catch (NullPointerException | UnsatisfiedLinkError e) {
+        Utils.warn("pcap_init: Function doesn't exist.");
         return 0;
       }
     }
