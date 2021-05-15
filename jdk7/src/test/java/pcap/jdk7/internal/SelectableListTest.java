@@ -12,6 +12,8 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.spi.Selectable;
+import pcap.spi.Selection;
+import pcap.spi.Selector;
 
 @RunWith(JUnitPlatform.class)
 class SelectableListTest {
@@ -72,6 +74,17 @@ class SelectableListTest {
   static final class SelectableImpl implements Selectable {
 
     @Override
-    public void close() throws Exception {}
+    public Object id() {
+      return null;
+    }
+
+    @Override
+    public void close() {}
+
+    @Override
+    public Selection register(Selector selector, int interestOperations, Object attachment)
+        throws IllegalArgumentException, IllegalStateException {
+      return null;
+    }
   }
 }

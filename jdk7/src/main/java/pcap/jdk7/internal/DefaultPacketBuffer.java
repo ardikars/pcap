@@ -11,7 +11,10 @@ import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
@@ -1042,6 +1045,22 @@ class DefaultPacketBuffer implements PacketBuffer {
   public PacketBuffer byteOrder(ByteOrder byteOrder) {
     bigEndian = byteOrder == ByteOrder.BIG_ENDIAN;
     return this;
+  }
+
+  @Override
+  public long memoryAddress() throws IllegalAccessException {
+    if (NativeMappings.RESTRICTED_LEVEL > 0) {
+      if (NativeMappings.RESTRICTED_LEVEL > 1) {
+        System.err.println("Calling restricted method PacketBuffer#memoryAddress().");
+      }
+      long address = Pointer.nativeValue(buffer);
+      if (address == 0L) {
+        throw new IllegalStateException("Packet buffer already closed.");
+      }
+      return address;
+    } else {
+      throw new IllegalAccessException(NativeMappings.RESTRICTED_MESSAGE);
+    }
   }
 
   @Override

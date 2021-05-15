@@ -5,6 +5,7 @@
 package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
@@ -28,6 +29,7 @@ class DefaultPcap implements Pcap {
 
   final Pointer pointer;
   final int netmask;
+  final int datalink;
   final DefaultStatistics statistics;
   final PcapReference reference;
 
@@ -52,6 +54,7 @@ class DefaultPcap implements Pcap {
         REFS.remove(ref);
       }
     }
+    this.datalink = NativeMappings.pcap_datalink(pointer);
   }
 
   static Timestamp.Precision timestampPrecision(int rc) {
@@ -288,7 +291,32 @@ class DefaultPcap implements Pcap {
 
   @Override
   public int datalink() {
-    return NativeMappings.pcap_datalink(pointer);
+    return datalink;
+  }
+
+  @Override
+  public Object id() throws IllegalAccessException {
+    if (NativeMappings.RESTRICTED_LEVEL > 0) {
+      if (NativeMappings.RESTRICTED_LEVEL > 1) {
+        System.err.println("Calling restricted method Pcap#id().");
+      }
+      try {
+        if (Platform.isWindows() || Platform.isWindowsCE()) {
+          final NativeMappings.HANDLE handle =
+              NativeMappings.PLATFORM_DEPENDENT.pcap_getevent(pointer);
+          final long ptrAddr = Pointer.nativeValue(handle.getPointer());
+          return ptrAddr;
+        } else {
+          return NativeMappings.PLATFORM_DEPENDENT.pcap_get_selectable_fd(pointer);
+        }
+      } catch (UnsatisfiedLinkError | NullPointerException e) {
+        return null;
+      }
+    } else {
+      System.err.println(NativeMappings.RESTRICTED_MESSAGE);
+      System.err.println(NativeMappings.RESTRICTED_PROPERTY_VALUE);
+      throw new IllegalAccessException(NativeMappings.RESTRICTED_MESSAGE);
+    }
   }
 
   @Override
@@ -300,6 +328,16 @@ class DefaultPcap implements Pcap {
     com.sun.jna.Native.free(com.sun.jna.Pointer.nativeValue(statistics.pointer));
     reference.pcap = 0L;
     reference.stats = 0L;
+  }
+
+  @Override
+  public Selection register(Selector selector, int interestOperations, Object attachment)
+      throws IllegalArgumentException, IllegalStateException {
+    if (selector instanceof AbstractSelector<?>) {
+      AbstractSelector<?> s = (AbstractSelector) selector;
+      return s.register(this, interestOperations, attachment);
+    }
+    throw new IllegalArgumentException("Invalid selector type.");
   }
 
   @Override

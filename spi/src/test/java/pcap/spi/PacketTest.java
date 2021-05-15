@@ -598,6 +598,11 @@ class PacketTest {
     }
 
     @Override
+    public long memoryAddress() throws IllegalAccessException {
+      return 0;
+    }
+
+    @Override
     public boolean release() {
       return false;
     }
@@ -608,6 +613,6 @@ class PacketTest {
     }
 
     @Override
-    public void close() throws Exception {}
+    public void close() {}
   }
 }

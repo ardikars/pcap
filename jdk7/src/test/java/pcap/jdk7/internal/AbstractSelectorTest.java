@@ -46,8 +46,20 @@ abstract class AbstractSelectorTest extends BaseTest {
               selector.register(
                   new Selectable() {
                     @Override
-                    public void close() throws Exception {
+                    public Object id() {
+                      return null;
+                    }
+
+                    @Override
+                    public void close() {
                       //
+                    }
+
+                    @Override
+                    public Selection register(
+                        Selector selector, int interestOperations, Object attachment)
+                        throws IllegalArgumentException, IllegalStateException {
+                      return null;
                     }
                   }); // invalid
             }

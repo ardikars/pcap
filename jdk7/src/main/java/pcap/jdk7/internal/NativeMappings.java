@@ -6,11 +6,6 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.PointerByReference;
-import pcap.spi.Address;
-import pcap.spi.Interface;
-import pcap.spi.Timestamp;
-import pcap.spi.annotation.Version;
-
 import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -18,8 +13,20 @@ import java.net.InetAddress;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import pcap.spi.Address;
+import pcap.spi.Interface;
+import pcap.spi.Timestamp;
+import pcap.spi.annotation.Version;
 
 class NativeMappings {
+
+  static final int RESTRICTED_LEVEL;
+  static final String RESTRICTED_MESSAGE =
+      "Access to restricted method is disabled by default; to enabled access to restricted method, the Pcap property 'pcap.restricted' must be set to a value other then deny. The possible values for this property are:";
+  static final String RESTRICTED_PROPERTY_VALUE =
+      "0) deny: issues a runtime exception on each restricted call. This is the default value;\n"
+          + "1) permit: allows restricted calls;\n"
+          + "2) warn: like permit, but also prints a one-line warning on each restricted call.\n";
 
   static final int OK = 0;
   static final int TRUE = 1;
@@ -76,6 +83,16 @@ class NativeMappings {
 
     String characterEncoding = System.getProperty("pcap.character.encoding");
     initLibrary(characterEncoding);
+    String unsafeAccess = System.getProperty("pcap.restricted", "deny");
+    if (unsafeAccess.equals("deny")) {
+      RESTRICTED_LEVEL = 0;
+    } else if (unsafeAccess.equals("permit")) {
+      RESTRICTED_LEVEL = 1;
+    } else if (unsafeAccess.equals("warn")) {
+      RESTRICTED_LEVEL = 2;
+    } else {
+      RESTRICTED_LEVEL = 0;
+    }
   }
 
   private NativeMappings() {}

@@ -4,6 +4,8 @@
  */
 package pcap.spi;
 
+import pcap.spi.annotation.Restricted;
+
 /**
  * Used to wrap low-level memory address.
  *
@@ -1334,6 +1336,9 @@ public interface PacketBuffer extends AutoCloseable {
    * @since 1.0.0
    */
   PacketBuffer byteOrder(ByteOrder byteOrder);
+
+  @Restricted
+  long memoryAddress() throws IllegalAccessException;
 
   /**
    * Release this {@link PacketBuffer} buffer

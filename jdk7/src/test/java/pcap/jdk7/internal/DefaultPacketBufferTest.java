@@ -3669,6 +3669,17 @@ class DefaultPacketBufferTest {
     Assertions.assertFalse(memory1.phantomReference.equals(""));
   }
 
+  @Test
+  void memoryAddress() {
+    PacketBuffer memory = DefaultPacketBuffer.PacketBufferManager.allocate(LONG_BYTES);
+    try {
+      Assertions.assertTrue(memory.memoryAddress() != 0);
+    } catch (IllegalAccessException e) {
+      //
+    }
+    Assertions.assertTrue(memory.release());
+  }
+
   static final class TestPacket extends Packet.Abstract {
 
     public TestPacket(PacketBuffer buffer) {

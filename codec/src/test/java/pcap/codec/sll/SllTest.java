@@ -69,6 +69,9 @@ class SllTest {
       sll.addressLength(0); // max addr len is 8 bytes, will returns 8 bytes with zero values
       Assertions.assertArrayEquals(new byte[8], sll.address());
 
+      sll.addressLength(6);
+      sll.address(null);
+
       sll.addressLength(0);
       Assertions.assertThrows(
           IllegalArgumentException.class,
