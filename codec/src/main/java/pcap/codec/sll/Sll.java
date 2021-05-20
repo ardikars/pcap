@@ -19,6 +19,8 @@ import pcap.spi.annotation.Incubating;
 @Incubating
 public final class Sll extends AbstractPacket {
 
+  public static final int TYPE = 113;
+
   private static final int SLL_ADDRLEN = 8;
 
   // offsets

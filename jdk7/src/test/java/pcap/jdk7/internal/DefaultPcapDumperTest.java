@@ -4,6 +4,8 @@
  */
 package pcap.jdk7.internal;
 
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -145,5 +147,15 @@ class DefaultPcapDumperTest extends BaseTest {
       Assertions.assertTrue(dumper.reference.hashCode() >= 0 || dumper.reference.hashCode() <= 0);
       Assertions.assertTrue(dumper.reference.hashCode() != dumper1.reference.hashCode());
     }
+  }
+
+  @Test
+  void setNativeLong() {
+    Pointer ptr = new Pointer(Native.malloc(8));
+    DefaultDumper.setNativeLong(ptr, 0, Integer.MAX_VALUE, 4);
+    Assertions.assertEquals(Integer.MAX_VALUE, ptr.getInt(0));
+    DefaultDumper.setNativeLong(ptr, 0, Long.MAX_VALUE, 8);
+    Assertions.assertEquals(Long.MAX_VALUE, ptr.getLong(0));
+    Native.free(Pointer.nativeValue(ptr));
   }
 }

@@ -8,11 +8,14 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import java.util.Collections;
+import java.util.Iterator;
 import pcap.spi.Selectable;
+import pcap.spi.Selection;
 import pcap.spi.Selector;
 import pcap.spi.Timeout;
 import pcap.spi.exception.NoSuchSelectableException;
 import pcap.spi.exception.TimeoutException;
+import pcap.spi.util.Consumer;
 
 class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappings.HANDLE> {
 
@@ -22,6 +25,56 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
 
   DefaultWaitForMultipleObjectsSelector() {
     super.isClosed = false;
+  }
+
+  Iterable<Selectable> toIterableSelectable(int rc, int timeout) throws TimeoutException {
+    if (rc == 0x00000102) {
+      throw new TimeoutException("Timeout: " + timeout + " ms.");
+    }
+    if (rc < 0) {
+      return Collections.EMPTY_LIST;
+    }
+    final DefaultSelection selection = registered.get(handles[rc]);
+    selection.setReadyOperation(selection.interestOperations());
+    return new SelectableList<Selectable>(selection.pcap);
+  }
+
+  private NativeMappings.HANDLE[] add(DefaultSelection selection, int size) {
+    NativeMappings.HANDLE[] newHandles = new NativeMappings.HANDLE[size];
+    NativeMappings.HANDLE handle =
+        NativeMappings.PLATFORM_DEPENDENT.pcap_getevent(selection.pcap.pointer);
+    newHandles[handles.length] = handle;
+    selection.pcap.selector = this;
+    registered.put(handle, selection);
+    return newHandles;
+  }
+
+  @Override
+  public Selector register(Selectable pcap) throws IllegalArgumentException, IllegalStateException {
+    register(pcap, Selection.OPERATION_READ, null);
+    return this;
+  }
+
+  @Override
+  Selection register(Selectable selectable, int interestOperations, Object attachment)
+      throws IllegalArgumentException, IllegalStateException {
+    DefaultSelection selection = validateRegister(selectable, attachment);
+    if (!registered.isEmpty()) {
+      // register new pcap
+      NativeMappings.HANDLE[] newHandles = add(selection, handles.length + 1);
+      System.arraycopy(handles, 0, newHandles, 0, handles.length);
+      this.handles = newHandles;
+    } else {
+      this.handles = add(selection, 1);
+    }
+    selection.interestOperations(interestOperations);
+    selection.attach(attachment);
+    return selection;
+  }
+
+  @Override
+  void interestOperations(DefaultSelection selection, int interestOperations) {
+    selection.interestOperations(interestOperations);
   }
 
   @Override
@@ -34,40 +87,33 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
     do {
       rc = Kernel32.INSTANCE.WaitForMultipleObjects(registered.size(), handles, false, ts);
     } while (rc < 0 && EINTR == Native.getLastError());
-    return toIterable(rc, ts);
-  }
-
-  Iterable<Selectable> toIterable(int rc, int timeout) throws TimeoutException {
-    if (rc < 0 || rc >= registered.size()) {
-      if (rc == 0x00000102) {
-        throw new TimeoutException("Timeout: " + timeout + " ms.");
-      }
-      return Collections.EMPTY_LIST;
-    }
-    return new SelectableList<Selectable>(registered.get(handles[rc]));
+    return toIterableSelectable(rc, ts);
   }
 
   @Override
-  public Selector register(Selectable pcap) throws IllegalArgumentException, IllegalStateException {
-    DefaultPcap defaultPcap = validateRegister(pcap);
-    if (!registered.isEmpty()) {
-      // register new pcap
-      NativeMappings.HANDLE[] newHandles = add(defaultPcap, handles.length + 1);
-      System.arraycopy(handles, 0, newHandles, 0, handles.length);
-      this.handles = newHandles;
-    } else {
-      this.handles = add(defaultPcap, 1);
-    }
-    return this;
+  public int select(Consumer<Selection> consumer, Timeout timeout)
+      throws TimeoutException, NoSuchSelectableException, IllegalStateException,
+          IllegalArgumentException {
+    validateSelect(timeout);
+    int ts = (int) timeout.microSecond() / 1000;
+    int rc;
+    do {
+      rc = Kernel32.INSTANCE.WaitForMultipleObjects(registered.size(), handles, false, ts);
+    } while (rc < 0 && EINTR == Native.getLastError());
+    return callback(rc, timeout, consumer);
   }
 
-  private NativeMappings.HANDLE[] add(DefaultPcap pcap, int size) {
-    NativeMappings.HANDLE[] newHandles = new NativeMappings.HANDLE[size];
-    NativeMappings.HANDLE handle = NativeMappings.PLATFORM_DEPENDENT.pcap_getevent(pcap.pointer);
-    newHandles[handles.length] = handle;
-    pcap.selector = this;
-    registered.put(handle, pcap);
-    return newHandles;
+  int callback(int rc, Timeout timeout, Consumer<Selection> consumer) throws TimeoutException {
+    if (rc == 0x00000102) {
+      throw new TimeoutException("Timeout: " + timeout + " ms.");
+    }
+    if (rc < 0) {
+      return 0;
+    }
+    final DefaultSelection selection = registered.get(handles[rc]);
+    selection.setReadyOperation(selection.interestOperations());
+    consumer.accept(selection);
+    return 1;
   }
 
   @Override
@@ -89,6 +135,16 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
         break;
       }
     }
+  }
+
+  @Override
+  public void close() throws Exception {
+    Iterator<DefaultSelection> iterator = registered.values().iterator();
+    while (iterator.hasNext()) {
+      iterator.next().pcap.selector = null;
+      iterator.remove();
+    }
+    isClosed = true;
   }
 
   public interface Kernel32 extends Library {

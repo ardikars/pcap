@@ -11,10 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import pcap.spi.Selectable;
-import pcap.spi.Selector;
-import pcap.spi.Service;
+import pcap.spi.*;
 import pcap.spi.exception.TimeoutException;
+import pcap.spi.option.DefaultLiveOptions;
+import pcap.spi.util.Consumer;
+import pcap.spi.util.DefaultTimeout;
 
 @RunWith(JUnitPlatform.class)
 class DefaultWaitForMultipleObjectsTest extends AbstractSelectorTest {
@@ -33,19 +34,62 @@ class DefaultWaitForMultipleObjectsTest extends AbstractSelectorTest {
     Selector selector = service.selector();
     final DefaultWaitForMultipleObjectsSelector objectsSelector =
         (DefaultWaitForMultipleObjectsSelector) selector;
-    Iterable<Selectable> selected1 = objectsSelector.toIterable(-1, 0);
+    Iterable<Selectable> selected1 = objectsSelector.toIterableSelectable(-1, 0);
     Iterator<Selectable> iterator1 = selected1.iterator();
     Assertions.assertFalse(iterator1.hasNext());
-    Iterable<Selectable> selected2 = objectsSelector.toIterable(10, 0);
-    Iterator<Selectable> iterator2 = selected2.iterator();
-    Assertions.assertFalse(iterator2.hasNext());
 
     Assertions.assertThrows(
         TimeoutException.class,
         new Executable() {
           @Override
           public void execute() throws Throwable {
-            objectsSelector.toIterable(0x00000102, 0);
+            objectsSelector.toIterableSelectable(0x00000102, 0);
+          }
+        });
+    selector.close();
+  }
+
+  @Test
+  void select() throws Exception {
+    if (!isWindows()) {
+      Assertions.assertFalse(isWindows());
+      return;
+    }
+    final Service service = Service.Creator.create("PcapService");
+    final Selector selector = service.selector();
+    final DefaultWaitForMultipleObjectsSelector objectsSelector =
+        (DefaultWaitForMultipleObjectsSelector) selector;
+    final DefaultTimeout timeout = new DefaultTimeout(1000000L, Timeout.Precision.MICRO);
+    final Pcap live = service.live(service.interfaces(), new DefaultLiveOptions());
+    final Selection selection = live.register(selector, Selection.OPERATION_READ, null);
+    Assertions.assertNotNull(selection);
+
+    final Consumer<Selection> consumer =
+        new Consumer<Selection>() {
+          @Override
+          public void accept(Selection selection) {
+            //
+          }
+        };
+
+    try {
+      selector.select(timeout);
+    } catch (Exception e) {
+      //
+    }
+    try {
+      selector.select(consumer, timeout);
+    } catch (Exception e) {
+      //
+    }
+
+    Assertions.assertEquals(0, objectsSelector.callback(-1, timeout, consumer));
+    Assertions.assertThrows(
+        TimeoutException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            objectsSelector.callback(0x00000102, timeout, consumer);
           }
         });
     selector.close();

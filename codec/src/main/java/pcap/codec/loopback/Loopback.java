@@ -18,6 +18,8 @@ import pcap.spi.annotation.Incubating;
 @Incubating
 public final class Loopback extends AbstractPacket {
 
+  public static final int TYPE = 0;
+
   private final long family;
 
   private Loopback(PacketBuffer buffer) {

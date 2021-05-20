@@ -1265,4 +1265,20 @@ class DefaultPcapTest extends BaseTest {
     Assertions.assertTrue(offline1.reference.hashCode() >= 0 || offline1.reference.hashCode() <= 0);
     Assertions.assertFalse(offline1.reference.hashCode() == offline2.reference.hashCode());
   }
+
+  @Test
+  void idAndRegister() throws Exception {
+    Interface lo = loopbackInterface(service);
+    final Selector selector = service.selector();
+    try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
+      try {
+        final Object id = live.id();
+        Assertions.assertNotNull(id);
+      } catch (IllegalAccessException e) {
+        //
+      }
+      live.register(selector, Selection.OPERATION_READ, null);
+      selector.close();
+    }
+  }
 }

@@ -5,30 +5,22 @@
 package pcap.jdk7.internal;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import pcap.spi.Selectable;
-import pcap.spi.Selector;
-import pcap.spi.Timeout;
+import pcap.spi.*;
 import pcap.spi.exception.NoSuchSelectableException;
 
 abstract class AbstractSelector<T> implements Selector {
 
-  protected final Map<T, DefaultPcap> registered = new HashMap<T, DefaultPcap>();
+  protected final Map<T, DefaultSelection> registered = new HashMap<T, DefaultSelection>();
 
   protected boolean isClosed;
 
-  abstract void cancel(DefaultPcap pcap);
+  abstract Selection register(Selectable selectable, int interestOperations, Object attachment)
+      throws IllegalArgumentException, IllegalStateException;
 
-  @Override
-  public void close() throws Exception {
-    Iterator<DefaultPcap> iterator = registered.values().iterator();
-    while (iterator.hasNext()) {
-      iterator.next().selector = null;
-      iterator.remove();
-    }
-    isClosed = true;
-  }
+  abstract void interestOperations(DefaultSelection selection, int interestOperations);
+
+  abstract void cancel(DefaultPcap pcap);
 
   protected void validateSelect(Timeout timeout) {
     if (isClosed) {
@@ -45,7 +37,7 @@ abstract class AbstractSelector<T> implements Selector {
     }
   }
 
-  protected DefaultPcap validateRegister(Selectable pcap) {
+  protected DefaultSelection validateRegister(Selectable pcap, Object attachment) {
     if (isClosed) {
       throw new IllegalStateException("Selector is closed.");
     }
@@ -61,6 +53,6 @@ abstract class AbstractSelector<T> implements Selector {
     if (defaultPcap.netmask == 0) {
       throw new IllegalArgumentException("Offline selectable is not supported.");
     }
-    return defaultPcap;
+    return new DefaultSelection(this, defaultPcap, attachment);
   }
 }

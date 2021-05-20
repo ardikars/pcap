@@ -6,7 +6,6 @@ package pcap.jdk7.internal;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import pcap.spi.Selectable;
 
 /**
  * Selectable list.
@@ -14,7 +13,7 @@ import pcap.spi.Selectable;
  * @param <T> selectable type.
  * @since 1.1.0
  */
-class SelectableList<T extends Selectable> implements Iterable<T> {
+class SelectableList<T> implements Iterable<T> {
 
   Node<T> head;
 
@@ -55,12 +54,12 @@ class SelectableList<T extends Selectable> implements Iterable<T> {
     return new SelectableListIterator<T>(head);
   }
 
-  private static final class Node<T extends Selectable> {
+  private static final class Node<T> {
     private T data;
     private Node<T> next;
   }
 
-  private static final class SelectableListIterator<T extends Selectable> implements Iterator<T> {
+  private static final class SelectableListIterator<T> implements Iterator<T> {
 
     private Node<T> node;
 
