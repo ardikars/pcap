@@ -276,7 +276,7 @@ public final class Ip4 extends AbstractPacket {
    * @since 1.0.0
    */
   public int ttl() {
-    return buffer.getByte(ttl) & 0xFFFF;
+    return buffer.getByte(ttl) & 0xFF;
   }
 
   /**
@@ -287,7 +287,7 @@ public final class Ip4 extends AbstractPacket {
    * @since 1.0.0
    */
   public Ip4 ttl(int value) {
-    buffer.setByte(ttl, value & 0xFFFF);
+    buffer.setByte(ttl, value & 0xFF);
     return this;
   }
 
