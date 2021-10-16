@@ -18,62 +18,62 @@ public interface Interface extends Iterable<Interface> {
    *
    * @since 1.3.1 (incubating)
    */
-  @Incubating int PCAP_IF_LOOPBACK = 0x00000001;
+  @Incubating int LOOPBACK = 0x00000001;
 
   /**
    * Interface is up.
    *
    * @since 1.3.1 (incubating)
    */
-  @Incubating int PCAP_IF_UP = 0x00000002;
+  @Incubating int UP = 0x00000002;
 
   /**
    * Interface is running.
    *
    * @since 1.3.1 (incubating)
    */
-  @Incubating int PCAP_IF_RUNNING = 0x00000004;
+  @Incubating int RUNNING = 0x00000004;
 
   /**
    * Interface is wireless (*NOT* necessarily Wi-Fi!).
    *
    * @since 1.3.1 (incubating)
    */
-  @Incubating int PCAP_IF_WIRELESS = 0x00000008;
+  @Incubating int WIRELESS = 0x00000008;
 
   /**
    * Connection status.
    *
    * @since 1.3.1 (incubating)
    */
-  @Incubating int PCAP_IF_CONNECTION_STATUS = 0x00000030;
+  @Incubating int CONNECTION_STATUS = 0x00000030;
   /**
    * Unknown.
    *
    * @since 1.3.1 (incubating)
    */
-  @Incubating int PCAP_IF_CONNECTION_STATUS_UNKNOWN = 0x00000000;
+  @Incubating int CONNECTION_STATUS_UNKNOWN = 0x00000000;
 
   /**
    * Connected.
    *
    * @since 1.3.1 (incubating)
    */
-  @Incubating int PCAP_IF_CONNECTION_STATUS_CONNECTED = 0x00000010;
+  @Incubating int CONNECTION_STATUS_CONNECTED = 0x00000010;
 
   /**
    * Disconnected.
    *
    * @since 1.3.1 (incubating)
    */
-  @Incubating int PCAP_IF_CONNECTION_STATUS_DISCONNECTED = 0x00000020;
+  @Incubating int CONNECTION_STATUS_DISCONNECTED = 0x00000020;
 
   /**
    * Not applicable.
    *
    * @since 1.3.1 (incubating)
    */
-  @Incubating int PCAP_IF_CONNECTION_STATUS_NOT_APPLICABLE = 0x00000030;
+  @Incubating int CONNECTION_STATUS_NOT_APPLICABLE = 0x00000030;
 
   /**
    * Next available interface.
@@ -109,6 +109,16 @@ public interface Interface extends Iterable<Interface> {
 
   /**
    * Interface flags.
+   *
+   * <pre>{@code
+   * Interface source = ..;
+   * if (source.flags() & Interface.UP != 0) {
+   *     // interface is up
+   * }
+   * if (source.flags() & Interface.RUNNING != 0) {
+   *     // Interface is running
+   * }
+   * }</pre>
    *
    * @return returns interface flags.
    * @since 1.0.0
