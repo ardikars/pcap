@@ -4,17 +4,11 @@
  */
 package pcap.spi;
 
+import pcap.spi.exception.ErrorException;
+import pcap.spi.exception.error.*;
+
 import java.util.Iterator;
 import java.util.ServiceLoader;
-import pcap.spi.exception.ErrorException;
-import pcap.spi.exception.error.ActivatedException;
-import pcap.spi.exception.error.InterfaceNotSupportTimestampTypeException;
-import pcap.spi.exception.error.InterfaceNotUpException;
-import pcap.spi.exception.error.NoSuchDeviceException;
-import pcap.spi.exception.error.PermissionDeniedException;
-import pcap.spi.exception.error.PromiscuousModePermissionDeniedException;
-import pcap.spi.exception.error.RadioFrequencyModeNotSupportedException;
-import pcap.spi.exception.error.TimestampPrecisionNotSupportedException;
 
 /**
  * Pcap service.
@@ -360,7 +354,7 @@ public interface Service {
      */
     public static Service create(String name) throws ErrorException {
       for (int i = 0; i < PROVIDERS.length; i++) {
-        if (PROVIDERS[i].name().equals(name)) {
+        if (PROVIDERS[i].name().compareTo(name) == 0) {
           return PROVIDERS[i];
         }
       }
