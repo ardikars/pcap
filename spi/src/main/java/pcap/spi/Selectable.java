@@ -4,7 +4,6 @@
  */
 package pcap.spi;
 
-import pcap.spi.annotation.Incubating;
 import pcap.spi.annotation.Restricted;
 
 /**
@@ -19,9 +18,8 @@ public interface Selectable extends AutoCloseable {
    *
    * @return returns selectable id, or {@code null} on error.
    * @throws IllegalAccessException restricted function call.
-   * @since 1.3.1 (incubating)
+   * @since 1.3.1
    */
-  @Incubating
   @Restricted
   Object id() throws IllegalAccessException;
 
