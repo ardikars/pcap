@@ -4,7 +4,6 @@
  */
 package pcap.spi;
 
-import pcap.spi.annotation.Incubating;
 import pcap.spi.annotation.Restricted;
 
 /**
@@ -1343,9 +1342,8 @@ public interface PacketBuffer extends AutoCloseable {
    *
    * @return returns first byte memory address.
    * @throws IllegalAccessException restricted function call.
-   * @since 1.3.1 (incubating)
+   * @since 1.3.1
    */
-  @Incubating
   @Restricted
   long memoryAddress() throws IllegalAccessException;
 
