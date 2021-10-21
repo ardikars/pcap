@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
  *   <li>warn: like permit, but also prints a one-line warning on each restricted call.
  * </ul>
  *
- * @since 1.3.1 (incubating)
+ * @since 1.3.1
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
