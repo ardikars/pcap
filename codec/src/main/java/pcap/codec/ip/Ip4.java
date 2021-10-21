@@ -4,13 +4,14 @@
  */
 package pcap.codec.ip;
 
-import java.net.Inet4Address;
 import pcap.codec.AbstractPacket;
 import pcap.common.net.InetAddresses;
 import pcap.common.util.Bytes;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
+
+import java.net.Inet4Address;
 
 /*
  *  0                   1                   2                   3
@@ -343,7 +344,7 @@ public final class Ip4 extends AbstractPacket {
    */
   public int calculateChecksum() {
     int accumulation = Checksum.sum(buffer, offset, ihl() << 2);
-    accumulation -= buffer.getShort(10) & 0xFFFF;
+    accumulation -= buffer.getShort(headerChecksum) & 0xFFFF;
     accumulation = (accumulation >> 16 & 0xFFFF) + (accumulation & 0xFFFF);
     return (~accumulation & 0xFFFF);
   }

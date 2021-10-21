@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import pcap.codec.ethernet.Ethernet;
 import pcap.common.util.Hexs;
 import pcap.spi.PacketBuffer;
 import pcap.spi.Pcap;
@@ -202,6 +203,34 @@ class Ip4Test {
 
       buffer.release();
       newBuffer.release();
+    }
+  }
+
+
+  // see: https://github.com/ardikars/pcap/issues/149
+  @Test
+  void issue149()
+      throws ErrorException, RadioFrequencyModeNotSupportedException, ActivatedException,
+          InterfaceNotSupportTimestampTypeException, PromiscuousModePermissionDeniedException,
+          InterfaceNotUpException, PermissionDeniedException, NoSuchDeviceException,
+          TimestampPrecisionNotSupportedException {
+    final byte[] bytes =
+        Hexs.parseHex(
+            "8a86831f94c4e86f38393dbf0800450000285ca440004006f3c9c0a832c43471c284cffe01bbea1008c16c50eee2501001f5a3be0000");
+    Service service = Service.Creator.create("PcapService");
+    try (final Pcap pcap = service.live(service.interfaces(), new DefaultLiveOptions())) {
+      final PacketBuffer buffer =
+          pcap.allocate(PacketBuffer.class)
+              .capacity(bytes.length)
+              .byteOrder(PacketBuffer.ByteOrder.BIG_ENDIAN);
+      buffer.writeBytes(bytes);
+      final Ethernet ethernet = buffer.cast(Ethernet.class);
+      final Ip4 ip4 = buffer.readerIndex(ethernet.size()).cast(Ip4.class);
+      final int checksum = ip4.checksum();
+      final int calculatedChecksum = ip4.calculateChecksum();
+      Assertions.assertEquals(checksum, calculatedChecksum);
+      Assertions.assertTrue(ip4.isValidChecksum());
+      Assertions.assertTrue(buffer.release());
     }
   }
 }

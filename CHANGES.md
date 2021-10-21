@@ -5,11 +5,16 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 
 # Changes
 
-## Version x.y.z (on-progress)
+## Version 1.3.2 (2021-10-22)
 
 * Fix IPv4 TTL
 
 * Remove incubating annotation on restricted methods.
+
+* Fix IPv4 checksum offset (issue: 149)
+
+* Use String#compareTo instead of String#equals for creating Service.
+
 
 
 ## Version 1.3.1 (2021-05-22)
