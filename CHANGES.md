@@ -9,6 +9,14 @@ All notable changes to this project will be documented in this file.
 
 
 
+## [1.3.3] - 2021-10-23
+
+### Changed
+
+- Remove incubating annotation for equals and hashCode (Fixed: force non-readable buffer to return false).
+
+
+
 ## [1.3.2] - 2021-10-22
 
 ### Changed
