@@ -6,6 +6,11 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import pcap.spi.Packet;
+import pcap.spi.PacketBuffer;
+import pcap.spi.exception.MemoryAccessException;
+import pcap.spi.exception.MemoryLeakException;
+
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -16,11 +21,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import pcap.spi.Packet;
-import pcap.spi.PacketBuffer;
-import pcap.spi.annotation.Incubating;
-import pcap.spi.exception.MemoryAccessException;
-import pcap.spi.exception.MemoryLeakException;
 
 class DefaultPacketBuffer implements PacketBuffer {
 
@@ -757,15 +757,14 @@ class DefaultPacketBuffer implements PacketBuffer {
     return (index | length | (index + length) | (capacity - (index + length))) < 0;
   }
 
-  @Incubating
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
     DefaultPacketBuffer that = (DefaultPacketBuffer) o;
-    if (!isReadable() && !that.isReadable()) {
-      return true;
+    if (!isReadable() || !that.isReadable()) {
+      return false;
     }
     if (readableBytes() != that.readableBytes()) {
       return false;
@@ -775,7 +774,6 @@ class DefaultPacketBuffer implements PacketBuffer {
             buffer.share(readerIndex()), that.buffer.share(that.readerIndex()), readableBytes());
   }
 
-  @Incubating
   @Override
   public int hashCode() {
     if (!isReadable()) {
@@ -1219,7 +1217,7 @@ class DefaultPacketBuffer implements PacketBuffer {
           throw new MemoryLeakException(
               String.format(
                   "PacketBuffer.release() was not called before it's garbage collected.\n\tCreated at:\n%s",
-                  stackTraceBuilder.toString()));
+                      stackTraceBuilder));
         }
       }
     }
