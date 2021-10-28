@@ -9,6 +9,12 @@ All notable changes to this project will be documented in this file.
 
 
 
+## [Unreleased]
+
+- Use String::format(..) instead of concatenate with +
+
+
+
 ## [1.3.3] - 2021-10-23
 
 ### Changed

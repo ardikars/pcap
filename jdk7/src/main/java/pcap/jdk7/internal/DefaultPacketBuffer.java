@@ -96,7 +96,7 @@ class DefaultPacketBuffer implements PacketBuffer {
       throw (RuntimeException) e.getCause();
     } else if (e instanceof InstantiationException) {
       throw new IllegalArgumentException(
-          "A class must be extends " + Packet.Abstract.class.getName());
+          String.format("A class must be extends %s.", Packet.Abstract.class.getName()));
     }
     return null;
   }
@@ -735,7 +735,7 @@ class DefaultPacketBuffer implements PacketBuffer {
   private void checkReadableBytes(long minimumReadableBytes) {
     if (minimumReadableBytes < 0) {
       throw new IllegalArgumentException(
-          "minimumReadableBytes: " + minimumReadableBytes + " (expected: >= 0)");
+          String.format("minimumReadableBytes: %d (expected: >= 0)", minimumReadableBytes));
     }
     if (readerIndex > writerIndex - minimumReadableBytes) {
       throw new IndexOutOfBoundsException(
@@ -1069,7 +1069,7 @@ class DefaultPacketBuffer implements PacketBuffer {
   @Override
   public void close() throws Exception {
     if (!release()) {
-      throw new IllegalStateException("Can't release the buffer: " + getClass());
+      throw new IllegalStateException(String.format("Can't release the buffer: %s.", getClass()));
     }
   }
 
@@ -1212,12 +1212,13 @@ class DefaultPacketBuffer implements PacketBuffer {
         if (enabled) {
           StringBuilder stackTraceBuilder = new StringBuilder();
           for (int i = ref.stackTraceElements.length - 1; i >= 0; i--) {
-            stackTraceBuilder.append("\t[" + ref.stackTraceElements[i].toString() + "]\n");
+            stackTraceBuilder.append(
+                String.format("\t[%s]\n", ref.stackTraceElements[i].toString()));
           }
           throw new MemoryLeakException(
               String.format(
                   "PacketBuffer.release() was not called before it's garbage collected.\n\tCreated at:\n%s",
-                      stackTraceBuilder));
+                  stackTraceBuilder));
         }
       }
     }

@@ -4,12 +4,13 @@
  */
 package pcap.codec.udp;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import pcap.codec.AbstractPacket;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
+
+import java.net.Inet4Address;
+import java.net.InetAddress;
 
 /**
  * UDP
@@ -173,7 +174,7 @@ public final class Udp extends AbstractPacket {
         .add("sourcePort", sourcePort())
         .add("destinationPort", destinationPort())
         .add("length", length())
-        .add("checksum", "0x" + Integer.toHexString(checksum()))
+        .add("checksum", String.format("0x%s", Integer.toHexString(checksum())))
         .toString();
   }
 }

@@ -61,7 +61,7 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
       return Collections.EMPTY_LIST;
     }
     if (rc == 0) {
-      throw new TimeoutException("Timeout: " + timeout + ".");
+      throw new TimeoutException(String.format("Timeout: %d.", timeout));
     }
     final SelectableList<Selectable> selected = new SelectableList<Selectable>();
     for (int i = 0; i < registered.size(); i++) {
@@ -159,7 +159,7 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
       return rc;
     }
     if (rc == 0) {
-      throw new TimeoutException("Timeout: " + timeout + ".");
+      throw new TimeoutException(String.format("Timeout: %s,", timeout));
     }
     for (int i = 0; i < registered.size(); i++) {
       pfds[i].read();

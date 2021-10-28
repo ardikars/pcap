@@ -205,7 +205,7 @@ public final class Sll extends AbstractPacket {
         .add("packetType", packetType())
         .add("addressType", addressType())
         .add("addressLength", addressLength())
-        .add("address", "0x" + Strings.hex(address()))
+        .add("address", String.format("0x%s", Strings.hex(address())))
         .add("protocol", protocol())
         .toString();
   }

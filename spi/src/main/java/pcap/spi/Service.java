@@ -365,7 +365,7 @@ public interface Service {
           return PROVIDERS[i];
         }
       }
-      throw new ErrorException("No service provider implementation for (" + name + ").");
+      throw new ErrorException(String.format("No service provider implementation for (%s).", name));
     }
   }
 }

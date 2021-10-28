@@ -174,7 +174,7 @@ public final class Strings {
     int lineNumber = 0;
     builder.append(Hexs.HEXDUMP_PRETTY_HEADER);
     while (pos < max) {
-      builder.append(String.format("%08d", lineNumber++) + " | ");
+      builder.append(String.format("%08d | ", lineNumber++));
       int lineMax = Math.min(max - pos, 16);
       for (int i = 0; i < lineMax; i++) {
         int index = (data[pos + i] & 0xFF) << 1;

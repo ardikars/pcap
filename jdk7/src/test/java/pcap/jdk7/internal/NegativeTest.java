@@ -5,10 +5,11 @@
 package pcap.jdk7.internal;
 
 import com.sun.jna.Pointer;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Assertions;
 import pcap.spi.PacketBuffer;
 import pcap.spi.exception.MemoryAccessException;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 // test for multi threaded, currently is not supported
 // @RunWith(JUnitPlatform.class)
@@ -37,7 +38,7 @@ class NegativeTest {
                       DefaultPacketBuffer.FinalizablePacketBuffer memory =
                           (DefaultPacketBuffer.FinalizablePacketBuffer) memories[finalI];
                       throw new AssertionError(
-                          "Invalid value (" + Pointer.nativeValue(memory.buffer));
+                          String.format("Invalid value (%d).", Pointer.nativeValue(memory.buffer)));
                     }
                   } catch (Throwable e) {
                     if (!(e instanceof MemoryAccessException)) {

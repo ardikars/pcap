@@ -354,7 +354,7 @@ class DefaultPcap implements Pcap {
       return (T) buffer;
     }
 
-    throw new IllegalArgumentException("Class: " + cls + " is unsupported.");
+    throw new IllegalArgumentException(String.format("Class: %s is unsupported.",  cls));
   }
 
   @Override

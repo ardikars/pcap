@@ -6,7 +6,6 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
-import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,8 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+
+import java.util.Arrays;
 
 @RunWith(JUnitPlatform.class)
 class NativeMappingsTest {
@@ -55,7 +56,7 @@ class NativeMappingsTest {
       byte[] address_in = NativeMappings.inetAddress(sockaddr_in).getAddress();
       Assertions.assertArrayEquals(new byte[] {127, 0, 0, 1}, address_in);
     } catch (NullPointerException e) {
-      Utils.warn("AF_INET6: " + NativeMappings.AF_INET6);
+      Utils.warn(String.format("AF_INET6: %d", NativeMappings.AF_INET6));
     }
 
     NativeMappings.sockaddr sockaddr_in6 = new NativeMappings.sockaddr();
@@ -66,7 +67,7 @@ class NativeMappingsTest {
       Assertions.assertArrayEquals(
           new byte[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, address_in6);
     } catch (NullPointerException e) {
-      Utils.warn("AF_INET6: " + NativeMappings.AF_INET6);
+      Utils.warn(String.format("AF_INET6: %d", NativeMappings.AF_INET6));
     }
 
     NativeMappings.sockaddr sockaddr_err = new NativeMappings.sockaddr();
