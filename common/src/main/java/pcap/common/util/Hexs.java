@@ -22,7 +22,7 @@ public final class Hexs {
           + "+--------+-------------------------------------------------+--------+\n";
 
   static final String HEXDUMP_PRETTY_FOOTER =
-      "+--------+---------------------------------" + "----------------+--------+";
+      "+--------+-------------------------------------------------+--------+";
 
   private static final Pattern NO_SEPARATOR_HEX_STRING_PATTERN =
       Pattern.compile("\\A([0-9a-fA-F][0-9a-fA-F])+\\z");

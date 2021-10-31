@@ -4,12 +4,13 @@
  */
 package pcap.codec.tcp;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import pcap.codec.AbstractPacket;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
+
+import java.net.Inet4Address;
+import java.net.InetAddress;
 
 /*
    0                   1                   2                   3
@@ -578,9 +579,9 @@ public final class Tcp extends AbstractPacket {
         .add("syn", (((v & 0x1FF) >> 1) & 0x1) == 1)
         .add("fin", ((v & 0x1FF) & 0x1) == 1)
         .add("windowsSize", windowSize())
-        .add("checksum", "0x" + Integer.toHexString(checksum()))
+        .add("checksum", String.format("0x%s", Integer.toHexString(checksum())))
         .add("urgentPointer", urgentPointer())
-        .add("options", "0x" + Strings.hex(options()))
+        .add("options", String.format("0x%s", Strings.hex(options())))
         .toString();
   }
 }

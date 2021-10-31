@@ -451,10 +451,10 @@ public final class Ip4 extends AbstractPacket {
         .add("fragmentOffset", fragmentOffset())
         .add("ttl", ttl())
         .add("protocol", protocol())
-        .add("checksum", "0x" + Integer.toHexString(checksum()))
+        .add("checksum", String.format("0x%s", Integer.toHexString(checksum())))
         .add("source", source().getHostAddress())
         .add("destination", destination().getHostAddress())
-        .add("options", "0x" + Strings.hex(options()))
+        .add("options", String.format("0x%s", Strings.hex(options())))
         .toString();
   }
 }

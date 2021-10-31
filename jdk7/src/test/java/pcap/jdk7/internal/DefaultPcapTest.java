@@ -5,11 +5,6 @@
 package pcap.jdk7.internal;
 
 import com.sun.jna.Pointer;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +19,12 @@ import pcap.spi.exception.error.*;
 import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.option.DefaultOfflineOptions;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.UUID;
+
 @RunWith(JUnitPlatform.class)
 class DefaultPcapTest extends BaseTest {
 
@@ -31,7 +32,7 @@ class DefaultPcapTest extends BaseTest {
   private String file;
 
   private static void logBuf(String message, PacketBuffer buffer) {
-    // System.out.println(message + ": " + buffer);
+    // System.out.printf("%s: %s", message, buffer);
   }
 
   @BeforeEach

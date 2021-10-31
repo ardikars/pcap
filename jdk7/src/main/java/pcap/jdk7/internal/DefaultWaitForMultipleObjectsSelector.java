@@ -7,8 +7,6 @@ package pcap.jdk7.internal;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import java.util.Collections;
-import java.util.Iterator;
 import pcap.spi.Selectable;
 import pcap.spi.Selection;
 import pcap.spi.Selector;
@@ -16,6 +14,9 @@ import pcap.spi.Timeout;
 import pcap.spi.exception.NoSuchSelectableException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.util.Consumer;
+
+import java.util.Collections;
+import java.util.Iterator;
 
 class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappings.HANDLE> {
 
@@ -29,7 +30,7 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
 
   Iterable<Selectable> toIterableSelectable(int rc, int timeout) throws TimeoutException {
     if (rc == 0x00000102) {
-      throw new TimeoutException("Timeout: " + timeout + " ms.");
+      throw new TimeoutException(String.format("Timeout: %d ms.", timeout));
     }
     if (rc < 0) {
       return Collections.EMPTY_LIST;
@@ -105,7 +106,7 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
 
   int callback(int rc, Timeout timeout, Consumer<Selection> consumer) throws TimeoutException {
     if (rc == 0x00000102) {
-      throw new TimeoutException("Timeout: " + timeout + " ms.");
+      throw new TimeoutException(String.format("Timeout: %s ms.", timeout));
     }
     if (rc < 0) {
       return 0;
