@@ -8,23 +8,16 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 import java.net.Inet4Address;
-import pcap.spi.Address;
-import pcap.spi.Interface;
-import pcap.spi.Pcap;
-import pcap.spi.Selector;
-import pcap.spi.Service;
+import pcap.common.logging.Logger;
+import pcap.common.logging.LoggerFactory;
+import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
-import pcap.spi.exception.error.ActivatedException;
-import pcap.spi.exception.error.InterfaceNotSupportTimestampTypeException;
-import pcap.spi.exception.error.InterfaceNotUpException;
-import pcap.spi.exception.error.NoSuchDeviceException;
-import pcap.spi.exception.error.PermissionDeniedException;
-import pcap.spi.exception.error.PromiscuousModePermissionDeniedException;
-import pcap.spi.exception.error.RadioFrequencyModeNotSupportedException;
-import pcap.spi.exception.error.TimestampPrecisionNotSupportedException;
+import pcap.spi.exception.error.*;
 import pcap.spi.exception.warn.PromiscuousModeNotSupported;
 
 public class DefaultService implements Service {
+
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultService.class);
 
   private final NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
 
@@ -178,7 +171,7 @@ public class DefaultService implements Service {
         if (result < 0) {
           throw new ErrorException(statusToString(result, message));
         } else {
-          Utils.warn(statusToString(result, message));
+          LOG.warn(statusToString(result, message));
         }
       }
     }
@@ -213,7 +206,7 @@ public class DefaultService implements Service {
     } else if (result == -10) {
       throw new InterfaceNotSupportTimestampTypeException(statusToString(result, message));
     } else if (result == 3) {
-      Utils.warn(statusToString(result, message));
+      LOG.warn(statusToString(result, message));
     }
   }
 
@@ -261,9 +254,9 @@ public class DefaultService implements Service {
     if (result == 2) {
       throw new PromiscuousModeNotSupported(NativeMappings.pcap_geterr(pointer).getString(0));
     } else if (result == 3) {
-      Utils.warn(statusToString(result, message));
+      LOG.warn(statusToString(result, message));
     } else if (result == 1) {
-      Utils.warn(statusToString(result, message));
+      LOG.warn(statusToString(result, message));
     } else if (result == -4) {
       throw new ActivatedException(statusToString(result, message));
     } else if (result == -5) {

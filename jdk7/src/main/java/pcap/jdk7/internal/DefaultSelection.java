@@ -31,6 +31,7 @@ class DefaultSelection implements Selection {
   int pollFDsIndex; // only for poll
   private volatile int readyOperations;
   private volatile int interestOperations;
+
   @SuppressWarnings("all")
   private volatile Object attachment;
 

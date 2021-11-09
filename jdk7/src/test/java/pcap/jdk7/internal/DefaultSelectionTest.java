@@ -107,8 +107,10 @@ class DefaultSelectionTest {
   @Test
   void equalsAndHasCode() throws Exception {
     Service service = Service.Creator.create("PcapService");
-    final DefaultPcap pcap1 = (DefaultPcap) service.live(service.interfaces(), new DefaultLiveOptions());
-    final DefaultPcap pcap2 = (DefaultPcap) service.live(service.interfaces(), new DefaultLiveOptions());
+    final DefaultPcap pcap1 =
+        (DefaultPcap) service.live(service.interfaces(), new DefaultLiveOptions());
+    final DefaultPcap pcap2 =
+        (DefaultPcap) service.live(service.interfaces(), new DefaultLiveOptions());
     Selection selection1 = new DefaultSelection(null, pcap1, null);
     Selection selection2 = new DefaultSelection(null, pcap2, null);
     Object NULL_REF = null;
@@ -127,11 +129,14 @@ class DefaultSelectionTest {
     DefaultSelection.validateOperations(Selection.OPERATION_READ);
     DefaultSelection.validateOperations(Selection.OPERATION_WRITE);
     DefaultSelection.validateOperations(Selection.OPERATION_READ | Selection.OPERATION_WRITE);
-    Assertions.assertThrows(IllegalArgumentException.class, new Executable() {
-      @Override
-      public void execute() throws Throwable {
-        DefaultSelection.validateOperations(Selection.OPERATION_READ | Selection.OPERATION_WRITE | 100);
-      }
-    });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            DefaultSelection.validateOperations(
+                Selection.OPERATION_READ | Selection.OPERATION_WRITE | 100);
+          }
+        });
   }
 }

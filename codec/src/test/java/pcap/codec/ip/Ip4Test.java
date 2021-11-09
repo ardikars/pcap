@@ -206,7 +206,6 @@ class Ip4Test {
     }
   }
 
-
   // see: https://github.com/ardikars/pcap/issues/149
   @Test
   void issue149()

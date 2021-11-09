@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import pcap.common.logging.Logger;
+import pcap.common.logging.LoggerFactory;
 import pcap.spi.*;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
@@ -21,6 +23,8 @@ import pcap.spi.exception.error.BreakException;
 import pcap.spi.exception.error.NotActivatedException;
 
 class DefaultPcap implements Pcap {
+
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultPcap.class);
 
   static final Set<Reference<DefaultPcap>> REFS =
       Collections.synchronizedSet(new HashSet<Reference<DefaultPcap>>());
@@ -298,7 +302,7 @@ class DefaultPcap implements Pcap {
   public Object id() throws IllegalAccessException {
     if (NativeMappings.RESTRICTED_LEVEL > 0) {
       if (NativeMappings.RESTRICTED_LEVEL > 1) {
-        System.err.println("Calling restricted method Pcap#id().");
+        LOG.warn("Calling restricted method Pcap#id().");
       }
       try {
         if (Platform.isWindows() || Platform.isWindowsCE()) {
@@ -313,8 +317,8 @@ class DefaultPcap implements Pcap {
         return null;
       }
     } else {
-      System.err.println(NativeMappings.RESTRICTED_MESSAGE);
-      System.err.println(NativeMappings.RESTRICTED_PROPERTY_VALUE);
+      LOG.warn(NativeMappings.RESTRICTED_MESSAGE);
+      LOG.warn(NativeMappings.RESTRICTED_PROPERTY_VALUE);
       throw new IllegalAccessException(NativeMappings.RESTRICTED_MESSAGE);
     }
   }
@@ -354,7 +358,7 @@ class DefaultPcap implements Pcap {
       return (T) buffer;
     }
 
-    throw new IllegalArgumentException(String.format("Class: %s is unsupported.",  cls));
+    throw new IllegalArgumentException(String.format("Class: %s is unsupported.", cls));
   }
 
   @Override
