@@ -3139,9 +3139,12 @@ class DefaultPacketBufferTest {
     PacketBuffer smallSlice = smallBuffer.slice(BYTE_BYTES, BYTE_BYTES);
     PacketBuffer mediumSlice = mediumBuffer.slice(BYTE_BYTES, SHORT_BYTES);
     PacketBuffer largeSlice = largeBuffer.slice(BYTE_BYTES, INTEGER_BYTES);
-    Assertions.assertEquals(smallBuffer.writerIndex(2), ((PacketBuffer.Sliced) smallSlice).unSlice().writerIndex(2));
-    Assertions.assertEquals(mediumBuffer.writerIndex(4), ((PacketBuffer.Sliced) mediumSlice).unSlice().writerIndex(4));
-    Assertions.assertEquals(largeBuffer.writerIndex(8), ((PacketBuffer.Sliced) largeSlice).unSlice().writerIndex(8));
+    Assertions.assertEquals(
+        smallBuffer.writerIndex(2), ((PacketBuffer.Sliced) smallSlice).unSlice().writerIndex(2));
+    Assertions.assertEquals(
+        mediumBuffer.writerIndex(4), ((PacketBuffer.Sliced) mediumSlice).unSlice().writerIndex(4));
+    Assertions.assertEquals(
+        largeBuffer.writerIndex(8), ((PacketBuffer.Sliced) largeSlice).unSlice().writerIndex(8));
 
     Assertions.assertTrue(smallBuffer.release());
     Assertions.assertTrue(mediumBuffer.release());
@@ -3652,8 +3655,10 @@ class DefaultPacketBufferTest {
     Assertions.assertFalse(memory1.writerIndex(0).equals(memory2.writerIndex(1)));
     Assertions.assertFalse(memory1.writerIndex(1).equals(memory2.writerIndex(0)));
     Assertions.assertFalse(memory1.writerIndex(1).equals(memory2.writerIndex(2)));
-    Assertions.assertFalse(memory1.writerIndex(0).equals(memory2.writerIndex(0))); // both of them is not readable
-    Assertions.assertFalse(memory1.writerIndex(0).equals(memory2.writerIndex(1))); // one of them is not readable
+    Assertions.assertFalse(
+        memory1.writerIndex(0).equals(memory2.writerIndex(0))); // both of them is not readable
+    Assertions.assertFalse(
+        memory1.writerIndex(0).equals(memory2.writerIndex(1))); // one of them is not readable
     memory1.setShort(0, -0x80);
     Assertions.assertFalse(memory1.writerIndex(2).equals(memory2.writerIndex(2)));
 

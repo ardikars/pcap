@@ -6,10 +6,10 @@ name: Build and Test
 on:
   push:
     branches:
-      - 1.3
+      - development
   pull_request:
     branches:
-      - 1.3
+      - development
 
 jobs:
   build-and-test:
@@ -82,7 +82,7 @@ jobs:
           ping 127.0.0.1 &
           PID=$!
           echo -n " -Djna.library.path=$(pwd)/libpcap/lib -Djna.debug_load=true" >> .mvn/maven.config
-          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Pformat -Plegacy-support
+          ./mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Pformat -Psonar -Plegacy-support -Dsonar.login="${{ secrets.sonar_token }}"
           kill $PID
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

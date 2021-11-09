@@ -5,11 +5,10 @@
 package pcap.jdk7.internal;
 
 import com.sun.jna.Pointer;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Assertions;
 import pcap.spi.PacketBuffer;
 import pcap.spi.exception.MemoryAccessException;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 // test for multi threaded, currently is not supported
 // @RunWith(JUnitPlatform.class)

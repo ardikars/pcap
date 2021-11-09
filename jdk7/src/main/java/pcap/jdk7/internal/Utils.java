@@ -5,7 +5,6 @@
 package pcap.jdk7.internal;
 
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Logger;
 import pcap.spi.PacketBuffer;
 import pcap.spi.exception.ErrorException;
 
@@ -14,9 +13,6 @@ class Utils {
   static final int MAJOR;
   static final int MINOR;
   static final int PATCH;
-  private static final Logger LOGGER = Logger.getLogger("PcapService");
-  private static final boolean VERBOSE =
-      Boolean.parseBoolean(System.getProperty("pcap.verbose", "true"));
 
   static {
     String version = NativeMappings.pcap_lib_version();
@@ -160,15 +156,5 @@ class Utils {
     return Utils.MAJOR > major
         || (Utils.MAJOR == major && Utils.MINOR > minor)
         || (Utils.MAJOR == major && Utils.MINOR == minor && Utils.PATCH >= patch);
-  }
-
-  static void warn(String message) {
-    doLog(VERBOSE, message);
-  }
-
-  static void doLog(boolean verbose, String message) {
-    if (verbose) {
-      LOGGER.warning(message);
-    }
   }
 }

@@ -4,13 +4,12 @@
  */
 package pcap.codec.udp;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import pcap.codec.AbstractPacket;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
-
-import java.net.Inet4Address;
-import java.net.InetAddress;
 
 /**
  * UDP

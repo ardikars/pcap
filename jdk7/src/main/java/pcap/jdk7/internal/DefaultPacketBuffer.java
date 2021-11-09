@@ -6,11 +6,6 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import pcap.spi.Packet;
-import pcap.spi.PacketBuffer;
-import pcap.spi.exception.MemoryAccessException;
-import pcap.spi.exception.MemoryLeakException;
-
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -21,8 +16,16 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import pcap.common.logging.Logger;
+import pcap.common.logging.LoggerFactory;
+import pcap.spi.Packet;
+import pcap.spi.PacketBuffer;
+import pcap.spi.exception.MemoryAccessException;
+import pcap.spi.exception.MemoryLeakException;
 
 class DefaultPacketBuffer implements PacketBuffer {
+
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultPacketBuffer.class);
 
   private static final boolean LEAK_DETECTION =
       System.getProperty("pcap.leakDetection", "false").equals("true");
@@ -1049,7 +1052,7 @@ class DefaultPacketBuffer implements PacketBuffer {
   public long memoryAddress() throws IllegalAccessException {
     if (NativeMappings.RESTRICTED_LEVEL > 0) {
       if (NativeMappings.RESTRICTED_LEVEL > 1) {
-        System.err.println("Calling restricted method PacketBuffer#memoryAddress().");
+        LOG.warn("Calling restricted method PacketBuffer#memoryAddress().");
       }
       long address = Pointer.nativeValue(buffer);
       if (address == 0L) {

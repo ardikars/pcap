@@ -16,11 +16,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.PointerByReference;
-import pcap.spi.Address;
-import pcap.spi.Interface;
-import pcap.spi.Timestamp;
-import pcap.spi.annotation.Version;
-
 import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -28,8 +23,16 @@ import java.net.InetAddress;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import pcap.common.logging.Logger;
+import pcap.common.logging.LoggerFactory;
+import pcap.spi.Address;
+import pcap.spi.Interface;
+import pcap.spi.Timestamp;
+import pcap.spi.annotation.Version;
 
 class NativeMappings {
+
+  private static final Logger LOG = LoggerFactory.getLogger(NativeMappings.class);
 
   static final int RESTRICTED_LEVEL;
   static final String RESTRICTED_MESSAGE =
@@ -137,7 +140,7 @@ class NativeMappings {
 
   static void eprint(int rc, ErrorBuffer errbuf) {
     if (rc != 0) {
-      Utils.warn(errbuf.toString());
+      LOG.warn(errbuf.toString());
     }
   }
 
@@ -476,7 +479,7 @@ class NativeMappings {
         try {
           return NATIVE.pcap_inject(p, buf, size);
         } catch (NullPointerException | UnsatisfiedLinkError e) {
-          Utils.warn("pcap_inject: Function doesn't exist, use pcap_sendpacket.");
+          LOG.warn("pcap_inject: Function doesn't exist, use pcap_sendpacket.");
           injectIsSupported.compareAndSet(true, false);
         }
       }
@@ -494,7 +497,7 @@ class NativeMappings {
         try {
           return NATIVE.pcap_dump_ftell(dumper);
         } catch (NullPointerException | UnsatisfiedLinkError e) {
-          Utils.warn("pcap_dump_ftell: Function doesn't exist.");
+          LOG.warn("pcap_dump_ftell: Function doesn't exist.");
           dumpFtellIsSupported.compareAndSet(true, false);
         }
       }
@@ -506,7 +509,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_setdirection(p, pcap_direction);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_setdirection: Function doesn't exist.");
+        LOG.warn("pcap_setdirection: Function doesn't exist.");
         return 0;
       }
     }
@@ -516,7 +519,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_create(device, errbuf);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_create: Function doesn't exist.");
+        LOG.warn("pcap_create: Function doesn't exist.");
         return null;
       }
     }
@@ -526,7 +529,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_set_snaplen(p, snaplen);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_set_snaplen: Function doesn't exist.");
+        LOG.warn("pcap_set_snaplen: Function doesn't exist.");
         return 0;
       }
     }
@@ -536,7 +539,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_set_promisc(p, promisc);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_set_promisc: Function doesn't exist.");
+        LOG.warn("pcap_set_promisc: Function doesn't exist.");
         return 0;
       }
     }
@@ -546,7 +549,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_set_timeout(p, timeout);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_set_timeout: Function doesn't exist.");
+        LOG.warn("pcap_set_timeout: Function doesn't exist.");
         return 0;
       }
     }
@@ -556,7 +559,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_set_buffer_size(p, bufferSize);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_set_buffer_size: Function doesn't exist.");
+        LOG.warn("pcap_set_buffer_size: Function doesn't exist.");
         return 0;
       }
     }
@@ -566,7 +569,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_activate(p);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_activate: Function doesn't exist.");
+        LOG.warn("pcap_activate: Function doesn't exist.");
         return -1;
       }
     }
@@ -576,7 +579,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_can_set_rfmon(p);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_can_set_frmon: Function doesn't exist.");
+        LOG.warn("pcap_can_set_frmon: Function doesn't exist.");
         return 0;
       }
     }
@@ -595,7 +598,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_dump_open_append(p, fname);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_dump_open_append: Function doesn't exist.");
+        LOG.warn("pcap_dump_open_append: Function doesn't exist.");
         return null;
       }
     }
@@ -605,7 +608,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_set_tstamp_type(p, tstampType);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_set_tstamp_type: Function doesn't exist.");
+        LOG.warn("pcap_set_tstamp_type: Function doesn't exist.");
         return 0;
       }
     }
@@ -615,7 +618,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_get_tstamp_precision(p);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_get_tstamp_precision: Function doesn't exist.");
+        LOG.warn("pcap_get_tstamp_precision: Function doesn't exist.");
         return Timestamp.Precision.MICRO.value();
       }
     }
@@ -625,7 +628,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_set_rfmon(p, rfmon);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_set_rfmon: Function doesn't exist.");
+        LOG.warn("pcap_set_rfmon: Function doesn't exist.");
         return 0;
       }
     }
@@ -636,7 +639,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_open_offline_with_tstamp_precision(fname, precision, errbuf);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_open_offline_with_tstamp_precision: Function doesn't exist.");
+        LOG.warn("pcap_open_offline_with_tstamp_precision: Function doesn't exist.");
         return null;
       }
     }
@@ -646,7 +649,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_set_tstamp_precision(p, tstamp_precision);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_set_tstamp_precision: Function doesn't exist.");
+        LOG.warn("pcap_set_tstamp_precision: Function doesn't exist.");
         return 0;
       }
     }
@@ -665,7 +668,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_setmintocopy(p, size);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_setmintocopy: Function doesn't exist.");
+        LOG.warn("pcap_setmintocopy: Function doesn't exist.");
         return 0;
       }
     }
@@ -675,7 +678,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_init(opts, errbuf);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_init: Function doesn't exist.");
+        LOG.warn("pcap_init: Function doesn't exist.");
         return 0;
       }
     }
@@ -694,7 +697,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_get_required_select_timeout(p);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        Utils.warn("pcap_get_required_select_timeout: Function doesn't exist.");
+        LOG.warn("pcap_get_required_select_timeout: Function doesn't exist.");
         return null;
       }
     }
