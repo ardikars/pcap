@@ -6,7 +6,10 @@ package pcap.jdk7.internal;
 
 import java.util.HashMap;
 import java.util.Map;
-import pcap.spi.*;
+import pcap.spi.Selectable;
+import pcap.spi.Selection;
+import pcap.spi.Selector;
+import pcap.spi.Timeout;
 import pcap.spi.exception.NoSuchSelectableException;
 
 abstract class AbstractSelector<T> implements Selector {

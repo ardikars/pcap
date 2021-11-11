@@ -21,7 +21,13 @@ import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.nio.ByteOrder;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
@@ -32,8 +38,6 @@ import pcap.spi.annotation.Version;
 
 class NativeMappings {
 
-  private static final Logger LOG = LoggerFactory.getLogger(NativeMappings.class);
-
   static final int RESTRICTED_LEVEL;
   static final String RESTRICTED_MESSAGE =
       "Access to restricted method is disabled by default; to enabled access to restricted method, the Pcap property 'pcap.restricted' must be set to a value other then deny.";
@@ -42,7 +46,6 @@ class NativeMappings {
           + "0) deny: issues a runtime exception on each restricted call. This is the default value;\n"
           + "1) permit: allows restricted calls;\n"
           + "2) warn: like permit, but also prints a one-line warning on each restricted call.\n";
-
   static final int OK = 0;
   static final int TRUE = 1;
   static final int FALSE = 0;
@@ -50,6 +53,7 @@ class NativeMappings {
   static final short AF_INET6;
   static final DefaultPlatformDependent PLATFORM_DEPENDENT;
   static final boolean IS_WIN_PCAP;
+  private static final Logger LOG = LoggerFactory.getLogger(NativeMappings.class);
   private static final Map<String, Object> NATIVE_LOAD_LIBRARY_OPTIONS =
       new HashMap<String, Object>();
 
@@ -726,7 +730,7 @@ class NativeMappings {
 
     @Override
     protected List<String> getFieldOrder() {
-      return Arrays.asList("buf");
+      return Collections.singletonList("buf");
     }
 
     @Override
@@ -744,10 +748,10 @@ class NativeMappings {
 
     @Override
     protected List<String> getFieldOrder() {
-      List<String> list = new ArrayList<String>(2);
-      list.add("bf_len");
-      list.add("bf_insns");
-      return list;
+      return Arrays.asList(
+          "bf_len", //
+          "bf_insns" //
+          );
     }
   }
 
@@ -762,12 +766,11 @@ class NativeMappings {
 
     @Override
     protected List<String> getFieldOrder() {
-      List<String> list = new ArrayList<String>(4);
-      list.add("code");
-      list.add("jt");
-      list.add("jf");
-      list.add("k");
-      return list;
+      return Arrays.asList(
+          "code", //
+          "jt", //
+          "jf", //
+          "k");
     }
 
     public static final class ByReference extends bpf_insn implements Structure.ByReference {}
@@ -796,10 +799,10 @@ class NativeMappings {
 
     @Override
     protected List<String> getFieldOrder() {
-      List<String> fieldOrder = new ArrayList<String>(2);
-      fieldOrder.add("sa_family");
-      fieldOrder.add("sa_data");
-      return fieldOrder;
+      return Arrays.asList(
+          "sa_family", //
+          "sa_data" //
+          );
     }
 
     public short getSaFamily() {
@@ -860,13 +863,13 @@ class NativeMappings {
 
     @Override
     protected List<String> getFieldOrder() {
-      List<String> fieldOrder = new ArrayList<String>(5);
-      fieldOrder.add("next");
-      fieldOrder.add("name");
-      fieldOrder.add("description");
-      fieldOrder.add("addresses");
-      fieldOrder.add("flags");
-      return fieldOrder;
+      return Arrays.asList(
+          "next", //
+          "name", //
+          "description", //
+          "addresses", //
+          "flags" //
+          );
     }
 
     public static final class ByReference extends pcap_if implements Structure.ByReference {}
@@ -914,13 +917,13 @@ class NativeMappings {
 
     @Override
     protected List<String> getFieldOrder() {
-      List<String> fieldOrder = new ArrayList<String>(5);
-      fieldOrder.add("next");
-      fieldOrder.add("addr");
-      fieldOrder.add("netmask");
-      fieldOrder.add("broadaddr");
-      fieldOrder.add("dstaddr");
-      return fieldOrder;
+      return Arrays.asList(
+          "next", //
+          "addr", //
+          "netmask", //
+          "broadaddr", //
+          "dstaddr" //
+          );
     }
 
     public static final class ByReference extends pcap_addr implements Structure.ByReference {}
