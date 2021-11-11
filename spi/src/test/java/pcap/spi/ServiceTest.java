@@ -10,7 +10,14 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.spi.exception.ErrorException;
-import pcap.spi.exception.error.*;
+import pcap.spi.exception.error.ActivatedException;
+import pcap.spi.exception.error.InterfaceNotSupportTimestampTypeException;
+import pcap.spi.exception.error.InterfaceNotUpException;
+import pcap.spi.exception.error.NoSuchDeviceException;
+import pcap.spi.exception.error.PermissionDeniedException;
+import pcap.spi.exception.error.PromiscuousModePermissionDeniedException;
+import pcap.spi.exception.error.RadioFrequencyModeNotSupportedException;
+import pcap.spi.exception.error.TimestampPrecisionNotSupportedException;
 
 @RunWith(JUnitPlatform.class)
 class ServiceTest {
