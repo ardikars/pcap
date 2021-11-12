@@ -93,74 +93,122 @@ final class NoLogger implements Logger {
   }
 
   @Override
-  public void debug(Object message) {}
+  public void debug(Object message) {
+    // there is no log here
+  }
 
   @Override
-  public void debug(Throwable throwable) {}
+  public void debug(Throwable throwable) {
+    // there is no log here
+  }
 
   @Override
-  public void debug(String format, Object arg1) {}
+  public void debug(String format, Object arg1) {
+    // there is no log here
+  }
 
   @Override
-  public void debug(String format, Object arg1, Object arg2) {}
+  public void debug(String format, Object arg1, Object arg2) {
+    // there is no log here
+  }
 
   @Override
-  public void debug(String format, Object... args) {}
+  public void debug(String format, Object... args) {
+    // there is no log here
+  }
 
   @Override
-  public void debug(String message, Throwable throwable) {}
+  public void debug(String message, Throwable throwable) {
+    // there is no log here
+  }
 
   @Override
-  public void info(Object message) {}
+  public void info(Object message) {
+    // there is no log here
+  }
 
   @Override
-  public void info(Throwable throwable) {}
+  public void info(Throwable throwable) {
+    // there is no log here
+  }
 
   @Override
-  public void info(String format, Object obj1) {}
+  public void info(String format, Object obj1) {
+    // there is no log here
+  }
 
   @Override
-  public void info(String format, Object obj1, Object obj2) {}
+  public void info(String format, Object obj1, Object obj2) {
+    // there is no log here
+  }
 
   @Override
-  public void info(String format, Object... args) {}
+  public void info(String format, Object... args) {
+    // there is no log here
+  }
 
   @Override
-  public void info(String message, Throwable throwable) {}
+  public void info(String message, Throwable throwable) {
+    // there is no log here
+  }
 
   @Override
-  public void warn(Object message) {}
+  public void warn(Object message) {
+    // there is no log here
+  }
 
   @Override
-  public void warn(Throwable throwable) {}
+  public void warn(Throwable throwable) {
+    // there is no log here
+  }
 
   @Override
-  public void warn(String format, Object arg1) {}
+  public void warn(String format, Object arg1) {
+    // there is no log here
+  }
 
   @Override
-  public void warn(String format, Object arg1, Object obj2) {}
+  public void warn(String format, Object arg1, Object obj2) {
+    // there is no log here
+  }
 
   @Override
-  public void warn(String format, Object... args) {}
+  public void warn(String format, Object... args) {
+    // there is no log here
+  }
 
   @Override
-  public void warn(String message, Throwable throwable) {}
+  public void warn(String message, Throwable throwable) {
+    // there is no log here
+  }
 
   @Override
-  public void error(Object message) {}
+  public void error(Object message) {
+    // there is no log here
+  }
 
   @Override
-  public void error(Throwable throwable) {}
+  public void error(Throwable throwable) {
+    // there is no log here
+  }
 
   @Override
-  public void error(String format, Object obj1) {}
+  public void error(String format, Object obj1) {
+    // there is no log here
+  }
 
   @Override
-  public void error(String format, Object obj1, Object obj2) {}
+  public void error(String format, Object obj1, Object obj2) {
+    // there is no log here
+  }
 
   @Override
-  public void error(String format, Object... args) {}
+  public void error(String format, Object... args) {
+    // there is no log here
+  }
 
   @Override
-  public void error(String message, Throwable throwable) {}
+  public void error(String message, Throwable throwable) {
+    // there is no log here
+  }
 }

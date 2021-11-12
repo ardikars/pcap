@@ -1216,11 +1216,11 @@ class DefaultPacketBuffer implements PacketBuffer {
           StringBuilder stackTraceBuilder = new StringBuilder();
           for (int i = ref.stackTraceElements.length - 1; i >= 0; i--) {
             stackTraceBuilder.append(
-                String.format("\t[%s]\n", ref.stackTraceElements[i].toString()));
+                String.format("\t[%s]%n", ref.stackTraceElements[i].toString()));
           }
           throw new MemoryLeakException(
               String.format(
-                  "PacketBuffer.release() was not called before it's garbage collected.\n\tCreated at:\n%s",
+                  "PacketBuffer.release() was not called before it's garbage collected.%n\tCreated at:%n%s",
                   stackTraceBuilder));
         }
       }

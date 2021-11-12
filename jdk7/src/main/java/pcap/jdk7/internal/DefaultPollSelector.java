@@ -227,7 +227,9 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
     public short events;
     public short revents;
 
-    public pollfd() {}
+    public pollfd() {
+      // public constructor
+    }
 
     @Override
     protected List getFieldOrder() {

@@ -17,8 +17,6 @@ import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.PointerByReference;
 import java.lang.reflect.Method;
-import java.net.Inet4Address;
-import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.nio.ByteOrder;
 import java.util.Arrays;
@@ -320,13 +318,13 @@ class NativeMappings {
     InetAddress address;
     try {
       if (sockaddr.getSaFamily() == AF_INET) {
-        address = Inet4Address.getByAddress(Arrays.copyOfRange(sockaddr.sa_data, 2, 6));
+        address = InetAddress.getByAddress(Arrays.copyOfRange(sockaddr.sa_data, 2, 6));
       } else if (sockaddr.sa_family == AF_INET6) {
-        address = Inet6Address.getByAddress(Arrays.copyOfRange(sockaddr.sa_data, 2, 18));
+        address = InetAddress.getByAddress(Arrays.copyOfRange(sockaddr.sa_data, 2, 18));
       } else {
         address = null;
       }
-    } catch (Throwable e) {
+    } catch (Exception e) {
       address = null;
     }
     return address;
@@ -744,7 +742,9 @@ class NativeMappings {
     public int bf_len;
     public bpf_insn.ByReference bf_insns;
 
-    public bpf_program() {}
+    public bpf_program() {
+      // public constructor
+    }
 
     @Override
     protected List<String> getFieldOrder() {
@@ -762,7 +762,9 @@ class NativeMappings {
     public byte jf;
     public int k;
 
-    public bpf_insn() {}
+    public bpf_insn() {
+      // public constructor
+    }
 
     @Override
     protected List<String> getFieldOrder() {
@@ -783,7 +785,9 @@ class NativeMappings {
     public short sa_family;
     public byte[] sa_data = new byte[14];
 
-    public sockaddr() {}
+    public sockaddr() {
+      // public constructor
+    }
 
     static boolean isLinuxOrWindows() {
       return Platform.isWindows() || Platform.isLinux();
@@ -824,7 +828,9 @@ class NativeMappings {
     public pcap_addr.ByReference addresses;
     public int flags;
 
-    public pcap_if() {}
+    public pcap_if() {
+      // public constructor
+    }
 
     public pcap_if(Pointer pointer) {
       super(pointer);

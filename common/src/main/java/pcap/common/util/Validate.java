@@ -11,10 +11,6 @@ package pcap.common.util;
  */
 public final class Validate {
 
-  private static final String ARRAY_IS_EMPTY = "Array is empty.";
-  private static final String NOT_INBOUNDS_EXCEPTION =
-      "Arguments: array(size(%d)), offset(%d), length(%d).";
-
   private Validate() {
     //
   }

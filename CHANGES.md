@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
 - Use String::format(..) instead of concatenate with +
 
 - Use common logging instead of jdk logger

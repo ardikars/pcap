@@ -84,8 +84,8 @@ public interface Packet {
     @Override
     public int hashCode() {
       int result = 1;
-      long length = offset + size();
-      for (long i = offset; i < length; i++) {
+      long len = offset + size();
+      for (long i = offset; i < len; i++) {
         result = 31 * result + buffer.getByte(i);
       }
       return result;
