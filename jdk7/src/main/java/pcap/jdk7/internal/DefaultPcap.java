@@ -307,16 +307,19 @@ class DefaultPcap implements Pcap {
 
   @Override
   public Object id() throws IllegalAccessException {
-    if (NativeMappings.RESTRICTED_LEVEL > 0) {
-      if (NativeMappings.RESTRICTED_LEVEL > 1) {
+    return getId(NativeMappings.RESTRICTED_LEVEL);
+  }
+
+  Object getId(int restrictedLevel) throws IllegalAccessException {
+    if (restrictedLevel > 0) {
+      if (restrictedLevel > 1) {
         LOG.warn("Calling restricted method Pcap#id().");
       }
       try {
         if (Platform.isWindows() || Platform.isWindowsCE()) {
           final NativeMappings.HANDLE handle =
               NativeMappings.PLATFORM_DEPENDENT.pcap_getevent(pointer);
-          final long ptrAddr = Pointer.nativeValue(handle.getPointer());
-          return ptrAddr;
+          return Pointer.nativeValue(handle.getPointer());
         } else {
           return NativeMappings.PLATFORM_DEPENDENT.pcap_get_selectable_fd(pointer);
         }

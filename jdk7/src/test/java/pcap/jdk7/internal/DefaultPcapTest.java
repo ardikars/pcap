@@ -4,6 +4,7 @@
  */
 package pcap.jdk7.internal;
 
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,16 +19,20 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import pcap.spi.Dumper;
 import pcap.spi.Interface;
+import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.PacketHandler;
 import pcap.spi.PacketHeader;
 import pcap.spi.Pcap;
+import pcap.spi.Selectable;
 import pcap.spi.Selection;
 import pcap.spi.Selector;
 import pcap.spi.Service;
 import pcap.spi.Statistics;
+import pcap.spi.Timeout;
 import pcap.spi.Timestamp;
 import pcap.spi.exception.ErrorException;
+import pcap.spi.exception.NoSuchSelectableException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.WarningException;
 import pcap.spi.exception.error.ActivatedException;
@@ -42,6 +47,7 @@ import pcap.spi.exception.error.RadioFrequencyModeNotSupportedException;
 import pcap.spi.exception.error.TimestampPrecisionNotSupportedException;
 import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.option.DefaultOfflineOptions;
+import pcap.spi.util.Consumer;
 
 @RunWith(JUnitPlatform.class)
 class DefaultPcapTest extends BaseTest {
@@ -603,11 +609,27 @@ class DefaultPcapTest extends BaseTest {
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 1});
       buffer.writeBytes(new byte[] {0, 0, 0, 0, 0, 2});
       buffer.writeShortRE(0x0806);
-      try {
-        live.sendPacket(buffer);
-        Assertions.assertEquals(buffer.capacity(), live.inject(buffer));
-      } finally {
-        Assertions.assertTrue(buffer.release());
+      if (!Platform.isFreeBSD() && !Platform.iskFreeBSD()) {
+        try {
+          live.sendPacket(buffer);
+          Assertions.assertEquals(buffer.capacity(), live.inject(buffer));
+        } finally {
+          Assertions.assertTrue(buffer.release());
+        }
+      } else {
+        Assertions.assertThrows(
+            ErrorException.class,
+            new Executable() {
+              @Override
+              public void execute() throws Throwable {
+                try {
+                  live.sendPacket(buffer);
+                  Assertions.assertEquals(buffer.capacity(), live.inject(buffer));
+                } finally {
+                  Assertions.assertTrue(buffer.release());
+                }
+              }
+            });
       }
       Assertions.assertThrows(
           IllegalArgumentException.class,
@@ -1261,6 +1283,14 @@ class DefaultPcapTest extends BaseTest {
               pcap.checkBuffer(new DefaultPacketBuffer(null, null, -1, 8, 8));
             }
           });
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              pcap.checkBuffer(new BadBuffer(1, 1));
+            }
+          });
     }
   }
 
@@ -1298,6 +1328,632 @@ class DefaultPcapTest extends BaseTest {
       }
       live.register(selector, Selection.OPERATION_READ, null);
       selector.close();
+
+      Assertions.assertThrows(
+          IllegalArgumentException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              live.register(new BadSelector(), Selection.OPERATION_READ, null);
+            }
+          });
     }
+  }
+
+  @Test
+  void getId() throws Exception {
+    Interface lo = loopbackInterface(service);
+    try (DefaultPcap live = (DefaultPcap) service.live(lo, new DefaultLiveOptions())) {
+      Assertions.assertThrows(
+          IllegalAccessException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              live.getId(NativeMappings.RESTRICTED_LEVEL_DENY);
+            }
+          });
+      live.getId(NativeMappings.RESTRICTED_LEVEL_WARN);
+      live.getId(NativeMappings.RESTRICTED_LEVEL_PERMIT);
+    }
+  }
+
+  static final class BadBuffer implements PacketBuffer {
+
+    private final long readableBytes;
+    private final long writeableBytes;
+
+    public BadBuffer(long readableBytes, long writeableBytes) {
+      this.readableBytes = readableBytes;
+      this.writeableBytes = writeableBytes;
+    }
+
+    @Override
+    public long capacity() {
+      return 0;
+    }
+
+    @Override
+    public PacketBuffer capacity(long newCapacity) {
+      return null;
+    }
+
+    @Override
+    public long readerIndex() {
+      return 0;
+    }
+
+    @Override
+    public PacketBuffer readerIndex(long readerIndex) {
+      return null;
+    }
+
+    @Override
+    public long writerIndex() {
+      return 0;
+    }
+
+    @Override
+    public PacketBuffer writerIndex(long writerIndex) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setIndex(long readerIndex, long writerIndex) {
+      return null;
+    }
+
+    @Override
+    public long readableBytes() {
+      return readableBytes;
+    }
+
+    @Override
+    public long writableBytes() {
+      return writeableBytes;
+    }
+
+    @Override
+    public boolean isReadable() {
+      return false;
+    }
+
+    @Override
+    public boolean isReadable(long numBytes) {
+      return false;
+    }
+
+    @Override
+    public boolean isWritable() {
+      return false;
+    }
+
+    @Override
+    public boolean isWritable(long numBytes) {
+      return false;
+    }
+
+    @Override
+    public PacketBuffer clear() {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer markReaderIndex() {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer resetReaderIndex() {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer markWriterIndex() {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer resetWriterIndex() {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer ensureWritable(long minWritableBytes) {
+      return null;
+    }
+
+    @Override
+    public boolean getBoolean(long index) {
+      return false;
+    }
+
+    @Override
+    public byte getByte(long index) {
+      return 0;
+    }
+
+    @Override
+    public short getUnsignedByte(long index) {
+      return 0;
+    }
+
+    @Override
+    public short getShort(long index) {
+      return 0;
+    }
+
+    @Override
+    public short getShortRE(long index) {
+      return 0;
+    }
+
+    @Override
+    public int getUnsignedShort(long index) {
+      return 0;
+    }
+
+    @Override
+    public int getUnsignedShortRE(long index) {
+      return 0;
+    }
+
+    @Override
+    public int getInt(long index) {
+      return 0;
+    }
+
+    @Override
+    public int getIntRE(long index) {
+      return 0;
+    }
+
+    @Override
+    public long getUnsignedInt(long index) {
+      return 0;
+    }
+
+    @Override
+    public long getUnsignedIntRE(long index) {
+      return 0;
+    }
+
+    @Override
+    public long getLong(long index) {
+      return 0;
+    }
+
+    @Override
+    public long getLongRE(long index) {
+      return 0;
+    }
+
+    @Override
+    public float getFloat(long index) {
+      return 0;
+    }
+
+    @Override
+    public float getFloatRE(long index) {
+      return 0;
+    }
+
+    @Override
+    public double getDouble(long index) {
+      return 0;
+    }
+
+    @Override
+    public double getDoubleRE(long index) {
+      return 0;
+    }
+
+    @Override
+    public PacketBuffer getBytes(long index, PacketBuffer dst) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer getBytes(long index, PacketBuffer dst, long length) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer getBytes(long index, PacketBuffer dst, long dstIndex, long length) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer getBytes(long index, byte[] dst) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer getBytes(long index, byte[] dst, long dstIndex, long length) {
+      return null;
+    }
+
+    @Override
+    public CharSequence getCharSequence(long index, long length, Charset charset) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setBoolean(long index, boolean value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setByte(long index, int value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setShort(long index, int value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setShortRE(long index, int value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setInt(long index, int value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setIntRE(long index, int value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setLong(long index, long value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setLongRE(long index, long value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setFloat(long index, float value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setFloatRE(long index, float value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setDouble(long index, double value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setDoubleRE(long index, double value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setBytes(long index, PacketBuffer src) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setBytes(long index, PacketBuffer src, long length) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setBytes(long index, PacketBuffer src, long srcIndex, long length) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setBytes(long index, byte[] src) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setBytes(long index, byte[] src, long srcIndex, long length) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer setCharSequence(long index, CharSequence sequence, Charset charset) {
+      return null;
+    }
+
+    @Override
+    public boolean readBoolean() {
+      return false;
+    }
+
+    @Override
+    public byte readByte() {
+      return 0;
+    }
+
+    @Override
+    public short readUnsignedByte() {
+      return 0;
+    }
+
+    @Override
+    public short readShort() {
+      return 0;
+    }
+
+    @Override
+    public short readShortRE() {
+      return 0;
+    }
+
+    @Override
+    public int readUnsignedShort() {
+      return 0;
+    }
+
+    @Override
+    public int readUnsignedShortRE() {
+      return 0;
+    }
+
+    @Override
+    public int readInt() {
+      return 0;
+    }
+
+    @Override
+    public int readIntRE() {
+      return 0;
+    }
+
+    @Override
+    public long readUnsignedInt() {
+      return 0;
+    }
+
+    @Override
+    public long readUnsignedIntRE() {
+      return 0;
+    }
+
+    @Override
+    public long readLong() {
+      return 0;
+    }
+
+    @Override
+    public long readLongRE() {
+      return 0;
+    }
+
+    @Override
+    public float readFloat() {
+      return 0;
+    }
+
+    @Override
+    public float readFloatRE() {
+      return 0;
+    }
+
+    @Override
+    public double readDouble() {
+      return 0;
+    }
+
+    @Override
+    public double readDoubleRE() {
+      return 0;
+    }
+
+    @Override
+    public PacketBuffer readBytes(PacketBuffer dst) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer readBytes(PacketBuffer dst, long length) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer readBytes(PacketBuffer dst, long dstIndex, long length) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer readBytes(byte[] dst) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer readBytes(byte[] dst, long dstIndex, long length) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer skipBytes(long length) {
+      return null;
+    }
+
+    @Override
+    public CharSequence readCharSequence(long length, Charset charset) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeBoolean(boolean value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeByte(int value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeShort(int value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeShortRE(int value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeInt(int value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeIntRE(int value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeLong(long value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeLongRE(long value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeFloat(float value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeFloatRE(float value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeDouble(double value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeDoubleRE(double value) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeBytes(PacketBuffer src) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeBytes(PacketBuffer src, long length) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeBytes(PacketBuffer src, long srcIndex, long length) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeBytes(byte[] src) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeBytes(byte[] src, long srcIndex, long length) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer writeCharSequence(CharSequence sequence, Charset charset) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer copy() {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer copy(long index, long length) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer slice() {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer slice(long index, long length) {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer duplicate() {
+      return null;
+    }
+
+    @Override
+    public ByteOrder byteOrder() {
+      return null;
+    }
+
+    @Override
+    public PacketBuffer byteOrder(ByteOrder byteOrder) {
+      return null;
+    }
+
+    @Override
+    public long memoryAddress() throws IllegalAccessException {
+      return 0;
+    }
+
+    @Override
+    public boolean release() {
+      return false;
+    }
+
+    @Override
+    public <T extends Packet.Abstract> T cast(Class<T> t) {
+      return null;
+    }
+
+    @Override
+    public void close() throws Exception {}
+  }
+
+  static final class BadSelector implements Selector {
+
+    @Override
+    public Iterable<Selectable> select(Timeout timeout)
+        throws TimeoutException, NoSuchSelectableException, IllegalStateException,
+            IllegalArgumentException {
+      return null;
+    }
+
+    @Override
+    public int select(Consumer<Selection> consumer, Timeout timeout)
+        throws TimeoutException, NoSuchSelectableException, IllegalStateException,
+            IllegalArgumentException {
+      return 0;
+    }
+
+    @Override
+    public Selector register(Selectable selectable)
+        throws IllegalArgumentException, IllegalStateException {
+      return null;
+    }
+
+    @Override
+    public void close() throws Exception {}
   }
 }

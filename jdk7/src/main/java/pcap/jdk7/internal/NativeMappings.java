@@ -37,6 +37,9 @@ import pcap.spi.annotation.Version;
 class NativeMappings {
 
   static final int RESTRICTED_LEVEL;
+  static final int RESTRICTED_LEVEL_DENY = 0;
+  static final int RESTRICTED_LEVEL_PERMIT = 1;
+  static final int RESTRICTED_LEVEL_WARN = 2;
   static final String RESTRICTED_MESSAGE =
       "Access to restricted method is disabled by default; to enabled access to restricted method, the Pcap property 'pcap.restricted' must be set to a value other then deny.";
   static final String RESTRICTED_PROPERTY_VALUE =
@@ -102,13 +105,13 @@ class NativeMappings {
     initLibrary(characterEncoding);
     String unsafeAccess = System.getProperty("pcap.restricted", "deny");
     if (unsafeAccess.equals("deny")) {
-      RESTRICTED_LEVEL = 0;
+      RESTRICTED_LEVEL = RESTRICTED_LEVEL_DENY;
     } else if (unsafeAccess.equals("permit")) {
-      RESTRICTED_LEVEL = 1;
+      RESTRICTED_LEVEL = RESTRICTED_LEVEL_PERMIT;
     } else if (unsafeAccess.equals("warn")) {
-      RESTRICTED_LEVEL = 2;
+      RESTRICTED_LEVEL = RESTRICTED_LEVEL_WARN;
     } else {
-      RESTRICTED_LEVEL = 0;
+      RESTRICTED_LEVEL = RESTRICTED_LEVEL_DENY;
     }
   }
 
