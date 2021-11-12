@@ -1050,8 +1050,12 @@ class DefaultPacketBuffer implements PacketBuffer {
 
   @Override
   public long memoryAddress() throws IllegalAccessException {
-    if (NativeMappings.RESTRICTED_LEVEL > 0) {
-      if (NativeMappings.RESTRICTED_LEVEL > 1) {
+    return getMemoryAddress(NativeMappings.RESTRICTED_LEVEL);
+  }
+
+  long getMemoryAddress(int restrictedLevel) throws IllegalAccessException {
+    if (restrictedLevel > 0) {
+      if (restrictedLevel > 1) {
         LOG.warn("Calling restricted method PacketBuffer#memoryAddress().");
       }
       long address = Pointer.nativeValue(buffer);
@@ -1174,7 +1178,7 @@ class DefaultPacketBuffer implements PacketBuffer {
         return false;
       }
       PacketBufferReference that = (PacketBufferReference) o;
-      return hashCode() == that.hashCode();
+      return Objects.equals(hashCode(), that.hashCode());
     }
 
     @Override

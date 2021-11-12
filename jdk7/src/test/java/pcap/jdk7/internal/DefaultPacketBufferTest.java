@@ -3364,6 +3364,15 @@ class DefaultPacketBufferTest {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            DefaultPacketBuffer.checkCastThrowable(
+                Integer.class, new NoSuchMethodException("No method."));
+          }
+        });
   }
 
   // alignment test
@@ -3676,14 +3685,33 @@ class DefaultPacketBufferTest {
   }
 
   @Test
-  void memoryAddress() {
-    PacketBuffer memory = DefaultPacketBuffer.PacketBufferManager.allocate(LONG_BYTES);
+  void memoryAddress() throws IllegalAccessException {
+    final DefaultPacketBuffer.FinalizablePacketBuffer memory =
+        DefaultPacketBuffer.PacketBufferManager.allocate(LONG_BYTES);
     try {
       Assertions.assertTrue(memory.memoryAddress() != 0);
     } catch (IllegalAccessException e) {
       //
     }
+    Assertions.assertThrows(
+        IllegalAccessException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            memory.getMemoryAddress(NativeMappings.RESTRICTED_LEVEL_DENY);
+          }
+        });
+    Assertions.assertTrue(memory.getMemoryAddress(NativeMappings.RESTRICTED_LEVEL_WARN) != 0);
+    Assertions.assertTrue(memory.getMemoryAddress(NativeMappings.RESTRICTED_LEVEL_PERMIT) != 0);
     Assertions.assertTrue(memory.release());
+    Assertions.assertThrows(
+        IllegalStateException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            memory.getMemoryAddress(NativeMappings.RESTRICTED_LEVEL_PERMIT);
+          }
+        });
   }
 
   static final class TestPacket extends Packet.Abstract {

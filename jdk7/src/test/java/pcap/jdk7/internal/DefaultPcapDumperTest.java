@@ -172,4 +172,17 @@ class DefaultPcapDumperTest extends BaseTest {
     Assertions.assertEquals(Long.MAX_VALUE, ptr.getLong(0));
     Native.free(Pointer.nativeValue(ptr));
   }
+
+  @Test
+  void freeIfPossible() throws Exception {
+    Interface source = loopbackInterface(service);
+    try (Pcap live = service.live(source, new DefaultLiveOptions())) {
+      final String newFile = file.concat(UUID.randomUUID().toString());
+      final DefaultDumper dumper = (DefaultDumper) live.dumpOpen(newFile);
+      Assertions.assertTrue(dumper.reference.address != 0L);
+      DefaultDumper.freeIfPossible(dumper.reference);
+      Assertions.assertTrue(dumper.reference.address == 0L);
+      DefaultDumper.freeIfPossible(dumper.reference);
+    }
+  }
 }

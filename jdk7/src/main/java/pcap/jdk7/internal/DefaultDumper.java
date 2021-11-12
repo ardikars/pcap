@@ -34,11 +34,15 @@ class DefaultDumper implements Dumper {
     REFS.add(reference);
     DumperReference ref;
     while ((ref = (DumperReference) RQ.poll()) != null) {
-      if (ref.address > 0L) {
-        Native.free(ref.address);
-        ref.address = 0L;
-        REFS.remove(ref);
-      }
+      freeIfPossible(ref);
+    }
+  }
+
+  static void freeIfPossible(DumperReference ref) {
+    if (ref.address > 0) {
+      Native.free(ref.address);
+      ref.address = 0L;
+      DefaultDumper.REFS.remove(ref);
     }
   }
 
