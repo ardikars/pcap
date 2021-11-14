@@ -20,6 +20,11 @@ All notable changes to this project will be documented in this file.
 - Use Arrays.asList(..) insetead new ArrayList(..) for getFieldOrders() 
 
 
+### Fixed
+
+- Fix Slf4j module name
+
+
 
 ## [1.3.3] - 2021-10-23
 

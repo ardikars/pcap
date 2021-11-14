@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
     <parent>
         <artifactId>pcap</artifactId>
         <groupId>com.ardikars.pcap</groupId>
-        <version>1.3.3</version>
+        <version>1.3.4-alpha</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -58,6 +58,8 @@ SPDX-License-Identifier: MIT OR Apache-2.0
                                 pcap.codec.ip,
                                 pcap.codec.tcp,
                                 pcap.codec.udp,
+                                pcap.codec.sll,
+                                pcap.codec.loopback,
                                 pcap.codec
                             </packages>
                             <requires>
