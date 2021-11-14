@@ -15,7 +15,7 @@ All notable changes to this project will be documented in this file.
 
 - Use String::format(..) instead of concatenate with +
 
-- Use common logging instead of jdk logger
+- Use pcap-common logging instead of jdk logger
 
 - Use Arrays.asList(..) insetead new ArrayList(..) for getFieldOrders() 
 
