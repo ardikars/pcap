@@ -17,6 +17,7 @@ import java.util.Set;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.spi.PacketBuffer;
+import pcap.spi.PacketFilter;
 import pcap.spi.PacketHandler;
 import pcap.spi.PacketHeader;
 import pcap.spi.Pcap;
@@ -31,13 +32,10 @@ import pcap.spi.exception.error.NotActivatedException;
 
 class DefaultPcap implements Pcap {
 
-  private static final Logger LOG = LoggerFactory.getLogger(DefaultPcap.class);
-
   static final Set<Reference<DefaultPcap>> REFS =
       Collections.synchronizedSet(new HashSet<Reference<DefaultPcap>>());
-
   static final ReferenceQueue<DefaultPcap> RQ = new ReferenceQueue<DefaultPcap>();
-
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultPcap.class);
   final Pointer pointer;
   final int netmask;
   final int datalink;
@@ -91,6 +89,18 @@ class DefaultPcap implements Pcap {
     Pointer dumper = NativeMappings.PLATFORM_DEPENDENT.pcap_dump_open_append(pointer, file);
     nullCheck(dumper);
     return new DefaultDumper(dumper);
+  }
+
+  @Override
+  public PacketFilter compile(String filter, boolean optimize) throws ErrorException {
+    return new BerkeleyPacketFilter(pointer, filter, optimize, netmask);
+  }
+
+  @Override
+  public void setFilter(PacketFilter filter) throws ErrorException {
+    BerkeleyPacketFilter packetFilter = (BerkeleyPacketFilter) filter;
+    int rc = NativeMappings.pcap_setfilter(pointer, packetFilter.fp);
+    filterCheck(rc, packetFilter.fp);
   }
 
   @Override
