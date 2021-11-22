@@ -6,6 +6,9 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -30,15 +33,15 @@ class DefaultPacketBuffer implements PacketBuffer {
   private static final boolean LEAK_DETECTION =
       System.getProperty("pcap.leakDetection", "false").equals("true");
 
-  private static final ConcurrentHashMap<Class<?>, Constructor<?>> CACHE =
-      new ConcurrentHashMap<Class<?>, Constructor<?>>();
+  private static final ConcurrentHashMap<Class<?>, MethodHandle> CACHE =
+      new ConcurrentHashMap<Class<?>, MethodHandle>();
 
   private static final int BYTE_SIZE = 1;
   private static final int SHORT_SIZE = 2;
   private static final int INT_SIZE = 4;
   private static final int LONG_SIZE = 8;
-
   private static final boolean BE;
+  private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
   static {
     com.sun.jna.Native.register(
@@ -88,8 +91,8 @@ class DefaultPacketBuffer implements PacketBuffer {
   static native int memcmp(com.sun.jna.Pointer buf1, com.sun.jna.Pointer buf2, long size);
 
   static <T extends Packet.Abstract> T checkCastThrowable(Class<?> type, Throwable e) {
-    if (e.getCause() instanceof IllegalArgumentException) {
-      throw (IllegalArgumentException) e.getCause();
+    if (e instanceof IllegalArgumentException) {
+      throw (IllegalArgumentException) e;
     } else if (e instanceof NoSuchMethodException) {
       throw new IllegalArgumentException(
           String.format(
@@ -100,6 +103,8 @@ class DefaultPacketBuffer implements PacketBuffer {
     } else if (e instanceof InstantiationException) {
       throw new IllegalArgumentException(
           String.format("A class must be extends %s.", Packet.Abstract.class.getName()));
+    } else if (e instanceof IllegalStateException) {
+      throw (IllegalStateException) e;
     }
     return null;
   }
@@ -1083,14 +1088,15 @@ class DefaultPacketBuffer implements PacketBuffer {
   @Override
   public <T extends Packet.Abstract> T cast(Class<T> type) {
     try {
-      Constructor<?> constructor = CACHE.get(type);
-      if (constructor == null) {
-        constructor = type.getDeclaredConstructor(PacketBuffer.class);
+      MethodHandle methodHandle = CACHE.get(type);
+      if (methodHandle == null) {
+        Constructor<?> constructor = type.getDeclaredConstructor(PacketBuffer.class);
         constructor.setAccessible(true);
-        CACHE.put(type, constructor);
+        methodHandle = LOOKUP.unreflectConstructor(constructor);
+        CACHE.put(type, methodHandle);
       }
-      return (T) constructor.newInstance(this);
-    } catch (Exception e) {
+      return (T) methodHandle.invoke(this);
+    } catch (Throwable e) {
       return checkCastThrowable(type, e);
     }
   }

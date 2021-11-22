@@ -13,9 +13,15 @@ All notable changes to this project will be documented in this file.
 
 - Add bpf filter
 
+### Changed
+
+- Unreflect constructor for casting buffer to packet classes.
+
 ### Fixed
 
 - Accessing closed handle should throw exception.
+
+- Fix capacity of generated buffer from capture handle.
 
 ## [1.3.4] - 2021-11-15
 
