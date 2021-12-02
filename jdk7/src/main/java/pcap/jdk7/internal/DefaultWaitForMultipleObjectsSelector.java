@@ -58,6 +58,7 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
   @Override
   Selection register(Selectable selectable, int interestOperations, Object attachment)
       throws IllegalArgumentException, IllegalStateException {
+    checkOpenState();
     DefaultSelection selection = validateRegister(selectable, attachment);
     if (!registered.isEmpty()) {
       // register new pcap
@@ -74,6 +75,7 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
 
   @Override
   void interestOperations(DefaultSelection selection, int interestOperations) {
+    checkOpenState();
     selection.interestOperations(interestOperations);
   }
 
@@ -81,6 +83,7 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
   public Iterable<Selectable> select(Timeout timeout)
       throws TimeoutException, NoSuchSelectableException, IllegalStateException,
           IllegalArgumentException {
+    checkOpenState();
     validateSelect(timeout);
     int ts = (int) timeout.microSecond() / 1000;
     int rc;
@@ -94,6 +97,7 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
   public int select(Consumer<Selection> consumer, Timeout timeout)
       throws TimeoutException, NoSuchSelectableException, IllegalStateException,
           IllegalArgumentException {
+    checkOpenState();
     validateSelect(timeout);
     int ts = (int) timeout.microSecond() / 1000;
     int rc;
@@ -118,6 +122,7 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
 
   @Override
   protected void cancel(DefaultPcap pcap) {
+    checkOpenState();
     NativeMappings.HANDLE handle = NativeMappings.PLATFORM_DEPENDENT.pcap_getevent(pcap.pointer);
     for (int i = 0; i < registered.size(); i++) {
       if (Pointer.nativeValue(handle.getPointer())
@@ -138,7 +143,8 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
+    checkOpenState();
     Iterator<DefaultSelection> iterator = registered.values().iterator();
     while (iterator.hasNext()) {
       iterator.next().pcap.selector = null;

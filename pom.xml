@@ -321,6 +321,9 @@ SPDX-License-Identifier: MIT OR Apache-2.0
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven.surefire.plugin.version}</version>
+                    <configuration>
+                        <argLine>-Djdk.attach.allowAttachSelf=true -XX:+StartAttachListener</argLine>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

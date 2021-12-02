@@ -40,6 +40,12 @@ abstract class AbstractSelector<T> implements Selector {
     }
   }
 
+  protected void checkOpenState() {
+    if (isClosed) {
+      throw new IllegalStateException("Selector is closed.");
+    }
+  }
+
   protected DefaultSelection validateRegister(Selectable pcap, Object attachment) {
     if (isClosed) {
       throw new IllegalStateException("Selector is closed.");
