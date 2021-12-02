@@ -31,13 +31,10 @@ import pcap.spi.exception.error.NotActivatedException;
 
 class DefaultPcap implements Pcap {
 
-  private static final Logger LOG = LoggerFactory.getLogger(DefaultPcap.class);
-
   static final Set<Reference<DefaultPcap>> REFS =
       Collections.synchronizedSet(new HashSet<Reference<DefaultPcap>>());
-
   static final ReferenceQueue<DefaultPcap> RQ = new ReferenceQueue<DefaultPcap>();
-
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultPcap.class);
   final Pointer pointer;
   final int netmask;
   final int datalink;
@@ -78,6 +75,7 @@ class DefaultPcap implements Pcap {
 
   @Override
   public DefaultDumper dumpOpen(String file) throws ErrorException {
+    checkOpenState();
     Utils.requireNonBlank(file, "file: null (expected: file != null && notBlank(file))");
     Pointer dumper = NativeMappings.pcap_dump_open(pointer, file);
     nullCheck(dumper);
@@ -86,6 +84,7 @@ class DefaultPcap implements Pcap {
 
   @Override
   public DefaultDumper dumpOpenAppend(String file) throws ErrorException {
+    checkOpenState();
     Utils.validateVersion(1, 7, 0);
     Utils.requireNonBlank(file, "file: null (expected: file != null && notBlank(file))");
     Pointer dumper = NativeMappings.PLATFORM_DEPENDENT.pcap_dump_open_append(pointer, file);
@@ -95,6 +94,7 @@ class DefaultPcap implements Pcap {
 
   @Override
   public void setFilter(String filter, boolean optimize) throws ErrorException {
+    checkOpenState();
     Utils.requireNonBlank(filter, "filter: null (expected: filter != null && notBlank(filter))");
     int rc;
     NativeMappings.bpf_program fp = new NativeMappings.bpf_program();
@@ -118,6 +118,7 @@ class DefaultPcap implements Pcap {
   @Override
   public <T> void loop(int count, final PacketHandler<T> handler, final T args)
       throws BreakException, ErrorException {
+    checkOpenState();
     Utils.requireNonNull(handler, "handler: null (expected: handler != null)");
     int rc =
         NativeMappings.pcap_loop(
@@ -143,6 +144,7 @@ class DefaultPcap implements Pcap {
 
   @Override
   public PacketBuffer next(PacketHeader header) {
+    checkOpenState();
     Utils.requireNonNull(header, "header: null (expected: header != null)");
     PacketBuffer buffer;
     final DefaultPacketHeader[] packetHeader = new DefaultPacketHeader[1];
@@ -178,6 +180,7 @@ class DefaultPcap implements Pcap {
   @Override
   public void nextEx(PacketHeader packetHeader, PacketBuffer packetBuffer)
       throws BreakException, ErrorException, TimeoutException {
+    checkOpenState();
     Utils.requireNonNull(packetHeader, "header: null (expected: header != null)");
     Utils.requireNonNull(packetBuffer, "buffer: null (expected: buffer != null)");
     DefaultPacketHeader header = (DefaultPacketHeader) packetHeader;
@@ -189,6 +192,7 @@ class DefaultPcap implements Pcap {
   @Override
   public <T> void dispatch(int count, final PacketHandler<T> handler, final T args)
       throws BreakException, ErrorException, TimeoutException {
+    checkOpenState();
     Utils.requireNonNull(handler, "handler: null (expected: handler != null)");
     int rc =
         NativeMappings.pcap_dispatch(
@@ -214,6 +218,7 @@ class DefaultPcap implements Pcap {
 
   @Override
   public Statistics stats() throws ErrorException {
+    checkOpenState();
     int rc = NativeMappings.pcap_stats(pointer, statistics.pointer);
     statsCheck(rc);
     return statistics;
@@ -221,11 +226,13 @@ class DefaultPcap implements Pcap {
 
   @Override
   public void breakLoop() {
+    checkOpenState();
     NativeMappings.pcap_breakloop(pointer);
   }
 
   @Override
   public void sendPacket(PacketBuffer directBuffer) throws ErrorException {
+    checkOpenState();
     checkBuffer(directBuffer);
     DefaultPacketBuffer buffer = (DefaultPacketBuffer) directBuffer;
     int rc =
@@ -236,6 +243,7 @@ class DefaultPcap implements Pcap {
 
   @Override
   public int inject(PacketBuffer directBuffer) throws ErrorException {
+    checkOpenState();
     checkBuffer(directBuffer);
     DefaultPacketBuffer buffer = (DefaultPacketBuffer) directBuffer;
     final int readableBytes = (int) directBuffer.readableBytes();
@@ -248,6 +256,7 @@ class DefaultPcap implements Pcap {
 
   @Override
   public void setDirection(Direction direction) throws ErrorException {
+    checkOpenState();
     Utils.requireNonNull(direction, "direction: null (expected: direction != null)");
     int result;
     if (Direction.PCAP_D_IN == direction) {
@@ -262,31 +271,37 @@ class DefaultPcap implements Pcap {
 
   @Override
   public boolean isSwapped() throws NotActivatedException {
+    checkOpenState();
     return swappedCheck(NativeMappings.pcap_is_swapped(pointer));
   }
 
   @Override
   public Timestamp.Precision getTimestampPrecision() {
+    checkOpenState();
     return timestampPrecision(NativeMappings.PLATFORM_DEPENDENT.pcap_get_tstamp_precision(pointer));
   }
 
   @Override
   public int majorVersion() {
+    checkOpenState();
     return NativeMappings.pcap_major_version(pointer);
   }
 
   @Override
   public int minorVersion() {
+    checkOpenState();
     return NativeMappings.pcap_minor_version(pointer);
   }
 
   @Override
   public int snapshot() {
+    checkOpenState();
     return NativeMappings.pcap_snapshot(pointer);
   }
 
   @Override
   public boolean getNonBlock() throws ErrorException {
+    checkOpenState();
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
     int rc = NativeMappings.pcap_getnonblock(pointer, errbuf);
     getNonBlockCheck(rc);
@@ -295,6 +310,7 @@ class DefaultPcap implements Pcap {
 
   @Override
   public void setNonBlock(boolean blocking) throws ErrorException {
+    checkOpenState();
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
     int rc = NativeMappings.pcap_setnonblock(pointer, blocking ? 1 : 0, errbuf);
     setNonBlockCheck(rc);
@@ -302,11 +318,13 @@ class DefaultPcap implements Pcap {
 
   @Override
   public int datalink() {
+    checkOpenState();
     return datalink;
   }
 
   @Override
   public Object id() throws IllegalAccessException {
+    checkOpenState();
     return getId(NativeMappings.RESTRICTED_LEVEL);
   }
 
@@ -335,8 +353,11 @@ class DefaultPcap implements Pcap {
 
   @Override
   public void close() {
+    checkOpenState();
     if (selector != null) {
-      selector.cancel(this);
+      if (!selector.isClosed) {
+        selector.cancel(this);
+      }
     }
     NativeMappings.pcap_close(pointer);
     com.sun.jna.Native.free(com.sun.jna.Pointer.nativeValue(statistics.pointer));
@@ -347,6 +368,7 @@ class DefaultPcap implements Pcap {
   @Override
   public Selection register(Selector selector, int interestOperations, Object attachment)
       throws IllegalArgumentException, IllegalStateException {
+    checkOpenState();
     if (selector instanceof AbstractSelector<?>) {
       AbstractSelector<?> s = (AbstractSelector) selector;
       return s.register(this, interestOperations, attachment);
@@ -356,6 +378,7 @@ class DefaultPcap implements Pcap {
 
   @Override
   public <T> T allocate(Class<T> cls) throws IllegalArgumentException {
+    checkOpenState();
     if (cls == null) {
       throw new IllegalArgumentException(
           "type: null (expected: type is PacketHeader.class or PacketBuffer.class)");
@@ -498,6 +521,12 @@ class DefaultPcap implements Pcap {
           String.format(
               "buffer.capacity: %d (expected: buffer.capacity(%d) > 0)",
               directBuffer.capacity(), directBuffer.capacity()));
+    }
+  }
+
+  void checkOpenState() {
+    if (!(reference.pcap != 0L && reference.stats != 0L)) {
+      throw new IllegalStateException("Pcap handle is closed.");
     }
   }
 

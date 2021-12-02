@@ -105,6 +105,7 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
   @Override
   Selection register(Selectable selectable, int interestOperations, Object attachment)
       throws IllegalArgumentException, IllegalStateException {
+    checkOpenState();
     DefaultSelection selection = validateRegister(selectable, attachment);
     if (!registered.isEmpty()) {
       // register new pcap
@@ -126,6 +127,7 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
 
   @Override
   void interestOperations(DefaultSelection selection, int interestOperations) {
+    checkOpenState();
     if (pfds[selection.pollFDsIndex] != null) {
       pfds[selection.pollFDsIndex].events = toPollEvent(interestOperations);
       pfds[selection.pollFDsIndex].write();
@@ -136,6 +138,7 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
   public Iterable<Selectable> select(Timeout timeout)
       throws TimeoutException, NoSuchSelectableException, IllegalStateException,
           IllegalArgumentException {
+    checkOpenState();
     validateSelect(timeout);
     int ts = (int) timeout.microSecond() / 1000;
     int rc;
@@ -149,6 +152,7 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
   public int select(Consumer<Selection> consumer, Timeout timeout)
       throws TimeoutException, NoSuchSelectableException, IllegalStateException,
           IllegalArgumentException {
+    checkOpenState();
     validateSelect(timeout);
     int ts = (int) timeout.microSecond() / 1000;
     int rc;
@@ -176,6 +180,7 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
 
   @Override
   protected void cancel(DefaultPcap pcap) {
+    checkOpenState();
     try {
       int fd = NativeMappings.PLATFORM_DEPENDENT.pcap_get_selectable_fd(pcap.pointer);
       for (int i = 0; i < registered.size(); i++) {
@@ -205,7 +210,8 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
+    checkOpenState();
     Iterator<DefaultSelection> iterator = registered.values().iterator();
     while (iterator.hasNext()) {
       iterator.next().pcap.selector = null;

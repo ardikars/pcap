@@ -56,6 +56,7 @@ class DefaultDumper implements Dumper {
 
   @Override
   public void dump(PacketHeader header, PacketBuffer buffer) {
+    checkOpenState();
     Utils.requireNonNull(header, "header: null (expected: header != null).");
     Utils.requireNonNull(buffer, "buffer: null (expected: buffer != null).");
     if (buffer.capacity() <= 0) {
@@ -86,17 +87,27 @@ class DefaultDumper implements Dumper {
 
   @Override
   public long position() {
+    checkOpenState();
     return NativeMappings.PLATFORM_DEPENDENT.pcap_dump_ftell(pointer).longValue();
   }
 
   @Override
   public void flush() {
+    checkOpenState();
     NativeMappings.pcap_dump_flush(pointer);
   }
 
   @Override
   public void close() {
+    checkOpenState();
     NativeMappings.pcap_dump_close(pointer);
+    reference.address = 0L;
+  }
+
+  void checkOpenState() {
+    if (reference.address == 0L) {
+      throw new IllegalStateException("Pcap dumper handle is closed.");
+    }
   }
 
   @Override
