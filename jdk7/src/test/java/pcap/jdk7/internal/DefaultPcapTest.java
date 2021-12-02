@@ -21,6 +21,7 @@ import pcap.spi.Dumper;
 import pcap.spi.Interface;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
+import pcap.spi.PacketFilter;
 import pcap.spi.PacketHandler;
 import pcap.spi.PacketHeader;
 import pcap.spi.Pcap;
@@ -1300,19 +1301,20 @@ class DefaultPcapTest extends BaseTest {
         (DefaultPcap) service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions());
     DefaultPcap offline2 =
         (DefaultPcap) service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions());
-    Assertions.assertFalse(offline1.equals(offline2));
-    Assertions.assertFalse(offline1.equals(new ArrayList<>()));
-    Assertions.assertFalse(offline1.equals(null));
-    Assertions.assertTrue(offline1.equals(offline1));
+    Object nullRef = null;
+    Assertions.assertNotEquals(offline1, offline2);
+    Assertions.assertNotEquals(offline1, new ArrayList<String>(1));
+    Assertions.assertNotEquals(offline1, nullRef);
+    Assertions.assertEquals(offline1, offline1);
     Assertions.assertTrue(offline1.hashCode() >= 0 || offline1.hashCode() <= 0);
-    Assertions.assertFalse(offline1.hashCode() == offline2.hashCode());
+    Assertions.assertNotEquals(offline1.hashCode(), offline2.hashCode());
 
-    Assertions.assertFalse(offline1.reference.equals(offline2.reference));
-    Assertions.assertFalse(offline1.reference.equals(new ArrayList<>(1)));
-    Assertions.assertFalse(offline1.reference.equals(null));
-    Assertions.assertTrue(offline1.reference.equals(offline1.reference));
+    Assertions.assertNotEquals(offline1.reference, offline2.reference);
+    Assertions.assertNotEquals(offline1.reference, new ArrayList<String>(1));
+    Assertions.assertNotEquals(offline1.reference, nullRef);
+    Assertions.assertEquals(offline1.reference, offline1.reference);
     Assertions.assertTrue(offline1.reference.hashCode() >= 0 || offline1.reference.hashCode() <= 0);
-    Assertions.assertFalse(offline1.reference.hashCode() == offline2.reference.hashCode());
+    Assertions.assertNotEquals(offline1.reference.hashCode(), offline2.reference.hashCode());
   }
 
   @Test
@@ -1354,6 +1356,33 @@ class DefaultPcapTest extends BaseTest {
           });
       live.getId(NativeMappings.RESTRICTED_LEVEL_WARN);
       live.getId(NativeMappings.RESTRICTED_LEVEL_PERMIT);
+    }
+  }
+
+  @Test
+  void checkOpenState() throws Exception {
+    final Interface lo = loopbackInterface(service);
+    final DefaultPcap live = (DefaultPcap) service.live(lo, new DefaultLiveOptions());
+    live.checkOpenState();
+    live.close();
+    Assertions.assertThrows(
+        IllegalStateException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            live.checkOpenState();
+          }
+        });
+  }
+
+  @Test
+  void compileAndSetFilter() throws Exception {
+    final Interface lo = loopbackInterface(service);
+    try (final Pcap live = service.live(lo, new DefaultLiveOptions())) {
+      try (PacketFilter filter = live.compile("icmp", true)) {
+        live.setFilter(filter);
+        Assertions.assertNotNull(live);
+      }
     }
   }
 

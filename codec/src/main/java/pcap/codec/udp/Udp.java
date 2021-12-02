@@ -6,6 +6,7 @@ package pcap.codec.udp;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.util.Objects;
 import pcap.codec.AbstractPacket;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
@@ -21,17 +22,17 @@ public final class Udp extends AbstractPacket {
   public static final int TYPE = 17;
 
   // Header fields offset.
-  private final long sourcePort;
-  private final long destinationPort;
-  private final long length;
-  private final long checksum;
+  private final long sourcePortOffset;
+  private final long destinationPortOffset;
+  private final long lengthOffset;
+  private final long checksumOffset;
 
   private Udp(PacketBuffer buffer) {
     super(buffer);
-    this.sourcePort = offset;
-    this.destinationPort = sourcePort + 2;
-    this.length = destinationPort + 2;
-    this.checksum = length + 2;
+    this.sourcePortOffset = superOffset;
+    this.destinationPortOffset = sourcePortOffset + 2;
+    this.lengthOffset = destinationPortOffset + 2;
+    this.checksumOffset = lengthOffset + 2;
   }
 
   /**
@@ -56,7 +57,7 @@ public final class Udp extends AbstractPacket {
    * @since 1.0.0
    */
   public int sourcePort() {
-    return buffer.getShort(sourcePort) & 0xFFFF;
+    return superBuffer.getShort(sourcePortOffset) & 0xFFFF;
   }
 
   /**
@@ -67,7 +68,7 @@ public final class Udp extends AbstractPacket {
    * @since 1.0.0
    */
   public Udp sourcePort(int value) {
-    buffer.setShort(sourcePort, value & 0xFFFF);
+    superBuffer.setShort(sourcePortOffset, value & 0xFFFF);
     return this;
   }
 
@@ -78,7 +79,7 @@ public final class Udp extends AbstractPacket {
    * @since 1.0.0
    */
   public int destinationPort() {
-    return buffer.getShort(destinationPort) & 0xFFFF;
+    return superBuffer.getShort(destinationPortOffset) & 0xFFFF;
   }
 
   /**
@@ -89,7 +90,7 @@ public final class Udp extends AbstractPacket {
    * @since 1.0.0
    */
   public Udp destinationPort(int value) {
-    buffer.setShort(destinationPort, value & 0xFFFF);
+    superBuffer.setShort(destinationPortOffset, value & 0xFFFF);
     return this;
   }
 
@@ -100,7 +101,7 @@ public final class Udp extends AbstractPacket {
    * @since 1.0.0
    */
   public int length() {
-    return buffer.getShort(length) & 0xFFFF;
+    return superBuffer.getShort(lengthOffset) & 0xFFFF;
   }
 
   /**
@@ -111,7 +112,7 @@ public final class Udp extends AbstractPacket {
    * @since 1.0.0
    */
   public Udp length(int value) {
-    buffer.setShort(length, value & 0xFFFF);
+    superBuffer.setShort(lengthOffset, value & 0xFFFF);
     return this;
   }
 
@@ -122,7 +123,7 @@ public final class Udp extends AbstractPacket {
    * @since 1.0.0
    */
   public int checksum() {
-    return buffer.getShort(checksum) & 0xFFFF;
+    return superBuffer.getShort(checksumOffset) & 0xFFFF;
   }
 
   /**
@@ -133,7 +134,7 @@ public final class Udp extends AbstractPacket {
    * @since 1.0.0
    */
   public Udp checksum(int value) {
-    buffer.setShort(checksum, value & 0xFFFF);
+    superBuffer.setShort(checksumOffset, value & 0xFFFF);
     return this;
   }
 
@@ -146,7 +147,8 @@ public final class Udp extends AbstractPacket {
    * @since 1.0.0
    */
   public int calculateChecksum(InetAddress srcAddr, InetAddress dstAddr) {
-    return Checksum.calculate(buffer, offset, srcAddr, dstAddr, TYPE, size(), length() - size());
+    return Checksum.calculate(
+        superBuffer, superOffset, srcAddr, dstAddr, TYPE, size(), length() - size());
   }
 
   /**
@@ -165,6 +167,16 @@ public final class Udp extends AbstractPacket {
   @Override
   public int size() {
     return 8;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return super.equals(o);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), sourcePort(), destinationPort(), length(), checksum());
   }
 
   @Override

@@ -142,10 +142,10 @@ class DefaultPacketBuffer implements PacketBuffer {
               "newCapacity: %d (expected: newCapacity(%d) > 0)", newCapacity, newCapacity));
     }
     if (buffer == null) {
-      FinalizablePacketBuffer buffer = PacketBufferManager.allocate(newCapacity);
-      buffer.reference = this.reference;
-      buffer.reference.setValue(buffer.buffer);
-      return buffer;
+      FinalizablePacketBuffer finalizablePacketBuffer = PacketBufferManager.allocate(newCapacity);
+      finalizablePacketBuffer.reference = this.reference;
+      finalizablePacketBuffer.reference.setValue(finalizablePacketBuffer.buffer);
+      return finalizablePacketBuffer;
     } else {
       if (newCapacity <= capacity) {
         this.capacity = newCapacity;

@@ -17,6 +17,7 @@ import java.util.Set;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.spi.PacketBuffer;
+import pcap.spi.PacketFilter;
 import pcap.spi.PacketHandler;
 import pcap.spi.PacketHeader;
 import pcap.spi.Pcap;
@@ -93,26 +94,30 @@ class DefaultPcap implements Pcap {
   }
 
   @Override
-  public void setFilter(String filter, boolean optimize) throws ErrorException {
+  public PacketFilter compile(String filter, boolean optimize) throws ErrorException {
     checkOpenState();
     Utils.requireNonBlank(filter, "filter: null (expected: filter != null && notBlank(filter))");
-    int rc;
-    NativeMappings.bpf_program fp = new NativeMappings.bpf_program();
+    return new BerkeleyPacketFilter(pointer, filter, optimize, netmask);
+  }
 
-    if (Utils.isSupported(1, 8, 0)) {
-      // in libpcap 1.8.0 and later is newly thread-safe.
-      rc = NativeMappings.pcap_compile(pointer, fp, filter, optimize ? 1 : 0, netmask);
-    } else {
-      synchronized (this) {
-        rc = NativeMappings.pcap_compile(pointer, fp, filter, optimize ? 1 : 0, netmask);
-      }
+  @Override
+  public void setFilter(PacketFilter filter) throws ErrorException {
+    checkOpenState();
+    Utils.requireNonNull(filter, "filter: null (expected: filter != null)");
+    BerkeleyPacketFilter packetFilter = (BerkeleyPacketFilter) filter;
+    int rc = NativeMappings.pcap_setfilter(pointer, packetFilter.fp);
+    filterCheck(rc, packetFilter.fp);
+  }
+
+  @Override
+  public void setFilter(String filter, boolean optimize) throws ErrorException {
+    try (PacketFilter compiled = compile(filter, optimize)) {
+      setFilter(compiled);
+    } catch (IllegalStateException | IllegalArgumentException e) {
+      throw e;
+    } catch (Exception e) {
+      throw new ErrorException(e.getMessage());
     }
-
-    compileCheck(rc, fp);
-
-    rc = NativeMappings.pcap_setfilter(pointer, fp);
-    filterCheck(rc, fp);
-    NativeMappings.pcap_freecode(fp);
   }
 
   @Override
@@ -132,7 +137,7 @@ class DefaultPcap implements Pcap {
                     new DefaultPacketBuffer(
                         packet,
                         PacketBuffer.ByteOrder.BIG_ENDIAN,
-                        packetHeader.captureLength(),
+                        packetHeader.length(),
                         0,
                         packetHeader.captureLength());
                 handler.gotPacket(args, packetHeader, packetBuffer);
@@ -162,7 +167,7 @@ class DefaultPcap implements Pcap {
                     new DefaultPacketBuffer(
                         packet,
                         PacketBuffer.ByteOrder.BIG_ENDIAN,
-                        packetHeader[0].captureLength(),
+                        packetHeader[0].length(),
                         0,
                         packetHeader[0].captureLength());
               }
@@ -206,7 +211,7 @@ class DefaultPcap implements Pcap {
                     new DefaultPacketBuffer(
                         packet,
                         PacketBuffer.ByteOrder.BIG_ENDIAN,
-                        packetHeader.captureLength(),
+                        packetHeader.length(),
                         0,
                         packetHeader.captureLength());
                 handler.gotPacket(args, packetHeader, packetBuffer);
@@ -354,10 +359,8 @@ class DefaultPcap implements Pcap {
   @Override
   public void close() {
     checkOpenState();
-    if (selector != null) {
-      if (!selector.isClosed) {
-        selector.cancel(this);
-      }
+    if (selector != null && !selector.isClosed) {
+      selector.cancel(this);
     }
     NativeMappings.pcap_close(pointer);
     com.sun.jna.Native.free(com.sun.jna.Pointer.nativeValue(statistics.pointer));

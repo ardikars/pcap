@@ -4,6 +4,7 @@
  */
 package pcap.codec.ethernet;
 
+import java.util.Objects;
 import pcap.codec.AbstractPacket;
 import pcap.common.net.MacAddress;
 import pcap.common.util.Strings;
@@ -20,15 +21,15 @@ public final class Ethernet extends AbstractPacket {
   public static final int TYPE = 1;
 
   // Header fields offset.
-  private final long destination;
-  private final long source;
-  private final long type;
+  private final long destinationOffset;
+  private final long sourceOffset;
+  private final long typeOffset;
 
   private Ethernet(PacketBuffer buffer) {
     super(buffer);
-    this.destination = offset;
-    this.source = destination + MacAddress.MAC_ADDRESS_LENGTH;
-    this.type = source + MacAddress.MAC_ADDRESS_LENGTH;
+    this.destinationOffset = superOffset;
+    this.sourceOffset = destinationOffset + MacAddress.MAC_ADDRESS_LENGTH;
+    this.typeOffset = sourceOffset + MacAddress.MAC_ADDRESS_LENGTH;
   }
 
   /**
@@ -52,7 +53,7 @@ public final class Ethernet extends AbstractPacket {
    * @since 1.0.0
    */
   public MacAddress destination() {
-    return MacAddress.valueOf((buffer.getLong(destination) >> 16) & 0xffffffffffffL);
+    return MacAddress.valueOf((superBuffer.getLong(destinationOffset) >> 16) & 0xffffffffffffL);
   }
 
   /**
@@ -63,7 +64,7 @@ public final class Ethernet extends AbstractPacket {
    * @since 1.0.0
    */
   public Ethernet destination(MacAddress macAddress) {
-    buffer.setBytes(destination, macAddress.address());
+    superBuffer.setBytes(destinationOffset, macAddress.address());
     return this;
   }
 
@@ -74,7 +75,7 @@ public final class Ethernet extends AbstractPacket {
    * @since 1.0.0
    */
   public MacAddress source() {
-    return MacAddress.valueOf((buffer.getLong(source) >> 16) & 0xffffffffffffL);
+    return MacAddress.valueOf((superBuffer.getLong(sourceOffset) >> 16) & 0xffffffffffffL);
   }
 
   /**
@@ -85,7 +86,7 @@ public final class Ethernet extends AbstractPacket {
    * @since 1.0.0
    */
   public Ethernet source(MacAddress macAddress) {
-    buffer.setBytes(source, macAddress.address());
+    superBuffer.setBytes(sourceOffset, macAddress.address());
     return this;
   }
 
@@ -96,7 +97,7 @@ public final class Ethernet extends AbstractPacket {
    * @since 1.0.0
    */
   public int type() {
-    return buffer.getShort(type) & 0xFFFF;
+    return superBuffer.getShort(typeOffset) & 0xFFFF;
   }
 
   /**
@@ -107,7 +108,7 @@ public final class Ethernet extends AbstractPacket {
    * @since 1.0.0
    */
   public Ethernet type(int value) {
-    buffer.setShort(type, value & 0xFFFF);
+    superBuffer.setShort(typeOffset, value & 0xFFFF);
     return this;
   }
 
@@ -115,6 +116,16 @@ public final class Ethernet extends AbstractPacket {
   @Override
   public int size() {
     return 14;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return super.equals(o);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), destination(), source(), type());
   }
 
   @Override

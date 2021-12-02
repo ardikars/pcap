@@ -47,6 +47,7 @@ class EthernetTest {
       final Ethernet ethernet = buffer.cast(Ethernet.class);
       final Ethernet comparison = Ethernet.newInstance(14, buffer);
       Assertions.assertEquals(ethernet, comparison);
+      Assertions.assertEquals(ethernet.hashCode(), comparison.hashCode());
 
       Assertions.assertEquals(MacAddress.valueOf("d8:0d:17:26:9c:ee"), ethernet.destination());
       Assertions.assertEquals(MacAddress.valueOf("8c:85:90:c3:0b:33"), ethernet.source());

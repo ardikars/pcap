@@ -51,6 +51,7 @@ class TcpTest {
       final Tcp tcp = buffer.cast(Tcp.class);
       final Tcp comparison = Tcp.newInstance(tcp.size(), buffer);
       Assertions.assertEquals(tcp, comparison);
+      Assertions.assertEquals(tcp.hashCode(), comparison.hashCode());
 
       Assertions.assertEquals(51247, tcp.sourcePort());
       Assertions.assertEquals(443, tcp.destinationPort());

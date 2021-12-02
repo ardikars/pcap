@@ -13,7 +13,7 @@ import pcap.spi.annotation.Version;
 import pcap.spi.exception.ErrorException;
 
 @RunWith(JUnitPlatform.class)
-public class UtilsTest {
+class UtilsTest {
 
   @Test
   void emptyTest() {

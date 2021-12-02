@@ -49,6 +49,7 @@ class UdpTest {
       final Udp udp = buffer.cast(Udp.class);
       final Udp comparison = Udp.newInstance(8, buffer);
       Assertions.assertEquals(udp, comparison);
+      Assertions.assertEquals(udp.hashCode(), comparison.hashCode());
 
       Assertions.assertEquals(48345, udp.sourcePort());
       Assertions.assertEquals(53, udp.destinationPort());

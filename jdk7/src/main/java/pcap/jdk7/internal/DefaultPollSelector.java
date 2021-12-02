@@ -62,7 +62,7 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
 
   Iterable<Selectable> toIterableSelectable(int rc, int timeout) throws TimeoutException {
     if (rc < 0 || rc > registered.size()) {
-      return Collections.EMPTY_LIST;
+      return Collections.emptyList();
     }
     if (rc == 0) {
       throw new TimeoutException(String.format("Timeout: %d.", timeout));
@@ -248,10 +248,10 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) {
-        return true;
+      if (o == null) {
+        return false;
       }
-      if (o == null || getClass() != o.getClass()) {
+      if (!(o instanceof pollfd)) {
         return false;
       }
       pollfd pollfd = (pollfd) o;

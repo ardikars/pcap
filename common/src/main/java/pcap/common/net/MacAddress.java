@@ -20,6 +20,7 @@ public final class MacAddress implements Serializable {
   /** MAC Address Length. */
   public static final int MAC_ADDRESS_LENGTH = 6;
 
+  private static final Pattern REGEX = Pattern.compile("[:-]");
   /** Zero MAC Address (00:00:00:00:00:00). */
   public static final MacAddress ZERO = valueOf("00:00:00:00:00:00");
 
@@ -56,7 +57,7 @@ public final class MacAddress implements Serializable {
         !Strings.blank(stringAddress), "Address must be not empty or blank.");
     Validate.notIllegalArgument(
         isValidAddress(stringAddress), String.format("Invalid address: %s.", stringAddress));
-    final String[] elements = stringAddress.split(":|-");
+    final String[] elements = REGEX.split(stringAddress);
     final byte[] b = new byte[MAC_ADDRESS_LENGTH];
     for (int i = 0; i < MAC_ADDRESS_LENGTH; i++) {
       final String element = elements[i];

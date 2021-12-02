@@ -48,13 +48,14 @@ class LoopbackTest {
       final Loopback loopback = buffer.cast(Loopback.class);
       final Loopback comparison = Loopback.newInstance(loopback.size(), buffer);
       Assertions.assertEquals(loopback, comparison);
+      Assertions.assertEquals(loopback.hashCode(), comparison.hashCode());
 
       Assertions.assertEquals(Integer.reverseBytes(2), loopback.family());
 
       loopback.family(Integer.reverseBytes(1));
       Assertions.assertEquals(Integer.reverseBytes(1), loopback.family());
 
-      Assertions.assertTrue(loopback.toString() != null);
+      Assertions.assertNotNull(loopback.toString());
 
       Assertions.assertThrows(
           IllegalArgumentException.class,

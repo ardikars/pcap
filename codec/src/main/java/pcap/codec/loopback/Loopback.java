@@ -4,6 +4,7 @@
  */
 package pcap.codec.loopback;
 
+import java.util.Objects;
 import pcap.codec.AbstractPacket;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
@@ -20,11 +21,11 @@ public final class Loopback extends AbstractPacket {
 
   public static final int TYPE = 0;
 
-  private final long family;
+  private final long familyOffset;
 
   private Loopback(PacketBuffer buffer) {
     super(buffer);
-    this.family = offset;
+    this.familyOffset = superOffset;
   }
 
   /**
@@ -50,7 +51,7 @@ public final class Loopback extends AbstractPacket {
    */
   @Incubating
   public int family() {
-    return buffer.getInt(family);
+    return superBuffer.getInt(familyOffset);
   }
 
   /**
@@ -62,7 +63,7 @@ public final class Loopback extends AbstractPacket {
    */
   @Incubating
   public Loopback family(int value) {
-    buffer.setInt(family, value);
+    superBuffer.setInt(familyOffset, value);
     return this;
   }
 
@@ -70,6 +71,16 @@ public final class Loopback extends AbstractPacket {
   @Override
   protected int size() {
     return 4;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return super.equals(o);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), family());
   }
 
   @Override

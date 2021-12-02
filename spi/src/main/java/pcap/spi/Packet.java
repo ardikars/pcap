@@ -26,9 +26,9 @@ public interface Packet {
    */
   abstract class Abstract implements Packet {
 
-    protected final PacketBuffer buffer;
-    protected final long offset;
-    protected final long length;
+    protected final PacketBuffer superBuffer;
+    protected final long superOffset;
+    protected final long superLength;
 
     /**
      * A class that extends this abstract class must have constructor with single {@link
@@ -38,21 +38,21 @@ public interface Packet {
      * @since 1.0.0
      */
     protected Abstract(PacketBuffer buffer) {
-      this.buffer = buffer;
+      this.superBuffer = buffer;
       if (buffer.readableBytes() < size()) {
         throw new IllegalArgumentException(
             String.format(
                 "buffer.readableBytes: %d (expected: buffer.readableBytes(%d) >= packet.size(%d))",
                 buffer.readableBytes(), buffer.readableBytes(), size()));
       }
-      this.offset = buffer.readerIndex();
-      this.length = size();
+      this.superOffset = buffer.readerIndex();
+      this.superLength = size();
     }
 
     /** {@inheritDoc} */
     @Override
     public PacketBuffer buffer() {
-      return buffer;
+      return superBuffer;
     }
 
     /**
@@ -74,7 +74,8 @@ public interface Packet {
       }
       int size = size();
       for (long i = 0; i < size; i++) {
-        if (buffer.getByte(offset + i) != packet.buffer.getByte(packet.offset + i)) {
+        if (superBuffer.getByte(superOffset + i)
+            != packet.superBuffer.getByte(packet.superOffset + i)) {
           return false;
         }
       }
@@ -84,9 +85,9 @@ public interface Packet {
     @Override
     public int hashCode() {
       int result = 1;
-      long len = offset + size();
-      for (long i = offset; i < len; i++) {
-        result = 31 * result + buffer.getByte(i);
+      long len = superOffset + size();
+      for (long i = superOffset; i < len; i++) {
+        result = 31 * result + superBuffer.getByte(i);
       }
       return result;
     }
