@@ -5,6 +5,7 @@
 package pcap.codec.ip;
 
 import java.net.Inet6Address;
+import java.util.Objects;
 import pcap.codec.AbstractPacket;
 import pcap.common.net.InetAddresses;
 import pcap.common.util.Strings;
@@ -21,21 +22,21 @@ public final class Ip6 extends AbstractPacket {
   public static final int TYPE = 0x86dd;
 
   // Header fields offset.
-  private final long version;
-  private final long payloadLength;
-  private final long nextHeader;
-  private final long hopLimit;
-  private final long source;
-  private final long destination;
+  private final long versionOffset;
+  private final long payloadLengthOffset;
+  private final long nextHeaderOffset;
+  private final long hopLimitOffset;
+  private final long sourceOffset;
+  private final long destinationOffset;
 
   private Ip6(PacketBuffer buffer) {
     super(buffer);
-    this.version = offset;
-    this.payloadLength = version + 4;
-    this.nextHeader = payloadLength + 2;
-    this.hopLimit = nextHeader + 1;
-    this.source = hopLimit + 1;
-    this.destination = source + 16;
+    this.versionOffset = superOffset;
+    this.payloadLengthOffset = versionOffset + 4;
+    this.nextHeaderOffset = payloadLengthOffset + 2;
+    this.hopLimitOffset = nextHeaderOffset + 1;
+    this.sourceOffset = hopLimitOffset + 1;
+    this.destinationOffset = sourceOffset + 16;
   }
 
   /**
@@ -59,7 +60,7 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public int version() {
-    return (buffer.getInt(version) >> 28) & 0xF;
+    return (superBuffer.getInt(versionOffset) >> 28) & 0xF;
   }
 
   /**
@@ -70,8 +71,8 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public Ip6 version(int value) {
-    int v = buffer.getInt(version);
-    buffer.setInt(version, (value & 0xF) << 28 | ((v >> 20) & 0xFF) << 20 | v & 0xFFFFF);
+    int v = superBuffer.getInt(versionOffset);
+    superBuffer.setInt(versionOffset, (value & 0xF) << 28 | ((v >> 20) & 0xFF) << 20 | v & 0xFFFFF);
     return this;
   }
 
@@ -82,7 +83,7 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public int trafficClass() {
-    return (buffer.getInt(version) >> 20) & 0xFF;
+    return (superBuffer.getInt(versionOffset) >> 20) & 0xFF;
   }
 
   /**
@@ -93,8 +94,8 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public Ip6 trafficClass(int value) {
-    int v = buffer.getInt(version);
-    buffer.setInt(version, ((v >> 28) & 0xF) << 28 | (value & 0xFF) << 20 | v & 0xFFFFF);
+    int v = superBuffer.getInt(versionOffset);
+    superBuffer.setInt(versionOffset, ((v >> 28) & 0xF) << 28 | (value & 0xFF) << 20 | v & 0xFFFFF);
     return this;
   }
 
@@ -105,7 +106,7 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public int flowLabel() {
-    return (buffer.getInt(version) & 0xFFFFF);
+    return (superBuffer.getInt(versionOffset) & 0xFFFFF);
   }
 
   /**
@@ -116,8 +117,9 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public Ip6 flowLabel(int value) {
-    int v = buffer.getInt(version);
-    buffer.setInt(version, ((v >> 28) & 0xF) << 28 | ((v >> 20) & 0xFF) << 20 | value & 0xFFFFF);
+    int v = superBuffer.getInt(versionOffset);
+    superBuffer.setInt(
+        versionOffset, ((v >> 28) & 0xF) << 28 | ((v >> 20) & 0xFF) << 20 | value & 0xFFFFF);
     return this;
   }
 
@@ -128,7 +130,7 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public int payloadLength() {
-    return buffer.getShort(payloadLength) & 0xFFFF;
+    return superBuffer.getShort(payloadLengthOffset) & 0xFFFF;
   }
 
   /**
@@ -139,7 +141,7 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public Ip6 payloadLength(int value) {
-    buffer.setShort(payloadLength, value & 0xFFFF);
+    superBuffer.setShort(payloadLengthOffset, value & 0xFFFF);
     return this;
   }
 
@@ -150,7 +152,7 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public int nextHeader() {
-    return buffer.getByte(nextHeader) & 0xFF;
+    return superBuffer.getByte(nextHeaderOffset) & 0xFF;
   }
 
   /**
@@ -161,7 +163,7 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public Ip6 nextHeader(int value) {
-    buffer.setByte(nextHeader, value & 0xFF);
+    superBuffer.setByte(nextHeaderOffset, value & 0xFF);
     return this;
   }
 
@@ -172,7 +174,7 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public int hopLimit() {
-    return buffer.getByte(hopLimit) & 0xFF;
+    return superBuffer.getByte(hopLimitOffset) & 0xFF;
   }
 
   /**
@@ -183,7 +185,7 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public Ip6 hopLimit(int value) {
-    buffer.setByte(hopLimit, value & 0xFF);
+    superBuffer.setByte(hopLimitOffset, value & 0xFF);
     return this;
   }
 
@@ -194,7 +196,7 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public Inet6Address source() {
-    return getInet6Address(source);
+    return getInet6Address(sourceOffset);
   }
 
   /**
@@ -205,7 +207,7 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public Ip6 source(Inet6Address value) {
-    buffer.setBytes(source, value.getAddress());
+    superBuffer.setBytes(sourceOffset, value.getAddress());
     return this;
   }
 
@@ -216,7 +218,7 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public Inet6Address destination() {
-    return getInet6Address(destination);
+    return getInet6Address(destinationOffset);
   }
 
   /**
@@ -227,13 +229,13 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public Ip6 destination(Inet6Address value) {
-    buffer.setBytes(destination, value.getAddress());
+    superBuffer.setBytes(destinationOffset, value.getAddress());
     return this;
   }
 
   private Inet6Address getInet6Address(long offset) {
     byte[] address = new byte[16];
-    buffer.getBytes(offset, address);
+    superBuffer.getBytes(offset, address);
     return InetAddresses.fromBytesToInet6Address(address);
   }
 
@@ -241,6 +243,25 @@ public final class Ip6 extends AbstractPacket {
   @Override
   public int size() {
     return 40;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return super.equals(o);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+        super.hashCode(),
+        version(),
+        trafficClass(),
+        flowLabel(),
+        payloadLength(),
+        nextHeader(),
+        hopLimit(),
+        source(),
+        destination());
   }
 
   @Override

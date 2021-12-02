@@ -29,6 +29,7 @@ class NativeMappingsTest {
     NativeMappings.initLibrary(null);
     NativeMappings.initLibrary("LOCAL");
     NativeMappings.initLibrary("UTF-8");
+    Assertions.assertTrue(true);
   }
 
   @Test
@@ -36,6 +37,7 @@ class NativeMappingsTest {
     NativeMappings.ErrorBuffer errbuf = new NativeMappings.ErrorBuffer();
     NativeMappings.eprint(0, errbuf);
     NativeMappings.eprint(1, errbuf);
+    Assertions.assertTrue(true);
   }
 
   @Test
@@ -169,8 +171,9 @@ class NativeMappingsTest {
     final Pointer p = new Pointer(1);
     final NativeMappings.HANDLE handle1 = new NativeMappings.HANDLE();
     final NativeMappings.HANDLE handle2 = new NativeMappings.HANDLE(p);
-    Assertions.assertFalse(handle1.equals(handle2));
-    Assertions.assertTrue(handle1.equals(handle1));
+    final NativeMappings.HANDLE handle3 = new NativeMappings.HANDLE();
+    Assertions.assertNotEquals(handle1, handle2);
+    Assertions.assertEquals(handle1, handle3);
     Assertions.assertThrows(
         UnsupportedOperationException.class,
         new Executable() {

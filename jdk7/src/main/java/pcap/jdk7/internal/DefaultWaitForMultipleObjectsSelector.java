@@ -32,7 +32,7 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
       throw new TimeoutException(String.format("Timeout: %d ms.", timeout));
     }
     if (rc < 0) {
-      return Collections.EMPTY_LIST;
+      return Collections.emptyList();
     }
     final DefaultSelection selection = registered.get(handles[rc]);
     selection.setReadyOperation(selection.interestOperations());

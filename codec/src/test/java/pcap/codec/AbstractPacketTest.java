@@ -7,6 +7,7 @@ package pcap.codec;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.LinkedList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -58,10 +59,11 @@ class AbstractPacketTest {
       Ethernet ethernet2 = Ethernet.newInstance(ETHERNET2.length, ethernet2Buffer);
       Udp udp = Udp.newInstance(8, ethernetBuffer);
 
-      Assertions.assertFalse(udp.equals(ethernet));
-      Assertions.assertFalse(ethernet.equals(ETHERNET));
-      Assertions.assertFalse(ethernet.equals(ethernet2));
-      Assertions.assertTrue(ethernet.equals(ethernet));
+      Assertions.assertNotEquals(udp, new LinkedList<String>());
+      Assertions.assertNotEquals(udp, ethernet);
+      Assertions.assertNotEquals(ETHERNET, ethernet);
+      Assertions.assertNotEquals(ethernet, ethernet2);
+      Assertions.assertEquals(ethernet, ethernet);
       Assertions.assertTrue(ethernet.hashCode() >= 0 || ethernet.hashCode() <= 0);
 
       ethernetBuffer.release();

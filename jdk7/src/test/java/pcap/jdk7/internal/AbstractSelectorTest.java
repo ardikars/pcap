@@ -194,4 +194,20 @@ abstract class AbstractSelectorTest extends BaseTest {
           }
         });
   }
+
+  @Test
+  void checkOpenState() throws Exception {
+    final Service service = Service.Creator.create("PcapService");
+    final AbstractSelector selector = (AbstractSelector) service.selector();
+    selector.checkOpenState();
+    selector.close();
+    Assertions.assertThrows(
+        IllegalStateException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            selector.checkOpenState();
+          }
+        });
+  }
 }

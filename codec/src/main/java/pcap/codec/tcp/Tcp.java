@@ -6,6 +6,8 @@ package pcap.codec.tcp;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.util.Arrays;
+import java.util.Objects;
 import pcap.codec.AbstractPacket;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
@@ -42,29 +44,29 @@ public final class Tcp extends AbstractPacket {
   public static final int TYPE = 6;
 
   // Header fields offset.
-  private final long sourcePort;
-  private final long destinationPort;
-  private final long sequenceNumber;
-  private final long acknowledgmentNumber;
+  private final long sourcePortOffset;
+  private final long destinationPortOffset;
+  private final long sequenceNumberOffset;
+  private final long acknowledgmentNumberOffset;
   private final long dataOffset;
-  private final long windowSize;
-  private final long checksum;
-  private final long urgentPointer;
-  private final long options;
+  private final long windowSizeOffset;
+  private final long checksumOffset;
+  private final long urgentPointerOffset;
+  private final long optionsOffset;
 
   private final long maxDataOffset;
 
   private Tcp(PacketBuffer buffer) {
     super(buffer);
-    this.sourcePort = offset;
-    this.destinationPort = sourcePort + 2;
-    this.sequenceNumber = destinationPort + 2;
-    this.acknowledgmentNumber = sequenceNumber + 4;
-    this.dataOffset = acknowledgmentNumber + 4;
-    this.windowSize = dataOffset + 2;
-    this.checksum = windowSize + 2;
-    this.urgentPointer = checksum + 2;
-    this.options = urgentPointer + 2;
+    this.sourcePortOffset = superOffset;
+    this.destinationPortOffset = sourcePortOffset + 2;
+    this.sequenceNumberOffset = destinationPortOffset + 2;
+    this.acknowledgmentNumberOffset = sequenceNumberOffset + 4;
+    this.dataOffset = acknowledgmentNumberOffset + 4;
+    this.windowSizeOffset = dataOffset + 2;
+    this.checksumOffset = windowSizeOffset + 2;
+    this.urgentPointerOffset = checksumOffset + 2;
+    this.optionsOffset = urgentPointerOffset + 2;
     this.maxDataOffset = dataOffset();
   }
 
@@ -91,7 +93,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public int sourcePort() {
-    return buffer.getShort(sourcePort) & 0xFFFF;
+    return superBuffer.getShort(sourcePortOffset) & 0xFFFF;
   }
 
   /**
@@ -102,7 +104,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public Tcp sourcePort(int value) {
-    buffer.setShort(sourcePort, value & 0xFFFF);
+    superBuffer.setShort(sourcePortOffset, value & 0xFFFF);
     return this;
   }
 
@@ -113,7 +115,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public int destinationPort() {
-    return buffer.getShort(destinationPort) & 0xFFFF;
+    return superBuffer.getShort(destinationPortOffset) & 0xFFFF;
   }
 
   /**
@@ -124,7 +126,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public Tcp destinationPort(int value) {
-    buffer.setShort(destinationPort, value & 0xFFFF);
+    superBuffer.setShort(destinationPortOffset, value & 0xFFFF);
     return this;
   }
 
@@ -135,7 +137,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public long sequenceNumber() {
-    return buffer.getUnsignedInt(sequenceNumber);
+    return superBuffer.getUnsignedInt(sequenceNumberOffset);
   }
 
   /**
@@ -146,7 +148,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public Tcp sequenceNumber(int value) {
-    buffer.setInt(sequenceNumber, value);
+    superBuffer.setInt(sequenceNumberOffset, value);
     return this;
   }
 
@@ -157,7 +159,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public long acknowledgmentNumber() {
-    return buffer.getUnsignedInt(acknowledgmentNumber);
+    return superBuffer.getUnsignedInt(acknowledgmentNumberOffset);
   }
 
   /**
@@ -168,7 +170,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public Tcp acknowledgmentNumber(int value) {
-    buffer.setInt(acknowledgmentNumber, value);
+    superBuffer.setInt(acknowledgmentNumberOffset, value);
     return this;
   }
 
@@ -179,7 +181,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public int dataOffset() {
-    return (buffer.getShort(dataOffset) >> 12) & 0xF;
+    return (superBuffer.getShort(dataOffset) >> 12) & 0xF;
   }
 
   /**
@@ -195,7 +197,7 @@ public final class Tcp extends AbstractPacket {
           String.format("value: %d (expected: 5 >= value <= %d)", value, maxDataOffset));
     }
     int val = getShortFlags() & 0x1FF | (value & 0xF) << 12;
-    buffer.setShort(dataOffset, val);
+    superBuffer.setShort(dataOffset, val);
     return this;
   }
 
@@ -206,7 +208,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isNs() {
-    return (((buffer.getShort(dataOffset) & 0x1FF) >> 8) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 8) & 0x1) == 1;
   }
 
   /**
@@ -230,7 +232,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isCwr() {
-    return (((buffer.getShort(dataOffset) & 0x1FF) >> 7) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 7) & 0x1) == 1;
   }
 
   /**
@@ -254,7 +256,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isEce() {
-    return (((buffer.getShort(dataOffset) & 0x1FF) >> 6) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 6) & 0x1) == 1;
   }
 
   /**
@@ -278,7 +280,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isUrg() {
-    return (((buffer.getShort(dataOffset) & 0x1FF) >> 5) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 5) & 0x1) == 1;
   }
 
   /**
@@ -302,7 +304,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isAck() {
-    return (((buffer.getShort(dataOffset) & 0x1FF) >> 4) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 4) & 0x1) == 1;
   }
 
   /**
@@ -326,7 +328,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isPsh() {
-    return (((buffer.getShort(dataOffset) & 0x1FF) >> 3) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 3) & 0x1) == 1;
   }
 
   /**
@@ -350,7 +352,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isRst() {
-    return (((buffer.getShort(dataOffset) & 0x1FF) >> 2) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 2) & 0x1) == 1;
   }
 
   /**
@@ -374,7 +376,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isSyn() {
-    return (((buffer.getShort(dataOffset) & 0x1FF) >> 1) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 1) & 0x1) == 1;
   }
 
   /**
@@ -398,7 +400,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isFin() {
-    return ((buffer.getShort(dataOffset) & 0x1FF) & 0x1) == 1;
+    return ((superBuffer.getShort(dataOffset) & 0x1FF) & 0x1) == 1;
   }
 
   /**
@@ -422,7 +424,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public int windowSize() {
-    return buffer.getShort(windowSize) & 0xFFFF;
+    return superBuffer.getShort(windowSizeOffset) & 0xFFFF;
   }
 
   /**
@@ -433,7 +435,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public Tcp windowSize(int value) {
-    buffer.setShort(windowSize, value & 0xFFFF);
+    superBuffer.setShort(windowSizeOffset, value & 0xFFFF);
     return this;
   }
 
@@ -444,7 +446,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public int checksum() {
-    return buffer.getShort(checksum) & 0xFFFF;
+    return superBuffer.getShort(checksumOffset) & 0xFFFF;
   }
 
   /**
@@ -456,7 +458,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public Tcp checksum(int value) {
-    buffer.setShort(checksum, value & 0xFFFF);
+    superBuffer.setShort(checksumOffset, value & 0xFFFF);
     return this;
   }
 
@@ -470,7 +472,8 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public int calculateChecksum(InetAddress srcAddr, InetAddress dstAddr, int payloadLength) {
-    return Checksum.calculate(buffer, offset, srcAddr, dstAddr, TYPE, size(), payloadLength);
+    return Checksum.calculate(
+        superBuffer, superOffset, srcAddr, dstAddr, TYPE, size(), payloadLength);
   }
 
   /**
@@ -493,7 +496,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public int urgentPointer() {
-    return buffer.getShort(urgentPointer) & 0xFFFF;
+    return superBuffer.getShort(urgentPointerOffset) & 0xFFFF;
   }
 
   /**
@@ -504,7 +507,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public Tcp urgentPointer(int value) {
-    buffer.setShort(urgentPointer, value & 0xFFFF);
+    superBuffer.setShort(urgentPointerOffset, value & 0xFFFF);
     return this;
   }
 
@@ -516,7 +519,7 @@ public final class Tcp extends AbstractPacket {
    */
   public byte[] options() {
     byte[] data = new byte[(dataOffset() << 2) - 20];
-    buffer.getBytes(options, data, 0, data.length);
+    superBuffer.getBytes(optionsOffset, data, 0, data.length);
     return data;
   }
 
@@ -529,12 +532,12 @@ public final class Tcp extends AbstractPacket {
    */
   public Tcp options(byte[] value) {
     int maxLength = (dataOffset() - 5) << 2;
-    buffer.setBytes(options, value, 0, Math.min(value.length, maxLength));
+    superBuffer.setBytes(optionsOffset, value, 0, Math.min(value.length, maxLength));
     return this;
   }
 
   private short getShortFlags() {
-    int val = buffer.getShort(dataOffset) & 0x1FF;
+    int val = superBuffer.getShort(dataOffset) & 0x1FF;
     short flags = 0;
     for (int i = 8; i >= 0; i--) {
       if (((val >> i) & 0x1) == 1) {
@@ -546,22 +549,51 @@ public final class Tcp extends AbstractPacket {
 
   private void setShortFlags(int flags) {
     int val = (getShortFlags() + flags) & 0x1FF | dataOffset() << 12;
-    buffer.setShort(dataOffset, val);
+    superBuffer.setShort(dataOffset, val);
   }
 
   /** {@inheritDoc} */
   @Override
   public int size() {
     if (maxDataOffset == 0) {
-      Validate.notIllegalState(buffer.readableBytes() >= 20, "buffer size is not sufficient.");
-      return ((buffer.getShort(buffer.readerIndex() + 12) >> 12) & 0xF) << 2;
+      Validate.notIllegalState(superBuffer.readableBytes() >= 20, "buffer size is not sufficient.");
+      return ((superBuffer.getShort(superBuffer.readerIndex() + 12) >> 12) & 0xF) << 2;
     }
     return dataOffset() << 2;
   }
 
   @Override
+  public boolean equals(Object o) {
+    return super.equals(o);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+        super.hashCode(),
+        sourcePort(),
+        destinationPort(),
+        sequenceNumber(),
+        acknowledgmentNumber(),
+        dataOffset(),
+        isNs(),
+        isCwr(),
+        isEce(),
+        isUrg(),
+        isAck(),
+        isPsh(),
+        isRst(),
+        isSyn(),
+        isFin(),
+        windowSize(),
+        checksum(),
+        urgentPointer(),
+        Arrays.hashCode(options()));
+  }
+
+  @Override
   public String toString() {
-    short v = buffer.getShort(dataOffset);
+    short v = superBuffer.getShort(dataOffset);
     return Strings.toStringBuilder(this)
         .add("sourcePort", sourcePort())
         .add("destinationPort", destinationPort())

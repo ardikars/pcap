@@ -26,9 +26,6 @@ abstract class AbstractSelector<T> implements Selector {
   abstract void cancel(DefaultPcap pcap);
 
   protected void validateSelect(Timeout timeout) {
-    if (isClosed) {
-      throw new IllegalStateException("Selector is closed.");
-    }
     if (registered.isEmpty()) {
       throw new NoSuchSelectableException(
           "No such \"selectable\" has been registered on this selector.");
@@ -47,9 +44,6 @@ abstract class AbstractSelector<T> implements Selector {
   }
 
   protected DefaultSelection validateRegister(Selectable pcap, Object attachment) {
-    if (isClosed) {
-      throw new IllegalStateException("Selector is closed.");
-    }
     Utils.requireNonNull(pcap, "selectable: null (expected: selectable != null).");
     if (!(pcap instanceof DefaultPcap)) {
       throw new IllegalArgumentException(pcap.getClass().getSimpleName() + " is not supperted.");

@@ -314,6 +314,12 @@ class NativeMappings {
       since = @Version(major = 0, minor = 4))
   static native int pcap_datalink(Pointer p);
 
+  @NativeSignature(
+      signature = "u_int bpf_filter(const struct bpf_insn *, const u_char *, u_int, u_int)",
+      since = @Version(major = 0, minor = 4))
+  static native int bpf_filter(
+      NativeMappings.bpf_insn insn, Pointer packet, int oriPktLen, int pktLen);
+
   static InetAddress inetAddress(sockaddr sockaddr) {
     if (sockaddr == null) {
       return null;

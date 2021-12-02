@@ -5,7 +5,6 @@
 package pcap.jdk7.internal;
 
 import com.sun.jna.Platform;
-import java.util.ArrayList;
 import java.util.Iterator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -56,12 +55,12 @@ class DefaultPollSelectorTest extends AbstractSelectorTest {
   void pollfdTest() {
     DefaultPollSelector.pollfd pollfd1 = new DefaultPollSelector.pollfd();
     DefaultPollSelector.pollfd pollfd2 = new DefaultPollSelector.pollfd();
-    Assertions.assertTrue(pollfd1.equals(pollfd1));
-    Assertions.assertTrue(pollfd1.equals(pollfd2));
-    Assertions.assertFalse(pollfd1.equals(new ArrayList<String>(1)));
-    Assertions.assertFalse(pollfd1.equals(null));
+    Object nullRef = null;
+    Assertions.assertEquals(pollfd1, pollfd2);
+    pollfd1.equals(pollfd1);
+    Assertions.assertNotEquals(pollfd1, nullRef);
     pollfd1.fd = 1;
-    Assertions.assertFalse(pollfd1.equals(pollfd2));
+    Assertions.assertNotEquals(pollfd1, pollfd2);
     Assertions.assertTrue(pollfd1.hashCode() >= 0 || pollfd1.hashCode() <= 0);
   }
 

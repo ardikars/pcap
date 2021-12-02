@@ -49,6 +49,7 @@ class SllTest {
       final Sll sll = buffer.cast(Sll.class);
       final Sll comparison = Sll.newInstance(sll.size(), buffer);
       Assertions.assertEquals(sll, comparison);
+      Assertions.assertEquals(sll.hashCode(), comparison.hashCode());
 
       Assertions.assertEquals(0, sll.packetType());
       Assertions.assertEquals(772, sll.addressType());
@@ -99,9 +100,9 @@ class SllTest {
           });
 
       sll.protocol(Ip6.TYPE);
-      Assertions.assertTrue(Ip6.TYPE == (sll.protocol() & 0xFFFF));
+      Assertions.assertEquals(Ip6.TYPE, (sll.protocol() & 0xFFFF));
 
-      Assertions.assertTrue(sll.toString() != null);
+      Assertions.assertNotNull(sll.toString());
 
       Assertions.assertThrows(
           IllegalArgumentException.class,

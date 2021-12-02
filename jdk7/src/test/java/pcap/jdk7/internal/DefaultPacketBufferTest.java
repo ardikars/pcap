@@ -31,15 +31,20 @@ class DefaultPacketBufferTest {
   @Test
   void useMemory() {
     Pointer hdrPtr = new Pointer(Native.malloc(DefaultPacketHeader.SIZEOF));
+    Assertions.assertNotNull(hdrPtr);
     hdrPtr.setNativeLong(DefaultTimestamp.TV_SEC_OFFSET, new NativeLong(0));
     hdrPtr.setNativeLong(DefaultTimestamp.TV_USEC_OFFSET, new NativeLong(0));
     hdrPtr.setInt(DefaultPacketHeader.CAPLEN_OFFSET, 4);
     hdrPtr.setInt(DefaultPacketHeader.LEN_OFFSET, 4);
 
     DefaultPacketHeader header = new DefaultPacketHeader(hdrPtr);
+    Assertions.assertNotNull(header);
 
     Pointer bufPtr = new Pointer(Native.malloc(header.captureLength()));
+    Assertions.assertNotNull(bufPtr);
+
     DefaultPacketBuffer buffer = new DefaultPacketBuffer();
+    Assertions.assertNotNull(buffer);
     buffer.reference.setValue(bufPtr);
     buffer.useReference(header);
 
@@ -1763,21 +1768,21 @@ class DefaultPacketBufferTest {
       largeBuffer.writeByte(i);
     }
     // PacketBuffer readBytes(PacketBuffer dst)
-    Assertions.assertEquals(smallBuffer.writerIndex(), SHORT_BYTES);
+    Assertions.assertEquals(SHORT_BYTES, smallBuffer.writerIndex());
     smallBuffer.readBytes(smallBufDst);
     smallBuffer.setIndex(0, SHORT_BYTES);
     smallBufDst.setIndex(0, SHORT_BYTES);
     for (int i = 0; i < SHORT_BYTES; i++) {
-      Assertions.assertEquals(smallBuffer.readByte(), smallBufDst.readByte());
+      Assertions.assertEquals(smallBufDst.readByte(), smallBuffer.readByte());
     }
-    Assertions.assertEquals(mediumBuffer.writerIndex(), INTEGER_BYTES);
+    Assertions.assertEquals(INTEGER_BYTES, mediumBuffer.writerIndex());
     mediumBuffer.readBytes(mediumBufDst);
     mediumBuffer.setIndex(0, INTEGER_BYTES);
     mediumBufDst.setIndex(0, INTEGER_BYTES);
     for (int i = 0; i < INTEGER_BYTES; i++) {
       Assertions.assertEquals(mediumBuffer.readByte(), mediumBufDst.readByte());
     }
-    Assertions.assertEquals(largeBuffer.writerIndex(), LONG_BYTES);
+    Assertions.assertEquals(LONG_BYTES, largeBuffer.writerIndex());
     largeBuffer.readBytes(largeBufDst);
     largeBuffer.setIndex(0, LONG_BYTES);
     largeBufDst.setIndex(0, LONG_BYTES);
@@ -1793,21 +1798,21 @@ class DefaultPacketBufferTest {
     largeBufDst.setIndex(0, 0);
 
     // PacketBuffer readBytes(PacketBuffer dst, long length)
-    Assertions.assertEquals(smallBuffer.writerIndex(), SHORT_BYTES);
+    Assertions.assertEquals(SHORT_BYTES, smallBuffer.writerIndex());
     smallBuffer.readBytes(smallBufDst, SHORT_BYTES);
     smallBuffer.setIndex(0, SHORT_BYTES);
     smallBufDst.setIndex(0, SHORT_BYTES);
     for (int i = 0; i < SHORT_BYTES; i++) {
       Assertions.assertEquals(smallBuffer.readByte(), smallBufDst.readByte());
     }
-    Assertions.assertEquals(mediumBuffer.writerIndex(), INTEGER_BYTES);
+    Assertions.assertEquals(INTEGER_BYTES, mediumBuffer.writerIndex());
     mediumBuffer.readBytes(mediumBufDst, INTEGER_BYTES);
     mediumBuffer.setIndex(0, INTEGER_BYTES);
     mediumBufDst.setIndex(0, INTEGER_BYTES);
     for (int i = 0; i < INTEGER_BYTES; i++) {
       Assertions.assertEquals(mediumBuffer.readByte(), mediumBufDst.readByte());
     }
-    Assertions.assertEquals(largeBuffer.writerIndex(), LONG_BYTES);
+    Assertions.assertEquals(LONG_BYTES, largeBuffer.writerIndex());
     largeBuffer.readBytes(largeBufDst, LONG_BYTES);
     largeBuffer.setIndex(0, LONG_BYTES);
     largeBufDst.setIndex(0, LONG_BYTES);
@@ -2384,21 +2389,21 @@ class DefaultPacketBufferTest {
       largeBufSrc.writeByte(i);
     }
     // PacketBuffer readBytes(PacketBuffer dst)
-    Assertions.assertEquals(smallBufSrc.writerIndex(), SHORT_BYTES);
+    Assertions.assertEquals(SHORT_BYTES, smallBufSrc.writerIndex());
     smallBuffer.writeBytes(smallBufSrc);
     smallBuffer.setIndex(0, SHORT_BYTES);
     smallBufSrc.setIndex(0, SHORT_BYTES);
     for (int i = 0; i < SHORT_BYTES; i++) {
       Assertions.assertEquals(smallBuffer.readByte(), smallBufSrc.readByte());
     }
-    Assertions.assertEquals(mediumBufSrc.writerIndex(), INTEGER_BYTES);
+    Assertions.assertEquals(INTEGER_BYTES, mediumBufSrc.writerIndex());
     mediumBuffer.writeBytes(mediumBufSrc);
     mediumBuffer.setIndex(0, INTEGER_BYTES);
     mediumBufSrc.setIndex(0, INTEGER_BYTES);
     for (int i = 0; i < INTEGER_BYTES; i++) {
       Assertions.assertEquals(mediumBuffer.readByte(), mediumBufSrc.readByte());
     }
-    Assertions.assertEquals(largeBufSrc.writerIndex(), LONG_BYTES);
+    Assertions.assertEquals(LONG_BYTES, largeBufSrc.writerIndex());
     largeBuffer.writeBytes(largeBufSrc);
     largeBuffer.setIndex(0, LONG_BYTES);
     largeBufSrc.setIndex(0, LONG_BYTES);
@@ -2414,21 +2419,21 @@ class DefaultPacketBufferTest {
     largeBuffer.setIndex(0, 0);
 
     // PacketBuffer readBytes(PacketBuffer dst, long length)
-    Assertions.assertEquals(smallBufSrc.writerIndex(), SHORT_BYTES);
+    Assertions.assertEquals(SHORT_BYTES, smallBufSrc.writerIndex());
     smallBuffer.writeBytes(smallBufSrc, SHORT_BYTES);
     smallBuffer.setIndex(0, SHORT_BYTES);
     smallBufSrc.setIndex(0, SHORT_BYTES);
     for (int i = 0; i < SHORT_BYTES; i++) {
       Assertions.assertEquals(smallBuffer.readByte(), smallBufSrc.readByte());
     }
-    Assertions.assertEquals(mediumBufSrc.writerIndex(), INTEGER_BYTES);
+    Assertions.assertEquals(INTEGER_BYTES, mediumBufSrc.writerIndex());
     mediumBuffer.writeBytes(mediumBufSrc, INTEGER_BYTES);
     mediumBuffer.setIndex(0, INTEGER_BYTES);
     mediumBufSrc.setIndex(0, INTEGER_BYTES);
     for (int i = 0; i < INTEGER_BYTES; i++) {
       Assertions.assertEquals(mediumBuffer.readByte(), mediumBufSrc.readByte());
     }
-    Assertions.assertEquals(largeBufSrc.writerIndex(), LONG_BYTES);
+    Assertions.assertEquals(LONG_BYTES, largeBufSrc.writerIndex());
     largeBuffer.writeBytes(largeBufSrc, LONG_BYTES);
     largeBuffer.setIndex(0, LONG_BYTES);
     largeBufSrc.setIndex(0, LONG_BYTES);
@@ -3258,11 +3263,11 @@ class DefaultPacketBufferTest {
       if (i % 2 == 0) {
         DefaultPacketBuffer.FinalizablePacketBuffer allocate =
             DefaultPacketBuffer.PacketBufferManager.allocate(4);
-        assert allocate.release();
+        Assertions.assertTrue(allocate.release());
       } else {
         DefaultPacketBuffer.FinalizablePacketBuffer allocate =
             DefaultPacketBuffer.PacketBufferManager.allocate(8);
-        assert allocate.release();
+        Assertions.assertTrue(allocate.release());
       }
     }
   }
@@ -3659,17 +3664,19 @@ class DefaultPacketBufferTest {
     memory1.setShort(0, 0xFF);
     memory2.setShort(0, 0xFF);
 
-    Assertions.assertFalse(memory1.equals(null));
-    Assertions.assertFalse(memory1.equals(new ArrayList<>(0)));
-    Assertions.assertFalse(memory1.writerIndex(0).equals(memory2.writerIndex(1)));
-    Assertions.assertFalse(memory1.writerIndex(1).equals(memory2.writerIndex(0)));
-    Assertions.assertFalse(memory1.writerIndex(1).equals(memory2.writerIndex(2)));
-    Assertions.assertFalse(
-        memory1.writerIndex(0).equals(memory2.writerIndex(0))); // both of them is not readable
-    Assertions.assertFalse(
-        memory1.writerIndex(0).equals(memory2.writerIndex(1))); // one of them is not readable
+    Object nullRef = null;
+
+    Assertions.assertNotEquals(memory1, nullRef);
+    Assertions.assertNotEquals(memory1, new ArrayList<>(0));
+    Assertions.assertNotEquals(memory1.writerIndex(0), memory2.writerIndex(1));
+    Assertions.assertNotEquals(memory1.writerIndex(1), memory2.writerIndex(0));
+    Assertions.assertNotEquals(memory1.writerIndex(1), memory2.writerIndex(2));
+    Assertions.assertNotEquals(
+        memory1.writerIndex(0), memory2.writerIndex(0)); // both of them is not readable
+    Assertions.assertNotEquals(
+        memory1.writerIndex(0), memory2.writerIndex(1)); // one of them is not readable
     memory1.setShort(0, -0x80);
-    Assertions.assertFalse(memory1.writerIndex(2).equals(memory2.writerIndex(2)));
+    Assertions.assertNotEquals(memory1.writerIndex(2), memory2.writerIndex(2));
 
     memory1.setShort(0, 0xFF);
     Assertions.assertEquals(memory1.hashCode(), memory2.hashCode());
@@ -3678,10 +3685,10 @@ class DefaultPacketBufferTest {
 
     Assertions.assertEquals(0, memory1.writerIndex(0).hashCode());
 
-    Assertions.assertTrue(memory1.phantomReference.equals(memory1.phantomReference));
-    Assertions.assertFalse(memory1.phantomReference.equals(memory2.phantomReference));
-    Assertions.assertFalse(memory1.phantomReference.equals(null));
-    Assertions.assertFalse(memory1.phantomReference.equals(""));
+    Assertions.assertEquals(memory1.phantomReference, memory1.phantomReference);
+    Assertions.assertNotEquals(memory1.phantomReference, memory2.phantomReference);
+    Assertions.assertNotEquals(memory1.phantomReference, nullRef);
+    Assertions.assertNotEquals(memory1.phantomReference, new ArrayList<Integer>(0));
   }
 
   @Test
@@ -3689,7 +3696,7 @@ class DefaultPacketBufferTest {
     final DefaultPacketBuffer.FinalizablePacketBuffer memory =
         DefaultPacketBuffer.PacketBufferManager.allocate(LONG_BYTES);
     try {
-      Assertions.assertTrue(memory.memoryAddress() != 0);
+      Assertions.assertEquals(0L, memory.memoryAddress());
     } catch (IllegalAccessException e) {
       //
     }
@@ -3701,8 +3708,8 @@ class DefaultPacketBufferTest {
             memory.getMemoryAddress(NativeMappings.RESTRICTED_LEVEL_DENY);
           }
         });
-    Assertions.assertTrue(memory.getMemoryAddress(NativeMappings.RESTRICTED_LEVEL_WARN) != 0);
-    Assertions.assertTrue(memory.getMemoryAddress(NativeMappings.RESTRICTED_LEVEL_PERMIT) != 0);
+    Assertions.assertNotEquals(0L, memory.getMemoryAddress(NativeMappings.RESTRICTED_LEVEL_WARN));
+    Assertions.assertNotEquals(0L, memory.getMemoryAddress(NativeMappings.RESTRICTED_LEVEL_PERMIT));
     Assertions.assertTrue(memory.release());
     Assertions.assertThrows(
         IllegalStateException.class,

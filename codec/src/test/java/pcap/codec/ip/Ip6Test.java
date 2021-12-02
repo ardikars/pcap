@@ -49,6 +49,7 @@ class Ip6Test {
       final Ip6 ip6 = buffer.cast(Ip6.class);
       final Ip6 comparison = Ip6.newInstance(40, buffer);
       Assertions.assertEquals(ip6, comparison);
+      Assertions.assertEquals(ip6.hashCode(), comparison.hashCode());
 
       Assertions.assertEquals(6, ip6.version());
       Assertions.assertEquals(0, ip6.trafficClass());

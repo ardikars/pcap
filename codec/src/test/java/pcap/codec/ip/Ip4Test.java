@@ -47,6 +47,7 @@ class Ip4Test {
       final Ip4 ipv4 = buffer.cast(Ip4.class);
       final Ip4 comparison = Ip4.newInstance(ipv4.size(), buffer);
       Assertions.assertEquals(ipv4, comparison);
+      Assertions.assertEquals(ipv4.hashCode(), comparison.hashCode());
 
       Assertions.assertEquals(4, ipv4.version());
       Assertions.assertEquals(5, ipv4.ihl());

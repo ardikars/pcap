@@ -147,19 +147,20 @@ class DefaultPcapDumperTest extends BaseTest {
       String newFile1 = file.concat(UUID.randomUUID().toString());
       final DefaultDumper dumper = (DefaultDumper) live.dumpOpen(newFile);
       final DefaultDumper dumper1 = (DefaultDumper) live.dumpOpen(newFile1);
-      Assertions.assertTrue(dumper.equals(dumper));
-      Assertions.assertFalse(dumper.equals(dumper1));
-      Assertions.assertFalse(dumper.equals(null));
-      Assertions.assertFalse(dumper.equals(new ArrayList<>(1)));
+      Object nullRef = null;
+      Assertions.assertEquals(dumper, dumper);
+      Assertions.assertNotEquals(dumper, dumper1);
+      Assertions.assertNotEquals(dumper, nullRef);
+      Assertions.assertNotEquals(dumper, new ArrayList<String>(1));
       Assertions.assertTrue(dumper.hashCode() >= 0 || dumper.hashCode() <= 0);
-      Assertions.assertTrue(dumper.hashCode() != dumper1.hashCode());
+      Assertions.assertNotEquals(dumper.hashCode(), dumper1.hashCode());
 
-      Assertions.assertTrue(dumper.reference.equals(dumper.reference));
-      Assertions.assertFalse(dumper.reference.equals(dumper1.reference));
-      Assertions.assertFalse(dumper.reference.equals(null));
-      Assertions.assertFalse(dumper.reference.equals(new ArrayList<>(1)));
+      Assertions.assertEquals(dumper.reference, dumper.reference);
+      Assertions.assertNotEquals(dumper.reference, dumper1.reference);
+      Assertions.assertNotEquals(dumper.reference, nullRef);
+      Assertions.assertNotEquals(dumper.reference, new ArrayList<String>(1));
       Assertions.assertTrue(dumper.reference.hashCode() >= 0 || dumper.reference.hashCode() <= 0);
-      Assertions.assertTrue(dumper.reference.hashCode() != dumper1.reference.hashCode());
+      Assertions.assertNotEquals(dumper.reference.hashCode(), dumper1.reference.hashCode());
     }
   }
 
@@ -179,10 +180,29 @@ class DefaultPcapDumperTest extends BaseTest {
     try (Pcap live = service.live(source, new DefaultLiveOptions())) {
       final String newFile = file.concat(UUID.randomUUID().toString());
       final DefaultDumper dumper = (DefaultDumper) live.dumpOpen(newFile);
-      Assertions.assertTrue(dumper.reference.address != 0L);
+      Assertions.assertNotEquals(0L, dumper.reference.address);
       DefaultDumper.freeIfPossible(dumper.reference);
-      Assertions.assertTrue(dumper.reference.address == 0L);
+      Assertions.assertEquals(0L, dumper.reference.address);
       DefaultDumper.freeIfPossible(dumper.reference);
+    }
+  }
+
+  @Test
+  void checkOpenState() throws Exception {
+    Interface source = loopbackInterface(service);
+    try (Pcap live = service.live(source, new DefaultLiveOptions())) {
+      final String newFile = file.concat(UUID.randomUUID().toString());
+      final DefaultDumper dumper = (DefaultDumper) live.dumpOpen(newFile);
+      dumper.checkOpenState();
+      dumper.close();
+      Assertions.assertThrows(
+          IllegalStateException.class,
+          new Executable() {
+            @Override
+            public void execute() throws Throwable {
+              dumper.checkOpenState();
+            }
+          });
     }
   }
 }

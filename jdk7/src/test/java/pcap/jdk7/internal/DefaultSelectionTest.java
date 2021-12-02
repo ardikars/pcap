@@ -38,7 +38,7 @@ class DefaultSelectionTest {
   void readyOperations() {
     DefaultSelection selection = new DefaultSelection(null, null, null);
     selection.setReadyOperation(Selection.OPERATION_READ);
-    Assertions.assertEquals(selection.readyOperations(), Selection.OPERATION_READ);
+    Assertions.assertEquals(Selection.OPERATION_READ, selection.readyOperations());
     selection.setReadyOperation(Selection.OPERATION_READ | Selection.OPERATION_WRITE);
     Assertions.assertEquals(
         selection.readyOperations(), Selection.OPERATION_READ | Selection.OPERATION_WRITE);
@@ -99,7 +99,7 @@ class DefaultSelectionTest {
     Assertions.assertNotNull(selection.selector());
     Assertions.assertNotNull(selection.selectable());
     selection.cancel();
-    Assertions.assertTrue(selection.hashCode() != 0);
+    Assertions.assertNotEquals(0, selection.hashCode());
     pcap.close();
     selector.close();
   }
@@ -113,13 +113,13 @@ class DefaultSelectionTest {
         (DefaultPcap) service.live(service.interfaces(), new DefaultLiveOptions());
     Selection selection1 = new DefaultSelection(null, pcap1, null);
     Selection selection2 = new DefaultSelection(null, pcap2, null);
-    Object NULL_REF = null;
+    Object nullRef = null;
     Integer OBJ = Integer.valueOf(0);
-    Assertions.assertTrue(selection1.equals(selection1));
-    Assertions.assertFalse(selection1.equals(selection2));
-    Assertions.assertFalse(selection1.equals(NULL_REF));
-    Assertions.assertFalse(selection1.equals(OBJ));
-    Assertions.assertTrue(pcap1.hashCode() != pcap2.hashCode());
+    Assertions.assertEquals(selection1, selection1);
+    Assertions.assertNotEquals(selection1, selection2);
+    Assertions.assertNotEquals(selection1, nullRef);
+    Assertions.assertNotEquals(selection1, OBJ);
+    Assertions.assertNotEquals(pcap1.hashCode(), pcap2.hashCode());
     pcap1.close();
     pcap2.close();
   }

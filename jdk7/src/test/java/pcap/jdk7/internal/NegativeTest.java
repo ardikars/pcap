@@ -7,6 +7,7 @@ package pcap.jdk7.internal;
 import com.sun.jna.Pointer;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import pcap.spi.PacketBuffer;
 import pcap.spi.exception.MemoryAccessException;
 
@@ -64,10 +65,10 @@ class NegativeTest {
       getterThreads[i].start();
       releaseThreads[i].start();
     }
-    try {
-      Thread.sleep(5000);
-    } catch (InterruptedException e) {
-      //
-    }
+  }
+
+  @Test
+  void pass() {
+    Assertions.assertTrue(true);
   }
 }

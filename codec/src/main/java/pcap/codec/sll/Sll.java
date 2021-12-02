@@ -4,6 +4,8 @@
  */
 package pcap.codec.sll;
 
+import java.util.Arrays;
+import java.util.Objects;
 import pcap.codec.AbstractPacket;
 import pcap.codec.ethernet.Ethernet;
 import pcap.common.util.Strings;
@@ -24,19 +26,19 @@ public final class Sll extends AbstractPacket {
   private static final int SLL_ADDRLEN = 8;
 
   // offsets
-  private final long packetType;
-  private final long addressType;
-  private final long addressLength;
-  private final long address;
-  private final long protocol;
+  private final long packetTypeOffset;
+  private final long addressTypeOffset;
+  private final long addressLengthOffset;
+  private final long addressOffset;
+  private final long protocolOffset;
 
   private Sll(PacketBuffer buffer) {
     super(buffer);
-    packetType = offset;
-    addressType = packetType + 2;
-    addressLength = addressType + 2;
-    address = addressLength + 2;
-    protocol = address + SLL_ADDRLEN;
+    packetTypeOffset = superOffset;
+    addressTypeOffset = packetTypeOffset + 2;
+    addressLengthOffset = addressTypeOffset + 2;
+    addressOffset = addressLengthOffset + 2;
+    protocolOffset = addressOffset + SLL_ADDRLEN;
   }
 
   /**
@@ -62,7 +64,7 @@ public final class Sll extends AbstractPacket {
    */
   @Incubating
   public int packetType() {
-    return buffer.getShort(packetType);
+    return superBuffer.getShort(packetTypeOffset);
   }
 
   /**
@@ -74,7 +76,7 @@ public final class Sll extends AbstractPacket {
    */
   @Incubating
   public Sll packetType(int value) {
-    buffer.setShort(packetType, value & 0xFFFF);
+    superBuffer.setShort(packetTypeOffset, value & 0xFFFF);
     return this;
   }
 
@@ -86,7 +88,7 @@ public final class Sll extends AbstractPacket {
    */
   @Incubating
   public int addressType() {
-    return buffer.getShort(addressType);
+    return superBuffer.getShort(addressTypeOffset);
   }
 
   /**
@@ -98,7 +100,7 @@ public final class Sll extends AbstractPacket {
    */
   @Incubating
   public Sll addressType(int value) {
-    buffer.setShort(addressType, value & 0xFFFF);
+    superBuffer.setShort(addressTypeOffset, value & 0xFFFF);
     return this;
   }
 
@@ -110,7 +112,7 @@ public final class Sll extends AbstractPacket {
    */
   @Incubating
   public int addressLength() {
-    return buffer.getShort(addressLength);
+    return superBuffer.getShort(addressLengthOffset);
   }
 
   /**
@@ -122,7 +124,7 @@ public final class Sll extends AbstractPacket {
    */
   @Incubating
   public Sll addressLength(int value) {
-    buffer.setShort(addressLength, value & 0xFFFF);
+    superBuffer.setShort(addressLengthOffset, value & 0xFFFF);
     return this;
   }
 
@@ -137,7 +139,7 @@ public final class Sll extends AbstractPacket {
     int addrLen = addressLength();
     if (addrLen > 0 && addrLen <= SLL_ADDRLEN) {
       byte[] addr = new byte[addrLen];
-      buffer.getBytes(address, addr);
+      superBuffer.getBytes(addressOffset, addr);
       return addr;
     } else {
       return new byte[SLL_ADDRLEN];
@@ -156,9 +158,9 @@ public final class Sll extends AbstractPacket {
     int addrLen = addressLength();
     if (addrLen > 0 && addrLen <= SLL_ADDRLEN) {
       if (value == null) {
-        buffer.setBytes(addrLen, new byte[addrLen], 0, addrLen);
+        superBuffer.setBytes(addrLen, new byte[addrLen], 0, addrLen);
       } else {
-        buffer.setBytes(address, value, 0, addrLen);
+        superBuffer.setBytes(addressOffset, value, 0, addrLen);
       }
     } else {
       throw new IllegalArgumentException(
@@ -177,7 +179,7 @@ public final class Sll extends AbstractPacket {
    */
   @Incubating
   public int protocol() {
-    return buffer.getShort(protocol);
+    return superBuffer.getShort(protocolOffset);
   }
 
   /**
@@ -189,7 +191,7 @@ public final class Sll extends AbstractPacket {
    */
   @Incubating
   public Sll protocol(int value) {
-    buffer.setShort(protocol, value & 0xFFFF);
+    superBuffer.setShort(protocolOffset, value & 0xFFFF);
     return this;
   }
 
@@ -197,6 +199,22 @@ public final class Sll extends AbstractPacket {
   @Override
   public int size() {
     return 16;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return super.equals(o);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+        super.hashCode(),
+        packetType(),
+        addressType(),
+        addressLength(),
+        Arrays.hashCode(address()),
+        protocol());
   }
 
   @Override

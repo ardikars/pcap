@@ -24,6 +24,10 @@ class MacAddressTest {
     Assertions.assertNotNull(macAddress);
     Assertions.assertEquals(STRING_MAC_ADDRESS, macAddress.toString());
     Assertions.assertEquals(LONG_MAC_ADDRESS, macAddress.toLong());
+    MacAddress macAddress2 = MacAddress.valueOf(STRING_MAC_ADDRESS.replace(":", "-"));
+    Assertions.assertNotNull(macAddress2);
+    Assertions.assertEquals(STRING_MAC_ADDRESS, macAddress2.toString());
+    Assertions.assertEquals(LONG_MAC_ADDRESS, macAddress2.toLong());
   }
 
   @Test
@@ -91,7 +95,7 @@ class MacAddressTest {
   void buildTest() {
     MacAddress macAddress = MacAddress.DUMMY;
     Assertions.assertNotNull(macAddress);
-    Assertions.assertEquals(macAddress.length(), MacAddress.MAC_ADDRESS_LENGTH);
+    Assertions.assertEquals(MacAddress.MAC_ADDRESS_LENGTH, macAddress.length());
     Assertions.assertEquals(0L, MacAddress.ZERO.toLong());
     Assertions.assertEquals(true, MacAddress.BROADCAST.isBroadcast());
     Assertions.assertEquals(true, MacAddress.IPV4_MULTICAST.isMulticast());
@@ -140,10 +144,11 @@ class MacAddressTest {
   void equalsAndHashCodeTest() {
     MacAddress macAddress = MacAddress.ZERO;
     MacAddress macAddressCmp = MacAddress.DUMMY;
-    Assertions.assertTrue(macAddress.equals(MacAddress.ZERO));
-    Assertions.assertFalse(macAddress.equals(macAddressCmp));
-    Assertions.assertFalse(macAddress.hashCode() == macAddressCmp.hashCode());
-    Assertions.assertFalse(macAddress.equals(new ArrayList<>(1)));
-    Assertions.assertFalse(macAddress.equals(null));
+    Object nullRef = null;
+    Assertions.assertEquals(MacAddress.DUMMY, macAddressCmp);
+    Assertions.assertNotEquals(macAddress, macAddressCmp);
+    Assertions.assertNotEquals(macAddress.hashCode(), macAddressCmp.hashCode());
+    Assertions.assertNotEquals(macAddress, new ArrayList<>(0));
+    Assertions.assertNotEquals(macAddress, nullRef);
   }
 }

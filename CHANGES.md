@@ -7,7 +7,15 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 
 All notable changes to this project will be documented in this file.
 
+## [UNRELEASED]
 
+### Added
+
+- Add bpf filter
+
+### Fixed
+
+- Accessing closed handle should throw exception.
 
 ## [1.3.4] - 2021-11-15
 
@@ -17,22 +25,17 @@ All notable changes to this project will be documented in this file.
 
 - Use pcap-common logging instead of jdk logger
 
-- Use Arrays.asList(..) insetead new ArrayList(..) for getFieldOrders() 
-
+- Use Arrays.asList(..) insetead new ArrayList(..) for getFieldOrders()
 
 ### Fixed
 
 - Fix Slf4j module name
-
-
 
 ## [1.3.3] - 2021-10-23
 
 ### Changed
 
 - Remove incubating annotation for equals and hashCode (Fixed: force non-readable buffer to return false).
-
-
 
 ## [1.3.2] - 2021-10-22
 
@@ -42,37 +45,31 @@ All notable changes to this project will be documented in this file.
 
 - Remove incubating annotation on restricted methods.
 
-
 ### Fixed
 
 - Fix IPv4 TTL.
 
 - Fix IPv4 checksum offset ([#149](https://github.com/ardikars/pcap/issues/149))
 
-
-
 ## [1.3.1] - 2021-05-22
 
 ### Added
 
-* Add optional properties for character encoding when initializing library.
+- Add optional properties for character encoding when initializing library.
 
-* Add missing NULL/Loopback datalink type.
+- Add missing NULL/Loopback datalink type.
 
-* Add missing Sll datalink type.
+- Add missing Sll datalink type.
 
-* Add @Restricted annotation (incubating).
+- Add @Restricted annotation (incubating).
 
-* Add restricted method such as PacketBuffer.memoryAddress and Selectable.id() annotated with @Restricted (incubating).
+- Add restricted method such as PacketBuffer.memoryAddress and Selectable.id() annotated with @Restricted (incubating).
 
-* Add pcap interface flags.
+- Add pcap interface flags.
 
-* Enhance Selector, reduce object creation, and support READ-WRITE operations.
-
-
+- Enhance Selector, reduce object creation, and support READ-WRITE operations.
 
 ## [1.3.0] - 2021-05-02
-
 
 ### Added
 
@@ -80,13 +77,9 @@ All notable changes to this project will be documented in this file.
 
 - Add incubating Selection.
 
-
 ### Changed
 
 - Remove @Incubating (AbstractPacket, Ethernet, Ip4, Ip6, Udp, Tcp, PacketBuffer#cast).
-
-
-
 
 ## [1.2.2] - 2021-03-20
 
@@ -94,31 +87,26 @@ All notable changes to this project will be documented in this file.
 
 - Add equals() and hashCode() to reference objects.
 
-
 ### Changed
+
 - Use function mapping (method proxy) for some native method instead of direct mapping for backward compatibility.
-
-
-
 
 ## [1.2.1] - 2021-03-12
 
 ### Fixed
 
-* Remove object reference if the object is GC'ed.
-
-
+- Remove object reference if the object is GC'ed.
 
 ## [1.2.0] - 2021-02-01
 
 ### Added
+
 - I/O multiplexor.
 - Add NoSuchSelectableException.
 
 ### Changed
+
 - Use NoSuchSelectableException on Selector#select(..) instead of NoSuchElementException.
-
-
 
 ## [1.0.7] - 2021-03-12
 
@@ -126,15 +114,11 @@ All notable changes to this project will be documented in this file.
 
 - Remove object reference if the object is GC'ed.
 
-
-
 ## [1.0.6] - 2021-01-30
 
 ### Fixed
 
 - Fix dumper.
-
-
 
 ## [1.0.5] - 2021-01-28
 
@@ -142,15 +126,11 @@ All notable changes to this project will be documented in this file.
 
 - Backward compatibility for pcap_setmintocopy(..) and update error message.
 
-
-
 ## [1.0.4] - 2021-01-24
 
 ### Changed
 
 - Validate packet header and buffer size on pcap_dump.
-
-
 
 ## [1.0.3] - 2021-01-23
 
@@ -158,8 +138,6 @@ All notable changes to this project will be documented in this file.
 
 - Fix pcap_inject on Windows.
 - Update SPDX header copyright.
-
-
 
 ## [1.0.2] - 2020-12-27
 
@@ -169,14 +147,11 @@ All notable changes to this project will be documented in this file.
 - Backward compatibility for immediate mode on Windows (pcap_setmintocopy).
 - Backward compatibility for non blocking I/O.
 
-
-
 ## [1.0.1] - 2020-12-25
 
 ### Fixed
 
 - Fix TCP maximum data offset value.
-
 
 ## [1.0.0] - 2020-12-24
 

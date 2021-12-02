@@ -333,7 +333,7 @@ public interface Service {
    */
   class Creator {
 
-    private static Service[] PROVIDERS = new Service[0];
+    private static Service[] providers = new Service[0];
 
     static {
       ServiceLoader<Service> services =
@@ -341,10 +341,10 @@ public interface Service {
       Iterator<Service> iterator = services.iterator();
       while (iterator.hasNext()) {
         Service service = iterator.next();
-        Service[] newServices = new Service[PROVIDERS.length + 1];
-        System.arraycopy(PROVIDERS, 0, newServices, 0, PROVIDERS.length);
-        newServices[PROVIDERS.length] = service;
-        PROVIDERS = newServices;
+        Service[] newServices = new Service[providers.length + 1];
+        System.arraycopy(providers, 0, newServices, 0, providers.length);
+        newServices[providers.length] = service;
+        providers = newServices;
       }
     }
 
@@ -359,9 +359,9 @@ public interface Service {
      * @since 1.0.0
      */
     public static Service create(String name) throws ErrorException {
-      for (int i = 0; i < PROVIDERS.length; i++) {
-        if (PROVIDERS[i].name().compareTo(name) == 0) {
-          return PROVIDERS[i];
+      for (int i = 0; i < providers.length; i++) {
+        if (providers[i].name().compareTo(name) == 0) {
+          return providers[i];
         }
       }
       throw new ErrorException(String.format("No service provider implementation for (%s).", name));

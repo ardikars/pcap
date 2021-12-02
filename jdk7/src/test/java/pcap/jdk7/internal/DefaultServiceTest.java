@@ -484,6 +484,7 @@ class DefaultServiceTest extends BaseTest {
       while (next != null) {
         if (next.netmask() != null) {
           notNull = true;
+          Assertions.assertTrue(notNull);
         }
         next = next.next();
       }
@@ -508,6 +509,7 @@ class DefaultServiceTest extends BaseTest {
 
   @Test
   void setRfmon() throws ErrorException, ActivatedException, NoSuchDeviceException {
+    Assertions.assertTrue(service instanceof DefaultService);
     final DefaultService defaultService = (DefaultService) service;
 
     DefaultLiveOptions options = new DefaultLiveOptions();
