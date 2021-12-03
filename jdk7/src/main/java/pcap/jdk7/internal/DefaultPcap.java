@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.spi.PacketBuffer;
@@ -148,13 +149,12 @@ class DefaultPcap implements Pcap {
   }
 
   @Override
-  public PacketBuffer next(PacketHeader header) {
+  public PacketBuffer next(final PacketHeader header) {
     checkOpenState();
     Utils.requireNonNull(header, "header: null (expected: header != null)");
-    PacketBuffer buffer;
-    final DefaultPacketHeader[] packetHeader = new DefaultPacketHeader[1];
-    packetHeader[0] = (DefaultPacketHeader) header;
-    final DefaultPacketBuffer[] packetBuffer = new DefaultPacketBuffer[1];
+    final DefaultPacketHeader packetHeader = (DefaultPacketHeader) header;
+    final AtomicReference<DefaultPacketBuffer> packetBuffer =
+        new AtomicReference<DefaultPacketBuffer>();
     int rc =
         NativeMappings.pcap_dispatch(
             pointer,
@@ -162,24 +162,22 @@ class DefaultPcap implements Pcap {
             new NativeMappings.pcap_handler() {
               @Override
               public void got_packet(Pointer user, Pointer header, Pointer packet) {
-                packetHeader[0].setPointer(header);
-                packetBuffer[0] =
+                packetHeader.setPointer(header);
+                packetBuffer.set(
                     new DefaultPacketBuffer(
                         packet,
                         PacketBuffer.ByteOrder.BIG_ENDIAN,
-                        packetHeader[0].length(),
+                        packetHeader.length(),
                         0,
-                        packetHeader[0].captureLength());
+                        packetHeader.captureLength()));
               }
             },
             Pointer.NULL);
     if (rc > 0) {
-      buffer = packetBuffer[0];
+      return packetBuffer.get();
     } else {
-      buffer = null;
+      return null;
     }
-
-    return buffer;
   }
 
   @Override
