@@ -335,12 +335,16 @@ class DefaultPcapTest extends BaseTest {
       PacketBuffer next = live.next(header);
       if (next != null) {
         Assertions.assertTrue(next.capacity() > 0);
-        Assertions.assertEquals(next.capacity(), next.writerIndex());
-        Assertions.assertEquals(next.capacity(), header.captureLength());
+        Assertions.assertEquals(next.capacity(), header.length());
+        Assertions.assertEquals(next.readableBytes(), header.captureLength());
       }
       live.setNonBlock(true);
       for (int i = 0; i < 5; i++) {
-        live.next(header);
+        next = live.next(header);
+        if (next != null) {
+          Assertions.assertEquals(next.capacity(), header.length());
+          Assertions.assertEquals(next.readableBytes(), header.captureLength());
+        }
       }
       Assertions.assertThrows(
           IllegalArgumentException.class,
@@ -369,9 +373,8 @@ class DefaultPcapTest extends BaseTest {
           live.nextEx(header, buffer);
           //          Assertions.assertTrue(header.timestamp().second() > 0);
           //          Assertions.assertTrue(header.timestamp().microSecond() > 0);
-          Assertions.assertTrue(header.captureLength() > 0);
-          Assertions.assertTrue(header.length() > 0);
-          Assertions.assertTrue(buffer.capacity() > 0);
+          Assertions.assertEquals(header.length(), buffer.capacity());
+          Assertions.assertEquals(header.captureLength(), buffer.readableBytes());
         } catch (ErrorException | BreakException | TimeoutException e) {
         }
         Assertions.assertThrows(
@@ -409,9 +412,8 @@ class DefaultPcapTest extends BaseTest {
           offline.nextEx(header, buffer);
           //          Assertions.assertTrue(header.timestamp().second() > 0);
           //          Assertions.assertTrue(header.timestamp().microSecond() > 0);
-          Assertions.assertTrue(header.captureLength() > 0);
-          Assertions.assertTrue(header.length() > 0);
-          Assertions.assertTrue(buffer.capacity() > 0);
+          Assertions.assertEquals(header.length(), buffer.capacity());
+          Assertions.assertEquals(header.captureLength(), buffer.readableBytes());
         } catch (ErrorException | BreakException | TimeoutException e) {
 
         }
@@ -458,9 +460,8 @@ class DefaultPcapTest extends BaseTest {
           offline.nextEx(header, buffer);
           //          Assertions.assertTrue(header.timestamp().second() > 0);
           //          Assertions.assertTrue(header.timestamp().microSecond() > 0);
-          Assertions.assertTrue(header.captureLength() > 0);
-          Assertions.assertTrue(header.length() > 0);
-          Assertions.assertTrue(buffer.capacity() > 0);
+          Assertions.assertEquals(header.length(), buffer.capacity());
+          Assertions.assertEquals(header.captureLength(), buffer.readableBytes());
         } catch (ErrorException | BreakException | TimeoutException e) {
 
         }

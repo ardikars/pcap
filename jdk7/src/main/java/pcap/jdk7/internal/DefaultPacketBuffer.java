@@ -6,7 +6,6 @@ package pcap.jdk7.internal;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.ref.PhantomReference;
@@ -127,7 +126,7 @@ class DefaultPacketBuffer implements PacketBuffer {
 
   void useReference(DefaultPacketHeader header) {
     this.buffer = reference.getValue();
-    this.capacity = header.captureLength();
+    this.capacity = header.length();
     this.readerIndex = 0;
     this.writerIndex = header.captureLength();
     this.markedReaderIndex = 0;
