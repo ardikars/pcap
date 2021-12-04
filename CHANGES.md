@@ -11,7 +11,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Add bpf filter
+- Add BPF filter.
+- Add logback-classic and log4j-core into maven BOM.
 
 ### Changed
 

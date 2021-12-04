@@ -52,7 +52,7 @@ public interface Interface extends Iterable<Interface> {
    *
    * @since 1.3.1 (incubating)
    */
-  @Incubating int PCAP_IF_ONNECTION_STATUS_UNKNOWN = 0x00000000;
+  @Incubating int PCAP_IF_CONNECTION_STATUS_UNKNOWN = 0x00000000;
 
   /**
    * Connected.

@@ -61,6 +61,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
         <jdk.version>${java.version}</jdk.version>
 
         <slf4j.version>1.7.32</slf4j.version>
+        <logback.version>1.2.7</logback.version>
         <log4j2.version>2.14.1</log4j2.version>
 
         <jna.version>5.10.0</jna.version>
@@ -175,8 +176,18 @@ SPDX-License-Identifier: MIT OR Apache-2.0
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
+                <version>${log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
 
