@@ -65,11 +65,11 @@ class DefaultDumper implements Dumper {
               "buffer.capacity: %d (expected: buffer.capacity(%d) > 0)",
               buffer.capacity(), buffer.capacity()));
     }
-    if (buffer.readableBytes() < header.length()) {
+    if (buffer.readableBytes() < header.captureLength()) {
       throw new IllegalArgumentException(
           String.format(
-              "buffer.readableBytes(): %d (expected: buffer.readableBytes(%d) >= header.length(%d))",
-              buffer.readableBytes(), buffer.readableBytes(), header.length()));
+              "buffer.readableBytes(): %d (expected: buffer.readableBytes(%d) >= header.captureLength(%d))",
+              buffer.readableBytes(), buffer.readableBytes(), header.captureLength()));
     }
     DefaultPacketBuffer packetBuffer = (DefaultPacketBuffer) buffer;
     setNativeLong(
