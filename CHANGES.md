@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Add BPF filter.
+
 - Add logback-classic and log4j-core into maven BOM.
 
 ### Changed
@@ -23,6 +24,8 @@ All notable changes to this project will be documented in this file.
 - Accessing closed handle should throw exception.
 
 - Fix capacity of generated buffer from capture handle.
+
+- Fix pcap_dump buffer size validation.
 
 ## [1.3.4] - 2021-11-15
 
