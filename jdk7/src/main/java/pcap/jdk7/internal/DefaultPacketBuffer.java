@@ -419,10 +419,8 @@ class DefaultPacketBuffer implements PacketBuffer {
 
   @Override
   public PacketBuffer setBytes(long index, PacketBuffer src, long length) {
+    Utils.requireNonNull(src, "src = null (expected: src != null).");
     checkIndex(index, length);
-    if (src == null) {
-      throw new IllegalArgumentException("src must be not null.");
-    }
     if (length > src.readableBytes()) {
       throw new IndexOutOfBoundsException(
           String.format(
@@ -890,6 +888,7 @@ class DefaultPacketBuffer implements PacketBuffer {
 
   @Override
   public PacketBuffer getBytes(long index, PacketBuffer dst, long dstIndex, long length) {
+    Utils.requireNonNull(dst, "dst = null (expected: dst != null).");
     // check buffer overflow
     checkIndex(index, length);
     if (isOutOfBounds(dstIndex, length, dst.capacity())) {
@@ -905,6 +904,7 @@ class DefaultPacketBuffer implements PacketBuffer {
 
   @Override
   public PacketBuffer getBytes(long index, byte[] dst, long dstIndex, long length) {
+    Utils.requireNonNull(dst, "dst = null (expected: dst != null).");
     // check buffer overflow
     checkIndex(index, length);
     if (isOutOfBounds(dstIndex, length, dst.length)) {
@@ -1013,6 +1013,7 @@ class DefaultPacketBuffer implements PacketBuffer {
 
   @Override
   public PacketBuffer setBytes(long index, byte[] src, long srcIndex, long length) {
+    Utils.requireNonNull(src, "src = null (expected: src != null).");
     // check buffer overflow
     checkIndex(index, length);
     if (isOutOfBounds(srcIndex, length, src.length)) {
@@ -1048,6 +1049,7 @@ class DefaultPacketBuffer implements PacketBuffer {
 
   @Override
   public PacketBuffer byteOrder(ByteOrder byteOrder) {
+    Utils.requireNonNull(byteOrder, "byteOrder = null (expected: byteOrder != null).");
     bigEndian = byteOrder == ByteOrder.BIG_ENDIAN;
     return this;
   }

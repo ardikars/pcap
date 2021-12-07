@@ -19,6 +19,8 @@ All notable changes to this project will be documented in this file.
 
 - Unreflect constructor for casting buffer to packet classes.
 
+- PacketBuffer null check params.
+
 ### Fixed
 
 - Accessing closed handle should throw exception.
