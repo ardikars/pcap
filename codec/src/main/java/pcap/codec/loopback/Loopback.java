@@ -9,14 +9,12 @@ import pcap.codec.AbstractPacket;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
-import pcap.spi.annotation.Incubating;
 
 /**
  * Null/Loopback
  *
- * @since 1.3.0 (incubating)
+ * @since 1.3.0
  */
-@Incubating
 public final class Loopback extends AbstractPacket {
 
   public static final int TYPE = 0;
@@ -34,9 +32,8 @@ public final class Loopback extends AbstractPacket {
    * @param size {@link Loopback} header size.
    * @param buffer buffer.
    * @return returns {@link Loopback} instance.
-   * @since 1.3.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
   public static Loopback newInstance(int size, PacketBuffer buffer) {
     Validate.notIllegalArgument(
         size == 4 && buffer.readableBytes() >= 4, "buffer size is not sufficient.");
@@ -47,9 +44,8 @@ public final class Loopback extends AbstractPacket {
    * Get protocol family.
    *
    * @return returns protocol family.
-   * @since 1.3.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
   public int family() {
     return superBuffer.getInt(familyOffset);
   }
@@ -59,9 +55,8 @@ public final class Loopback extends AbstractPacket {
    *
    * @param value protocol family.
    * @return returns this instance.
-   * @since 1.3.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
   public Loopback family(int value) {
     superBuffer.setInt(familyOffset, value);
     return this;
