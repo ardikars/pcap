@@ -11,14 +11,12 @@ import pcap.codec.ethernet.Ethernet;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 import pcap.spi.PacketBuffer;
-import pcap.spi.annotation.Incubating;
 
 /**
  * Linux cooked packet (SLL).
  *
- * @since 1.3.0 (incubating)
+ * @since 1.3.0
  */
-@Incubating
 public final class Sll extends AbstractPacket {
 
   public static final int TYPE = 113;
@@ -47,9 +45,8 @@ public final class Sll extends AbstractPacket {
    * @param size ethernet size.
    * @param buffer buffer.
    * @return returns {@link Ethernet} instance.
-   * @since 1.3.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
   public static Sll newInstance(int size, PacketBuffer buffer) {
     Validate.notIllegalArgument(
         size == 16 && buffer.readableBytes() >= 16, "buffer size is not sufficient.");
@@ -60,9 +57,8 @@ public final class Sll extends AbstractPacket {
    * Get packet type.
    *
    * @return returns this instance.
-   * @since 1.3.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
   public int packetType() {
     return superBuffer.getShort(packetTypeOffset);
   }
@@ -72,9 +68,8 @@ public final class Sll extends AbstractPacket {
    *
    * @param value packet type.
    * @return returns this instance.
-   * @since 1.3.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
   public Sll packetType(int value) {
     superBuffer.setShort(packetTypeOffset, value & 0xFFFF);
     return this;
@@ -84,9 +79,8 @@ public final class Sll extends AbstractPacket {
    * Get link layer address type.
    *
    * @return returns link layer address type.
-   * @since 1.3.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
   public int addressType() {
     return superBuffer.getShort(addressTypeOffset);
   }
@@ -96,9 +90,8 @@ public final class Sll extends AbstractPacket {
    *
    * @param value link layer address type.
    * @return returns this instance.
-   * @since 1.3.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
   public Sll addressType(int value) {
     superBuffer.setShort(addressTypeOffset, value & 0xFFFF);
     return this;
@@ -108,9 +101,8 @@ public final class Sll extends AbstractPacket {
    * Get link layer address length.
    *
    * @return returns link layer address length.
-   * @since 1.3.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
   public int addressLength() {
     return superBuffer.getShort(addressLengthOffset);
   }
@@ -120,9 +112,8 @@ public final class Sll extends AbstractPacket {
    *
    * @param value link layer address length.
    * @return returns this instance.
-   * @since 1.3.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
   public Sll addressLength(int value) {
     superBuffer.setShort(addressLengthOffset, value & 0xFFFF);
     return this;
@@ -132,9 +123,8 @@ public final class Sll extends AbstractPacket {
    * Get link layer address.
    *
    * @return returns link layer address.
-   * @since 1.3.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
   public byte[] address() {
     int addrLen = addressLength();
     if (addrLen > 0 && addrLen <= SLL_ADDRLEN) {
@@ -151,9 +141,8 @@ public final class Sll extends AbstractPacket {
    *
    * @param value link layer address.
    * @return returns this instance.
-   * @since 1.3.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
   public Sll address(byte[] value) {
     int addrLen = addressLength();
     if (addrLen > 0 && addrLen <= SLL_ADDRLEN) {
@@ -175,9 +164,8 @@ public final class Sll extends AbstractPacket {
    * Get next protocol type.
    *
    * @return returns protocol.
-   * @since 1.3.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
   public int protocol() {
     return superBuffer.getShort(protocolOffset);
   }
@@ -187,9 +175,8 @@ public final class Sll extends AbstractPacket {
    *
    * @param value protocol.
    * @return returns this instance.
-   * @since 1.3.0 (incubating)
+   * @since 1.3.0
    */
-  @Incubating
   public Sll protocol(int value) {
     superBuffer.setShort(protocolOffset, value & 0xFFFF);
     return this;
