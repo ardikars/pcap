@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 
 All notable changes to this project will be documented in this file.
 
-## [UNRELEASED]
+## [1.4.0] - 2021-12-25
 
 ### Added
 
@@ -20,6 +20,8 @@ All notable changes to this project will be documented in this file.
 - Unreflect constructor for casting buffer to packet classes.
 
 - PacketBuffer null check params.
+
+- Remove incubating annotation for enhance I/O multiplexer.
 
 ### Fixed
 
@@ -101,7 +103,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Use function mapping (method proxy) for some native method instead of direct mapping for backward compatibility.
+- Use function mapping (method proxy) for some native method instead of direct mapping for backward compatibility (java only not on native library).
 
 ## [1.2.1] - 2021-03-12
 
@@ -136,7 +138,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Backward compatibility for pcap_setmintocopy(..) and update error message.
+- Backward compatibility for pcap_setmintocopy(..) and update error message (java only not on native library).
 
 ## [1.0.4] - 2021-01-24
 
@@ -156,8 +158,8 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Only synchronize pcap_compile for before libpcap version 1.8.0.
-- Backward compatibility for immediate mode on Windows (pcap_setmintocopy).
-- Backward compatibility for non blocking I/O.
+- Backward compatibility for immediate mode on Windows (pcap_setmintocopy, java only not on native library).
+- Backward compatibility for non blocking I/O (java only not on native library).
 
 ## [1.0.1] - 2020-12-25
 
