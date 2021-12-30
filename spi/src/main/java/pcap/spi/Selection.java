@@ -65,7 +65,7 @@ public interface Selection {
    * Is writable.
    *
    * @return returns {@code true} if {@link Selectable} is writable, {@code false} otherwise.
-   * @since 1.3.1 (incubating)
+   * @since 1.4.0
    */
   boolean isWritable();
 

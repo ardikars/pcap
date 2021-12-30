@@ -48,7 +48,7 @@ public interface Selector extends AutoCloseable {
    * @throws NoSuchSelectableException no {@link Selectable} registered on this {@link Selector}.
    * @throws IllegalStateException this {@link Selectable} might be closed.
    * @throws IllegalArgumentException {@link Timeout} is not sufficient.
-   * @since 1.3.1 (incubating)
+   * @since 1.4.0
    */
   int select(Consumer<Selection> consumer, Timeout timeout)
       throws TimeoutException, NoSuchSelectableException, IllegalStateException,
