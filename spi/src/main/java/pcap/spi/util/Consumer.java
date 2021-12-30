@@ -8,7 +8,7 @@ package pcap.spi.util;
  * Consumer.
  *
  * @param <T> the type of input.
- * @since 1.3.1 (incubating)
+ * @since 1.4.0
  */
 public interface Consumer<T> {
 
@@ -16,7 +16,7 @@ public interface Consumer<T> {
    * Accept input.
    *
    * @param t input.
-   * @since 1.3.1 (incubating)
+   * @since 1.4.0
    */
   void accept(T t);
 }

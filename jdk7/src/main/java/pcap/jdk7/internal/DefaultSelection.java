@@ -13,7 +13,7 @@ import pcap.spi.Selector;
 /**
  * Default selection key.
  *
- * @since 1.3.1 (incubating)
+ * @since 1.4.0
  */
 class DefaultSelection implements Selection {
 

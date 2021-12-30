@@ -40,7 +40,7 @@ public interface Selectable extends AutoCloseable {
    * @return returns {@link Selection} on success.
    * @throws IllegalArgumentException illegal argument.
    * @throws IllegalStateException selector is closed.
-   * @since 1.3.1 (incubating)
+   * @since 1.4.0
    */
   Selection register(Selector selector, int interestOperations, Object attachment)
       throws IllegalArgumentException, IllegalStateException;

@@ -7,6 +7,14 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.1] - 2021-12-31
+
+### Changed
+
+- Bump log4j2 from 2.17.0 to 2.17.1
+
+- Javadocs fixes
+
 ## [1.4.0] - 2021-12-25
 
 ### Added
@@ -103,7 +111,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Use function mapping (method proxy) for some native method instead of direct mapping for backward compatibility (java only not on native library).
+- Use function mapping (method proxy) for some native method instead of direct mapping for backward compatibility (java
+  only not on native library).
 
 ## [1.2.1] - 2021-03-12
 
