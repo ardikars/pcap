@@ -13,13 +13,17 @@ All notable changes to this project will be documented in this file.
 
 - Init null buffer on pcap.next(..).
 
+### Fixed
+
+- Set new poll file descriptor during cancellation on Unix.
+
 ## [1.4.1] - 2021-12-31
 
 ### Changed
 
-- Bump log4j2 from 2.17.0 to 2.17.1
+- Bump log4j2 from 2.17.0 to 2.17.1.
 
-- Javadocs fixes
+- Javadocs fixes.
 
 ## [1.4.0] - 2021-12-25
 
@@ -49,15 +53,15 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Use String::format(..) instead of concatenate with +
+- Use String::format(..) instead of concatenate with `+`.
 
-- Use pcap-common logging instead of jdk logger
+- Use pcap-common logging instead of jdk logger.
 
-- Use Arrays.asList(..) insetead new ArrayList(..) for getFieldOrders()
+- Use Arrays.asList(..) insetead new ArrayList(..) for getFieldOrders().
 
 ### Fixed
 
-- Fix Slf4j module name
+- Fix Slf4j module name.
 
 ## [1.3.3] - 2021-10-23
 
@@ -77,7 +81,7 @@ All notable changes to this project will be documented in this file.
 
 - Fix IPv4 TTL.
 
-- Fix IPv4 checksum offset ([#149](https://github.com/ardikars/pcap/issues/149))
+- Fix IPv4 checksum offset ([#149](https://github.com/ardikars/pcap/issues/149)).
 
 ## [1.3.1] - 2021-05-22
 
