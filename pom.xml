@@ -74,7 +74,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 
         <fmt.maven.plugin.version>2.13</fmt.maven.plugin.version>
         <jacoco.maven.plugin.version>0.8.7</jacoco.maven.plugin.version>
-        <nexus.staging.maven.plugin.version>1.6.8</nexus.staging.maven.plugin.version>
+        <nexus.staging.maven.plugin.version>1.6.11</nexus.staging.maven.plugin.version>
         <sonar.maven.plugin.version>3.9.1.2184</sonar.maven.plugin.version>
         <modulemaker-maven-plugin.version>1.7</modulemaker-maven-plugin.version>
         <asm.version>9.2</asm.version>
