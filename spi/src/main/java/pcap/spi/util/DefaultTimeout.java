@@ -17,6 +17,15 @@ public class DefaultTimeout implements Timeout {
   private final long microSecond;
 
   /**
+   * Create default timeout for 1 seconds.
+   *
+   * @since 1.4.2
+   */
+  public DefaultTimeout() {
+    this(1000000L, Precision.MICRO);
+  }
+
+  /**
    * Create timeout instance.
    *
    * @param timeout timeout.
