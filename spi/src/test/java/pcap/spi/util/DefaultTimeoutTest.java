@@ -14,6 +14,13 @@ import pcap.spi.Timeout;
 class DefaultTimeoutTest {
 
   @Test
+  void defaultTimeout() {
+    DefaultTimeout timeout = new DefaultTimeout();
+    Assertions.assertEquals(1L, timeout.second());
+    Assertions.assertEquals(1000000L, timeout.microSecond());
+  }
+
+  @Test
   void nanoSecond() {
     DefaultTimeout timeout = new DefaultTimeout(1000000000L, Timeout.Precision.NANO);
     Assertions.assertEquals(1L, timeout.second());
