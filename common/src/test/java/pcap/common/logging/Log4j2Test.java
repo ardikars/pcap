@@ -6,11 +6,8 @@ package pcap.common.logging;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 /** */
-@RunWith(JUnitPlatform.class)
 class Log4j2Test extends AbstractLoggerTest {
 
   @BeforeEach

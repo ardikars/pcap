@@ -6,10 +6,7 @@ package pcap.common.logging;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
-@RunWith(JUnitPlatform.class)
 class Log4j2FactoryTest {
 
   @Test

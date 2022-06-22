@@ -9,13 +9,10 @@ import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.spi.Selectable;
 import pcap.spi.Selection;
 import pcap.spi.Selector;
 
-@RunWith(JUnitPlatform.class)
 class SelectableListTest {
 
   @Test

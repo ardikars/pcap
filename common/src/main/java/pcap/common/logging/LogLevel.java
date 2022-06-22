@@ -10,14 +10,24 @@ package pcap.common.logging;
  * @since 1.0.0
  */
 public enum LogLevel {
-  /** @since 1.0.0 */
+  /**
+   * @since 1.0.0
+   */
   DEBUG,
-  /** @since 1.0.0 */
+  /**
+   * @since 1.0.0
+   */
   INFO,
-  /** @since 1.0.0 */
+  /**
+   * @since 1.0.0
+   */
   WARN,
-  /** @since 1.0.0 */
+  /**
+   * @since 1.0.0
+   */
   ERROR,
-  /** @since 1.0.0 */
+  /**
+   * @since 1.0.0
+   */
   UNKNOWN
 }

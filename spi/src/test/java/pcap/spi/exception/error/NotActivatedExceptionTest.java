@@ -7,15 +7,12 @@ package pcap.spi.exception.error;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 /**
  * The capture needs to be activated ({@code -3}).
  *
  * @since 1.0.0
  */
-@RunWith(JUnitPlatform.class)
 class NotActivatedExceptionTest {
 
   @Test

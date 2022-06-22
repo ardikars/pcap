@@ -7,12 +7,9 @@ package pcap.jdk7.internal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.spi.annotation.Version;
 import pcap.spi.exception.ErrorException;
 
-@RunWith(JUnitPlatform.class)
 class UtilsTest {
 
   @Test

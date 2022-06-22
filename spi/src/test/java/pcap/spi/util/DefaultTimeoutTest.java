@@ -6,11 +6,8 @@ package pcap.spi.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.spi.Timeout;
 
-@RunWith(JUnitPlatform.class)
 class DefaultTimeoutTest {
 
   @Test

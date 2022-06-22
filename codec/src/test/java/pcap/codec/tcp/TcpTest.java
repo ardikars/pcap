@@ -8,8 +8,6 @@ import java.net.Inet4Address;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.common.net.InetAddresses;
 import pcap.common.util.Hexs;
 import pcap.common.util.Strings;
@@ -27,7 +25,6 @@ import pcap.spi.exception.error.RadioFrequencyModeNotSupportedException;
 import pcap.spi.exception.error.TimestampPrecisionNotSupportedException;
 import pcap.spi.option.DefaultLiveOptions;
 
-@RunWith(JUnitPlatform.class)
 class TcpTest {
 
   private static final byte[] BYTES =

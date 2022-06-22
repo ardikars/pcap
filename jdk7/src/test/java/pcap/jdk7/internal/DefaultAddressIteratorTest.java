@@ -13,14 +13,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.spi.Address;
 import pcap.spi.Interface;
 import pcap.spi.Service;
 import pcap.spi.exception.ErrorException;
 
-@RunWith(JUnitPlatform.class)
 class DefaultAddressIteratorTest {
 
   private Service service;
