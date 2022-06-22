@@ -7,15 +7,12 @@ package pcap.jdk7.internal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.spi.Pcap;
 import pcap.spi.Selection;
 import pcap.spi.Selector;
 import pcap.spi.Service;
 import pcap.spi.option.DefaultLiveOptions;
 
-@RunWith(JUnitPlatform.class)
 class DefaultSelectionTest {
 
   @Test

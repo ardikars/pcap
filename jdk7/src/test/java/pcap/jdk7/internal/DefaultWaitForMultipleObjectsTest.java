@@ -9,8 +9,6 @@ import java.util.Iterator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.spi.Pcap;
 import pcap.spi.Selectable;
 import pcap.spi.Selection;
@@ -22,7 +20,6 @@ import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.util.Consumer;
 import pcap.spi.util.DefaultTimeout;
 
-@RunWith(JUnitPlatform.class)
 class DefaultWaitForMultipleObjectsTest extends AbstractSelectorTest {
 
   boolean isWindows() {

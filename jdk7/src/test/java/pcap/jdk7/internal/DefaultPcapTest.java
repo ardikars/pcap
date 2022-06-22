@@ -15,8 +15,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.spi.Dumper;
 import pcap.spi.Interface;
 import pcap.spi.Packet;
@@ -50,7 +48,6 @@ import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.option.DefaultOfflineOptions;
 import pcap.spi.util.Consumer;
 
-@RunWith(JUnitPlatform.class)
 class DefaultPcapTest extends BaseTest {
 
   private Service service;

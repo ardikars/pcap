@@ -7,8 +7,6 @@ package pcap.codec.sll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.codec.ip.Ip4;
 import pcap.codec.ip.Ip6;
 import pcap.common.util.Hexs;
@@ -26,7 +24,6 @@ import pcap.spi.exception.error.RadioFrequencyModeNotSupportedException;
 import pcap.spi.exception.error.TimestampPrecisionNotSupportedException;
 import pcap.spi.option.DefaultLiveOptions;
 
-@RunWith(JUnitPlatform.class)
 class SllTest {
 
   private static final byte[] BYTES =

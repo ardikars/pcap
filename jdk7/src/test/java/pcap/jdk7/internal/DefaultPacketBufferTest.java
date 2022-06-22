@@ -13,14 +13,11 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.exception.MemoryAccessException;
 import pcap.spi.exception.MemoryLeakException;
 
-@RunWith(JUnitPlatform.class)
 class DefaultPacketBufferTest {
 
   private static final int BYTE_BYTES = 1;

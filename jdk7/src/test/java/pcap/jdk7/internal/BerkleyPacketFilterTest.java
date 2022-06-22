@@ -7,8 +7,6 @@ package pcap.jdk7.internal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.common.util.Hexs;
 import pcap.spi.Interface;
 import pcap.spi.PacketBuffer;
@@ -17,7 +15,6 @@ import pcap.spi.Pcap;
 import pcap.spi.Service;
 import pcap.spi.option.DefaultLiveOptions;
 
-@RunWith(JUnitPlatform.class)
 class BerkleyPacketFilterTest extends BaseTest {
 
   @Test
@@ -61,10 +58,10 @@ class BerkleyPacketFilterTest extends BaseTest {
       PacketBuffer buffer = live.allocate(PacketBuffer.class).capacity(bytes.length);
       buffer.writeBytes(bytes);
       try (PacketFilter filter = live.compile("udp port 443", true)) {
-        filter.filter(buffer, bytes.length);
+        Assertions.assertTrue(filter.filter(buffer, bytes.length));
       }
       try (PacketFilter filter = live.compile("udp port 53", true)) {
-        filter.filter(buffer, bytes.length);
+        Assertions.assertFalse(filter.filter(buffer, bytes.length));
       }
       Assertions.assertTrue(buffer.release());
     }

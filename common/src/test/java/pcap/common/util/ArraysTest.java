@@ -4,15 +4,14 @@
  */
 package pcap.common.util;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
-/** @since 1.0.0 */
-@RunWith(JUnitPlatform.class)
+/**
+ * @since 1.0.0
+ */
 class ArraysTest {
 
   private final int maximumDelta = 2;
@@ -136,6 +135,6 @@ class ArraysTest {
   @Test
   void toStringTest() {
     String string = Arrays.toString(new int[] {1, 2});
-    assertNotNull(string);
+    Assertions.assertNotNull(string);
   }
 }

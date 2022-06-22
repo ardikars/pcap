@@ -10,8 +10,6 @@ import java.net.UnknownHostException;
 import java.util.LinkedList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.codec.ethernet.Ethernet;
 import pcap.codec.udp.Udp;
 import pcap.common.util.Hexs;
@@ -29,7 +27,6 @@ import pcap.spi.exception.error.RadioFrequencyModeNotSupportedException;
 import pcap.spi.exception.error.TimestampPrecisionNotSupportedException;
 import pcap.spi.option.DefaultLiveOptions;
 
-@RunWith(JUnitPlatform.class)
 class AbstractPacketTest {
 
   private static final byte[] ETHERNET = Hexs.parseHex("d80d17269cee8c8590c30b330800");

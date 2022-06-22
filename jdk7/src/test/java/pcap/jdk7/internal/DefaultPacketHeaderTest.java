@@ -9,10 +9,7 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
-@RunWith(JUnitPlatform.class)
 class DefaultPacketHeaderTest {
 
   @Test

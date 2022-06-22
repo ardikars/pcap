@@ -7,11 +7,8 @@ package pcap.common.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 /** */
-@RunWith(JUnitPlatform.class)
 class HexsTest {
 
   private static final byte[] byteData =

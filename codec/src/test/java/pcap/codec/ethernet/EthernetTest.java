@@ -7,8 +7,6 @@ package pcap.codec.ethernet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.common.net.MacAddress;
 import pcap.common.util.Hexs;
 import pcap.spi.PacketBuffer;
@@ -25,7 +23,6 @@ import pcap.spi.exception.error.RadioFrequencyModeNotSupportedException;
 import pcap.spi.exception.error.TimestampPrecisionNotSupportedException;
 import pcap.spi.option.DefaultLiveOptions;
 
-@RunWith(JUnitPlatform.class)
 class EthernetTest {
 
   private static final byte[] BYTES = Hexs.parseHex("d80d17269cee8c8590c30b330800");

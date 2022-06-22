@@ -7,15 +7,12 @@ package pcap.spi.exception.error;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 /**
  * You don't have permission to capture in promiscuous mode ({@code -11}).
  *
  * @since 1.0.0
  */
-@RunWith(JUnitPlatform.class)
 class PromiscuousModePermissionDeniedExceptionTest {
 
   @Test

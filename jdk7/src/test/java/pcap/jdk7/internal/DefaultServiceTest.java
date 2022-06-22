@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import pcap.spi.Address;
 import pcap.spi.Interface;
 import pcap.spi.Pcap;
@@ -32,7 +30,6 @@ import pcap.spi.exception.warn.PromiscuousModeNotSupported;
 import pcap.spi.option.DefaultLiveOptions;
 import pcap.spi.option.DefaultOfflineOptions;
 
-@RunWith(JUnitPlatform.class)
 class DefaultServiceTest extends BaseTest {
 
   private Service service;
