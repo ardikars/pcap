@@ -95,7 +95,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
         <maven.enforcer.plugin.version>3.0.0</maven.enforcer.plugin.version>
         <maven.failsafe.plugin.version>2.22.2</maven.failsafe.plugin.version>
         <maven.surefire.plugin.version>3.0.0-M5</maven.surefire.plugin.version>
-        <maven.project.info.reports.plugin.version>3.2.1</maven.project.info.reports.plugin.version>
+        <maven.project.info.reports.plugin.version>3.4.1</maven.project.info.reports.plugin.version>
 
         <aggregate.report.dir>tests/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
         <sonar.exclusions>**/src/test/java/**/*.java</sonar.exclusions>
