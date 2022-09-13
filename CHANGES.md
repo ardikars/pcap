@@ -7,6 +7,12 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+
+- Init null buffer on pcap.next(..).
+
 ## [1.4.1] - 2021-12-31
 
 ### Changed
@@ -118,7 +124,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- Remove object reference if the object is GC'ed.
+- Remove strong object reference if the buffer object is GC'ed.
 
 ## [1.2.0] - 2021-02-01
 
