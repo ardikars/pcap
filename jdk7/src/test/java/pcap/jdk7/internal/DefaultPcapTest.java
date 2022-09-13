@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Pcap Project
+ * Copyright (c) 2020-2022 Pcap Project
  * SPDX-License-Identifier: MIT OR Apache-2.0
  */
 package pcap.jdk7.internal;
@@ -329,6 +329,7 @@ class DefaultPcapTest extends BaseTest {
     try (Pcap live =
         service.live(lo, new DefaultLiveOptions().timestampPrecision(Timestamp.Precision.MICRO))) {
       PacketHeader header = live.allocate(PacketHeader.class);
+      live.setNonBlock(false);
       PacketBuffer next = live.next(header);
       if (next != null) {
         Assertions.assertTrue(next.capacity() > 0);

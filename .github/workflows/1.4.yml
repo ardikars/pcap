@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2021 Pcap Project
+# Copyright (c) 2020-2022 Pcap Project
 # SPDX-License-Identifier: MIT OR Apache-2.0
 
 name: Build and Test
@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['macos-10.15', 'ubuntu-18.04', 'ubuntu-20.04', 'windows-2016', 'windows-2019']
+        os: ['macos-10.15', 'ubuntu-18.04', 'ubuntu-20.04', 'windows-2019']
         java: [17]
     runs-on: ${{ matrix.os }}
     steps:
