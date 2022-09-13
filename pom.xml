@@ -64,35 +64,35 @@ SPDX-License-Identifier: MIT OR Apache-2.0
         <logback.version>1.4.0</logback.version>
         <log4j2.version>2.17.2</log4j2.version>
 
-        <jna.version>5.10.0</jna.version>
-        <jmh.version>1.34</jmh.version>
+        <jna.version>5.12.1</jna.version>
+        <jmh.version>1.35</jmh.version>
 
         <mockito.version>4.4.0</mockito.version>
-        <junit.jupiter.api.version>5.8.2</junit.jupiter.api.version>
+        <junit.jupiter.api.version>5.9.0</junit.jupiter.api.version>
         <junit.jupiter.engine.version>5.6.1</junit.jupiter.engine.version>
-        <junit.platform.suite.version>1.8.2</junit.platform.suite.version>
+        <junit.platform.suite.version>1.9.0</junit.platform.suite.version>
 
         <fmt.maven.plugin.version>2.19</fmt.maven.plugin.version>
-        <jacoco.maven.plugin.version>0.8.7</jacoco.maven.plugin.version>
+        <jacoco.maven.plugin.version>0.8.8</jacoco.maven.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.13</nexus.staging.maven.plugin.version>
         <sonar.maven.plugin.version>3.9.1.2184</sonar.maven.plugin.version>
-        <modulemaker-maven-plugin.version>1.7</modulemaker-maven-plugin.version>
+        <modulemaker-maven-plugin.version>1.9</modulemaker-maven-plugin.version>
         <asm.version>9.2</asm.version>
 
-        <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
+        <maven.assembly.plugin.version>3.4.2</maven.assembly.plugin.version>
         <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
         <maven.jar.plugin.version>3.2.2</maven.jar.plugin.version>
-        <maven.javadoc.plugin.version>3.3.2</maven.javadoc.plugin.version>
+        <maven.javadoc.plugin.version>3.4.1</maven.javadoc.plugin.version>
         <maven.toolchains.plugin.version>3.0.0</maven.toolchains.plugin.version>
         <maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
         <maven.clean.plugin.version>3.2.0</maven.clean.plugin.version>
-        <maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
+        <maven.resources.plugin.version>3.3.0</maven.resources.plugin.version>
         <maven.install.plugin.version>2.5.2</maven.install.plugin.version>
-        <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
+        <maven.deploy.plugin.version>3.0.0</maven.deploy.plugin.version>
         <maven.site.plugin.version>3.12.1</maven.site.plugin.version>
-        <maven.jxr.plugin.version>3.1.1</maven.jxr.plugin.version>
+        <maven.jxr.plugin.version>3.3.1</maven.jxr.plugin.version>
         <maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
-        <maven.enforcer.plugin.version>3.0.0</maven.enforcer.plugin.version>
+        <maven.enforcer.plugin.version>3.1.0</maven.enforcer.plugin.version>
         <maven.failsafe.plugin.version>2.22.2</maven.failsafe.plugin.version>
         <maven.surefire.plugin.version>3.0.0-M7</maven.surefire.plugin.version>
         <maven.project.info.reports.plugin.version>3.4.1</maven.project.info.reports.plugin.version>
