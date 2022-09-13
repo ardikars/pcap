@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.4.2] - 2022-09-13
 
 ### Changed
 
