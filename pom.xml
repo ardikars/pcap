@@ -70,7 +70,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
         <mockito.version>4.4.0</mockito.version>
         <junit.jupiter.api.version>5.8.2</junit.jupiter.api.version>
         <junit.jupiter.engine.version>5.6.1</junit.jupiter.engine.version>
-        <junit.platform.suite.version>1.8.2</junit.platform.suite.version>
+        <junit.platform.suite.version>1.9.0</junit.platform.suite.version>
 
         <fmt.maven.plugin.version>2.19</fmt.maven.plugin.version>
         <jacoco.maven.plugin.version>0.8.7</jacoco.maven.plugin.version>
