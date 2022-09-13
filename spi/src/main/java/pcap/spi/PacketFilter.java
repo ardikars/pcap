@@ -4,7 +4,10 @@
  */
 package pcap.spi;
 
+import pcap.spi.annotation.Incubating;
+
 /** Packet filter. */
+@Incubating
 public interface PacketFilter extends AutoCloseable {
 
   /**
@@ -14,5 +17,6 @@ public interface PacketFilter extends AutoCloseable {
    * @param packetLength packet original length.
    * @return returns {@code true} if filtered, {@code false} otherwise.
    */
+  @Incubating
   boolean filter(PacketBuffer packetBuffer, long packetLength);
 }

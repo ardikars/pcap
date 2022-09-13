@@ -4,6 +4,7 @@
  */
 package pcap.spi;
 
+import pcap.spi.annotation.Incubating;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.BreakException;
@@ -45,6 +46,7 @@ public interface Pcap extends Selectable {
    * @return returns packet filter.
    * @throws ErrorException generic error.
    */
+  @Incubating
   PacketFilter compile(String filter, boolean optimize) throws ErrorException;
 
   /**
@@ -53,6 +55,7 @@ public interface Pcap extends Selectable {
    * @param filter packet filter.
    * @throws ErrorException generic error.
    */
+  @Incubating
   void setFilter(PacketFilter filter) throws ErrorException;
 
   /**
