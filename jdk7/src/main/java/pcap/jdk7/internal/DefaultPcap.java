@@ -154,7 +154,7 @@ class DefaultPcap implements Pcap {
     Utils.requireNonNull(header, "header: null (expected: header != null)");
     final DefaultPacketHeader packetHeader = (DefaultPacketHeader) header;
     final AtomicReference<DefaultPacketBuffer> packetBuffer =
-        new AtomicReference<DefaultPacketBuffer>();
+        new AtomicReference<DefaultPacketBuffer>(null);
     int rc =
         NativeMappings.pcap_dispatch(
             pointer,

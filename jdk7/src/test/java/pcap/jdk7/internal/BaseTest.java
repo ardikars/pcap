@@ -6,8 +6,10 @@ package pcap.jdk7.internal;
 
 import java.util.Iterator;
 import pcap.spi.Interface;
+import pcap.spi.Pcap;
 import pcap.spi.Service;
 import pcap.spi.exception.ErrorException;
+import pcap.spi.option.DefaultLiveOptions;
 
 abstract class BaseTest {
 
@@ -20,34 +22,49 @@ abstract class BaseTest {
   protected static final String SAMPLE_PCAPNG = "src/test/resources/sample.pcapng";
 
   private static Interface LOOPBACK;
+  private static Interface ETHERNET;
 
   protected Interface loopbackInterface(Service service) throws ErrorException {
     if (LOOPBACK == null) {
       Iterator<Interface> iterator = service.interfaces().iterator();
-      if (iterator != null) {
-        while (iterator.hasNext()) {
-          Interface source = iterator.next();
-          if ((source.flags() & 0x00000001) != 0) {
-            LOOPBACK = source;
-            return LOOPBACK;
-          }
+      while (iterator.hasNext()) {
+        Interface source = iterator.next();
+        if ((source.flags() & 0x00000001) != 0) {
+          LOOPBACK = source;
+          return LOOPBACK;
         }
       }
       // try get by description
       iterator = service.interfaces().iterator();
-      if (iterator != null) {
-        while (iterator.hasNext()) {
-          Interface source = iterator.next();
-          if (source.description() != null
-              && source.description().toLowerCase().contains("loopback")) {
-            LOOPBACK = source;
-            return LOOPBACK;
-          }
+      while (iterator.hasNext()) {
+        Interface source = iterator.next();
+        if (source.description() != null
+            && source.description().toLowerCase().contains("loopback")) {
+          LOOPBACK = source;
+          return LOOPBACK;
         }
       }
       throw new ErrorException("Loopback interface is not found.");
     } else {
       return LOOPBACK;
+    }
+  }
+
+  protected Interface ethernetInterface(Service service) throws ErrorException {
+    if (ETHERNET == null) {
+      for (Interface source : service.interfaces()) {
+        try (final Pcap live = service.live(source, new DefaultLiveOptions())) {
+          if (live.datalink() == 1) {
+            ETHERNET = source;
+          return ETHERNET;
+          }
+        } catch (Exception e) {
+          // continue
+        }
+      }
+      throw new ErrorException("Ethernet interface is not found.");
+    } else {
+      return ETHERNET;
     }
   }
 }
