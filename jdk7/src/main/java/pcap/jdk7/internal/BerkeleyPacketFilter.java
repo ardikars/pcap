@@ -71,6 +71,22 @@ class BerkeleyPacketFilter implements PacketFilter {
   }
 
   @Override
+  public boolean filter(PacketBuffer packetBuffer) {
+    checkOpenState();
+    final long offset = packetBuffer.readerIndex();
+    final long capacity = packetBuffer.capacity();
+    final int packetLength = (int) (capacity - offset);
+    final DefaultPacketBuffer buffer = (DefaultPacketBuffer) packetBuffer;
+    final long r = NativeMappings.bpf_filter(
+            fp.bf_insns,
+            buffer.buffer.share(buffer.readerIndex()),
+            (int) packetLength,
+            (int) buffer.capacity());
+    // not sure about this
+    return r != 0 && r != 4294967295L;
+  }
+
+  @Override
   public void close() throws Exception {
     checkOpenState();
     NativeMappings.pcap_freecode(fp);
