@@ -7,9 +7,6 @@ package pcap.jdk7.internal;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
-import java.lang.ref.ReferenceQueue;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -17,6 +14,10 @@ import pcap.spi.Packet;
 import pcap.spi.PacketBuffer;
 import pcap.spi.exception.MemoryAccessException;
 import pcap.spi.exception.MemoryLeakException;
+
+import java.lang.ref.ReferenceQueue;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 class DefaultPacketBufferTest {
 
@@ -3289,6 +3290,22 @@ class DefaultPacketBufferTest {
             DefaultPacketBuffer.PacketBufferManager.checkLeak(bufRef, true);
           }
         });
+  }
+
+  // @Test // run it manually
+  void leakTest() {
+    final String defLeakDetection = System.getProperty("pcap.leakDetection");
+    System.setProperty("pcap.leakDetection", "true");
+    for (int i = 0; i < 1000; i++) {
+      try {
+        final PacketBuffer buf = new DefaultPacketBuffer().capacity(64);
+        System.gc();
+        System.runFinalization();
+      } catch (Exception e) {
+          Assertions.assertTrue(e instanceof MemoryLeakException);
+      }
+    }
+    System.setProperty("pcap.leakDetection", defLeakDetection == null ? "false" : defLeakDetection);
   }
 
   @Test
