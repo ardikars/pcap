@@ -15,6 +15,8 @@ import java.util.List;
  */
 public final class Arrays {
 
+  static final byte[] EMPTY_BYTES = new byte[0];
+
   private Arrays() {}
 
   /**
