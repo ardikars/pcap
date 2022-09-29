@@ -13,18 +13,15 @@ import java.util.Arrays;
  */
 public final class Hexs {
 
+  static final byte[] HEX2B;
   static final char[] HEXDUMP_TABLE;
-
   static final String HEXDUMP_PRETTY_HEADER =
       ""
           + "         +-------------------------------------------------+\n"
           + "         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |\n"
           + "+--------+-------------------------------------------------+--------+\n";
-
   static final String HEXDUMP_PRETTY_FOOTER =
       "+--------+-------------------------------------------------+--------+";
-
-  private static final byte[] HEX2B;
 
   static {
     HEXDUMP_TABLE = new char[256 * 4];
@@ -64,6 +61,20 @@ public final class Hexs {
   }
 
   /**
+   * Helper to decode half of a hexadecimal number from a string.
+   *
+   * @param c The ASCII character of the hexadecimal number to decode. Must be in the range {@code
+   *     [0-9a-fA-F]}.
+   * @return The hexadecimal value represented in the ASCII character given, or {@code -1} if the
+   *     character is invalid.
+   */
+  public static int decodeHexNibble(final char c) {
+    // Character.digit() is not used here, as it addresses a larger
+    // set of characters (both ASCII and full-width latin letters).
+    return HEX2B[c];
+  }
+
+  /**
    * Parse hex strings to byte array.
    *
    * @param hexStream hex strings.
@@ -72,26 +83,29 @@ public final class Hexs {
    */
   public static byte[] parseHex(String hexStream) {
     Validate.nullPointer(hexStream);
-    // see https://github.com/netty/netty/blob/4.1/common/src/main/java/io/netty/util/internal/StringUtil.java
+    // see
+    // https://github.com/netty/netty/blob/4.1/common/src/main/java/io/netty/util/internal/StringUtil.java
     int length = hexStream.length();
     if ((length & 1) != 0) {
       throw new IllegalArgumentException(String.format("Invalid length: %d", length));
+    }
+    if (length == 0) {
+      return pcap.common.util.Arrays.EMPTY_BYTES;
     }
     int fromIndex = 0;
     if (hexStream.charAt(0) == '0' && hexStream.charAt(1) == 'x') {
       fromIndex += 2;
       length -= 2;
     }
-    if (length == 0) {
-      return pcap.common.util.Arrays.EMPTY_BYTES;
-    }
     final byte[] bytes = new byte[length >>> 1];
     for (int i = 0; i < length; i += 2) {
       int hi = HEX2B[hexStream.charAt(fromIndex + i)];
       int lo = HEX2B[hexStream.charAt(fromIndex + i + 1)];
       if (hi == -1 || lo == -1) {
-        throw new IllegalArgumentException(String.format(
-                "invalid hex byte '%s' at index %d of '%s'", hexStream.subSequence(fromIndex + i, fromIndex + i + 2), fromIndex + 1, fromIndex));
+        throw new IllegalArgumentException(
+            String.format(
+                "Invalid hex byte '%s' at index %d of '%s'",
+                hexStream.subSequence(fromIndex + i, fromIndex + i + 2), fromIndex + i, hexStream));
       }
       bytes[i >>> 1] = (byte) ((hi << 4) + lo);
     }

@@ -27,4 +27,48 @@ class HexsTest {
           }
         });
   }
+
+  @Test
+  void decodeHexNibble() {
+    Assertions.assertEquals(0, Hexs.decodeHexNibble('0'));
+    Assertions.assertNotEquals(1, Hexs.decodeHexNibble('0'));
+  }
+
+  @Test
+  void parseHex() {
+    for (int i = 0; i < 256; i++) {
+      String hex = Integer.toString(i, 16);
+      if (hex.length() == 1) {
+        hex = "0" + hex;
+      }
+      Assertions.assertEquals(i, Hexs.parseHex(hex)[0] & 0xFF);
+      Assertions.assertEquals(i, Hexs.parseHex("0x" + hex)[0] & 0xFF);
+    }
+    Assertions.assertArrayEquals(new byte[0], Hexs.parseHex("0x"));
+    Assertions.assertArrayEquals(new byte[0], Hexs.parseHex(""));
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Hexs.parseHex("0x0");
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Hexs.parseHex("0y00");
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            Hexs.parseHex("xx00");
+          }
+        });
+  }
 }
