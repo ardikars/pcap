@@ -61,7 +61,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
         <jdk.version>${java.version}</jdk.version>
 
         <slf4j.version>2.0.0</slf4j.version>
-        <logback.version>1.4.0</logback.version>
+        <logback.version>1.4.3</logback.version>
         <log4j2.version>2.18.0</log4j2.version>
 
         <jna.version>5.12.1</jna.version>
