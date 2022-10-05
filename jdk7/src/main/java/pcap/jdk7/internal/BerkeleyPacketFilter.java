@@ -61,7 +61,8 @@ class BerkeleyPacketFilter implements PacketFilter {
   public boolean filter(PacketBuffer packetBuffer, long packetLength) {
     checkOpenState();
     final DefaultPacketBuffer buffer = (DefaultPacketBuffer) packetBuffer;
-    final long r = NativeMappings.bpf_filter(
+    final long r =
+        NativeMappings.bpf_filter(
             fp.bf_insns,
             buffer.buffer.share(buffer.readerIndex()),
             (int) packetLength,
@@ -75,7 +76,8 @@ class BerkeleyPacketFilter implements PacketFilter {
     checkOpenState();
     final int packetLength = (int) (packetBuffer.readableBytes());
     final DefaultPacketBuffer buffer = (DefaultPacketBuffer) packetBuffer;
-    final long r = NativeMappings.bpf_filter(
+    final long r =
+        NativeMappings.bpf_filter(
             fp.bf_insns,
             buffer.buffer.share(buffer.readerIndex()),
             packetLength,

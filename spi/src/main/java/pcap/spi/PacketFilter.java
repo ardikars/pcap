@@ -11,8 +11,7 @@ import pcap.spi.annotation.Incubating;
 public interface PacketFilter extends AutoCloseable {
 
   /**
-   * Filter packet buffer.
-   * Deprecated: prevent user to pass unreasonable packet length.
+   * Filter packet buffer. Deprecated: prevent user to pass unreasonable packet length.
    *
    * @param packetBuffer packet buffer.
    * @param packetLength packet original length.

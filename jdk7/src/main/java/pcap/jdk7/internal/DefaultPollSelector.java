@@ -185,7 +185,8 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
       int fd = NativeMappings.PLATFORM_DEPENDENT.pcap_get_selectable_fd(pcap.pointer);
       for (int i = 0; i < registered.size(); i++) {
         if (pfds[i].fd == fd) {
-          final pollfd[] newPfds = pfds.length == 1 ? null : (pollfd[]) (new pollfd().toArray(pfds.length - 1));
+          final pollfd[] newPfds =
+              pfds.length == 1 ? null : (pollfd[]) (new pollfd().toArray(pfds.length - 1));
           if (newPfds != null) {
             int index = 0;
             for (int j = 0; j < pfds.length; j++) {
