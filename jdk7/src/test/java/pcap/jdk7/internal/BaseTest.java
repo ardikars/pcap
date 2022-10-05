@@ -56,7 +56,7 @@ abstract class BaseTest {
         try (final Pcap live = service.live(source, new DefaultLiveOptions())) {
           if (live.datalink() == 1) {
             ETHERNET = source;
-          return ETHERNET;
+            return ETHERNET;
           }
         } catch (Exception e) {
           // continue

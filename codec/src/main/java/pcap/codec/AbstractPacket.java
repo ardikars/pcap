@@ -31,11 +31,12 @@ public abstract class AbstractPacket extends pcap.spi.Packet.Abstract {
     @Internal
     public static int sum(final PacketBuffer buffer, final long offset, final int length) {
       int accumulation = 0;
-      long size = offset + (length % 2 == 0 ? length : length - 1);
+      final boolean isEven = (length & 1) == 0;
+      final long size = offset + (isEven ? length : length - 1);
       for (long i = offset; i < size; i += 2) {
         accumulation += buffer.getShort(i) & 0xFFFF;
       }
-      if (length % 2 > 0) {
+      if (!isEven) {
         accumulation += ((buffer.getByte(offset + size)) & 0xFF) << 8;
       }
       return accumulation;
@@ -50,9 +51,9 @@ public abstract class AbstractPacket extends pcap.spi.Packet.Abstract {
         int protocol,
         int headerLength,
         int payloadLength) {
-      boolean isIp = srcAddr instanceof Inet4Address && dstAddr instanceof Inet4Address;
+      final boolean isIp = srcAddr instanceof Inet4Address && dstAddr instanceof Inet4Address;
       int accumulation = 0;
-      ByteBuffer bb = ByteBuffer.allocate(isIp ? 12 : 40);
+      final ByteBuffer bb = ByteBuffer.allocate(isIp ? 12 : 40);
       bb.put(srcAddr.getAddress());
       bb.put(dstAddr.getAddress());
       bb.put((byte) 0);
@@ -64,7 +65,7 @@ public abstract class AbstractPacket extends pcap.spi.Packet.Abstract {
       }
       bb.rewind();
 
-      for (int i = 0; i < bb.capacity() / 2; ++i) {
+      for (int i = 0; i < bb.capacity() >>> 1; ++i) {
         accumulation += bb.getShort() & 0xFFFF;
       }
 
