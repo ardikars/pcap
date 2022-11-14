@@ -65,7 +65,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
         <log4j2.version>2.18.0</log4j2.version>
 
         <jna.version>5.12.1</jna.version>
-        <jmh.version>1.35</jmh.version>
+        <jmh.version>1.36</jmh.version>
 
         <mockito.version>4.8.0</mockito.version>
         <junit.jupiter.api.version>5.9.0</junit.jupiter.api.version>
