@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2020-2021 Pcap Project
+SPDX-License-Identifier: MIT OR Apache-2.0
+-->
+
 # Security Policy
 
 ## Reporting a security issue
