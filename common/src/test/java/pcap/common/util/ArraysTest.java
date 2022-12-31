@@ -1,12 +1,11 @@
 /*
- * Copyright (c) 2020-2022 Pcap Project
+ * Copyright (c) 2020-2023 Pcap Project
  * SPDX-License-Identifier: MIT OR Apache-2.0
  */
 package pcap.common.util;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -130,11 +129,5 @@ class ArraysTest {
     assertArrayEquals(
         new Object[] {charArray, doubleArray, intArray, floatArray},
         Arrays.concatenate(objectArray, new Object[] {intArray, floatArray}));
-  }
-
-  @Test
-  void toStringTest() {
-    String string = Arrays.toString(new int[] {1, 2});
-    Assertions.assertNotNull(string);
   }
 }

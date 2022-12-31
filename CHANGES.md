@@ -1,11 +1,27 @@
 <!--
-SPDX-FileCopyrightText: 2020-2021 Pcap Project
+SPDX-FileCopyrightText: 2020-2023 Pcap Project
 SPDX-License-Identifier: MIT OR Apache-2.0
 -->
 
 # Changelog
 
 All notable changes to this project will be documented in this file.
+
+## [1.5.0] - 2023-01-01
+
+### Added
+
+* Pcap.compile returns `PacketFilter`.
+* Pcap.setFilter by compiled `PacketFilter`.
+
+### Changed
+
+* Improve IP checksum calculation.
+* Improve hex to bytes.
+
+### Removed
+
+* Remove deprecated Arrays.toString(..).
 
 ## [1.4.2] - 2022-09-13
 

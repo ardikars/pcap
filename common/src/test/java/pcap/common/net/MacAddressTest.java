@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Pcap Project
+ * Copyright (c) 2020-2023 Pcap Project
  * SPDX-License-Identifier: MIT OR Apache-2.0
  */
 package pcap.common.net;
@@ -25,6 +25,55 @@ class MacAddressTest {
     Assertions.assertNotNull(macAddress2);
     Assertions.assertEquals(STRING_MAC_ADDRESS, macAddress2.toString());
     Assertions.assertEquals(LONG_MAC_ADDRESS, macAddress2.toLong());
+
+    Assertions.assertEquals(
+        MacAddress.DUMMY.toString(), MacAddress.fromString(MacAddress.DUMMY.toString()).toString());
+    Assertions.assertEquals(
+        MacAddress.DUMMY.toString(),
+        MacAddress.fromString(MacAddress.DUMMY.toString().replace(":", "-")).toString());
+    Assertions.assertEquals(
+        MacAddress.DUMMY.toString(),
+        MacAddress.fromString(MacAddress.DUMMY.toString().replace(":", "")).toString());
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            MacAddress.fromString(null);
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            MacAddress.fromString("de:ad");
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            MacAddress.fromString("de:ad:be:ef:c0-fe");
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            MacAddress.fromString("de:ad:be:ef:c0:fi");
+          }
+        });
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        new Executable() {
+          @Override
+          public void execute() throws Throwable {
+            MacAddress.fromString("de:ad:be:ef:c0:ve");
+          }
+        });
   }
 
   @Test
@@ -147,5 +196,17 @@ class MacAddressTest {
     Assertions.assertNotEquals(macAddress.hashCode(), macAddressCmp.hashCode());
     Assertions.assertNotEquals(macAddress, new ArrayList<>(0));
     Assertions.assertNotEquals(macAddress, nullRef);
+  }
+
+  @Test
+  void isValidStringTest() {
+    Assertions.assertTrue(MacAddress.isValidString(MacAddress.DUMMY.toString()));
+    Assertions.assertTrue(MacAddress.isValidString(MacAddress.DUMMY.toString().replace(":", "-")));
+    Assertions.assertTrue(MacAddress.isValidString(MacAddress.DUMMY.toString().replace(":", "")));
+    Assertions.assertFalse(MacAddress.isValidString(null));
+    Assertions.assertFalse(MacAddress.isValidString("de:ad"));
+    Assertions.assertFalse(MacAddress.isValidString("de:ad:be:ef:c0-fe"));
+    Assertions.assertFalse(MacAddress.isValidString("de:ad:be:ef:c0:fi"));
+    Assertions.assertFalse(MacAddress.isValidString("de:ad:be:ef:c0:ve"));
   }
 }

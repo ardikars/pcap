@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Pcap Project
+ * Copyright (c) 2020-2023 Pcap Project
  * SPDX-License-Identifier: MIT OR Apache-2.0
  */
 package pcap.jdk7.internal;
@@ -58,11 +58,9 @@ class BerkleyPacketFilterTest extends BaseTest {
       PacketBuffer buffer = live.allocate(PacketBuffer.class).capacity(bytes.length);
       buffer.writeBytes(bytes);
       try (PacketFilter filter = live.compile("udp port 443", true)) {
-        Assertions.assertTrue(filter.filter(buffer, bytes.length));
         Assertions.assertTrue(filter.filter(buffer));
       }
       try (PacketFilter filter = live.compile("udp port 53", true)) {
-        Assertions.assertFalse(filter.filter(buffer, bytes.length));
         Assertions.assertFalse(filter.filter(buffer));
       }
       Assertions.assertTrue(buffer.release());

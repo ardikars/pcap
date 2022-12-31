@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2022 Pcap Project
+# Copyright (c) 2020-2023 Pcap Project
 # SPDX-License-Identifier: MIT OR Apache-2.0
 
 name: Release
@@ -21,7 +21,7 @@ jobs:
         java: [7]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/cache@v1
+      - uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -29,7 +29,7 @@ jobs:
             ${{ runner.os }}-maven-
 
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 1
 
@@ -37,10 +37,12 @@ jobs:
         uses: fsfe/reuse-action@v1
         if: matrix.os == 'ubuntu-18.04'
 
-      - uses: actions/setup-java@v1
+      - uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.java }}
-          architecture: x64
+          distribution: 'temurin'
+          check-latest: true
+          cache: 'maven'
 
       - name: Setting up deployment
         run: |

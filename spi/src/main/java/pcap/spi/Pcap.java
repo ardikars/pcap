@@ -1,10 +1,9 @@
 /*
- * Copyright (c) 2020-2022 Pcap Project
+ * Copyright (c) 2020-2023 Pcap Project
  * SPDX-License-Identifier: MIT OR Apache-2.0
  */
 package pcap.spi;
 
-import pcap.spi.annotation.Incubating;
 import pcap.spi.exception.ErrorException;
 import pcap.spi.exception.TimeoutException;
 import pcap.spi.exception.error.BreakException;
@@ -45,8 +44,8 @@ public interface Pcap extends Selectable {
    * @param optimize {@code true} optimized, {@code false} otherwise.
    * @return returns packet filter.
    * @throws ErrorException generic error.
+   * @since 1.5.0
    */
-  @Incubating
   PacketFilter compile(String filter, boolean optimize) throws ErrorException;
 
   /**
@@ -54,8 +53,8 @@ public interface Pcap extends Selectable {
    *
    * @param filter packet filter.
    * @throws ErrorException generic error.
+   * @since 1.5.0
    */
-  @Incubating
   void setFilter(PacketFilter filter) throws ErrorException;
 
   /**

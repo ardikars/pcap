@@ -1,32 +1,22 @@
 /*
- * Copyright (c) 2020-2022 Pcap Project
+ * Copyright (c) 2020-2023 Pcap Project
  * SPDX-License-Identifier: MIT OR Apache-2.0
  */
 package pcap.spi;
 
-import pcap.spi.annotation.Incubating;
-
-/** Packet filter. */
-@Incubating
+/**
+ * Packet filter.
+ *
+ * @since 1.5.0
+ */
 public interface PacketFilter extends AutoCloseable {
-
-  /**
-   * Filter packet buffer. Deprecated: prevent user to pass unreasonable packet length.
-   *
-   * @param packetBuffer packet buffer.
-   * @param packetLength packet original length.
-   * @return returns {@code true} if filtered, {@code false} otherwise.
-   */
-  @Deprecated
-  @Incubating
-  boolean filter(PacketBuffer packetBuffer, long packetLength);
 
   /**
    * Filter packet buffer.
    *
    * @param packetBuffer packet buffer.
    * @return returns {@code true} if filtered, {@code false} otherwise.
+   * @since 1.5.0
    */
-  @Incubating
   boolean filter(PacketBuffer packetBuffer);
 }

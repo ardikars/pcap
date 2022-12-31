@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Pcap Project
+ * Copyright (c) 2020-2023 Pcap Project
  * SPDX-License-Identifier: MIT OR Apache-2.0
  */
 package pcap.jdk7.internal;
@@ -55,20 +55,6 @@ class BerkeleyPacketFilter implements PacketFilter {
         cleaned.pointer = 0L;
       }
     }
-  }
-
-  @Override
-  public boolean filter(PacketBuffer packetBuffer, long packetLength) {
-    checkOpenState();
-    final DefaultPacketBuffer buffer = (DefaultPacketBuffer) packetBuffer;
-    final long r =
-        NativeMappings.bpf_filter(
-            fp.bf_insns,
-            buffer.buffer.share(buffer.readerIndex()),
-            (int) packetLength,
-            (int) buffer.capacity());
-    // not sure about this
-    return r != 0 && r != 4294967295L;
   }
 
   @Override

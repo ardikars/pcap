@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Pcap Project
+ * Copyright (c) 2020-2023 Pcap Project
  * SPDX-License-Identifier: MIT OR Apache-2.0
  */
 package pcap.common.net;
@@ -7,6 +7,7 @@ package pcap.common.net;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.regex.Pattern;
+import pcap.common.util.Hexs;
 import pcap.common.util.Strings;
 import pcap.common.util.Validate;
 
@@ -45,6 +46,62 @@ public final class MacAddress implements Serializable {
     this.address = Arrays.copyOf(address, MacAddress.MAC_ADDRESS_LENGTH);
   }
 
+  // internal API
+  private static int separator0(String stringAddress) {
+    if (stringAddress == null) {
+      return -1;
+    }
+    final int length = stringAddress.length();
+    if (length != 17 && length != 12) {
+      return -1;
+    }
+    final int separator = length == 17 ? 3 : 2;
+    if (separator == 3) { // with separator
+      // check separator
+      int n = 0;
+      for (int i = 2; i <= 14; i += separator) {
+        n += stringAddress.charAt(i);
+      }
+      if (n == 290 || n == 225) {
+        return separator;
+      } else {
+        return -1;
+      }
+    }
+    return separator;
+  }
+
+  /**
+   * Determines the MacAddress address.
+   *
+   * @param stringAddress MAC string address.
+   * @return an Mac address object.
+   * @since 1.5.0
+   */
+  public static MacAddress fromString(String stringAddress) {
+    final int separator = separator0(stringAddress);
+    if (separator < 0) {
+      throw new IllegalArgumentException("Invalid mac address: " + stringAddress);
+    }
+    final byte[] bytes = new byte[MAC_ADDRESS_LENGTH];
+    assert stringAddress != null;
+    final int length = stringAddress.length();
+    int offset = 0;
+    for (int i = 0; i < length; i += separator) {
+      final int hi = Hexs.decodeHexNibble(stringAddress.charAt(i));
+      final int lo = Hexs.decodeHexNibble(stringAddress.charAt(i + 1));
+      if (hi == -1 || lo == -1) {
+        throw new IllegalArgumentException(
+            String.format(
+                "Invalid hex address '%s' at index %d of '%s'",
+                stringAddress.subSequence(i, i + 2), i, stringAddress));
+      }
+      bytes[offset] = (byte) ((hi << 4) + lo);
+      offset += 1;
+    }
+    return valueOf(bytes);
+  }
+
   /**
    * Determines the MacAddress address.
    *
@@ -74,7 +131,18 @@ public final class MacAddress implements Serializable {
    * @since 1.0.0
    */
   public static MacAddress valueOf(final byte[] bytesAddress) {
-    return new MacAddress(bytesAddress);
+    return fromBytes(bytesAddress);
+  }
+
+  /**
+   * Determines the MacAddress address.
+   *
+   * @param bytes MAC bytes address.
+   * @return an Mac address object.
+   * @since 1.5.0
+   */
+  public static MacAddress fromBytes(final byte[] bytes) {
+    return new MacAddress(bytes);
   }
 
   /**
@@ -85,6 +153,17 @@ public final class MacAddress implements Serializable {
    * @since 1.0.0
    */
   public static MacAddress valueOf(final long longAddress) {
+    return fromLong(longAddress);
+  }
+
+  /**
+   * Determines the MacAddress address.
+   *
+   * @param longAddress MAC long address.
+   * @return an Mac address object.
+   * @since 1.5.0
+   */
+  public static MacAddress fromLong(final long longAddress) {
     Validate.notIllegalArgument(
         longAddress >= 0, String.format("Address: %d expected(address > 0)", longAddress));
     final byte[] bytes =
@@ -94,7 +173,7 @@ public final class MacAddress implements Serializable {
           (byte) (longAddress >> 24 & 0xff),
           (byte) (longAddress >> 16 & 0xff),
           (byte) (longAddress >> 8 & 0xff),
-          (byte) (longAddress >> 0 & 0xff)
+          (byte) (longAddress & 0xff)
         };
     return valueOf(bytes);
   }
@@ -111,6 +190,31 @@ public final class MacAddress implements Serializable {
     Validate.notIllegalArgument(
         !Strings.blank(stringAddress), "Address must be not empty or blank.");
     return Pattern.matches("^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$", stringAddress);
+  }
+
+  /**
+   * Validate string mac address.
+   *
+   * @param stringAddress string mac address.
+   * @return a {@code boolean} indicating if the stringAddress is a valid mac address; or false
+   *     otherwise.
+   * @since 1.5.0
+   */
+  public static boolean isValidString(final String stringAddress) {
+    final int separator = separator0(stringAddress);
+    if (separator < 0) {
+      return false;
+    }
+    assert stringAddress != null;
+    final int length = stringAddress.length();
+    for (int i = 0; i < length; i += separator) {
+      final int hi = Hexs.decodeHexNibble(stringAddress.charAt(i));
+      final int lo = Hexs.decodeHexNibble(stringAddress.charAt(i + 1));
+      if (hi == -1 || lo == -1) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**

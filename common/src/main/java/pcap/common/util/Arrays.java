@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Pcap Project
+ * Copyright (c) 2020-2023 Pcap Project
  * SPDX-License-Identifier: MIT OR Apache-2.0
  */
 package pcap.common.util;
@@ -324,21 +324,5 @@ public final class Arrays {
       copied += arr.length;
     }
     return all;
-  }
-
-  /**
-   * To string objects.
-   *
-   * <p>Use java.util.Array.toString(..) instead.
-   *
-   * <p>This method will removed on 1.2.x
-   *
-   * @param objs objs.
-   * @return returns {@link String}.
-   * @since 1.0.0
-   */
-  @Deprecated
-  public static String toString(Object... objs) {
-    return java.util.Arrays.toString(objs);
   }
 }
