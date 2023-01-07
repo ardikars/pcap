@@ -23,19 +23,19 @@ public final class MacAddress implements Serializable {
 
   private static final Pattern REGEX = Pattern.compile("[:-]");
   /** Zero MAC Address (00:00:00:00:00:00). */
-  public static final MacAddress ZERO = valueOf("00:00:00:00:00:00");
+  public static final MacAddress ZERO = fromString("00:00:00:00:00:00");
 
   /** Dummy MAC Address (de:ad:be:ef:c0:fe). */
-  public static final MacAddress DUMMY = valueOf("de:ad:be:ef:c0:fe");
+  public static final MacAddress DUMMY = fromString("de:ad:be:ef:c0:fe");
 
   /** Broadcast MAC Address (ff:ff:ff:ff:ff:ff). */
-  public static final MacAddress BROADCAST = valueOf("ff:ff:ff:ff:ff:ff");
+  public static final MacAddress BROADCAST = fromString("ff:ff:ff:ff:ff:ff");
 
   /** Multicast Address. */
-  public static final MacAddress IPV4_MULTICAST = valueOf("01:00:5e:00:00:00");
+  public static final MacAddress IPV4_MULTICAST = fromString("01:00:5e:00:00:00");
 
   /** Multicast mask. */
-  public static final MacAddress IPV4_MULTICAST_MASK = valueOf("ff:ff:ff:80:00:00");
+  public static final MacAddress IPV4_MULTICAST_MASK = fromString("ff:ff:ff:80:00:00");
 
   private final byte[] address;
 
@@ -99,7 +99,7 @@ public final class MacAddress implements Serializable {
       bytes[offset] = (byte) ((hi << 4) + lo);
       offset += 1;
     }
-    return valueOf(bytes);
+    return fromBytes(bytes);
   }
 
   /**
@@ -109,6 +109,7 @@ public final class MacAddress implements Serializable {
    * @return an Mac address object.
    * @since 1.0.0
    */
+  @Deprecated
   public static MacAddress valueOf(String stringAddress) {
     Validate.notIllegalArgument(
         !Strings.blank(stringAddress), "Address must be not empty or blank.");
@@ -130,6 +131,7 @@ public final class MacAddress implements Serializable {
    * @return an Mac address object.
    * @since 1.0.0
    */
+  @Deprecated
   public static MacAddress valueOf(final byte[] bytesAddress) {
     return fromBytes(bytesAddress);
   }
@@ -152,6 +154,7 @@ public final class MacAddress implements Serializable {
    * @return an Mac address object.
    * @since 1.0.0
    */
+  @Deprecated
   public static MacAddress valueOf(final long longAddress) {
     return fromLong(longAddress);
   }
@@ -175,7 +178,7 @@ public final class MacAddress implements Serializable {
           (byte) (longAddress >> 8 & 0xff),
           (byte) (longAddress & 0xff)
         };
-    return valueOf(bytes);
+    return fromBytes(bytes);
   }
 
   /**

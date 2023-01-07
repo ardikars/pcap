@@ -53,7 +53,7 @@ public final class Ethernet extends AbstractPacket {
    * @since 1.0.0
    */
   public MacAddress destination() {
-    return MacAddress.valueOf((superBuffer.getLong(destinationOffset) >> 16) & 0xffffffffffffL);
+    return MacAddress.fromLong((superBuffer.getLong(destinationOffset) >> 16) & 0xffffffffffffL);
   }
 
   /**
@@ -75,7 +75,7 @@ public final class Ethernet extends AbstractPacket {
    * @since 1.0.0
    */
   public MacAddress source() {
-    return MacAddress.valueOf((superBuffer.getLong(sourceOffset) >> 16) & 0xffffffffffffL);
+    return MacAddress.fromLong((superBuffer.getLong(sourceOffset) >> 16) & 0xffffffffffffL);
   }
 
   /**
