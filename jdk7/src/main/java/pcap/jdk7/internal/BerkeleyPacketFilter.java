@@ -75,6 +75,7 @@ class BerkeleyPacketFilter implements PacketFilter {
 
   @Override
   public void dump(Consumer<String> consumer) {
+    checkOpenState();
     fp.bf_insns.read();
     final int n = fp.bf_len;
     NativeMappings.bpf_insn.ByReference insn = fp.bf_insns;
@@ -96,6 +97,7 @@ class BerkeleyPacketFilter implements PacketFilter {
 
   @Override
   public String toString() {
+    checkOpenState();
     fp.bf_insns.read();
     final int n = fp.bf_len;
     NativeMappings.bpf_insn.ByReference insn = fp.bf_insns;
@@ -103,7 +105,7 @@ class BerkeleyPacketFilter implements PacketFilter {
     final int size = insn.size();
     sb.append(n).append('\n');
     for (int i = 0; i < n; i++) {
-      sb.append(String.format("%d %d %d %d\n", insn.code, insn.jt, insn.jf, insn.k));
+      sb.append(String.format("%d %d %d %d\n", insn.code, insn.jt, insn.jf, insn.k & 0xffffffffL));
       final Pointer pointer = insn.getPointer().share(size);
       insn = new NativeMappings.bpf_insn.ByReference(pointer);
       insn.read();
