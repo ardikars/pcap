@@ -4,15 +4,13 @@
  */
 package pcap.tests;
 
+import java.util.Random;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-import pcap.common.util.Hexs;
 import pcap.common.util.Strings;
-
-import java.util.Random;
 
 public class BytesToHexBenchmark {
 

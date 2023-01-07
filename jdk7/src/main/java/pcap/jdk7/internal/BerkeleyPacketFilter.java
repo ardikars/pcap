@@ -14,6 +14,7 @@ import java.util.Set;
 import pcap.spi.PacketBuffer;
 import pcap.spi.PacketFilter;
 import pcap.spi.exception.ErrorException;
+import pcap.spi.util.Consumer;
 
 class BerkeleyPacketFilter implements PacketFilter {
 
@@ -73,10 +74,41 @@ class BerkeleyPacketFilter implements PacketFilter {
   }
 
   @Override
+  public void dump(Consumer<String> consumer) {
+    fp.bf_insns.read();
+    final int n = fp.bf_len;
+    NativeMappings.bpf_insn.ByReference insn = fp.bf_insns;
+    int size = insn.size();
+    for (int i = 0; i < n; i++) {
+      consumer.accept(NativeMappings.bpf_image(insn, i));
+      final Pointer pointer = insn.getPointer().share(size);
+      insn = new NativeMappings.bpf_insn.ByReference(pointer);
+      insn.read();
+    }
+  }
+
+  @Override
   public void close() throws Exception {
     checkOpenState();
     NativeMappings.pcap_freecode(fp);
     cleaner.pointer = 0L;
+  }
+
+  @Override
+  public String toString() {
+    fp.bf_insns.read();
+    final int n = fp.bf_len;
+    NativeMappings.bpf_insn.ByReference insn = fp.bf_insns;
+    final StringBuilder sb = new StringBuilder();
+    final int size = insn.size();
+    sb.append(n).append('\n');
+    for (int i = 0; i < n; i++) {
+      sb.append(String.format("%d %d %d %d\n", insn.code, insn.jt, insn.jf, insn.k));
+      final Pointer pointer = insn.getPointer().share(size);
+      insn = new NativeMappings.bpf_insn.ByReference(pointer);
+      insn.read();
+    }
+    return sb.toString();
   }
 
   void checkOpenState() {
