@@ -43,12 +43,14 @@ class BerkleyPacketFilterTest extends BaseTest {
               sb.append(s).append('\n');
             }
           });
-      String icmpHumanReadable =
-          "(000) ldh      [12]\n(001) jeq      #0x800           jt 2\tjf 5\n(002) ldb      [23]\n(003) jeq      #0x1             jt 4\tjf 5\n(004) ret      #65535\n(005) ret      #0\n";
-      Assertions.assertEquals(icmpHumanReadable, sb.toString());
-      String icmpByteCode =
-          "6\n40 0 0 12\n21 0 3 2048\n48 0 0 23\n21 0 1 1\n6 0 0 65535\n6 0 0 0\n";
-      Assertions.assertEquals(icmpByteCode, bpf.toString());
+      if (live.datalink() == 1) {
+        String icmpHumanReadable =
+                "(000) ldh      [12]\n(001) jeq      #0x800           jt 2\tjf 5\n(002) ldb      [23]\n(003) jeq      #0x1             jt 4\tjf 5\n(004) ret      #65535\n(005) ret      #0\n";
+        Assertions.assertEquals(icmpHumanReadable, sb.toString());
+        String icmpByteCode =
+                "6\n40 0 0 12\n21 0 3 2048\n48 0 0 23\n21 0 1 1\n6 0 0 65535\n6 0 0 0\n";
+        Assertions.assertEquals(icmpByteCode, bpf.toString());
+      }
       Assertions.assertNotNull(bpf);
       bpf.clean();
     }
