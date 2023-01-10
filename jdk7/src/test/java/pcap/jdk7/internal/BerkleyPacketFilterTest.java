@@ -35,30 +35,30 @@ class BerkleyPacketFilterTest extends BaseTest {
     Service service = Service.Creator.create("PcapService");
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
-      BerkeleyPacketFilter bpf = (BerkeleyPacketFilter) live.compile("icmp", false);
-      final StringBuilder sb = new StringBuilder();
-      bpf.dump(
-          new Consumer<String>() {
-            @Override
-            public void accept(String s) {
-              sb.append(s).append('\n');
-            }
-          });
-      if (live.datalink() == 1) {
-        final String str = "(000) ldh      [12]\n" +
-                "(001) jeq      #0x800           jt 2\tjf 5\n" +
-                "(002) ldb      [23]\n" +
-                "(003) jeq      #0x1             jt 4\tjf 5\n" +
-                "(004) ret      #65535\n" +
-                "(005) ret      #0\n";
-        Assertions.assertEquals(str, sb.toString());
-      } else if (live.datalink() == 113) {
+      try (BerkeleyPacketFilter bpf = (BerkeleyPacketFilter) live.compile("icmp", false)) {
+        final StringBuilder sb = new StringBuilder();
+        bpf.dump(
+                new Consumer<String>() {
+                  @Override
+                  public void accept(String s) {
+                    sb.append(s).append('\n');
+                  }
+                });
+        if (live.datalink() == 1) {
+          final String str = "(000) ldh      [12]\n" +
+                  "(001) jeq      #0x800           jt 2\tjf 5\n" +
+                  "(002) ldb      [23]\n" +
+                  "(003) jeq      #0x1             jt 4\tjf 5\n" +
+                  "(004) ret      #65535\n" +
+                  "(005) ret      #0\n";
+          Assertions.assertEquals(str, sb.toString());
+        } else if (live.datalink() == 113) {
 
-      } else if (live.datalink() == 0) {
+        } else if (live.datalink() == 0) {
 
+        }
+        Assertions.assertNotNull(bpf);
       }
-      Assertions.assertNotNull(bpf);
-      bpf.clean();
     }
   }
 
@@ -86,12 +86,12 @@ class BerkleyPacketFilterTest extends BaseTest {
     final Service service = Service.Creator.create("PcapService");
     final Interface lo = loopbackInterface(service);
     try (final Pcap live = service.live(lo, new DefaultLiveOptions())) {
-      final BerkeleyPacketFilter bpf = (BerkeleyPacketFilter) live.compile("icmp", false);
-      final byte[] bytes = bpf.bytes();
-      final String str = Strings.hex(bytes);
-      Assertions.assertNotNull(str);
-      Assertions.assertNotNull(bpf);
-      bpf.clean();
+      try (final BerkeleyPacketFilter bpf = (BerkeleyPacketFilter) live.compile("icmp", false)) {
+        final byte[] bytes = bpf.bytes();
+        final String str = Strings.hex(bytes);
+        Assertions.assertNotNull(str);
+        Assertions.assertNotNull(bpf);
+      }
     }
   }
 
