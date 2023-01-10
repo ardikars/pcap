@@ -8,9 +8,12 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
+import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import pcap.common.util.Strings;
 import pcap.spi.PacketBuffer;
 import pcap.spi.PacketFilter;
 import pcap.spi.exception.ErrorException;
@@ -89,6 +92,27 @@ class BerkeleyPacketFilter implements PacketFilter {
   }
 
   @Override
+  public byte[] bytes() {
+    checkOpenState();
+    fp.bf_insns.read();
+    final int n = fp.bf_len;
+    NativeMappings.bpf_insn.ByReference insn = fp.bf_insns;
+    final int size = insn.size();
+    final ByteBuffer buffer = ByteBuffer.allocate(size * n + 4);
+    buffer.putInt(n);
+    for (int i = 0; i < n; i++) {
+      buffer.putShort(insn.code);
+      buffer.put(insn.jt);
+      buffer.put(insn.jf);
+      buffer.putInt(insn.k);
+      final Pointer pointer = insn.getPointer().share(size);
+      insn = new NativeMappings.bpf_insn.ByReference(pointer);
+      insn.read();
+    }
+    return buffer.array();
+  }
+
+  @Override
   public void close() throws Exception {
     checkOpenState();
     NativeMappings.pcap_freecode(fp);
@@ -97,20 +121,11 @@ class BerkeleyPacketFilter implements PacketFilter {
 
   @Override
   public String toString() {
-    checkOpenState();
-    fp.bf_insns.read();
-    final int n = fp.bf_len;
-    NativeMappings.bpf_insn.ByReference insn = fp.bf_insns;
-    final StringBuilder sb = new StringBuilder();
-    final int size = insn.size();
-    sb.append(n).append('\n');
-    for (int i = 0; i < n; i++) {
-      sb.append(String.format("%d %d %d %d\n", insn.code, insn.jt, insn.jf, insn.k & 0xffffffffL));
-      final Pointer pointer = insn.getPointer().share(size);
-      insn = new NativeMappings.bpf_insn.ByReference(pointer);
-      insn.read();
+    try {
+      return Strings.hex(bytes());
+    } catch (Exception e) {
+      return "";
     }
-    return sb.toString();
   }
 
   void checkOpenState() {

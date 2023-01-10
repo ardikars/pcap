@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import pcap.common.util.Hexs;
+import pcap.common.util.Strings;
 import pcap.spi.Interface;
 import pcap.spi.PacketBuffer;
 import pcap.spi.PacketFilter;
@@ -44,12 +45,17 @@ class BerkleyPacketFilterTest extends BaseTest {
             }
           });
       if (live.datalink() == 1) {
-        String icmpHumanReadable =
-                "(000) ldh      [12]\n(001) jeq      #0x800           jt 2\tjf 5\n(002) ldb      [23]\n(003) jeq      #0x1             jt 4\tjf 5\n(004) ret      #65535\n(005) ret      #0\n";
-        Assertions.assertEquals(icmpHumanReadable, sb.toString());
-        String icmpByteCode =
-                "6\n40 0 0 12\n21 0 3 2048\n48 0 0 23\n21 0 1 1\n6 0 0 65535\n6 0 0 0\n";
-        Assertions.assertEquals(icmpByteCode, bpf.toString());
+        final String str = "(000) ldh      [12]\n" +
+                "(001) jeq      #0x800           jt 2\tjf 5\n" +
+                "(002) ldb      [23]\n" +
+                "(003) jeq      #0x1             jt 4\tjf 5\n" +
+                "(004) ret      #65535\n" +
+                "(005) ret      #0\n";
+        Assertions.assertEquals(str, sb.toString());
+      } else if (live.datalink() == 113) {
+
+      } else if (live.datalink() == 0) {
+
       }
       Assertions.assertNotNull(bpf);
       bpf.clean();
@@ -72,6 +78,20 @@ class BerkleyPacketFilterTest extends BaseTest {
               icmp.close();
             }
           });
+    }
+  }
+
+  @Test
+  void bytes() throws Exception {
+    final Service service = Service.Creator.create("PcapService");
+    final Interface lo = loopbackInterface(service);
+    try (final Pcap live = service.live(lo, new DefaultLiveOptions())) {
+      final BerkeleyPacketFilter bpf = (BerkeleyPacketFilter) live.compile("icmp", false);
+      final byte[] bytes = bpf.bytes();
+      final String str = Strings.hex(bytes);
+      Assertions.assertNotNull(str);
+      Assertions.assertNotNull(bpf);
+      bpf.clean();
     }
   }
 

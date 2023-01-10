@@ -32,4 +32,12 @@ public interface PacketFilter extends AutoCloseable {
    */
   @Incubating
   void dump(Consumer<String> consumer);
+
+  /**
+   * Get byte code.
+   *
+   * @return returns byte code.
+   */
+  @Incubating
+  byte[] bytes();
 }
