@@ -67,7 +67,7 @@ SPDX-License-Identifier: MIT OR Apache-2.0
         <jna.version>5.12.1</jna.version>
         <jmh.version>1.36</jmh.version>
 
-        <mockito.version>4.9.0</mockito.version>
+        <mockito.version>5.1.0</mockito.version>
         <junit.jupiter.api.version>5.9.1</junit.jupiter.api.version>
         <junit.platform.suite.version>1.9.1</junit.platform.suite.version>
 
