@@ -6,8 +6,8 @@ SPDX-License-Identifier: MIT OR Apache-2.0
     <toolchain>
         <type>jdk</type>
         <provides>
-            <id>Java17</id>
-            <version>17</version>
+            <id>Java21</id>
+            <version>21</version>
         </provides>
         <configuration>
             <jdkHome>${env.JAVA_HOME}</jdkHome>
