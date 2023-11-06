@@ -590,7 +590,7 @@ class NativeMappings {
       try {
         return NATIVE.pcap_can_set_rfmon(p);
       } catch (NullPointerException | UnsatisfiedLinkError e) {
-        LOG.warn("pcap_can_set_frmon: Function doesn't exist.");
+        LOG.warn("pcap_can_set_rfmon: Function doesn't exist.");
         return 0;
       }
     }
