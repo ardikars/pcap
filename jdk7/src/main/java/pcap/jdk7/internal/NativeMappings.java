@@ -16,9 +16,12 @@ import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.PointerByReference;
+
+import java.io.File;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.nio.ByteOrder;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,6 +60,16 @@ class NativeMappings {
   private static final Logger LOG = LoggerFactory.getLogger(NativeMappings.class);
   private static final Map<String, Object> NATIVE_LOAD_LIBRARY_OPTIONS =
       new HashMap<String, Object>();
+
+  static final File NPCAP_DIR = Paths.get(System.getenv("SystemRoot"), "System32", "Npcap").toFile();
+
+  static {
+    if (Platform.isWindows() && System.getProperty("jna.library.path") == null) {
+      if (NPCAP_DIR.exists()) {
+        NativeLibrary.addSearchPath("wpcap", NPCAP_DIR.getAbsolutePath());
+      }
+    }
+  }
 
   static {
     com.sun.jna.Native.register(
