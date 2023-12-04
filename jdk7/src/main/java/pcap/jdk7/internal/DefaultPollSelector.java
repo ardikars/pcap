@@ -136,7 +136,9 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
 
   @Override
   public Iterable<Selectable> select(Timeout timeout)
-      throws TimeoutException, NoSuchSelectableException, IllegalStateException,
+      throws TimeoutException,
+          NoSuchSelectableException,
+          IllegalStateException,
           IllegalArgumentException {
     checkOpenState();
     validateSelect(timeout);
@@ -150,7 +152,9 @@ class DefaultPollSelector extends AbstractSelector<Integer> {
 
   @Override
   public int select(Consumer<Selection> consumer, Timeout timeout)
-      throws TimeoutException, NoSuchSelectableException, IllegalStateException,
+      throws TimeoutException,
+          NoSuchSelectableException,
+          IllegalStateException,
           IllegalArgumentException {
     checkOpenState();
     validateSelect(timeout);

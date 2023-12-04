@@ -7,6 +7,16 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.1] - 2023-12-04
+
+## Added
+
+* Adding dll search path for Npcap. [#295](https://github.com/ardikars/pcap/pull/295)
+
+## Fixed
+
+* Fix typo [#293](https://github.com/ardikars/pcap/discussions/293)
+
 ## [1.5.0] - 2023-01-01
 
 ### Added

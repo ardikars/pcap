@@ -70,9 +70,14 @@ public class DefaultService implements Service {
 
   @Override
   public Pcap live(Interface source, LiveOptions options)
-      throws InterfaceNotSupportTimestampTypeException, InterfaceNotUpException,
-          RadioFrequencyModeNotSupportedException, ActivatedException, PermissionDeniedException,
-          NoSuchDeviceException, PromiscuousModePermissionDeniedException, ErrorException,
+      throws InterfaceNotSupportTimestampTypeException,
+          InterfaceNotUpException,
+          RadioFrequencyModeNotSupportedException,
+          ActivatedException,
+          PermissionDeniedException,
+          NoSuchDeviceException,
+          PromiscuousModePermissionDeniedException,
+          ErrorException,
           TimestampPrecisionNotSupportedException {
     Utils.requireNonNull(source, "source: null (expected: source != null).");
     Pointer pointer = NativeMappings.PLATFORM_DEPENDENT.pcap_create(source.name(), errbuf(true));
@@ -258,8 +263,11 @@ public class DefaultService implements Service {
   }
 
   void checkActivate(Pointer pointer, int result)
-      throws PromiscuousModePermissionDeniedException, RadioFrequencyModeNotSupportedException,
-          InterfaceNotUpException, NoSuchDeviceException, ActivatedException,
+      throws PromiscuousModePermissionDeniedException,
+          RadioFrequencyModeNotSupportedException,
+          InterfaceNotUpException,
+          NoSuchDeviceException,
+          ActivatedException,
           PermissionDeniedException {
     String message = "Error occurred when activate a handle";
     if (result == 2) {

@@ -69,10 +69,16 @@ class DefaultServiceTest extends BaseTest {
 
   @Test
   void live()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException, BreakException {
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException,
+          BreakException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions().snapshotLength(-1))) {
       Assertions.assertNotNull(live);
@@ -399,8 +405,12 @@ class DefaultServiceTest extends BaseTest {
 
   @Test
   void checkActivate()
-      throws ErrorException, PromiscuousModePermissionDeniedException, PermissionDeniedException,
-          RadioFrequencyModeNotSupportedException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PromiscuousModePermissionDeniedException,
+          PermissionDeniedException,
+          RadioFrequencyModeNotSupportedException,
+          ActivatedException,
+          InterfaceNotUpException,
           NoSuchDeviceException {
     final DefaultService defaultService = (DefaultService) service;
     Interface lo = loopbackInterface(defaultService);

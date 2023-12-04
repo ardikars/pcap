@@ -1382,6 +1382,7 @@ public interface PacketBuffer extends AutoCloseable {
      * @since 1.0.0
      */
     LITTLE_ENDIAN;
+
     /**
      * Get native byte order.
      *

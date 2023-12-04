@@ -32,9 +32,14 @@ class UdpTest {
 
   @Test
   void readWrite()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Service service = Service.Creator.create("PcapService");
     try (final Pcap pcap = service.live(service.interfaces(), new DefaultLiveOptions())) {

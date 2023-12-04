@@ -81,7 +81,9 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
 
   @Override
   public Iterable<Selectable> select(Timeout timeout)
-      throws TimeoutException, NoSuchSelectableException, IllegalStateException,
+      throws TimeoutException,
+          NoSuchSelectableException,
+          IllegalStateException,
           IllegalArgumentException {
     checkOpenState();
     validateSelect(timeout);
@@ -95,7 +97,9 @@ class DefaultWaitForMultipleObjectsSelector extends AbstractSelector<NativeMappi
 
   @Override
   public int select(Consumer<Selection> consumer, Timeout timeout)
-      throws TimeoutException, NoSuchSelectableException, IllegalStateException,
+      throws TimeoutException,
+          NoSuchSelectableException,
+          IllegalStateException,
           IllegalArgumentException {
     checkOpenState();
     validateSelect(timeout);

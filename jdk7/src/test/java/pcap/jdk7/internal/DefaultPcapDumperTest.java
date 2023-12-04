@@ -50,9 +50,14 @@ class DefaultPcapDumperTest extends BaseTest {
 
   @Test
   void dump()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface source = loopbackInterface(service);
     try (Pcap live = service.live(source, new DefaultLiveOptions())) {
@@ -134,9 +139,14 @@ class DefaultPcapDumperTest extends BaseTest {
 
   @Test
   void equalsAndHashCode()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface source = loopbackInterface(service);
     try (Pcap live = service.live(source, new DefaultLiveOptions())) {

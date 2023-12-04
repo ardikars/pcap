@@ -69,9 +69,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void dumpOpen()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     String newFile;
@@ -111,9 +116,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void dumpOpenAppend()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     Assertions.assertTrue(Files.exists(Paths.get(SAMPLE_NANOSECOND_PCAP)));
@@ -170,9 +180,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void setFilter()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -203,9 +218,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void loop()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -262,9 +282,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void dispatch()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -321,9 +346,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void next()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live =
@@ -357,9 +387,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void nextEx()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -469,9 +504,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void stats()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -505,10 +545,16 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void breakLoop()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException, InterruptedException {
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException,
+          InterruptedException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
       Assertions.assertThrows(
@@ -598,9 +644,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void injectAndSendPacket()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -674,9 +725,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void setDirection()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -726,10 +782,16 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void isSwapped()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException, NotActivatedException {
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException,
+          NotActivatedException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
       Assertions.assertFalse(live.isSwapped());
@@ -741,10 +803,16 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void majorVersion()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException, NotActivatedException {
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException,
+          NotActivatedException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
       Assertions.assertTrue(live.majorVersion() >= 0 || live.majorVersion() <= 0);
@@ -756,10 +824,16 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void minorVersion()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
-          InterfaceNotSupportTimestampTypeException, NotActivatedException {
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException,
+          NotActivatedException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
       Assertions.assertTrue(live.minorVersion() >= 0 || live.majorVersion() <= 0);
@@ -771,9 +845,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void snapshot()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -786,9 +865,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void getNonBlock()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -805,9 +889,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void setNonBlock()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -841,9 +930,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void datalink()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -856,9 +950,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void allocate()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -911,9 +1010,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void nullCheck()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     final DefaultService defaultService = (DefaultService) this.service;
@@ -944,9 +1048,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void compileCheck()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -969,9 +1078,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void filterCheck()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -992,9 +1106,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void loopCheck()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     try (Pcap offline = service.offline(SAMPLE_MICROSECOND_PCAP, new DefaultOfflineOptions())) {
       final DefaultPcap pcap = (DefaultPcap) offline;
@@ -1099,9 +1218,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void statsCheck()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -1120,9 +1244,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void injectCheck()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -1141,9 +1270,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void directionCheck()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -1163,9 +1297,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void getNonBlockCheck()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -1184,9 +1323,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void setNonBlockCheck()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -1224,9 +1368,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void getTimestampPrecision()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          RadioFrequencyModeNotSupportedException, NoSuchDeviceException, ActivatedException,
-          InterfaceNotUpException, InterfaceNotSupportTimestampTypeException {
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live =
         service.live(lo, new DefaultLiveOptions().timestampPrecision(Timestamp.Precision.MICRO))) {
@@ -1249,9 +1398,14 @@ class DefaultPcapTest extends BaseTest {
 
   @Test
   void checkBuffer()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Interface lo = loopbackInterface(service);
     try (Pcap live = service.live(lo, new DefaultLiveOptions())) {
@@ -1963,14 +2117,18 @@ class DefaultPcapTest extends BaseTest {
 
     @Override
     public Iterable<Selectable> select(Timeout timeout)
-        throws TimeoutException, NoSuchSelectableException, IllegalStateException,
+        throws TimeoutException,
+            NoSuchSelectableException,
+            IllegalStateException,
             IllegalArgumentException {
       return null;
     }
 
     @Override
     public int select(Consumer<Selection> consumer, Timeout timeout)
-        throws TimeoutException, NoSuchSelectableException, IllegalStateException,
+        throws TimeoutException,
+            NoSuchSelectableException,
+            IllegalStateException,
             IllegalArgumentException {
       return 0;
     }

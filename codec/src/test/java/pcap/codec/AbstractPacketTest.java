@@ -34,9 +34,14 @@ class AbstractPacketTest {
 
   @Test
   void equalsAndHasCodeTest()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Service service = Service.Creator.create("PcapService");
     try (final Pcap pcap = service.live(service.interfaces(), new DefaultLiveOptions())) {
@@ -70,10 +75,16 @@ class AbstractPacketTest {
 
   @Test
   void calculate()
-      throws UnknownHostException, ErrorException, PermissionDeniedException,
-          PromiscuousModePermissionDeniedException, TimestampPrecisionNotSupportedException,
-          RadioFrequencyModeNotSupportedException, NoSuchDeviceException, ActivatedException,
-          InterfaceNotUpException, InterfaceNotSupportTimestampTypeException {
+      throws UnknownHostException,
+          ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
+          InterfaceNotSupportTimestampTypeException {
     InetAddress dstIp4 = Inet4Address.getByName("127.0.0.1");
     InetAddress srcIp4 = Inet4Address.getByName("127.0.0.1");
     InetAddress dstIp6 = Inet4Address.getByName("::1");

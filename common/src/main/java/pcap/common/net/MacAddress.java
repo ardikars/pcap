@@ -22,6 +22,7 @@ public final class MacAddress implements Serializable {
   public static final int MAC_ADDRESS_LENGTH = 6;
 
   private static final Pattern REGEX = Pattern.compile("[:-]");
+
   /** Zero MAC Address (00:00:00:00:00:00). */
   public static final MacAddress ZERO = valueOf("00:00:00:00:00:00");
 

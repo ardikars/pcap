@@ -16,7 +16,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.PointerByReference;
-
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.InetAddress;

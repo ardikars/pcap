@@ -29,9 +29,14 @@ class Ip4Test {
 
   @Test
   void readWrite()
-      throws ErrorException, PermissionDeniedException, PromiscuousModePermissionDeniedException,
-          TimestampPrecisionNotSupportedException, RadioFrequencyModeNotSupportedException,
-          NoSuchDeviceException, ActivatedException, InterfaceNotUpException,
+      throws ErrorException,
+          PermissionDeniedException,
+          PromiscuousModePermissionDeniedException,
+          TimestampPrecisionNotSupportedException,
+          RadioFrequencyModeNotSupportedException,
+          NoSuchDeviceException,
+          ActivatedException,
+          InterfaceNotUpException,
           InterfaceNotSupportTimestampTypeException {
     Service service = Service.Creator.create("PcapService");
     try (final Pcap pcap = service.live(service.interfaces(), new DefaultLiveOptions())) {
@@ -214,9 +219,14 @@ class Ip4Test {
   // see: https://github.com/ardikars/pcap/issues/149
   @Test
   void issue149()
-      throws ErrorException, RadioFrequencyModeNotSupportedException, ActivatedException,
-          InterfaceNotSupportTimestampTypeException, PromiscuousModePermissionDeniedException,
-          InterfaceNotUpException, PermissionDeniedException, NoSuchDeviceException,
+      throws ErrorException,
+          RadioFrequencyModeNotSupportedException,
+          ActivatedException,
+          InterfaceNotSupportTimestampTypeException,
+          PromiscuousModePermissionDeniedException,
+          InterfaceNotUpException,
+          PermissionDeniedException,
+          NoSuchDeviceException,
           TimestampPrecisionNotSupportedException {
     final byte[] bytes =
         Hexs.parseHex(

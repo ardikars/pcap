@@ -97,9 +97,14 @@ class ServiceTest {
     /** {@inheritDoc} */
     @Override
     public Pcap live(Interface source, LiveOptions options)
-        throws InterfaceNotSupportTimestampTypeException, InterfaceNotUpException,
-            RadioFrequencyModeNotSupportedException, ActivatedException, PermissionDeniedException,
-            NoSuchDeviceException, PromiscuousModePermissionDeniedException, ErrorException,
+        throws InterfaceNotSupportTimestampTypeException,
+            InterfaceNotUpException,
+            RadioFrequencyModeNotSupportedException,
+            ActivatedException,
+            PermissionDeniedException,
+            NoSuchDeviceException,
+            PromiscuousModePermissionDeniedException,
+            ErrorException,
             TimestampPrecisionNotSupportedException {
       throw new ErrorException("No API implementation.");
     }

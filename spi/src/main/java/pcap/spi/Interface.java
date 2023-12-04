@@ -45,6 +45,7 @@ public interface Interface extends Iterable<Interface> {
    * @since 1.4.0
    */
   int PCAP_IF_CONNECTION_STATUS = 0x00000030;
+
   /**
    * Unknown.
    *

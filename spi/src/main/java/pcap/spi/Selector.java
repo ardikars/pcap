@@ -31,7 +31,9 @@ public interface Selector extends AutoCloseable {
    * @since 1.1.0
    */
   Iterable<Selectable> select(Timeout timeout)
-      throws TimeoutException, NoSuchSelectableException, IllegalStateException,
+      throws TimeoutException,
+          NoSuchSelectableException,
+          IllegalStateException,
           IllegalArgumentException;
 
   /**
@@ -51,7 +53,9 @@ public interface Selector extends AutoCloseable {
    * @since 1.4.0
    */
   int select(Consumer<Selection> consumer, Timeout timeout)
-      throws TimeoutException, NoSuchSelectableException, IllegalStateException,
+      throws TimeoutException,
+          NoSuchSelectableException,
+          IllegalStateException,
           IllegalArgumentException;
 
   /**

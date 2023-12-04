@@ -80,9 +80,14 @@ public interface Service {
    * @since 1.0.0
    */
   Pcap live(Interface source, LiveOptions options)
-      throws InterfaceNotSupportTimestampTypeException, InterfaceNotUpException,
-          RadioFrequencyModeNotSupportedException, ActivatedException, PermissionDeniedException,
-          NoSuchDeviceException, PromiscuousModePermissionDeniedException, ErrorException,
+      throws InterfaceNotSupportTimestampTypeException,
+          InterfaceNotUpException,
+          RadioFrequencyModeNotSupportedException,
+          ActivatedException,
+          PermissionDeniedException,
+          NoSuchDeviceException,
+          PromiscuousModePermissionDeniedException,
+          ErrorException,
           TimestampPrecisionNotSupportedException;
 
   /**
