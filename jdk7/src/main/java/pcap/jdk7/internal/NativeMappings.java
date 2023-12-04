@@ -61,13 +61,11 @@ class NativeMappings {
   private static final Map<String, Object> NATIVE_LOAD_LIBRARY_OPTIONS =
       new HashMap<String, Object>();
 
-  static final File NPCAP_DIR = Paths.get(System.getenv("SystemRoot"), "System32", "Npcap").toFile();
-
   static {
-    if (Platform.isWindows() && System.getProperty("jna.library.path") == null) {
-      if (NPCAP_DIR.exists()) {
-        NativeLibrary.addSearchPath("wpcap", NPCAP_DIR.getAbsolutePath());
-      }
+    File NPCAP_DIR = Paths.get(System.getenv("SystemRoot"), "System32", "Npcap").toFile();
+
+    if (Platform.isWindows() && System.getProperty("jna.library.path") == null && NPCAP_DIR.exists()) {
+      NativeLibrary.addSearchPath("wpcap", NPCAP_DIR.getAbsolutePath());
     }
   }
 
