@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['macos-10.15', 'ubuntu-18.04', 'ubuntu-20.04', 'windows-2019']
+        os: ['ubuntu-20.04']
         java: [17]
     runs-on: ${{ matrix.os }}
     steps:
@@ -100,7 +100,7 @@ jobs:
           ping 127.0.0.1 &
           PID=$!
           echo -n " -Djna.library.path=$(pwd)/libpcap/lib -Djna.debug_load=true " >> .mvn/maven.config
-          sudo -E bash -c './mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate -Pcoverage -Plegacy-support'
+          sudo -E bash -c './mvnw -B -t .mvn/toolchains.xml clean package jacoco:report-aggregate sonar:sonar -Pcoverage -Psonar -Plegacy-support -Dsonar.login="${{ secrets.sonar_token }}"'
           kill $PID
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
