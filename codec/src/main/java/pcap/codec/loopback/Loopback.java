@@ -64,7 +64,7 @@ public final class Loopback extends AbstractPacket {
 
   /** {@inheritDoc} */
   @Override
-  protected int size() {
+  public int size() {
     return 4;
   }
 
