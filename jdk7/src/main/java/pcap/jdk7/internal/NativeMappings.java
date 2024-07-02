@@ -332,6 +332,11 @@ class NativeMappings {
   static native long bpf_filter(
       NativeMappings.bpf_insn insn, Pointer packet, int oriPktLen, int pktLen);
 
+  @NativeSignature(
+      signature = "char * bpf_image(const struct bpf_insn *p, int n)",
+      since = @Version(major = 0, minor = 4))
+  static native String bpf_image(NativeMappings.bpf_insn insn, int n);
+
   static InetAddress inetAddress(sockaddr sockaddr) {
     if (sockaddr == null) {
       return null;
@@ -787,6 +792,10 @@ class NativeMappings {
       // public constructor
     }
 
+    public bpf_insn(Pointer ptr) {
+      super(ptr);
+    }
+
     @Override
     protected List<String> getFieldOrder() {
       return Arrays.asList(
@@ -796,7 +805,16 @@ class NativeMappings {
           "k");
     }
 
-    public static final class ByReference extends bpf_insn implements Structure.ByReference {}
+    public static final class ByReference extends bpf_insn implements Structure.ByReference {
+
+      public ByReference() {
+        super();
+      }
+
+      public ByReference(Pointer ptr) {
+        super(ptr);
+      }
+    }
   }
 
   public static class sockaddr extends Structure {
