@@ -8,6 +8,8 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 import java.net.Inet4Address;
+import java.util.Iterator;
+
 import pcap.common.logging.Logger;
 import pcap.common.logging.LoggerFactory;
 import pcap.spi.Address;
@@ -48,9 +50,57 @@ public class DefaultService implements Service {
     checkFindAllDevs(NativeMappings.pcap_findalldevs(alldevsPP, errbuf(true)));
 
     Pointer alldevsp = alldevsPP.getValue();
+
+    if (alldevsp == null) {
+      NativeMappings.pcap_freealldevs(alldevsPP.getPointer());
+      return new PcapInterface.NoInterface();
+    }
+
     NativeMappings.pcap_if pcapIf = new NativeMappings.pcap_if(alldevsp);
+
+    Iterator<Interface> iterator = pcapIf.iterator();
+
+    Interface first = null;
+    PcapInterface prev = null;
+
+    while (iterator.hasNext()) {
+      Interface next = iterator.next();
+
+      PcapInterface.PcapAddress firstAddress = null;
+      PcapInterface.PcapAddress prevAddress = null;
+
+      if (next.addresses() != null) {
+        Iterator<Address> addressIterator = next.addresses().iterator();
+
+        while (addressIterator.hasNext()) {
+            Address nextAddress = addressIterator.next();
+
+            PcapInterface.PcapAddress pcapAddress = new PcapInterface.PcapAddress(nextAddress.address(), nextAddress.netmask(), nextAddress.broadcast(), nextAddress.destination());
+
+            if (firstAddress == null) {
+                firstAddress = pcapAddress;
+            }
+            if (prevAddress != null) {
+                prevAddress.setNext(pcapAddress);
+            }
+            prevAddress = pcapAddress;
+        }
+      }
+
+      PcapInterface pcapInterface = new PcapInterface(next.name(), next.description(), firstAddress, next.flags());
+
+      if (first == null) {
+        first = pcapInterface;
+      }
+
+      if (prev != null) {
+        prev.setNext(pcapInterface);
+      }
+      prev = pcapInterface;
+    }
     NativeMappings.pcap_freealldevs(pcapIf.getPointer());
-    return pcapIf;
+
+    return first;
   }
 
   @Override
