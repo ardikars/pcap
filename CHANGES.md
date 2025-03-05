@@ -7,6 +7,14 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.2] - 2025-03-05
+
+## Fixed
+
+* Use after free bug in `DefaulService.interfaces()`
+* Change `Loopback.size()` to public
+* Fix right shift ops in `Bytes.toByteArray(..)`
+
 ## [1.5.1] - 2023-12-04
 
 ## Added
