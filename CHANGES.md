@@ -7,6 +7,12 @@ SPDX-License-Identifier: MIT OR Apache-2.0
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.3] - 2025-03-06
+
+## Fixed
+
+* Fix free invalid memory address [#317](https://github.com/ardikars/pcap/pull/317)
+
 ## [1.5.2] - 2025-03-05
 
 ## Fixed
