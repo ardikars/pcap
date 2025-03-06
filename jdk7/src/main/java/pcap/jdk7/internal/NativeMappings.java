@@ -818,7 +818,7 @@ class NativeMappings {
       if (bo.equals(ByteOrder.BIG_ENDIAN)) {
         return (short) (0xFF & saFamily);
       } else {
-        return (short) (0xFF & (saFamily >> 8));
+        return (short) (0xFF & (saFamily >>> 8));
       }
     }
 

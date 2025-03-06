@@ -169,11 +169,11 @@ public final class MacAddress implements Serializable {
         longAddress >= 0, String.format("Address: %d expected(address > 0)", longAddress));
     final byte[] bytes =
         new byte[] {
-          (byte) (longAddress >> 40 & 0xff),
-          (byte) (longAddress >> 32 & 0xff),
-          (byte) (longAddress >> 24 & 0xff),
-          (byte) (longAddress >> 16 & 0xff),
-          (byte) (longAddress >> 8 & 0xff),
+          (byte) (longAddress >>> 40 & 0xff),
+          (byte) (longAddress >>> 32 & 0xff),
+          (byte) (longAddress >>> 24 & 0xff),
+          (byte) (longAddress >>> 16 & 0xff),
+          (byte) (longAddress >>> 8 & 0xff),
           (byte) (longAddress & 0xff)
         };
     return valueOf(bytes);

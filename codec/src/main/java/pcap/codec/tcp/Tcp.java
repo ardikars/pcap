@@ -82,7 +82,7 @@ public final class Tcp extends AbstractPacket {
     Validate.notIllegalArgument(
         size >= 20 && size <= 60 && buffer.readableBytes() >= 20, "buffer size is not sufficient.");
     int flags = buffer.getShort(buffer.readerIndex() + 12) & 0x1FF;
-    buffer.setShort(buffer.readerIndex() + 12, flags & 0x1FF | (size >> 2) << 12);
+    buffer.setShort(buffer.readerIndex() + 12, flags & 0x1FF | (size >>> 2) << 12);
     return new Tcp(buffer);
   }
 
@@ -181,7 +181,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.0.0
    */
   public int dataOffset() {
-    return (superBuffer.getShort(dataOffset) >> 12) & 0xF;
+    return (superBuffer.getShort(dataOffset) >>> 12) & 0xF;
   }
 
   /**
@@ -208,7 +208,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isNs() {
-    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 8) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >>> 8) & 0x1) == 1;
   }
 
   /**
@@ -232,7 +232,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isCwr() {
-    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 7) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >>> 7) & 0x1) == 1;
   }
 
   /**
@@ -256,7 +256,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isEce() {
-    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 6) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >>> 6) & 0x1) == 1;
   }
 
   /**
@@ -280,7 +280,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isUrg() {
-    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 5) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >>> 5) & 0x1) == 1;
   }
 
   /**
@@ -304,7 +304,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isAck() {
-    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 4) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >>> 4) & 0x1) == 1;
   }
 
   /**
@@ -328,7 +328,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isPsh() {
-    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 3) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >>> 3) & 0x1) == 1;
   }
 
   /**
@@ -352,7 +352,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isRst() {
-    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 2) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >>> 2) & 0x1) == 1;
   }
 
   /**
@@ -376,7 +376,7 @@ public final class Tcp extends AbstractPacket {
    * @since 1.3.0
    */
   public boolean isSyn() {
-    return (((superBuffer.getShort(dataOffset) & 0x1FF) >> 1) & 0x1) == 1;
+    return (((superBuffer.getShort(dataOffset) & 0x1FF) >>> 1) & 0x1) == 1;
   }
 
   /**
@@ -540,7 +540,7 @@ public final class Tcp extends AbstractPacket {
     int val = superBuffer.getShort(dataOffset) & 0x1FF;
     short flags = 0;
     for (int i = 8; i >= 0; i--) {
-      if (((val >> i) & 0x1) == 1) {
+      if (((val >>> i) & 0x1) == 1) {
         flags += 1 << i;
       }
     }
@@ -557,7 +557,7 @@ public final class Tcp extends AbstractPacket {
   public int size() {
     if (maxDataOffset == 0) {
       Validate.notIllegalState(superBuffer.readableBytes() >= 20, "buffer size is not sufficient.");
-      return ((superBuffer.getShort(superBuffer.readerIndex() + 12) >> 12) & 0xF) << 2;
+      return ((superBuffer.getShort(superBuffer.readerIndex() + 12) >>> 12) & 0xF) << 2;
     }
     return dataOffset() << 2;
   }
@@ -599,15 +599,15 @@ public final class Tcp extends AbstractPacket {
         .add("destinationPort", destinationPort())
         .add("sequenceNumber", sequenceNumber())
         .add("acknowledgmentNumber", acknowledgmentNumber())
-        .add("dataOffset", (v >> 12) & 0xF)
-        .add("ns", (((v & 0x1FF) >> 8) & 0x1) == 1)
-        .add("cwr", (((v & 0x1FF) >> 7) & 0x1) == 1)
-        .add("ece", (((v & 0x1FF) >> 6) & 0x1) == 1)
-        .add("urg", (((v & 0x1FF) >> 5) & 0x1) == 1)
-        .add("ack", (((v & 0x1FF) >> 4) & 0x1) == 1)
-        .add("psh", (((v & 0x1FF) >> 3) & 0x1) == 1)
-        .add("rst", (((v & 0x1FF) >> 2) & 0x1) == 1)
-        .add("syn", (((v & 0x1FF) >> 1) & 0x1) == 1)
+        .add("dataOffset", (v >>> 12) & 0xF)
+        .add("ns", (((v & 0x1FF) >>> 8) & 0x1) == 1)
+        .add("cwr", (((v & 0x1FF) >>> 7) & 0x1) == 1)
+        .add("ece", (((v & 0x1FF) >>> 6) & 0x1) == 1)
+        .add("urg", (((v & 0x1FF) >>> 5) & 0x1) == 1)
+        .add("ack", (((v & 0x1FF) >>> 4) & 0x1) == 1)
+        .add("psh", (((v & 0x1FF) >>> 3) & 0x1) == 1)
+        .add("rst", (((v & 0x1FF) >>> 2) & 0x1) == 1)
+        .add("syn", (((v & 0x1FF) >>> 1) & 0x1) == 1)
         .add("fin", ((v & 0x1FF) & 0x1) == 1)
         .add("windowsSize", windowSize())
         .add("checksum", String.format("0x%s", Integer.toHexString(checksum())))

@@ -60,7 +60,7 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public int version() {
-    return (superBuffer.getInt(versionOffset) >> 28) & 0xF;
+    return (superBuffer.getInt(versionOffset) >>> 28) & 0xF;
   }
 
   /**
@@ -72,7 +72,7 @@ public final class Ip6 extends AbstractPacket {
    */
   public Ip6 version(int value) {
     int v = superBuffer.getInt(versionOffset);
-    superBuffer.setInt(versionOffset, (value & 0xF) << 28 | ((v >> 20) & 0xFF) << 20 | v & 0xFFFFF);
+    superBuffer.setInt(versionOffset, (value & 0xF) << 28 | ((v >>> 20) & 0xFF) << 20 | v & 0xFFFFF);
     return this;
   }
 
@@ -83,7 +83,7 @@ public final class Ip6 extends AbstractPacket {
    * @since 1.0.0
    */
   public int trafficClass() {
-    return (superBuffer.getInt(versionOffset) >> 20) & 0xFF;
+    return (superBuffer.getInt(versionOffset) >>> 20) & 0xFF;
   }
 
   /**
@@ -95,7 +95,7 @@ public final class Ip6 extends AbstractPacket {
    */
   public Ip6 trafficClass(int value) {
     int v = superBuffer.getInt(versionOffset);
-    superBuffer.setInt(versionOffset, ((v >> 28) & 0xF) << 28 | (value & 0xFF) << 20 | v & 0xFFFFF);
+    superBuffer.setInt(versionOffset, ((v >>> 28) & 0xF) << 28 | (value & 0xFF) << 20 | v & 0xFFFFF);
     return this;
   }
 
@@ -119,7 +119,7 @@ public final class Ip6 extends AbstractPacket {
   public Ip6 flowLabel(int value) {
     int v = superBuffer.getInt(versionOffset);
     superBuffer.setInt(
-        versionOffset, ((v >> 28) & 0xF) << 28 | ((v >> 20) & 0xFF) << 20 | value & 0xFFFFF);
+        versionOffset, ((v >>> 28) & 0xF) << 28 | ((v >>> 20) & 0xFF) << 20 | value & 0xFFFFF);
     return this;
   }
 

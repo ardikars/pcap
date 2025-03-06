@@ -87,7 +87,7 @@ public final class Ip4 extends AbstractPacket {
   public static Ip4 newInstance(int size, PacketBuffer buffer) {
     Validate.notIllegalArgument(
         size >= 20 && size <= 60 && buffer.readableBytes() >= 20, "buffer size is not sufficient.");
-    buffer.setByte(buffer.readerIndex(), (4 & 0xF) << 4 | (size >> 2) & 0xF);
+    buffer.setByte(buffer.readerIndex(), (4 & 0xF) << 4 | (size >>> 2) & 0xF);
     return new Ip4(buffer);
   }
 
@@ -98,7 +98,7 @@ public final class Ip4 extends AbstractPacket {
    * @since 1.0.0
    */
   public int version() {
-    return (superBuffer.getByte(versionOffset) >> 4) & 0xF;
+    return (superBuffer.getByte(versionOffset) >>> 4) & 0xF;
   }
 
   /**
@@ -146,7 +146,7 @@ public final class Ip4 extends AbstractPacket {
    * @since 1.0.0
    */
   public int dscp() {
-    return (superBuffer.getByte(dscpOffset) >> 2) & 0x3F;
+    return (superBuffer.getByte(dscpOffset) >>> 2) & 0x3F;
   }
 
   /**
@@ -234,7 +234,7 @@ public final class Ip4 extends AbstractPacket {
    * @since 1.0.0
    */
   public int flags() {
-    return (superBuffer.getShort(flagsOffset) >> 13) & 0x7;
+    return (superBuffer.getShort(flagsOffset) >>> 13) & 0x7;
   }
 
   /**
