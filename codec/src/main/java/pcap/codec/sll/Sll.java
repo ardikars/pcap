@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 Pcap Project
+ * Copyright (c) 2020-2025 Pcap Project
  * SPDX-License-Identifier: MIT OR Apache-2.0
  */
 package pcap.codec.sll;
