@@ -52,7 +52,7 @@ public class DefaultService implements Service {
     Pointer alldevsp = alldevsPP.getValue();
 
     if (alldevsp == null) {
-      NativeMappings.pcap_freealldevs(alldevsPP.getPointer());
+      // no need to call pcap_freealldevs with null
       return new PcapInterface.NoInterface();
     }
 
